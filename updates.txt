@@ -1,0 +1,36 @@
+NOVOS OBJETOS DE CONTROLE 
+
+*** COMPRAS ***
+- produtos/equipamentos a serem compros: 
+    - nome
+    - quantidade 
+    - preço/custo unitário 
+    - etcs...
+- local de entrega 
+- fornecedor
+- rastreio (se houver)
+- data do pedido
+- data de pagamento da compra 
+- data de faturamento 
+- código da NF
+- data de previsão de entrega 
+- data de entrega 
+- status da compra (AGUARDANDO LIBERAÇÃO, EM PROCESSO, AGUARDANDO NF, EM ROTA, ENTREGUE, FINALIZADO)
+- total da compra 
+
+
+*** HOMOLOGAÇÃO *** 
+- titular (nome, identificador (cpf ou cnpj), contato) // checked
+- número da instalação // checked
+- número do cliente // checked
+- equipamentos a serem homologados (fabricante, modelo, potencia, quantidade) // checked
+- forma de assinatura da documentação // checked
+- data de liberacao da documentação // checked
+- data de assinatura da documentação // checked
+- data de solicitação de acesso // checked
+- data de conclusao // checked
+- atualizacoes (data, assunto) // checked
+- código da NS // checked
+- status do solicitacao (em elaboração, aguardando assinatura, aguardando faturamento, com pendencias, aprovado com obras, reprovado, aprovado)
+- data de pedido da vistoria // checked
+- data da vistoria // checked

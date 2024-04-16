@@ -1,0 +1,83 @@
+import React from 'react'
+import TextInput from '../Inputs/TextInput'
+import { TService } from '@/utils/schemas/service.schema'
+import NumberInput from '../Inputs/NumberInput'
+import SelectInput from '../Inputs/SelectInput'
+import { usePricingMethods } from '@/utils/queries/pricing-methods'
+import CheckboxInput from '../Inputs/CheckboxInput'
+
+type GeneralInformationBlockProps = {
+  infoHolder: TService
+  setInfoHolder: React.Dispatch<React.SetStateAction<TService>>
+}
+function GeneralInformationBlock({ infoHolder, setInfoHolder }: GeneralInformationBlockProps) {
+  const { data: pricingMethods } = usePricingMethods()
+  return (
+    <div className="flex w-full flex-col gap-y-2">
+      <h1 className="w-full bg-gray-700  p-1 text-center font-medium text-white">INFORMAÇÕES GERAIS</h1>
+      <div className="flex w-full items-center justify-center gap-2 py-2">
+        <div className="w-fit">
+          <CheckboxInput
+            checked={infoHolder.ativo}
+            labelFalse="SERVIÇO ATIVADO"
+            labelTrue="SERVIÇO ATIVADO"
+            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, ativo: value }))}
+            justify="justify-center"
+          />
+        </div>
+      </div>
+      <div className="flex w-full flex-col items-center justify-center gap-2 lg:flex-row">
+        <div className="w-full lg:w-1/2">
+          <TextInput
+            label="DESCRIÇÃO DO SERVIÇO"
+            placeholder="Preencha aqui o nome do fabricante do produto."
+            value={infoHolder.descricao}
+            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, descricao: value }))}
+            width="100%"
+          />
+        </div>
+        <div className="w-full lg:w-1/2">
+          <NumberInput
+            label="VALOR BASE DO SERVIÇO"
+            placeholder="Preencha aqui o valor base do serviço."
+            value={infoHolder.preco || null}
+            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, preco: value }))}
+            width="100%"
+          />
+        </div>
+      </div>
+      <div className="flex w-full flex-col items-center justify-center gap-2 lg:flex-row">
+        <div className="w-full lg:w-1/2">
+          <NumberInput
+            label="GARANTIA DO SERVIÇO"
+            placeholder="Preencha aqui o garantia do serviço."
+            value={infoHolder.garantia || null}
+            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, garantia: value }))}
+            width="100%"
+          />
+        </div>
+        <div className="w-full lg:w-1/2">
+          <SelectInput
+            label="METODOLOGIA DE PRECIFICAÇÃO"
+            value={infoHolder.idMetodologiaPrecificacao ? infoHolder.idMetodologiaPrecificacao : null}
+            handleChange={(value) =>
+              setInfoHolder((prev) => ({
+                ...prev,
+                idMetodologiaPrecificacao: value,
+              }))
+            }
+            onReset={() =>
+              // @ts-ignore
+              setInfoHolder((prev) => ({ ...prev, idMetodologiaPrecificacao: '' }))
+            }
+            selectedItemLabel="NÃO DEFINIDO"
+            options={pricingMethods?.map((method) => ({ id: method._id, label: method.nome, value: method._id })) || null}
+            width="100%"
+          />
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default GeneralInformationBlock
