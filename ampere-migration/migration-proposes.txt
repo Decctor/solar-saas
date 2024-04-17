@@ -204,7 +204,7 @@ const priceDescription = {
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   const { id } = req.query
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const proposalsCollection = db.collection('proposals')
 
   const proposals = (AmpereProposes as (TSolarSystemPropose | THomologationPropose | TOeMPropose | TMonitoringPropose)[])

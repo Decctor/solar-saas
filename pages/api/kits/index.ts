@@ -21,7 +21,7 @@ const createKit: NextApiHandler<PostResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
 
   const kit = InsertNewKitSchema.parse(req.body)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
 
   const insertResponse = await insertKit({ collection: kitsCollection, info: kit, partnerId: partnerId || '' })
@@ -37,7 +37,7 @@ const getKits: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'visualizar', true)
   const partnerId = session.user.idParceiro
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
 
   const { id, active } = req.query
@@ -73,7 +73,7 @@ const editKit: NextApiHandler<PutResponse> = async (req, res) => {
   const changes = InsertNewKitSchema.parse(req.body)
 
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
 
   const updateResponse = await updateKit({ id: id, collection: kitsCollection, changes: changes, partnerId: partnerId || '' })

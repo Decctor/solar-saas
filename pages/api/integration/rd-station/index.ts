@@ -14,7 +14,7 @@ const getIntegrationDetails: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const integrationsCollection: Collection<TIntegration> = db.collection('integrations')
 
   const rdStationInformation = await integrationsCollection.findOne({ identificador: 'RD_STATION', idParceiro: partnerId || '' })
@@ -46,7 +46,7 @@ const createRdStationConfig: NextApiHandler<PostResponse> = async (req, res) => 
     client_secret,
   }
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const integrationsCollection: Collection<TIntegration> = db.collection('integrations')
   // @ts-ignore
   const insertResponse = await integrationsCollection.insertOne(IntegrationConfig)

@@ -1,4 +1,3 @@
-import { IContractRequest, IProposalInfo, IProposalOeMInfo } from '@/utils/models'
 import React, { useState } from 'react'
 import ContractInfo from './SolarSystem/ContractInfo'
 import JourneyInfo from './SolarSystem/JourneyInfo'
@@ -13,16 +12,85 @@ import DocumentAttachmentInfo from './OeM/DocumentAttachmentInfo'
 import ReviewInfo from './OeM/ReviewInfo'
 import { getModulesQty } from '@/utils/methods'
 import PersonalizedSystemInfo from './OeM/PersonalizedSystemInfo'
+import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
+import { UploadResult, getDownloadURL, getMetadata, ref, uploadBytes } from 'firebase/storage'
+import { storage } from '@/services/firebase/storage-config'
+import { fileTypes } from '@/utils/constants'
+import toast from 'react-hot-toast'
+import axios from 'axios'
+import { createContractRequest } from '@/utils/mutations/contract-request'
 type OeMFormProps = {
-  requestInfo: IContractRequest
-  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>
-  proposalInfo: IProposalOeMInfo
+  requestInfo: TContractRequest
+  setRequestInfo: React.Dispatch<React.SetStateAction<TContractRequest>>
+  proposeInfo: TProposalDTOWithOpportunity
 }
-function OeMForm({ requestInfo, setRequestInfo, proposalInfo }: OeMFormProps) {
+function OeMForm({ requestInfo, setRequestInfo, proposeInfo }: OeMFormProps) {
   const [stage, setStage] = useState(1)
+  const [sameProjectHolder, setSameProjectHolder] = useState<boolean>(false)
+  const [documentsFileHolder, setDocumentsFileHolder] = useState<{ [key: string]: File | string | null }>({})
+
+  async function handleUploadFiles(files: { [key: string]: File | string | null }) {
+    var links: { title: string; link: string; format: string }[] = []
+    try {
+      const uploadPromises = Object.entries(files).map(async ([key, value]) => {
+        const file = value
+        if (!file) return
+        if (typeof file == 'string') {
+          const fileRef = ref(storage, file)
+          const metaData = await getMetadata(fileRef)
+          const link = {
+            title: key,
+            link: file,
+            format: fileTypes[metaData.contentType || '']?.title || 'NÃO DEFINIDO',
+          }
+          links.push(link)
+        }
+        if (typeof file != 'string') {
+          const storageStr = `formSolicitacao/${requestInfo.nomeDoContrato}/${key} - ${new Date().toISOString()}`
+          const fileRef = ref(storage, storageStr)
+          const firebaseUploadResponse = await uploadBytes(fileRef, file)
+          const uploadResult = firebaseUploadResponse as UploadResult
+          const fileUrl = await getDownloadURL(ref(storage, firebaseUploadResponse.metadata.fullPath))
+          const link = {
+            title: key,
+            link: fileUrl,
+            format: fileTypes[uploadResult.metadata.contentType || '']?.title || 'NÃO DEFINIDO',
+          }
+          links.push(link)
+        }
+      })
+      await Promise.all(uploadPromises)
+      return links
+    } catch (error) {
+      throw error
+    }
+  }
+
+  async function handleRequestContract() {
+    try {
+      // Getting documents links
+      const fileUploadLoadingToast = toast.loading('Vinculando arquivos...')
+      const links = await handleUploadFiles(documentsFileHolder)
+      toast.dismiss(fileUploadLoadingToast)
+      // Creating contract request
+      const requestCreationLoadingToast = toast.loading('Criando formulário...')
+      const previsaoValorDoKit = proposeInfo?.precificacao?.find((p) => p.descricao.includes('KIT'))
+        ? proposeInfo?.precificacao?.find((p) => p.descricao.includes('KIT'))?.valorFinal
+        : null
+      const idProjetoCRM = proposeInfo.oportunidadeDados?._id || ''
+      const idPropostaCRM = proposeInfo._id || ''
+      const contractRequest = { ...requestInfo, previsaoValorDoKit, idProjetoCRM, idPropostaCRM, links }
+      const insertedId = await createContractRequest({ info: contractRequest, returnId: true })
+      toast.dismiss(requestCreationLoadingToast)
+      return 'Solicitação finalizada com sucesso !'
+    } catch (error) {
+      toast.dismiss()
+      throw error
+    }
+  }
   return (
     <>
-      {' '}
       {stage == 1 ? <ContractInfo requestInfo={requestInfo} setRequestInfo={setRequestInfo} goToNextStage={() => setStage((prev) => prev + 1)} /> : null}
       {stage == 2 ? (
         <JourneyInfo
@@ -38,6 +106,8 @@ function OeMForm({ requestInfo, setRequestInfo, proposalInfo }: OeMFormProps) {
           setRequestInfo={setRequestInfo}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           goToNextStage={() => setStage((prev) => prev + 1)}
+          sameProjectHolder={sameProjectHolder}
+          setSameProjectHolder={setSameProjectHolder}
         />
       ) : null}
       {stage == 4 ? (
@@ -70,8 +140,8 @@ function OeMForm({ requestInfo, setRequestInfo, proposalInfo }: OeMFormProps) {
           setRequestInfo={setRequestInfo}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           goToNextStage={() => setStage((prev) => prev + 1)}
-          proposal={proposalInfo}
-          activePlanId={proposalInfo.idPlanoEscolhido}
+          propose={proposeInfo}
+          activePlanId={undefined}
         />
       ) : null}
       {stage == 8 ? (
@@ -92,12 +162,15 @@ function OeMForm({ requestInfo, setRequestInfo, proposalInfo }: OeMFormProps) {
       ) : null}
       {stage == 10 ? (
         <DocumentAttachmentInfo
-          projectInfo={proposalInfo.infoProjeto}
+          projectInfo={proposeInfo.oportunidadeDados}
           requestInfo={requestInfo}
-          proposalInfo={proposalInfo}
+          proposeInfo={proposeInfo}
           setRequestInfo={setRequestInfo}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           goToNextStage={() => setStage((prev) => prev + 1)}
+          documentsFile={documentsFileHolder}
+          setDocumentsFile={setDocumentsFileHolder}
+          sameProjectHolder={sameProjectHolder}
         />
       ) : null}
       {stage == 11 ? (
@@ -106,9 +179,11 @@ function OeMForm({ requestInfo, setRequestInfo, proposalInfo }: OeMFormProps) {
           setRequestInfo={setRequestInfo}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           goToNextStage={() => setStage((prev) => prev + 1)}
-          distance={proposalInfo.premissas.distancia}
-          projectId={proposalInfo?.infoProjeto?._id}
-          proposalInfo={proposalInfo}
+          distance={proposeInfo.premissas.distancia || 0}
+          projectId={proposeInfo?.oportunidadeDados?._id}
+          proposeInfo={proposeInfo}
+          documentsFile={documentsFileHolder}
+          handleRequestContract={handleRequestContract}
         />
       ) : null}
     </>

@@ -17,7 +17,7 @@ const editProject: NextApiHandler<PutResponse> = async (req, res) => {
   }
   if (!id || typeof id != 'string') throw new createHttpError.BadRequest('ID do objeto de alteração é inválido.')
   if (!pipeline) throw new createHttpError.BadRequest('Pipeline de alterações é não especificada.')
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('projects')
 
   const dbResponse = await collection.updateOne(

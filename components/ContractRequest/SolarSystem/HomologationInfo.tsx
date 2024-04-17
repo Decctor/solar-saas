@@ -1,42 +1,40 @@
-import NumberInput from "@/components/Inputs/NumberInput";
-import SelectInput from "@/components/Inputs/SelectInput";
-import TextInput from "@/components/Inputs/TextInput";
-import { stateCities } from "@/utils/estados_cidades";
-import { formatToCEP, getCEPInfo } from "@/utils/methods";
-import { IContractRequest } from "@/utils/models";
-import React from "react";
-import { toast } from "react-hot-toast";
-import { AiOutlineSearch } from "react-icons/ai";
+import CheckboxInput from '@/components/Inputs/CheckboxInput'
+import NumberInput from '@/components/Inputs/NumberInput'
+import SelectInput from '@/components/Inputs/SelectInput'
+import TextInput from '@/components/Inputs/TextInput'
+import { stateCities } from '@/utils/estados_cidades'
+import { formatToCEP, getCEPInfo } from '@/utils/methods'
+import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import React from 'react'
+import { toast } from 'react-hot-toast'
+import { AiOutlineSearch } from 'react-icons/ai'
 type HomologationInfoProps = {
-  requestInfo: IContractRequest;
-  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>;
-  goToPreviousStage: () => void;
-  goToNextStage: () => void;
-};
-function HomologationInfo({
-  requestInfo,
-  setRequestInfo,
-  goToPreviousStage,
-  goToNextStage,
-}: HomologationInfoProps) {
+  requestInfo: TContractRequest
+  setRequestInfo: React.Dispatch<React.SetStateAction<TContractRequest>>
+  sameProjectHolder: boolean
+  setSameProjectHolder: React.Dispatch<React.SetStateAction<boolean>>
+  goToPreviousStage: () => void
+  goToNextStage: () => void
+}
+function HomologationInfo({ requestInfo, setRequestInfo, sameProjectHolder, setSameProjectHolder, goToPreviousStage, goToNextStage }: HomologationInfoProps) {
   async function setAddressDataByCEP(cep: string) {
-    const addressInfo = await getCEPInfo(cep);
-    const toastID = toast.loading("Buscando informações sobre o CEP...", {
+    const addressInfo = await getCEPInfo(cep)
+    const toastID = toast.loading('Buscando informações sobre o CEP...', {
       duration: 2000,
-    });
+    })
     setTimeout(() => {
       if (addressInfo) {
-        toast.dismiss(toastID);
-        toast.success("Dados do CEP buscados com sucesso.", { duration: 1000 });
+        toast.dismiss(toastID)
+        toast.success('Dados do CEP buscados com sucesso.', { duration: 1000 })
         setRequestInfo((prev) => ({
           ...prev,
           enderecoInstalacao: addressInfo.logradouro,
           bairroInstalacao: addressInfo.bairro,
           ufInstalacao: addressInfo.uf as keyof typeof stateCities,
           cidadeInstalacao: addressInfo.localidade.toUpperCase(),
-        }));
+        }))
       }
-    }, 1000);
+    }, 1000)
   }
   function useMailInfo() {
     setRequestInfo((prev) => ({
@@ -48,83 +46,73 @@ function HomologationInfo({
       ufInstalacao: prev.uf,
       cidadeInstalacao: prev.cidade,
       pontoDeReferenciaInstalacao: prev.pontoDeReferencia,
-    }));
+    }))
   }
   function validateFields() {
     if (!requestInfo.nomeTitularProjeto) {
-      toast.error("Por favor, preencha um nome do titular válido.");
-      return false;
+      toast.error('Por favor, preencha um nome do titular válido.')
+      return false
     }
     if (!requestInfo.tipoDoTitular) {
-      toast.error("Por favor, preencha o tipo do titular.");
-      return false;
+      toast.error('Por favor, preencha o tipo do titular.')
+      return false
     }
     if (!requestInfo.tipoDaLigacao) {
-      toast.error("Por favor, preencha o tipo da ligação.");
-      return false;
+      toast.error('Por favor, preencha o tipo da ligação.')
+      return false
     }
     if (!requestInfo.tipoDaInstalacao) {
-      toast.error("Por favor, preencha o tipo da instalação.");
-      return false;
+      toast.error('Por favor, preencha o tipo da instalação.')
+      return false
     }
-    if (requestInfo.cidadeInstalacao == "NÃO DEFINIDO") {
-      toast.error("Por favor, preencha uma cidade válida.");
-      return false;
+    if (requestInfo.cidadeInstalacao == 'NÃO DEFINIDO') {
+      toast.error('Por favor, preencha uma cidade válida.')
+      return false
     }
     if (requestInfo.enderecoInstalacao.trim().length < 3) {
-      toast.error("Por favor, preencha um endereço válido");
-      return false;
+      toast.error('Por favor, preencha um endereço válido')
+      return false
     }
     if (requestInfo.bairroInstalacao.trim().length < 3) {
-      toast.error("Por favor, preencha um bairro válido");
-      return false;
+      toast.error('Por favor, preencha um bairro válido')
+      return false
     }
     if (requestInfo.numeroResInstalacao == null) {
-      toast.error("Por favor, preencha o número da residência.");
-      return false;
+      toast.error('Por favor, preencha o número da residência.')
+      return false
     }
-    if (
-      requestInfo.tipoDaLigacao == "EXISTENTE" &&
-      (requestInfo.numeroInstalacao == null ||
-        requestInfo.numeroInstalacao.trim().length < 7)
-    ) {
-      toast.error("Por favor, preencha um número de instalação válido.");
-      return false;
+    if (requestInfo.tipoDaLigacao == 'EXISTENTE' && (requestInfo.numeroInstalacao == null || requestInfo.numeroInstalacao.trim().length < 7)) {
+      toast.error('Por favor, preencha um número de instalação válido.')
+      return false
     }
-    if (
-      requestInfo.tipoDaInstalacao == "RURAL" &&
-      requestInfo.longitude.trim().length < 6
-    ) {
-      toast.error("Por favor, preencha uma longitude válida.");
-      return false;
+    if (requestInfo.tipoDaInstalacao == 'RURAL' && requestInfo.longitude.trim().length < 6) {
+      toast.error('Por favor, preencha uma longitude válida.')
+      return false
     }
-    if (
-      requestInfo.tipoDaInstalacao == "RURAL" &&
-      requestInfo.latitude.trim().length < 6
-    ) {
-      toast.error("Por favor, preencha uma latitude válida.");
-      return false;
+    if (requestInfo.tipoDaInstalacao == 'RURAL' && requestInfo.latitude.trim().length < 6) {
+      toast.error('Por favor, preencha uma latitude válida.')
+      return false
     }
-    return true;
+    return true
   }
   return (
     <div className="flex w-full grow flex-col bg-[#fff] pb-2">
-      <span className="py-2 text-center text-sm font-bold uppercase text-[#15599a]">
-        DADOS PARA ENTRADA NA CONCESSIONÁRIA
-      </span>
+      <span className="py-2 text-center text-sm font-bold uppercase text-[#15599a]">DADOS DE HOMOLOGAÇÃO</span>
+      <div className="flex w-full items-center justify-center">
+        <CheckboxInput
+          labelFalse="MESMO TITULAR DO CONTRATO"
+          labelTrue="MESMO TITULAR DO CONTRATO"
+          checked={sameProjectHolder}
+          handleChange={(value) => setSameProjectHolder(value)}
+        />
+      </div>
       <div className="flex flex-col gap-2 p-2 lg:grid lg:grid-cols-3">
-        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">
-          INFORMAÇÕES DA INSTALAÇÃO DO CLIENTE
-        </h1>
+        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">INFORMAÇÕES DA INSTALAÇÃO DO CLIENTE</h1>
         <div className="col-span-3 flex w-full items-center justify-center gap-2">
           <TextInput
-            label={"NOME DO TITULAR DO PROJETO"}
+            label={'NOME DO TITULAR DO PROJETO'}
             placeholder="Preencha o nome do titular do projeto junto a concessionária."
-            value={
-              requestInfo.nomeTitularProjeto
-                ? requestInfo.nomeTitularProjeto
-                : ""
-            }
+            value={requestInfo.nomeTitularProjeto ? requestInfo.nomeTitularProjeto : ''}
             editable={true}
             handleChange={(value) =>
               setRequestInfo({
@@ -135,87 +123,73 @@ function HomologationInfo({
           />
 
           <TextInput
-            label={"Nº DA INSTALAÇÃO"}
+            label={'Nº DA INSTALAÇÃO'}
             editable={true}
             placeholder="Preencha aqui o número de instalação junto a concessionária."
-            value={
-              requestInfo.numeroInstalacao ? requestInfo.numeroInstalacao : ""
-            }
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, numeroInstalacao: value })
-            }
+            value={requestInfo.numeroInstalacao ? requestInfo.numeroInstalacao : ''}
+            handleChange={(value) => setRequestInfo({ ...requestInfo, numeroInstalacao: value })}
           />
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            label={"TIPO DO TITULAR"}
+            label={'TIPO DO TITULAR'}
             editable={true}
             value={requestInfo.tipoDoTitular}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, tipoDoTitular: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, tipoDoTitular: value })}
             options={[
               {
                 id: 1,
-                label: "PESSOA FISICA",
-                value: "PESSOA FISICA",
+                label: 'PESSOA FISICA',
+                value: 'PESSOA FISICA',
               },
               {
                 id: 2,
-                label: "PESSOA JURIDICA",
-                value: "PESSOA JURIDICA",
+                label: 'PESSOA JURIDICA',
+                value: 'PESSOA JURIDICA',
               },
             ]}
             selectedItemLabel="NÃO DEFINIDO"
-            onReset={() =>
-              setRequestInfo((prev) => ({ ...prev, tipoDoTitular: undefined }))
-            }
+            onReset={() => setRequestInfo((prev) => ({ ...prev, tipoDoTitular: undefined }))}
           />
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            label={"TIPO DA LIGAÇÃO"}
+            label={'TIPO DA LIGAÇÃO'}
             editable={true}
             value={requestInfo.tipoDaLigacao}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, tipoDaLigacao: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, tipoDaLigacao: value })}
             options={[
               {
                 id: 1,
-                label: "NOVA",
-                value: "NOVA",
+                label: 'NOVA',
+                value: 'NOVA',
               },
               {
                 id: 2,
-                label: "EXISTENTE",
-                value: "EXISTENTE",
+                label: 'EXISTENTE',
+                value: 'EXISTENTE',
               },
             ]}
             selectedItemLabel="NÃO DEFINIDO"
-            onReset={() =>
-              setRequestInfo((prev) => ({ ...prev, tipoDaLigacao: undefined }))
-            }
+            onReset={() => setRequestInfo((prev) => ({ ...prev, tipoDaLigacao: undefined }))}
           />
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            label={"TIPO DA INSTALAÇÃO"}
+            label={'TIPO DA INSTALAÇÃO'}
             editable={true}
             value={requestInfo.tipoDaInstalacao}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, tipoDaInstalacao: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, tipoDaInstalacao: value })}
             options={[
               {
                 id: 1,
-                label: "RURAL",
-                value: "RURAL",
+                label: 'RURAL',
+                value: 'RURAL',
               },
               {
                 id: 2,
-                label: "URBANO",
-                value: "URBANO",
+                label: 'URBANO',
+                value: 'URBANO',
               },
             ]}
             selectedItemLabel="NÃO DEFINIDO"
@@ -227,37 +201,32 @@ function HomologationInfo({
             }
           />
         </div>
-        <h1 className="col-span-3 pt-2 text-center font-bold text-[#fead61]">
-          ENDEREÇO DA INSTALAÇÃO
-        </h1>
+        <h1 className="col-span-3 pt-2 text-center font-bold text-[#fead61]">ENDEREÇO DA INSTALAÇÃO</h1>
         <div className="col-span-3 flex items-center justify-center">
-          <button
-            onClick={() => useMailInfo()}
-            className="rounded bg-[#15599a] p-2 text-xs font-medium text-white"
-          >
+          <button onClick={() => useMailInfo()} className="rounded bg-[#15599a] p-2 text-xs font-medium text-white">
             Usar informações de endereço da correspondência
           </button>
         </div>
         <div className="flex flex-wrap items-center justify-center gap-x-2">
           <TextInput
             editable={true}
-            label={"CEP INSTALAÇÃO"}
+            label={'CEP INSTALAÇÃO'}
             placeholder="Preencha aqui o CEP do local de instalação do sistema."
             value={requestInfo.cepInstalacao}
             handleChange={(value) => {
               if (value.length == 9) {
-                setAddressDataByCEP(value);
+                setAddressDataByCEP(value)
               }
               setRequestInfo({
                 ...requestInfo,
                 cepInstalacao: formatToCEP(value),
-              });
+              })
             }}
           />
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            label={"ENDEREÇO DE INSTALAÇÃO"}
+            label={'ENDEREÇO DE INSTALAÇÃO'}
             editable={true}
             placeholder="Preencha aqui o endereço do local de instalação do sistema."
             value={requestInfo.enderecoInstalacao}
@@ -271,22 +240,16 @@ function HomologationInfo({
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            label={"Nº"}
+            label={'Nº'}
             editable={true}
             placeholder="Preencha o número/identificador do local de instalação do sistema."
-            value={
-              requestInfo.numeroResInstalacao
-                ? requestInfo.numeroResInstalacao
-                : ""
-            }
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, numeroResInstalacao: value })
-            }
+            value={requestInfo.numeroResInstalacao ? requestInfo.numeroResInstalacao : ''}
+            handleChange={(value) => setRequestInfo({ ...requestInfo, numeroResInstalacao: value })}
           />
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            label={"BAIRRO"}
+            label={'BAIRRO'}
             placeholder="Preencha aqui o bairro do local de instalação do sistema."
             editable={true}
             value={requestInfo.bairroInstalacao}
@@ -300,8 +263,8 @@ function HomologationInfo({
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            width={"450px"}
-            label={"UF"}
+            width={'450px'}
+            label={'UF'}
             editable={true}
             options={Object.keys(stateCities).map((state, index) => ({
               id: index + 1,
@@ -309,34 +272,30 @@ function HomologationInfo({
               value: state,
             }))}
             value={requestInfo.ufInstalacao}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, ufInstalacao: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, ufInstalacao: value })}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() => {
-              setRequestInfo((prev) => ({ ...prev, ufInstalacao: null }));
+              setRequestInfo((prev) => ({ ...prev, ufInstalacao: null }))
             }}
           />
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            label={"CIDADE"}
+            label={'CIDADE'}
             editable={true}
             value={requestInfo.cidadeInstalacao}
             options={
               requestInfo.ufInstalacao
-                ? stateCities[requestInfo.ufInstalacao].map((city, index) => {
+                ? stateCities[requestInfo.ufInstalacao as keyof typeof stateCities].map((city, index) => {
                     return {
                       id: index,
                       value: city,
                       label: city,
-                    };
+                    }
                   })
                 : null
             }
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, cidadeInstalacao: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, cidadeInstalacao: value })}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() =>
               setRequestInfo((prev) => ({
@@ -348,7 +307,7 @@ function HomologationInfo({
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            label={"PONTO DE REFERÊNCIA DA INSTALAÇÃO"}
+            label={'PONTO DE REFERÊNCIA DA INSTALAÇÃO'}
             placeholder="Preencha aqui um ponto de referência do local de instalação."
             editable={true}
             value={requestInfo.pontoDeReferenciaInstalacao}
@@ -362,46 +321,36 @@ function HomologationInfo({
         </div>
         <div className="col-span-3 flex flex-wrap items-center justify-center gap-2">
           <TextInput
-            label={"LATITUDE"}
+            label={'LATITUDE'}
             value={requestInfo.latitude}
             placeholder="Preencha aqui a latitude do local de instalação."
             editable={true}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, latitude: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, latitude: value })}
           />
           <TextInput
-            label={"LONGITUDE"}
+            label={'LONGITUDE'}
             editable={true}
             value={requestInfo.longitude}
             placeholder="Preencha aqui a longitude do local de instalação."
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, longitude: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, longitude: value })}
           />
         </div>
 
-        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">
-          INFORMAÇÕES DA CONTA DE CEMIG ATENDE
-        </h1>
+        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">INFORMAÇÕES DA CONTA DE CEMIG ATENDE</h1>
         <div className="col-span-3 flex flex-wrap items-center justify-center gap-2">
           <TextInput
-            label={"LOGIN(CEMIG ATENDE)"}
+            label={'LOGIN(CEMIG ATENDE)'}
             editable={true}
             placeholder="Preencha aqui o login do CEMIG ATENDE do cliente."
             value={requestInfo.loginCemigAtende}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, loginCemigAtende: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, loginCemigAtende: value })}
           />
           <TextInput
-            label={"SENHA(CEMIG ATENDE)"}
+            label={'SENHA(CEMIG ATENDE)'}
             placeholder="Preencha aqui a senha do CEMIG ATENDE do cliente."
             editable={true}
             value={requestInfo.senhaCemigAtende}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, senhaCemigAtende: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, senhaCemigAtende: value })}
           />
         </div>
         {/* <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">
@@ -437,7 +386,7 @@ function HomologationInfo({
       <div className="mt-2 flex w-full flex-wrap justify-between  gap-2">
         <button
           onClick={() => {
-            goToPreviousStage();
+            goToPreviousStage()
           }}
           className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105"
         >
@@ -446,7 +395,7 @@ function HomologationInfo({
         <button
           onClick={() => {
             if (validateFields()) {
-              goToNextStage();
+              goToNextStage()
             }
           }}
           className="rounded p-2 font-bold hover:bg-black hover:text-white"
@@ -455,7 +404,7 @@ function HomologationInfo({
         </button>
       </div>
     </div>
-  );
+  )
 }
 
-export default HomologationInfo;
+export default HomologationInfo

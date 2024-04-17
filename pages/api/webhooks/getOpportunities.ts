@@ -120,7 +120,7 @@ const collectLead: NextApiHandler<PostResponse> = async (req, res) => {
   if (!partnerId || typeof partnerId != 'string' || !ObjectId.isValid(partnerId))
     throw new createHttpError.BadRequest('ID de parceiro inválido ou não fornecido.')
 
-  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const testCollection = db.collection('test')
   const clientsCollection: Collection<TClient> = db.collection('clients')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')

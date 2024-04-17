@@ -6,7 +6,7 @@ import { NextApiHandler } from 'next'
 type GetResponse = {}
 const getProjects: NextApiHandler<GetResponse> = async (req, res) => {
   await validateAuthentication(req)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('projects')
   const { searchParam, similarSearchParam } = req.query
   console.log(searchParam)

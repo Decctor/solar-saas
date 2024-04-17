@@ -27,7 +27,7 @@ const getUsersPersonalized: NextApiHandler<GetResponse> = async (req, res) => {
     .enum(PersonalizedQueryTypes, { invalid_type_error: 'Tipo inválido para tipo de usuários.', required_error: 'Tipo de usuários não definido.' })
     .parse(req.query.type)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const usersCollection: Collection<TUser> = db.collection('users')
 
   if (type == 'opportunity-creators') {

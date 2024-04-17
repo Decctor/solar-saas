@@ -14,7 +14,7 @@ const createPartner: NextApiHandler<PostResponse> = async (req, res) => {
   const insertInfo = InsertPartnerSchema.parse(req.body)
 
   // Passed validations
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const partnersCollection: Collection<TPartner> = db.collection('partners')
   const insertResponse = await partnersCollection.insertOne(insertInfo)
   if (insertResponse.acknowledged) return res.status(201).json({ data: 'Parceiro criado com sucesso !' })
@@ -35,7 +35,7 @@ const getClients: NextApiHandler<GetResponse> = async (req, res) => {
   if (!userIsAdmin) throw new createHttpError.Unauthorized('Nível de autorização insuficiente.')
 
   // Passed validations
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
   if (id) {
@@ -83,7 +83,7 @@ const editPartners: NextApiHandler<PutResponse> = async (req, res) => {
 
   const changes = InsertPartnerSchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
   const updateResponse = await partnersCollection.updateOne({ _id: new ObjectId(id) }, { $set: { ...changes } })

@@ -56,7 +56,7 @@ const createOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
 
   const project = InsertOpportunitySchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TOpportunity> = db.collection('opportunities')
 
   const insertResponse = await insertOpportunity({ collection: collection, info: project, partnerId: partnerId || '' })
@@ -79,7 +79,7 @@ const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
   const userScope = session.user.permissoes.oportunidades.escopo
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
   const opportunityActivitiesCollection: Collection<TActivity> = db.collection('activities')
@@ -182,7 +182,7 @@ const editOpportunity: NextApiHandler<PutResponse> = async (req, res) => {
 
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID de oportunidade inválido.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const opportunity = await getOpportunityById({ collection: opportunitiesCollection, id: id, partnerId: partnerId })
   if (!opportunity) throw new createHttpError.NotFound('Oportunidade não encontrada.')
@@ -205,7 +205,7 @@ const editOpportunity: NextApiHandler<PutResponse> = async (req, res) => {
 
 //   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID do objeto de alteração não especificado.')
 //   if (!req.body.changes) throw new createHttpError.BadRequest('Mudanças não especificadas na requisição.')
-//   const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+//   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
 //   const collection = db.collection('projects')
 //   if (!userHasEditPermission) await validateEditAuthorization({ collection, userId, projectId: id })
 

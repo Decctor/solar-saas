@@ -32,7 +32,7 @@ const handleContractUpdates: NextApiHandler<PostResponse> = async (req, res) => 
   const { id } = req.query
   if (typeof id != 'string') throw new createHttpError.BadRequest('ID do projeto fornecido é inválido.')
   const { operation, proposalId, projectId, signingDate, lossDate } = updateObjectSchema.parse(req.body)
-  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const projectsCollection = db.collection('projects')
   const clientsCollection = db.collection('clients')
   const proposalsCollection = db.collection('proposals')

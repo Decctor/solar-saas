@@ -21,7 +21,7 @@ const getPartnersSignaturePlans: NextApiHandler<GetResponse> = async (req, res) 
 
   // Final query
   const query: Filter<TSignaturePlan> = { ...queryActiveOnly }
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TSignaturePlan> = db.collection('signature-plans')
 
   if (id) {
@@ -47,7 +47,7 @@ const createSignaturePlan: NextApiHandler<PostResponse> = async (req, res) => {
 
   const plan = InsertSignaturePlanSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TSignaturePlan> = db.collection('signature-plans')
 
   const insertResponse = await insertSignaturePlan({ collection: collection, info: plan, partnerId: partnerId || '' })
@@ -69,7 +69,7 @@ const editSignaturePlan: NextApiHandler<PutResponse> = async (req, res) => {
   const changes = InsertSignaturePlanSchema.partial().parse(req.body)
 
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TSignaturePlan> = db.collection('signature-plans')
 
   const updateResponse = await updateSignaturePlan({ id: id, collection: collection, changes: changes, partnerId: partnerId || '' })

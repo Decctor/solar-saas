@@ -17,6 +17,19 @@ export function useKey(key: string, cb: () => void) {
     return () => document.removeEventListener('keypress', handle)
   }, [key])
 }
+export function useClickOutside(ref: React.MutableRefObject<any>, cb: () => void) {
+  useEffect(() => {
+    const handleClickOutside = (event: any) => {
+      if (ref.current && !ref.current.contains(event.target)) {
+        cb()
+      }
+    }
+    document.addEventListener('click', (e) => handleClickOutside(e), true)
+    return () => {
+      document.removeEventListener('click', (e) => handleClickOutside(e), true)
+    }
+  }, [cb])
+}
 
 export function copyToClipboard(text: string | undefined) {
   if (text) {

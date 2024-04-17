@@ -21,7 +21,7 @@ const createNotification: NextApiHandler<PostResponse> = async (req, res) => {
 
   const notification = InsertNotificationSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TNotification> = db.collection('notifications')
 
   const insertResponse = await insertNotification({ collection: collection, info: notification, partnerId: partnerId || '' })
@@ -40,7 +40,7 @@ const getNotifications: NextApiHandler<GetResponse> = async (req, res) => {
 
   const { id, recipientId, opportunityId } = req.query
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TNotification> = db.collection('notifications')
 
   if (id) {
@@ -81,7 +81,7 @@ const editNotification: NextApiHandler<PutResponse> = async (req, res) => {
 
   const changes = InsertNotificationSchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TNotification> = db.collection('notifications')
 
   const updateResponse = await updateNotification({ collection: collection, info: changes, partnerId: partnerId || '' })

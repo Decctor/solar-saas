@@ -78,7 +78,7 @@ type PostResponse = {
 }
 const queryKits: NextApiHandler<PostResponse> = async (req, res) => {
   await validateAuthentication(req)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TKit> = db.collection('kits')
   const { pipeline } = req.body
 

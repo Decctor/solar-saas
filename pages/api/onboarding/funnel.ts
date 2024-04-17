@@ -18,7 +18,7 @@ const createFunnel: NextApiHandler<PostResponse> = async (req, res) => {
     dataInsercao: new Date().toISOString(),
   }
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const funnelsCollection: Collection<TFunnel> = db.collection('funnels')
 
   const insertResponse = await funnelsCollection.insertOne({ ...funnel })

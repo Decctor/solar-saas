@@ -12,14 +12,7 @@ import { AuthorSchema } from './user.schema'
 
 const EquipmentSchema = z.object({
   id: z.string({ invalid_type_error: 'Tipo não válido para ID do módulo.' }).optional().nullable(),
-  categoria: z.union([
-    z.literal('MÓDULO'),
-    z.literal('INVERSOR'),
-    z.literal('INSUMO'),
-    z.literal('ESTRUTURA'),
-    z.literal('PADRÃO'),
-    z.literal('OUTROS'),
-  ]),
+  categoria: z.union([z.literal('MÓDULO'), z.literal('INVERSOR'), z.literal('INSUMO'), z.literal('ESTRUTURA'), z.literal('PADRÃO'), z.literal('OUTROS')]),
   fabricante: z.string({ required_error: 'Fabricante do módulo não informado.', invalid_type_error: 'Tipo não válido para o fabricante do módulo.' }),
   modelo: z.string({ required_error: 'Modelo do módulo não informado.', invalid_type_error: 'Tipo não válido para o modelo do módulo.' }),
   qtde: z.number({ required_error: 'Quantidade do módulo não informada.', invalid_type_error: 'Tipo não válido para a quantidade do módulo.' }),
@@ -453,10 +446,7 @@ export const GeneralTechnicalAnalysisSchema = z.object({
         invalid_type_error: 'Tipo não válido para a amperagem do padrão.',
       }), //
       ligacao: z.string({ required_error: 'Ligação do padrão não informada.', invalid_type_error: 'Tipo não válido para a ligação do padrão.' }), //
-      novaAmperagem: z
-        .union([z.string(), z.number()], { invalid_type_error: 'Tipo não válido para a nova amperagem do padrão.' })
-        .optional()
-        .nullable(), // x
+      novaAmperagem: z.union([z.string(), z.number()], { invalid_type_error: 'Tipo não válido para a nova amperagem do padrão.' }).optional().nullable(), // x
       novaLigacao: z.string({ invalid_type_error: 'Tipo não válido para a nova ligação do padrão.' }).optional().nullable(), // x
       codigoMedidor: z.string({
         required_error: 'Código do medidor não informado.',

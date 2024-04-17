@@ -12,17 +12,28 @@ import { formatDecimalPlaces } from '@/lib/methods/formatting'
 
 type GetColorArgs = {
   proposalId: string
+  opportunityHasContractRequested: boolean
+  opportunityIsWon: boolean
   opportunityWonProposalId?: string | null
   opportunityActiveProposalId?: string | null
 }
-function getTagColor({ opportunityWonProposalId, opportunityActiveProposalId, proposalId }: GetColorArgs) {
-  if (opportunityWonProposalId == proposalId) return 'bg-green-500'
+function getTagColor({ proposalId, opportunityHasContractRequested, opportunityIsWon, opportunityWonProposalId, opportunityActiveProposalId }: GetColorArgs) {
+  if (opportunityIsWon && opportunityWonProposalId == proposalId) return 'bg-green-500'
+  if (opportunityHasContractRequested && opportunityWonProposalId == proposalId) return 'bg-orange-500'
   if (opportunityActiveProposalId == proposalId) return 'bg-blue-500'
   return 'bg-gray-500'
 }
-function getStatusColor({ opportunityWonProposalId, opportunityActiveProposalId, proposalId }: GetColorArgs) {
-  if (opportunityWonProposalId == proposalId)
+function getStatusColor({
+  proposalId,
+  opportunityHasContractRequested,
+  opportunityIsWon,
+  opportunityWonProposalId,
+  opportunityActiveProposalId,
+}: GetColorArgs) {
+  if (opportunityIsWon && opportunityWonProposalId == proposalId)
     return <h1 className="w-fit self-center rounded border border-green-500 p-1 text-center text-[0.6rem] font-black text-green-500">GANHA</h1>
+  if (opportunityHasContractRequested && opportunityWonProposalId == proposalId)
+    return <h1 className="w-fit self-center rounded border border-orange-500 p-1 text-center text-[0.6rem] font-black text-orange-500">CONTRATO SOLICITADO</h1>
   if (opportunityActiveProposalId == proposalId)
     return <h1 className="w-fit self-center rounded border border-blue-500 p-1 text-center text-[0.6rem] font-black text-blue-500">ATIVA</h1>
   return <h1 className="w-fit self-center rounded border border-gray-500 p-1 text-center text-[0.6rem] font-black text-gray-500">GERADA</h1>
@@ -30,16 +41,19 @@ function getStatusColor({ opportunityWonProposalId, opportunityActiveProposalId,
 
 type ProposalItemProps = {
   info: TProposalDTO
+  opportunityHasContractRequested: boolean
   opportunityActiveProposalId?: string | null
   opportunityIsWon: boolean
   opportunityWonProposalId?: string | null
 }
-function ProposalItem({ info, opportunityActiveProposalId, opportunityIsWon, opportunityWonProposalId }: ProposalItemProps) {
+function ProposalItem({ info, opportunityHasContractRequested, opportunityActiveProposalId, opportunityIsWon, opportunityWonProposalId }: ProposalItemProps) {
   return (
     <div className="flex w-full items-center rounded-md border border-gray-200">
       <div
         className={`h-full w-[5px] rounded-bl-md rounded-tl-md ${getTagColor({
           proposalId: info._id,
+          opportunityIsWon,
+          opportunityHasContractRequested,
           opportunityActiveProposalId: opportunityActiveProposalId,
           opportunityWonProposalId: opportunityWonProposalId,
         })}`}
@@ -57,6 +71,8 @@ function ProposalItem({ info, opportunityActiveProposalId, opportunityIsWon, opp
 
           {getStatusColor({
             proposalId: info._id,
+            opportunityIsWon,
+            opportunityHasContractRequested,
             opportunityActiveProposalId: opportunityActiveProposalId,
             opportunityWonProposalId: opportunityWonProposalId,
           })}

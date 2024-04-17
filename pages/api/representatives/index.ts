@@ -10,7 +10,7 @@ type GetResponse = {
 
 const getRepresentatives: NextApiHandler<GetResponse> = async (req, res) => {
   await validateAuthentication(req)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('users')
   const { id } = req.query
   if (id && typeof id === 'string') {

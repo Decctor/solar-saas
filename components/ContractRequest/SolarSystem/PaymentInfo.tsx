@@ -1,14 +1,15 @@
 import NumberInput from '@/components/Inputs/NumberInput'
 import SelectInput from '@/components/Inputs/SelectInput'
 import TextInput from '@/components/Inputs/TextInput'
-import { creditors } from '@/utils/constants'
+
 import { formatToCPForCNPJ, formatToPhone } from '@/utils/methods'
 import { IContractRequest } from '@/utils/models'
+import { TContractRequest } from '@/utils/schemas/contract-request.schema'
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
 type PaymentInfoProps = {
-  requestInfo: IContractRequest
-  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>
+  requestInfo: TContractRequest
+  setRequestInfo: React.Dispatch<React.SetStateAction<TContractRequest>>
   goToPreviousStage: () => void
   goToNextStage: () => void
 }
@@ -371,7 +372,56 @@ function PaymentInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextS
                     width={'450px'}
                     label={'CREDOR'}
                     editable={true}
-                    options={creditors.map((creditor, index) => {
+                    options={[
+                      {
+                        label: 'BANCO DO BRASIL',
+                        value: 'BANCO DO BRASIL',
+                      },
+                      {
+                        label: 'BRADESCO',
+                        value: 'BRADESCO',
+                      },
+                      {
+                        label: 'BV FINANCEIRA',
+                        value: 'BV FINANCEIRA',
+                      },
+                      {
+                        label: 'CAIXA',
+                        value: 'CAIXA',
+                      },
+                      {
+                        label: 'COOPACREDI',
+                        value: 'COOPACREDI',
+                      },
+                      {
+                        label: 'CREDICAMPINA',
+                        value: 'CREDICAMPINA',
+                      },
+                      {
+                        label: 'CREDIPONTAL',
+                        value: 'CREDIPONTAL',
+                      },
+                      {
+                        label: 'SANTANDER',
+                        value: 'SANTANDER',
+                      },
+                      {
+                        label: 'SOL FÁCIL',
+                        value: 'SOL FÁCIL',
+                      },
+                      {
+                        label: 'SICRED',
+                        value: 'SICRED',
+                      },
+                      {
+                        label: 'SICOOB ARACOOP',
+                        value: 'SICOOB ARACOOP',
+                      },
+                      {
+                        label: 'SICOOB',
+                        value: 'SICOOB',
+                      },
+                    ].map((creditor, index) => {
                       return {
                         id: index + 1,
                         label: creditor.label,
@@ -485,8 +535,8 @@ function PaymentInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextS
                 options={[
                   {
                     id: 1,
-                    label: '70% A VISTA NA ENTRADA + 15% NA FINALIZAÇÃO DA INSTALAÇÃO E 15% APÓS TROCA DO MEDIDOR',
-                    value: '70% A VISTA NA ENTRADA + 15% NA FINALIZAÇÃO DA INSTALAÇÃO E 15% APÓS TROCA DO MEDIDOR',
+                    label: '80% A VISTA NA ENTRADA + 20% NA FINALIZAÇÃO DA INSTALAÇÃO',
+                    value: '80% A VISTA NA ENTRADA + 20% NA FINALIZAÇÃO DA INSTALAÇÃO',
                   },
                   {
                     id: 2,

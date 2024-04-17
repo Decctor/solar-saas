@@ -17,7 +17,7 @@ const getPartnerProducts: NextApiHandler<GetResponse> = async (req, res) => {
 
   const { id } = req.query
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProduct> = db.collection('products')
 
   if (id) {
@@ -43,7 +43,7 @@ const createProducts: NextApiHandler<PostResponse> = async (req, res) => {
 
   const product = InsertProductSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProduct> = db.collection('products')
 
   const insertResponse = await insertProduct({ collection: collection, info: product, partnerId: partnerId || '' })
@@ -65,7 +65,7 @@ const editProduct: NextApiHandler<PutResponse> = async (req, res) => {
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
   const changes = InsertProductSchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProduct> = db.collection('products')
 
   const updateResponse = await updateProduct({ collection: collection, id: id, changes: changes, partnerId: partnerId || '' })

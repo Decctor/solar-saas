@@ -30,7 +30,7 @@ const updateObjFunnelStage: NextApiHandler<PutResponse> = async (req, res) => {
   if (session.user.visibilidade != 'GERAL' && session.user.id != responsibleId) {
     throw new createHttpError.Unauthorized('Seu usuário não tem permissão para atualizar esse projeto.')
   }
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('projects')
   const updateResponse = await collection.updateOne(
     {

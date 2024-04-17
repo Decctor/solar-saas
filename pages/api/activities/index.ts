@@ -22,7 +22,7 @@ const getActivities: NextApiHandler<GetResponse> = async (req, res) => {
   // Final query
   const query: Filter<TActivity> = { ...queryOpenOnly, ...queryDueOnly }
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TActivity> = db.collection('activities')
 
   if (opportunityId) {
@@ -61,7 +61,7 @@ const createActivity: NextApiHandler<PostResponse> = async (req, res) => {
 
   const activity = InsertActivitySchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TActivity> = db.collection('activities')
 
   const insertResponse = await insertActivity({ collection: collection, info: activity, partnerId: partnerId || '' })
@@ -85,7 +85,7 @@ const editActivity: NextApiHandler<PutResponse> = async (req, res) => {
 
   const changes = InsertActivitySchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TActivity> = db.collection('activities')
 
   const updateResponse = await updateActivity({ activityId: id, collection: collection, changes: changes, partnerId: partnerId || '' })

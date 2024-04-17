@@ -76,7 +76,7 @@ const updateOpportunities: NextApiHandler<PutResponse | ErrorResponse> = async (
   if (typeof email != 'string') throw new createHttpError.BadRequest('Tipo de email inválido.')
   if (operation == 'SALE' && typeof value != 'number') throw new createHttpError.BadRequest('Tipo de valor inválido.')
   if (operation == 'OPPORTUNITY_LOST' && typeof reason != 'string') throw new createHttpError.BadRequest('Tipo de razão inválida.')
-  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const integrationsCollection: Collection<TIntegrationRDStation> = db.collection('integrations')
   // Now, able to proceed
   try {
@@ -124,7 +124,7 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
   if (!partnerId || typeof partnerId != 'string' || !ObjectId.isValid(partnerId))
     throw new createHttpError.BadRequest('ID de parceiro inválido ou não fornecido.')
 
-  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const testCollection = db.collection('test')
   const clientsCollection: Collection<TClient> = db.collection('clients')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')

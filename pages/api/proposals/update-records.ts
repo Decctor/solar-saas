@@ -18,7 +18,7 @@ const createUpdateRecord: NextApiHandler<PostResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
 
   const record = InsertProposalUpdateRecordSchema.parse(req.body)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProposalUpdateRecord> = db.collection('proposal-update-records')
 
   const insertResponse = await insertProposalUpdateRecord({ collection: collection, info: record, partnerId: partnerId || '' })
@@ -38,7 +38,7 @@ const getUpdateRecords: NextApiHandler<GetResponse> = async (req, res) => {
 
   const { proposalId } = req.query
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProposalUpdateRecord> = db.collection('proposal-update-records')
 
   if (proposalId) {

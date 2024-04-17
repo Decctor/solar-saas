@@ -18,7 +18,7 @@ const createUser: NextApiHandler<PostResponse> = async (req, res) => {
   const { senha: password } = user
   let hashedPassword = hashSync(password, 10)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TUser> = db.collection('users')
 
   // Validing existence of equivalent user in database

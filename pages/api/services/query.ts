@@ -14,7 +14,7 @@ const getProposalServices: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TService> = db.collection('services')
   const services = await getServicesWithPricingMethod({ collection: collection, partnerId: partnerId || '' })
 

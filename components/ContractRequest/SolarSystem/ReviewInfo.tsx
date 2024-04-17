@@ -2,123 +2,72 @@ import DateInput from '@/components/Inputs/DateInput'
 import NumberInput from '@/components/Inputs/NumberInput'
 import SelectInput from '@/components/Inputs/SelectInput'
 import TextInput from '@/components/Inputs/TextInput'
-import { creditors, customersAcquisitionChannels, customersNich, paTypes, signMethods, structureTypes } from '@/utils/constants'
+import { getInverterPeakPowerByProducts, getInverterQty, getModulesPeakPotByProducts, getModulesQty } from '@/lib/methods/extracting'
+import { renderCategoryIcon } from '@/lib/methods/rendering'
+import { structureTypes } from '@/utils/constants'
+
 import { stateCities } from '@/utils/estados_cidades'
 import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getPeakPotByModules } from '@/utils/methods'
-import { IContractRequest, IProposalInfo } from '@/utils/models'
-import { handleContractRequest } from '@/utils/mutations/contract-request'
+
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
-import { getOeMPrices } from '@/utils/pricing/methods'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+import { getOeMPrices } from '@/utils/pricing/oem/methods'
+import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
+
+import { CustomersAcquisitionChannels } from '@/utils/select-options'
+
+import { useQueryClient } from '@tanstack/react-query'
+
 import React, { useState } from 'react'
-import { toast } from 'react-hot-toast'
-import { AiFillCloseCircle } from 'react-icons/ai'
+
+import { AiFillCloseCircle, AiOutlineSafety } from 'react-icons/ai'
 import { BsPatchCheckFill } from 'react-icons/bs'
-import { FaSolarPanel } from 'react-icons/fa'
+import { FaIndustry, FaSolarPanel } from 'react-icons/fa'
 import { ImAttachment, ImPower, ImPriceTag } from 'react-icons/im'
-import { MdAttachMoney } from 'react-icons/md'
-import { TbTopologyFullHierarchy } from 'react-icons/tb'
+import { MdAttachFile, MdAttachMoney, MdOutlineMiscellaneousServices } from 'react-icons/md'
+import { TbTopologyFull, TbTopologyFullHierarchy } from 'react-icons/tb'
 type ReviewInfoProps = {
-  requestInfo: IContractRequest
-  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>
-  goToPreviousStage: () => void
-  goToNextStage: () => void
-  kit: IProposalInfo['kit']
+  requestInfo: TContractRequest
+  setRequestInfo: React.Dispatch<React.SetStateAction<TContractRequest>>
   modulesQty: number
   distance: number
   activePlanId?: number
   projectId?: string
-  proposalInfo?: IProposalInfo
+  proposeInfo: TProposalDTOWithOpportunity
+  documentsFile: { [key: string]: File | string | null }
+  handleRequestContract: () => void
 }
 function ReviewInfo({
   requestInfo,
   setRequestInfo,
-  goToPreviousStage,
-  goToNextStage,
-  kit,
   modulesQty,
   distance,
   activePlanId,
   projectId,
-  proposalInfo,
+  proposeInfo,
+  documentsFile,
+  handleRequestContract,
 }: ReviewInfoProps) {
-  const [pricing, setPricing] = useState(getOeMPrices(modulesQty, distance))
+  const [pricing, setPricing] = useState(getOeMPrices({ modulesQty, distance }))
   const queryClient = useQueryClient()
-  // ['proposal', proposalInfo?._id]
-  const { mutate, isLoading, isSuccess } = useMutationWithFeedback({
+  const { mutate, isPending, isSuccess } = useMutationWithFeedback({
     queryClient: queryClient,
     mutationKey: ['create-ufv-contract-request'],
-    mutationFn: handleContractRequest,
-    affectedQueryKey: ['proposal', proposalInfo?._id],
+    mutationFn: handleRequestContract,
+    affectedQueryKey: ['propose', proposeInfo?._id],
   })
-  // const {
-  //   mutate: createContractRequest,
-  //   isLoading,
-  //   isSuccess, //64adb93249f94d9354becb64
-  // } = useMutation({
-  //   mutationKey: ['createContractRequest'],
-  //   mutationFn: async () => {
-  //     try {
-  //       const { data } = await axios.post(`/api/integration/app-ampere/contractRequest`, {
-  //         ...requestInfo,
-  //         previsaoValorDoKit: proposalInfo?.precificacao?.kit ? proposalInfo.precificacao.kit.custo : null,
-  //         idProjetoCRM: projectId,
-  //         idPropostaCRM: proposalInfo?._id,
-  //       })
-  //       const projectPipelineUpdate = [
-  //         {
-  //           $set: {
-  //             'funis.$[elem].etapaId': 8,
-  //             solicitacaoContrato: {
-  //               id: data.data,
-  //               idProposta: proposalInfo?._id,
-  //               dataSolicitacao: new Date().toISOString(),
-  //             },
-  //             propostaAtiva: proposalInfo?._id,
-  //           },
-  //         },
-  //         {
-  //           arrayFilters: [{ 'elem.id': 1 }],
-  //         },
-  //       ]
-  //       const { data: projectUpdate } = await axios.put(
-  //         `/api/projects/personalizedUpdate?id=${proposalInfo?.infoProjeto?._id}&responsible=${proposalInfo?.infoProjeto?.responsavel.id}`,
-  //         {
-  //           pipeline: projectPipelineUpdate,
-  //         }
-  //       )
-  //       console.log('UPDATE', projectUpdate)
-  //       await queryClient.invalidateQueries({
-  //         queryKey: ['proposal', proposalInfo?._id],
-  //       })
-  //       if (data.message) toast.success(data.message)
-  //     } catch (error) {
-  //       if (error instanceof AxiosError) {
-  //         let errorMsg = error.response?.data.error.message
-  //         toast.error(errorMsg)
-  //         return
-  //       }
-  //       if (error instanceof Error) {
-  //         let errorMsg = error.message
-  //         toast.error(errorMsg)
-  //         return
-  //       }
-  //     }
-  //   },
-  // })
-  // console.log('REVIEW SOLICITACAO', requestInfo)
+
   function requestContract() {
-    const proposalId = proposalInfo?._id || ''
-    const projectResponsibleId = proposalInfo?.infoProjeto?.responsavel.id || ''
-    const kitCost = proposalInfo?.precificacao?.kit ? proposalInfo.precificacao.kit.custo : null
-    const opportunityId = proposalInfo?.infoProjeto?.idOportunidade
+    const proposeId = proposeInfo?._id || ''
+    const projectResponsibleId = proposeInfo?.oportunidadeDados?.responsaveis.find((r) => r.papel == 'VENDEDOR')?.id
+    const kitCost = proposeInfo?.precificacao?.find((c) => c.descricao.includes('KIT'))?.custoFinal
+    const opportunityId = proposeInfo?.oportunidadeDados?.idMarketing
     const clientEmail = requestInfo.email
     // @ts-ignore
     mutate({
       requestInfo,
       projectId,
-      proposalId,
+      proposeId,
       projectResponsibleId,
       kitCost,
       opportunityId,
@@ -395,7 +344,7 @@ function ReviewInfo({
                 value={requestInfo.cidade}
                 options={
                   requestInfo.uf
-                    ? stateCities[requestInfo.uf].map((city, index) => {
+                    ? stateCities[requestInfo.uf as keyof typeof stateCities].map((city, index) => {
                         return {
                           id: index,
                           value: city,
@@ -499,13 +448,12 @@ function ReviewInfo({
                 label={'SEGMENTO'}
                 value={requestInfo.segmento}
                 editable={true}
-                options={customersNich.map((nich, index) => {
-                  return {
-                    id: index + 1,
-                    label: nich.label,
-                    value: nich.value,
-                  }
-                })}
+                options={[
+                  { id: 1, label: 'RESIDENCIAL', value: 'RESIDENCIAL' },
+                  { id: 2, label: 'COMERCIAL', value: 'COMERCIAL' },
+                  { id: 3, label: 'RURAL', value: 'RURAL' },
+                  { id: 4, label: 'INDUSTRIAL', value: 'INDUSTRIAL' },
+                ]}
                 handleChange={(value) => setRequestInfo({ ...requestInfo, segmento: value })}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => {
@@ -522,13 +470,10 @@ function ReviewInfo({
                 label={'FORMA DE ASSINATURA'}
                 editable={true}
                 value={requestInfo.formaAssinatura}
-                options={signMethods.map((method, index) => {
-                  return {
-                    id: index + 1,
-                    label: method.label,
-                    value: method.value,
-                  }
-                })}
+                options={[
+                  { id: 1, label: 'FISICA', value: 'FISICA' },
+                  { id: 2, label: 'DIGITAL', value: 'DIGITAL' },
+                ]}
                 handleChange={(value) => setRequestInfo({ ...requestInfo, formaAssinatura: value })}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => {
@@ -545,7 +490,7 @@ function ReviewInfo({
                 editable={true}
                 value={requestInfo.canalVenda}
                 handleChange={(value) => setRequestInfo({ ...requestInfo, canalVenda: value })}
-                options={customersAcquisitionChannels.map((value) => value)}
+                options={CustomersAcquisitionChannels.map((value) => value)}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => {
                   setRequestInfo((prev) => ({
@@ -894,7 +839,7 @@ function ReviewInfo({
                 value={requestInfo.cidadeInstalacao}
                 options={
                   requestInfo.ufInstalacao
-                    ? stateCities[requestInfo.ufInstalacao].map((city, index) => {
+                    ? stateCities[requestInfo.ufInstalacao as keyof typeof stateCities].map((city, index) => {
                         return {
                           id: index,
                           value: city,
@@ -963,72 +908,98 @@ function ReviewInfo({
             </div>
           </div>
         </div>
-        <div className="flex w-full flex-col bg-[#fff] pb-2">
+        <div className="flex w-full grow flex-col bg-[#fff] pb-2">
           <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">DADOS DO SISTEMA</span>
-          <div className="flex w-full grow flex-col items-center">
-            <h1 className="italic text-gray-500">
-              O kit a ser utilizado na solicitação de contrato é aquele vinculado a proposta. Segue informações sobre esse kit abaixo:
-            </h1>
-            <div className={'relative mt-2 flex h-[500px] w-full flex-col gap-2 rounded border border-gray-300 p-3 shadow-lg lg:h-[400px] lg:w-[350px]'}>
-              <h1 className="text-center text-lg font-medium text-gray-800">{kit?.nome}</h1>
-              <div className="flex items-center justify-center gap-2">
-                <div className="flex items-center justify-start gap-2">
-                  <ImPower style={{ color: 'rgb(239,68,68)', fontSize: '20px' }} />
-                  <p className="text-xs font-thin text-gray-600">
-                    {requestInfo.potPico
-                      ? requestInfo.potPico.toLocaleString('pt-br', {
-                          minimumFractionDigits: 1,
-                          maximumFractionDigits: 2,
-                        })
-                      : getPeakPotByModules(kit?.modulos).toLocaleString('pt-br', {
-                          minimumFractionDigits: 1,
-                          maximumFractionDigits: 2,
-                        })}{' '}
-                    kWp
-                  </p>
-                </div>
-                {kit?.tipo == 'PROMOCIONAL' ? (
-                  <div className="flex items-center justify-end gap-2 rounded border border-green-500 p-1">
-                    <ImPriceTag style={{ color: 'rgb(34,197,94)', fontSize: '15px' }} />
-                    <p className="text-xs font-thin text-green-500">PROMOCIONAL</p>
-                  </div>
-                ) : null}
+          <div className="mt-2 flex w-full flex-col items-center justify-around gap-2 lg:flex-row">
+            <div className="flex min-h-[80px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-4 shadow-sm lg:w-1/4 lg:p-6">
+              <div className="flex items-center justify-between">
+                <h1 className="text-sm font-medium uppercase tracking-tight">POTÊNCIA DE MÓDULOS</h1>
+                <ImPower />
               </div>
-              <div className="flex w-full items-center justify-center py-4">
-                <FaSolarPanel style={{ color: 'green', fontSize: '56px' }} />
-              </div>
-              <div className="flex w-full items-start justify-center">
-                <div className="flex  flex-col items-center">
-                  <p className="font-medium text-blue-800">TOPOLOGIA</p>
-                  <div className="flex items-center gap-2">
-                    <TbTopologyFullHierarchy style={{ color: '#FFD200', fontSize: '25px' }} />{' '}
-                    <p className="text-xs font-light text-gray-500">{kit?.topologia}</p>
-                  </div>
-                </div>
-              </div>
-              <div className="flex w-full flex-col">
-                <h1 className="text-center font-medium text-gray-600">INVERSORES</h1>
-                {kit?.inversores.map((inverter) => (
-                  <div className="flex w-full items-center justify-between text-xs font-thin text-gray-600">
-                    <h1>
-                      {inverter.fabricante}-{inverter.modelo}
-                    </h1>
-                    <h1>x{inverter.qtde}</h1>
-                  </div>
-                ))}
-              </div>
-              <div className="flex w-full flex-col">
-                <h1 className="text-center font-medium text-gray-600">MÓDULOS</h1>
-                {kit?.modulos.map((module) => (
-                  <div className="flex w-full items-center justify-between text-xs font-thin text-gray-600">
-                    <h1>
-                      {module.fabricante}-{module.modelo}
-                    </h1>
-                    <h1>x{module.qtde}</h1>
-                  </div>
-                ))}
+              <div className="mt-2 flex w-full flex-col">
+                <div className="text-xl font-bold text-[#15599a] lg:text-2xl">{getModulesPeakPotByProducts(proposeInfo.produtos)} kWp</div>
               </div>
             </div>
+            <div className="flex min-h-[80px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-4 shadow-sm lg:w-1/4 lg:p-6">
+              <div className="flex items-center justify-between">
+                <h1 className="text-sm font-medium uppercase tracking-tight">POTÊNCIA DE INVERSORES</h1>
+                <ImPower />
+              </div>
+              <div className="mt-2 flex w-full flex-col">
+                <div className="text-xl font-bold text-[#15599a] lg:text-2xl">{getInverterPeakPowerByProducts(proposeInfo.produtos)} kWp</div>
+              </div>
+            </div>
+            <div className="flex min-h-[80px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-4 shadow-sm lg:w-1/4 lg:p-6">
+              <div className="flex items-center justify-between">
+                <h1 className="text-sm font-medium uppercase tracking-tight">NÚMERO DE MÓDULOS</h1>
+                <FaSolarPanel />
+              </div>
+              <div className="mt-2 flex w-full flex-col">
+                <div className="text-xl font-bold text-[#15599a] lg:text-2xl">{getModulesQty(proposeInfo.produtos)}</div>
+              </div>
+            </div>
+            <div className="flex min-h-[80px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-4 shadow-sm lg:w-1/4 lg:p-6">
+              <div className="flex items-center justify-between">
+                <h1 className="text-sm font-medium uppercase tracking-tight">NÚMERO DE INVERSORES</h1>
+                <TbTopologyFull />
+              </div>
+              <div className="mt-2 flex w-full flex-col">
+                <div className="text-xl font-bold text-[#15599a] lg:text-2xl">{getInverterQty(proposeInfo.produtos)}</div>
+              </div>
+            </div>
+          </div>
+          <h1 className="w-full text-start font-medium text-gray-500">LISTA DE EQUIPAMENTOS</h1>
+          <div className="flex w-full flex-col flex-wrap justify-around gap-2 lg:flex-row">
+            {proposeInfo.produtos.map((product, index) => (
+              <div key={index} className="mt-1 flex w-full flex-col rounded-md border border-gray-200 p-2">
+                <div className="flex w-full flex-col items-start justify-between gap-2 lg:flex-row lg:items-center">
+                  <div className="flex items-center gap-1">
+                    <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1 text-[15px]">
+                      {renderCategoryIcon(product.categoria)}
+                    </div>
+                    <p className="text-[0.6rem] font-medium leading-none tracking-tight lg:text-xs">
+                      <strong className="text-[#FF9B50]">{product.qtde}</strong> x {product.modelo}
+                    </p>
+                  </div>
+                  <div className="flex w-full grow items-center justify-end gap-2 pl-2 lg:w-fit">
+                    <div className="flex items-center gap-1">
+                      <FaIndustry size={15} />
+                      <p className="text-[0.6rem] font-light text-gray-500">{product.fabricante}</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <ImPower size={15} />
+                      <p className="text-[0.6rem] font-light text-gray-500">{product.potencia} W</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <AiOutlineSafety size={15} />
+                      <p className="text-[0.6rem] font-light text-gray-500">{product.garantia} ANOS</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+          <h1 className="w-full rounded-md bg-[#fead41] p-1 text-center text-sm font-medium text-white">SERVIÇOS</h1>
+          <h1 className="w-full text-start font-medium text-gray-500">LISTA DE SERVIÇOS</h1>
+          <div className="flex w-full flex-col flex-wrap justify-around gap-2 lg:flex-row">
+            {proposeInfo.servicos.map((service, index) => (
+              <div key={index} className="mt-1 flex w-full flex-col rounded-md border border-gray-200 p-2">
+                <div className="flex w-full items-center justify-between gap-2">
+                  <div className="flex  items-center gap-1">
+                    <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
+                      <MdOutlineMiscellaneousServices />
+                    </div>
+                    <p className="text-[0.6rem] font-medium leading-none tracking-tight lg:text-xs">{service.descricao}</p>
+                  </div>
+                  <div className="flex  grow items-center justify-end gap-2 pl-2">
+                    <div className="flex items-center gap-1">
+                      <AiOutlineSafety size={15} />
+                      <p className="text-[0.6rem] font-light text-gray-500">{service.garantia} ANOS</p>
+                    </div>
+                  </div>
+                </div>
+              </div>
+            ))}
           </div>
         </div>
         <div className="flex w-full flex-col bg-[#fff] pb-2">
@@ -1049,7 +1020,7 @@ function ReviewInfo({
                 handleChange={(value) => setRequestInfo({ ...requestInfo, tipoEstrutura: value })}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => {
-                  setRequestInfo((prev) => ({ ...prev, tipoEstrutura: null }))
+                  setRequestInfo((prev) => ({ ...prev, tipoEstrutura: '' }))
                 }}
                 width="100%"
               />
@@ -1266,7 +1237,60 @@ function ReviewInfo({
                     editable={true}
                     value={requestInfo.tipoDePadrao}
                     handleChange={(value) => setRequestInfo({ ...requestInfo, tipoDePadrao: value })}
-                    options={paTypes.map((type, index) => {
+                    options={[
+                      {
+                        label: 'MONO 40A',
+                        value: 'MONO 40A',
+                      },
+                      {
+                        label: 'MONO 63A',
+                        value: 'MONO 63A',
+                      },
+                      {
+                        label: 'BIFASICO 63A',
+                        value: 'BIFASICO 63A',
+                      },
+                      {
+                        label: 'BIFASICO 70A',
+                        value: 'BIFASICO 70A',
+                      },
+                      {
+                        label: 'BIFASICO 100A',
+                        value: 'BIFASICO 100A',
+                      },
+                      {
+                        label: 'BIFASICO 125A',
+                        value: 'BIFASICO 125A',
+                      },
+                      {
+                        label: 'BIFASICO 150A',
+                        value: 'BIFASICO 150A',
+                      },
+                      {
+                        label: 'BIFASICO 200A',
+                        value: 'BIFASICO 200A',
+                      },
+                      {
+                        label: 'TRIFASICO 63A',
+                        value: 'TRIFASICO 63A',
+                      },
+                      {
+                        label: 'TRIFASICO 100A',
+                        value: 'TRIFASICO 100A',
+                      },
+                      {
+                        label: 'TRIFASICO 125A',
+                        value: 'TRIFASICO 125A',
+                      },
+                      {
+                        label: 'TRIFASICO 150A',
+                        value: 'TRIFASICO 150A',
+                      },
+                      {
+                        label: 'TRIFASICO 200A',
+                        value: 'TRIFASICO 200A',
+                      },
+                    ].map((type, index) => {
                       return {
                         id: index + 1,
                         label: type.label,
@@ -1915,7 +1939,56 @@ function ReviewInfo({
                         width={'450px'}
                         label={'CREDOR'}
                         editable={true}
-                        options={creditors.map((creditor, index) => {
+                        options={[
+                          {
+                            label: 'BANCO DO BRASIL',
+                            value: 'BANCO DO BRASIL',
+                          },
+                          {
+                            label: 'BRADESCO',
+                            value: 'BRADESCO',
+                          },
+                          {
+                            label: 'BV FINANCEIRA',
+                            value: 'BV FINANCEIRA',
+                          },
+                          {
+                            label: 'CAIXA',
+                            value: 'CAIXA',
+                          },
+                          {
+                            label: 'COOPACREDI',
+                            value: 'COOPACREDI',
+                          },
+                          {
+                            label: 'CREDICAMPINA',
+                            value: 'CREDICAMPINA',
+                          },
+                          {
+                            label: 'CREDIPONTAL',
+                            value: 'CREDIPONTAL',
+                          },
+                          {
+                            label: 'SANTANDER',
+                            value: 'SANTANDER',
+                          },
+                          {
+                            label: 'SOL FÁCIL',
+                            value: 'SOL FÁCIL',
+                          },
+                          {
+                            label: 'SICRED',
+                            value: 'SICRED',
+                          },
+                          {
+                            label: 'SICOOB ARACOOP',
+                            value: 'SICOOB ARACOOP',
+                          },
+                          {
+                            label: 'SICOOB',
+                            value: 'SICOOB',
+                          },
+                        ].map((creditor, index) => {
                           return {
                             id: index + 1,
                             label: creditor.label,
@@ -2029,8 +2102,8 @@ function ReviewInfo({
                     options={[
                       {
                         id: 1,
-                        label: '70% A VISTA NA ENTRADA + 15% NA FINALIZAÇÃO DA INSTALAÇÃO E 15% APÓS TROCA DO MEDIDOR',
-                        value: '70% A VISTA NA ENTRADA + 15% NA FINALIZAÇÃO DA INSTALAÇÃO E 15% APÓS TROCA DO MEDIDOR',
+                        label: '80% A VISTA NA ENTRADA + 20% NA FINALIZAÇÃO DA INSTALAÇÃO',
+                        value: '80% A VISTA NA ENTRADA + 20% NA FINALIZAÇÃO DA INSTALAÇÃO',
                       },
                       {
                         id: 2,
@@ -2108,62 +2181,12 @@ function ReviewInfo({
           </div>
           {requestInfo.possuiDistribuicao == 'SIM' && (
             <>
-              {/* <div className="mt-2 flex flex-col gap-2 p-2">
-                <h1 className="font-raleway text-center font-bold">
-                  ADICIONAR DISTRIBUIÇÃO:
-                </h1>
-                <div className="flex flex-col items-center justify-around lg:flex-row">
-                  <TextInput
-                    label={"Nº DA INSTALAÇÃO"}
-                    editable={true}
-                    value={creditDistHolder.numInstalacao}
-                    placeholder="Preencha aqui o número da instalação."
-                    handleChange={(value) =>
-                      setCreditDistHolder({
-                        ...creditDistHolder,
-                        numInstalacao: value,
-                      })
-                    }
-                  />
-                  <NumberInput
-                    label={"% EXCEDENTE"}
-                    editable={true}
-                    placeholder="Preencha aqui o valor do excedente para envio."
-                    value={creditDistHolder.excedente}
-                    handleChange={(value) =>
-                      setCreditDistHolder({
-                        ...creditDistHolder,
-                        excedente: Number(value),
-                      })
-                    }
-                  />
-                  <button
-                    onClick={addCreditDist}
-                    className="rounded bg-[#fead61] p-1 font-bold hover:bg-[#15599a] hover:text-white"
-                  >
-                    ADICIONAR
-                  </button>
-                </div>
-              </div> */}
               {requestInfo.distribuicoes?.length > 0 && (
                 <div className="mt-4 flex flex-col gap-2">
                   {requestInfo.distribuicoes.map((distribuicao, index) => (
                     <div key={index} className="flex flex-wrap justify-around">
                       <p className="text-sm font-bold text-gray-600">INSTALAÇÃO Nº{distribuicao.numInstalacao}</p>
                       <p className="text-sm font-bold text-gray-600">{distribuicao.excedente}%</p>
-                      {/* <button
-                        onClick={() => {
-                          let distribuicoes = requestInfo.distribuicoes;
-                          distribuicoes.splice(index, 1);
-                          setRequestInfo({
-                            ...requestInfo,
-                            distribuicoes: distribuicoes,
-                          });
-                        }}
-                        className="rounded bg-red-500 p-1"
-                      >
-                        <AiFillDelete />
-                      </button> */}
                     </div>
                   ))}
                 </div>
@@ -2173,13 +2196,11 @@ function ReviewInfo({
         </div>
         <div className="flex w-full grow flex-col bg-[#fff] pb-2">
           <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">DOCUMENTAÇÃO</span>
-          <div className="flex w-full flex-col items-center">
-            {requestInfo.links?.map((file, index) => (
-              <div key={index} className="flex items-center justify-center gap-2">
-                <p className="text-sm italic text-gray-500">
-                  {file.title} ({file.format})
-                </p>
-                <ImAttachment />
+          <div className="flex w-full flex-wrap items-start justify-around gap-2">
+            {Object.entries(documentsFile).map(([key, value]) => (
+              <div className="flex items-center gap-1 rounded-md bg-blue-800 px-2 py-1 text-white">
+                <MdAttachFile />
+                <p className="text-sm">{key}</p>
               </div>
             ))}
           </div>
@@ -2197,12 +2218,12 @@ function ReviewInfo({
             onClick={() => {
               requestContract()
             }}
-            disabled={isLoading || isSuccess}
+            disabled={isPending || isSuccess}
             className="rounded p-2 font-bold hover:bg-black hover:text-white"
           >
-            {isLoading ? 'Criando solicitação...' : null}
+            {isPending ? 'Criando solicitação...' : null}
             {isSuccess ? 'Criação concluida!' : null}
-            {!isLoading && !isSuccess ? 'Criar solicitação' : null}
+            {!isPending && !isSuccess ? 'Criar solicitação' : null}
           </button>
         </div>
       </div>

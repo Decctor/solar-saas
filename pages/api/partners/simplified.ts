@@ -16,7 +16,7 @@ const getPartnerSimplified: NextApiHandler<GetResponse> = async (req, res) => {
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
   const partner = await getPartnerOwnInformation({ collection: partnersCollection, id: id })

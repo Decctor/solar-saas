@@ -16,7 +16,7 @@ const getHomologations: NextApiHandler<GetResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
 
   const { id, opportunityId } = req.query
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<THomologation> = db.collection('homologations')
 
   if (id) {
@@ -49,7 +49,7 @@ const createHomologation: NextApiHandler<PostResponse> = async (req, res) => {
 
   const homologation = InsertHomologationSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<THomologation> = db.collection('homologations')
 
   const insertResponse = await insertHomologation({ collection, info: homologation, partnerId: partnerId || '' })
@@ -73,7 +73,7 @@ const editHomologation: NextApiHandler<PutResponse> = async (req, res) => {
 
   const changes = InsertHomologationSchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<THomologation> = db.collection('homologations')
 
   const updateResponse = await updateHomologation({ id: id, collection: collection, changes: changes, partnerId: partnerId || '' })

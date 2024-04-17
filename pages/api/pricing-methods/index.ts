@@ -20,7 +20,7 @@ const createPricingMethod: NextApiHandler<PostResponse> = async (req, res) => {
 
   const pricingMethod = InsertPricingMethodSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPricingMethod> = db.collection('pricing-methods')
 
   const insertResponse = await insertPricingMethod({ collection: collection, info: pricingMethod, partnerId: partnerId || '' })
@@ -37,7 +37,7 @@ const getPricingMethods: NextApiHandler<GetResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
 
   const { id } = req.query
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPricingMethod> = db.collection('pricing-methods')
 
   if (id) {
@@ -63,7 +63,7 @@ const editPricingMethod: NextApiHandler<PutResponse> = async (req, res) => {
 
   const changes = InsertPricingMethodSchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPricingMethod> = db.collection('pricing-methods')
 
   const updateResponse = await collection.updateOne({ _id: new ObjectId(id) }, { $set: { ...changes } })

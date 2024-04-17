@@ -11,7 +11,7 @@ type GetResponse = {
 const getSignaturePlans: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TSignaturePlan> = db.collection('signature-plans')
   const plans = await getSignaturePlansWithPricingMethod({ collection: collection, partnerId: partnerId || '' })
 

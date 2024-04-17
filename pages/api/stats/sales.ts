@@ -462,7 +462,7 @@ const getStats: NextApiHandler<PostResponse> = async (req, res) => {
   const afterWithMarginDate = new Date(dayjs(after).subtract(1, 'month').toISOString())
   const beforeWithMarginDate = new Date(dayjs(before).subtract(1, 'month').set('hour', 22).toISOString())
 
-  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db: Db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const funnelsCollection: Collection<TFunnel> = db.collection('funnels')
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')

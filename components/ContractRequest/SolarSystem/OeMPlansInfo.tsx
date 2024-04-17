@@ -1,29 +1,33 @@
-import { IContractRequest, IProposalInfo, IProposalOeMInfo } from '@/utils/models'
 import { OeMPricing, getOeMPrices } from '@/utils/pricing/oem/methods'
+import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TProposalDTO } from '@/utils/schemas/proposal.schema'
 import React, { useState } from 'react'
 import { AiFillCloseCircle } from 'react-icons/ai'
 import { BsPatchCheckFill } from 'react-icons/bs'
 import { MdAttachMoney } from 'react-icons/md'
 
 type OeMPlansInfoProps = {
-  requestInfo: IContractRequest
-  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>
+  requestInfo: TContractRequest
+  setRequestInfo: React.Dispatch<React.SetStateAction<TContractRequest>>
   goToPreviousStage: () => void
   goToNextStage: () => void
   modulesQty?: number
   distance?: number
-  proposal: IProposalInfo | IProposalOeMInfo
+  propose: TProposalDTO
   activePlanId?: number
 }
 
-function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextStage, proposal, activePlanId, modulesQty, distance }: OeMPlansInfoProps) {
+function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextStage, propose, activePlanId, modulesQty, distance }: OeMPlansInfoProps) {
   // Nos casos em que houver um plano selecionado, captar nova escolha e atualizar informações da proposta.
-  function getPricing(proposal: OeMPlansInfoProps['proposal']) {
-    if (proposal.precificacao?.manutencaoSimples) {
-      return proposal.precificacao as OeMPricing
-    } else {
-      const pricing = getOeMPrices({ modulesQty: modulesQty || 0, distance: distance || 0 })
-      return pricing as OeMPricing
+  function getPricing(plans: TProposalDTO['planos']) {
+    const manutencaoSimples = plans.find((p) => p.nome == 'MANUTENÇÃO SIMPLES')?.valor || 0
+    const planoSol = plans.find((p) => p.nome == 'PLANO SOL')?.valor || 0
+    const planoSolPlus = plans.find((p) => p.nome == 'PLANO SOL PLUS')?.valor || 0
+
+    return {
+      manutencaoSimples,
+      planoSol,
+      planoSolPlus,
     }
   }
   return (
@@ -37,7 +41,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               ...prev,
               possuiOeM: 'SIM',
               planoOeM: 'MANUTENÇÃO SIMPLES',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(proposal)?.manutencaoSimples.vendaFinal || 0),
+              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.manutencaoSimples || 0),
             }))
             goToNextStage()
           }}
@@ -95,7 +99,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
               <p className="text-lg font-medium text-gray-600">
                 R${' '}
-                {getPricing(proposal)?.manutencaoSimples.vendaFinal.toLocaleString('pt-br', {
+                {getPricing(propose.planos)?.manutencaoSimples.toLocaleString('pt-br', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -109,7 +113,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               ...prev,
               possuiOeM: 'SIM',
               planoOeM: 'PLANO SOL',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(proposal)?.planoSol.vendaFinal || 0),
+              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.planoSol || 0),
             }))
             goToNextStage()
           }}
@@ -170,7 +174,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
               <p className="text-lg font-medium text-gray-600">
                 R${' '}
-                {getPricing(proposal)?.planoSol.vendaFinal.toLocaleString('pt-br', {
+                {getPricing(propose.planos)?.planoSol.toLocaleString('pt-br', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -184,7 +188,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               ...prev,
               possuiOeM: 'SIM',
               planoOeM: 'PLANO SOL +',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(proposal)?.planoSolPlus.vendaFinal || 0),
+              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.planoSolPlus || 0),
             }))
             goToNextStage()
           }}
@@ -243,7 +247,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
               <p className="text-lg font-medium text-gray-600">
                 R${' '}
-                {getPricing(proposal)?.planoSolPlus.vendaFinal.toLocaleString('pt-br', {
+                {getPricing(propose.planos)?.planoSolPlus.toLocaleString('pt-br', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}

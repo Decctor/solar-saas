@@ -1,8 +1,9 @@
+import { useClickOutside } from '@/lib/hooks'
 import { handleRenderIcon, renderIcon } from '@/lib/methods/rendering'
 
 import { formatLongString } from '@/utils/methods'
 import { TFileReferenceDTO } from '@/utils/schemas/file-reference.schema'
-import React, { useState } from 'react'
+import React, { useRef, useState } from 'react'
 
 import { BsCheck2All, BsCloudUploadFill } from 'react-icons/bs'
 
@@ -13,27 +14,23 @@ type DocumentFileInputProps = {
   fileReferences?: TFileReferenceDTO[]
 }
 function DocumentFileInput({ label, value, handleChange, fileReferences }: DocumentFileInputProps) {
+  const ref = useRef(null)
   const inputIdentifier = label.toLowerCase().replace(' ', '_')
   const [showMenu, setShowMenu] = useState<boolean>(false)
+  useClickOutside(ref, () => setShowMenu(false))
   return (
-    <div className="relative flex w-full flex-col justify-center self-center">
+    <div ref={ref} className="relative flex w-full flex-col justify-center self-center">
       <div className="flex w-full items-center justify-between gap-2">
         <label htmlFor={inputIdentifier} className={'text-start font-sans font-bold text-[#353432]'}>
           {label}
         </label>
         {fileReferences ? (
           !showMenu ? (
-            <button
-              onClick={() => setShowMenu(true)}
-              className="rounded-md bg-blue-800 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-blue-600"
-            >
+            <button onClick={() => setShowMenu(true)} className="rounded-md bg-blue-800 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-blue-600">
               MOSTRAR OPÇÕES
             </button>
           ) : (
-            <button
-              onClick={() => setShowMenu(false)}
-              className="rounded-md bg-red-600 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-red-500"
-            >
+            <button onClick={() => setShowMenu(false)} className="rounded-md bg-red-600 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-red-500">
               FECHAR OPÇÕES
             </button>
           )

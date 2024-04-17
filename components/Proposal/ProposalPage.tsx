@@ -16,7 +16,7 @@ import { copyToClipboard } from '@/lib/hooks'
 import { MdContentCopy, MdMiscellaneousServices, MdOutlineMiscellaneousServices, MdSignalCellularAlt } from 'react-icons/md'
 import { AiFillEdit, AiFillStar, AiOutlineSafety } from 'react-icons/ai'
 import { getPricingTotals } from '@/utils/pricing/methods'
-import ContractRequest from '../Modals/RequestContract'
+
 import { useClientById } from '@/utils/queries/clients'
 import { renderCategoryIcon } from '@/lib/methods/rendering'
 import { usePricingMethods } from '@/utils/queries/pricing-methods'
@@ -30,6 +30,8 @@ import ProposalViewPricingBlock from './Blocks/ProposalViewPricingBlock'
 import ProposalViewPlansBlock from './Blocks/ProposalViewPlansBlock'
 import EditProposal from '../Modals/Proposal/EditProposal'
 import ProposalUpdateRecords from './ProposalUpdateRecords'
+import NewContractRequest from '../Modals/ContractRequest/NewContractRequest'
+import { handleDownload } from '@/lib/methods/download'
 
 function getPricingMethodById({ methods, id }: { methods?: TPricingMethodDTO[]; id: string }) {
   if (!methods) return 'NÃO DEFINIDO'
@@ -107,10 +109,12 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
               proposalId={proposalId}
               isWon={!!proposal.oportunidadeDados.ganho.data}
               wonDate={proposal.oportunidadeDados.ganho.data}
+              contractRequestDate={proposal.oportunidadeDados.ganho.dataSolicitacao}
               wonProposalId={proposal.oportunidadeDados.ganho.idProposta}
               proposalValue={proposal.valor}
               idMarketing={proposal.oportunidadeDados.idMarketing}
               opportunityEmail={client?.email}
+              handleWin={() => setNewContractRequestIsOpen(true)}
             />
           </div>
           <div className="flex w-full grow flex-col py-2">
@@ -191,7 +195,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
                   {proposal.urlArquivo ? (
                     <>
                       <button
-                        //   onClick={() => handleDownload(proposal?.linkArquivo, proposal?.nome ? proposal.nome : 'PROPOSTA')}
+                        onClick={() => handleDownload({ fileName: proposal.nome, fileUrl: proposal.urlArquivo || '' })}
                         className="flex w-fit items-center gap-2 self-center rounded-lg border border-dashed border-[#15599a] p-2 text-[#15599a]"
                       >
                         <p>DOWNLOAD DO PDF</p>
@@ -337,7 +341,18 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
           />
         ) : null}
         {newContractRequestIsOpen && client ? (
-          <ContractRequest session={session} client={client} proposalInfo={proposal} closeModal={() => setNewContractRequestIsOpen(false)} />
+          <NewContractRequest
+            responsible={{
+              _id: session.user.id,
+              nome: session.user.email,
+              email: session.user.email,
+              avatar_url: session.user.avatar_url,
+              telefone: session.user.telefone,
+            }}
+            client={client}
+            proposeInfo={proposal}
+            closeModal={() => setNewContractRequestIsOpen(false)}
+          />
         ) : null}
       </div>
     )

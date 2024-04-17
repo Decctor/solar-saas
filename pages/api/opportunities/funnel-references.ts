@@ -17,13 +17,12 @@ const createFunnelReference: NextApiHandler<PostResponse> = async (req, res) => 
   // Parsing insert object from request
   const funnelReference = InsertFunnelReferenceSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
 
   const insertResponse = await insertFunnelReference({ collection: funnelReferencesCollection, info: funnelReference, partnerId: partnerId || '' })
   // In case something went wrong, acknowledged would be false, so throwing an error
-  if (!insertResponse.acknowledged)
-    throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na criação da referência de funil.')
+  if (!insertResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na criação da referência de funil.')
   // Else, returning the inserted ID
   const insertedId = insertResponse.insertedId.toString()
   return res.status(201).json({ data: { insertedId: insertedId }, message: 'Referência de funil criada com sucesso!' })
@@ -39,7 +38,7 @@ const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
   const { id } = req.query
   if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
 
   // Validing payload, checking if there is new stage id reference
@@ -53,8 +52,7 @@ const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
     newStageId: newStageId,
     partnerId: partnerId || '',
   })
-  if (!updateResponse.acknowledged)
-    throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na atualização da referência de funil.')
+  if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na atualização da referência de funil.')
   res.status(201).json({ data: 'Atualização feita com sucesso!', message: 'Atualização feita com sucesso !' })
 }
 export default apiHandler({

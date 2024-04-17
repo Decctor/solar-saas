@@ -18,7 +18,7 @@ const createProjectType: NextApiHandler<PostResponse> = async (req, res) => {
 
   const type = InsertProjectTypeSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProjectType> = db.collection('project-types')
 
   const insertResponse = await insertProjectType({ collection: collection, info: type, partnerId: partnerId || '' })
@@ -37,7 +37,7 @@ const getProjectType: NextApiHandler<GetResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
   const { id } = req.query
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProjectType> = db.collection('project-types')
 
   if (id) {
@@ -58,7 +58,7 @@ const editProjectType: NextApiHandler<PutResponse> = async (req, res) => {
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
   const changes = InsertProjectTypeSchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProjectType> = db.collection('project-types')
 
   const updateResponse = await updateProjectType({ collection: collection, id: id, changes: changes, partnerId: partnerId || '' })

@@ -51,7 +51,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         error: 'ID INVÁLIDO',
       },
     }
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const proposalsCollection: Collection<TProposal> = db.collection('proposals')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const partnersCollection: Collection<TPartner> = db.collection('partners')

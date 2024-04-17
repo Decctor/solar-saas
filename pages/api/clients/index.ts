@@ -22,7 +22,7 @@ const createClient: NextApiHandler<PostResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'clientes', 'criar', true)
   const partnerId = session.user.idParceiro
   const client = InsertClientSchema.parse(req.body)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TClient> = db.collection('clients')
   const email = client.email || undefined
   const cpfCnpj = client.cpfCnpj || undefined
@@ -47,7 +47,7 @@ const getPartnerClients: NextApiHandler<GetResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
   const userScope = session.user.permissoes.clientes.escopo
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TClient> = db.collection('clients')
 
   const { id, author } = req.query
@@ -95,7 +95,7 @@ const editClients: NextApiHandler<PutResponse> = async (req, res) => {
 
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID de cliente inválido.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const clientsCollection: Collection<TClient> = db.collection('clients')
 
   const client = await getClientById({ collection: clientsCollection, id: id, partnerId: partnerId || '' })

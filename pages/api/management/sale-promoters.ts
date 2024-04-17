@@ -10,7 +10,7 @@ type GetResponse = {
 const getSalePromoters: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const usersCollection: Collection<TUser> = db.collection('users')
   const salePromoters = await usersCollection
     .aggregate([

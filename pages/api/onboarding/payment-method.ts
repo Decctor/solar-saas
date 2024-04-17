@@ -15,7 +15,7 @@ type PostResponse = {
 const createPaymentMethod: NextApiHandler<PostResponse> = async (req, res) => {
   const paymentMethod = InsertPaymentMethodSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPaymentMethod> = db.collection('payment-methods')
 
   const insertResponse = await collection.insertOne({ ...paymentMethod })

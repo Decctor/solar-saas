@@ -16,7 +16,7 @@ const editOwnPartner: NextApiHandler<PutResponse> = async (req, res) => {
 
   const changes = UpdateOwnPartnerSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
   const updateResponse = await partnersCollection.updateOne({ _id: new ObjectId(id) }, { $set: { ...changes } })

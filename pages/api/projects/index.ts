@@ -82,7 +82,7 @@ const projectSchema = z.object({
 const createProject: NextApiHandler<PostResponse> = async (req, res) => {
   await validateAuthorization(req, res, 'projetos', 'serResponsavel', true)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('projects')
 
   const project = projectSchema.parse(req.body)
@@ -144,7 +144,7 @@ const modes = {
 
 const getProjects: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'projetos', 'serResponsavel', true)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection = db.collection('projects')
   const eventsCollection = db.collection('projectsEvents')
   const { id, responsible, funnel, after, before, mode, status } = req.query
@@ -404,7 +404,7 @@ const editProjects: NextApiHandler<PutResponse> = async (req, res) => {
 
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID do objeto de alteração não especificado.')
   if (!req.body.changes) throw new createHttpError.BadRequest('Mudanças não especificadas na requisição.')
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('projects')
   if (!userHasEditPermission) await validateEditAuthorization({ collection, userId, projectId: id })
 

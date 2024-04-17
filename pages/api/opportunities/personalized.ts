@@ -46,7 +46,7 @@ const createClientOpportunityAndFunnelReferences: NextApiHandler<PostResponse> =
 
   const { clientId, client, opportunity, funnelReference } = CreateClientOpportunityAndFunnelReferencesSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const clientsCollection: Collection<TClient> = db.collection('clients')
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')

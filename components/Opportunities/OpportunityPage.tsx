@@ -24,6 +24,8 @@ import { Session } from 'next-auth'
 import { usePartnerOwnInfo } from '@/utils/queries/partners'
 import OpportunityTechnicalAnalysisBlock from './OpportunityTechnicalAnalysisBlock'
 import OpportunityHomologations from './OpportunityHomologations'
+import OpportunityWonFlag from './OpportunityWonFlag'
+import OpportunityContractRequestedFlag from './OpportunityContractRequestedFlag'
 
 export type TOpportunityBlockMode = 'PROPOSES' | 'FILES' | 'TECHNICAL ANALYSIS'
 
@@ -90,15 +92,8 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
                   opportunityEmail={opportunity.cliente.email}
                 />
               )}
-              {!!opportunity.ganho.data ? (
-                <div className="flex min-w-[200px] flex-col items-center  rounded-md bg-green-400 p-2 shadow-md">
-                  <h1 className="text-center font-Raleway text-xs font-bold text-black">OPORTUNIDADE GANHA</h1>
-                  <div className="flex items-center justify-center gap-2">
-                    <BsFillCalendarCheckFill style={{ color: '#000', fontSize: '15px' }} />
-                    <p className="text-center text-xs font-bold text-black">{formatDateAsLocale(opportunity.ganho.data)}</p>
-                  </div>
-                </div>
-              ) : null}
+              <OpportunityContractRequestedFlag requestDate={opportunity.ganho.dataSolicitacao} />
+              <OpportunityWonFlag wonDate={opportunity.ganho.data} />
             </div>
           </div>
 
@@ -156,6 +151,7 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
                 opportunityId={opportunity._id ? opportunity._id : ''}
                 idActiveProposal={opportunity.idPropostaAtiva || undefined}
                 setBlockMode={setBlockMode}
+                opportunityHasContractRequested={!!opportunity.ganho.dataSolicitacao}
                 opportunityIsWon={!!opportunity.ganho.data}
                 opportunityWonProposalId={opportunity.ganho.idProposta}
               />

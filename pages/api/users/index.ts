@@ -25,7 +25,7 @@ const createUser: NextApiHandler<PostResponse> = async (req, res) => {
   const { senha: password } = user
   let hashedPassword = hashSync(password, 10)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TUser> = db.collection('users')
 
   // Validing existence of equivalent user in database
@@ -63,7 +63,7 @@ type GetResponse = {
 }
 const getUsers: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const usersCollection: Collection<TUserEntity> = db.collection('users')
   const userIsAdmin = session.user.administrador
   const userPartnerId = session.user.idParceiro
@@ -98,7 +98,7 @@ const editUser: NextApiHandler<PutResponse> = async (req, res) => {
 
   const user = req.body.changes
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('users')
   let changes
   if (req.body.changePassword && user.senha) {

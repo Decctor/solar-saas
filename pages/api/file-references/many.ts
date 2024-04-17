@@ -20,12 +20,11 @@ const createManyFileReferences: NextApiHandler<PostResponse> = async (req, res) 
 
   const manyAnalysis = z.array(InsertFileReferenceSchema).parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const fileReferencesCollection: Collection<TFileReference> = db.collection('file-references')
 
   const insertResponse = await insertManyFileReferences({ collection: fileReferencesCollection, info: manyAnalysis, partnerId: partnerId || '' })
-  if (!insertResponse.acknowledged)
-    throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na criação das referências de arquivo.')
+  if (!insertResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na criação das referências de arquivo.')
   const insertedIds = Object.values(insertResponse.insertedIds).map((i) => i.toString())
 
   return res.status(201).json({ data: { insertedIds }, message: 'Referências de arquivo criadas com sucesso !' })

@@ -21,7 +21,7 @@ const createProposal: NextApiHandler<PostResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
 
   const proposal = InsertProposalSchema.parse(req.body)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const proposalsCollection: Collection<TProposal> = db.collection('proposals')
   const insertResponse = await insertProposal({ collection: proposalsCollection, info: proposal, partnerId: partnerId || '' })
   if (!insertResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na criação da proposta.')
@@ -37,7 +37,7 @@ const getProposals: NextApiHandler<GetResponse> = async (req, res) => {
 
   const { opportunityId, id } = req.query
   if (!opportunityId && !id) throw new createHttpError.BadRequest('ID de referência não fornecido.')
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const proposalsCollection: Collection<TProposal> = db.collection('proposals')
   console.log('ID', id)
   // Query for opportunity proposals
@@ -66,7 +66,7 @@ const editProposal: NextApiHandler<PutResponse> = async (req, res) => {
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
   const changes = InsertProposalSchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TProposal> = db.collection('proposals')
 
   const updateResponse = await updateProposal({ id: id, collection: collection, changes: changes, partnerId: partnerId || '' })

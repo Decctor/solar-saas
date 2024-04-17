@@ -16,7 +16,7 @@ const getPartnerTechnicalAnalysis: NextApiHandler<GetResponse> = async (req, res
   const partnerId = session.user.idParceiro
   const { id, opportunityId } = req.query
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TTechnicalAnalysis> = db.collection('technical-analysis')
 
   if (id) {
@@ -50,7 +50,7 @@ const createTechnicalAnalysis: NextApiHandler<PostResponse> = async (req, res) =
   const partnerId = session.user.idParceiro
 
   const analysis = GeneralTechnicalAnalysisSchema.parse(req.body)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TTechnicalAnalysis> = db.collection('technical-analysis')
 
   const insertResponse = await insertTechnicalAnalysis({ collection: collection, info: analysis, partnerId: partnerId || '' })
@@ -72,7 +72,7 @@ const editTechnicalAnalysis: NextApiHandler<PutResponse> = async (req, res) => {
 
   const changes = req.body
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TTechnicalAnalysis> = db.collection('technical-analysis')
 
   const updateResponse = await updateTechnicalAnalysis({ collection: collection, info: changes, analysisId: id, partnerId: partnerId || '' })

@@ -20,7 +20,7 @@ const createPaymentMethod: NextApiHandler<PostResponse> = async (req, res) => {
 
   const paymentMethod = InsertPaymentMethodSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPaymentMethod> = db.collection('payment-methods')
 
   const insertResponse = await insertPaymentMethod({ collection: collection, info: paymentMethod, partnerId: partnerId || '' })
@@ -38,7 +38,7 @@ const getPartnerPaymentMethods: NextApiHandler<GetResponse> = async (req, res) =
   const partnerId = session.user.idParceiro
   const { id } = req.query
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPaymentMethod> = db.collection('payment-methods')
 
   if (!!id) {
@@ -63,7 +63,7 @@ const editPaymentMethod: NextApiHandler<PutResponse> = async (req, res) => {
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
   const changes = InsertPaymentMethodSchema.partial().parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPaymentMethod> = db.collection('payment-methods')
 
   const updateResponse = await updatePaymentMethod({ collection: collection, id: id, changes: changes, partnerId: partnerId || '' })

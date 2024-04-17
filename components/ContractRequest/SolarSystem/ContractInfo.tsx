@@ -1,140 +1,118 @@
-import DateInput from "@/components/Inputs/DateInput";
-import SelectInput from "@/components/Inputs/SelectInput";
-import TextInput from "@/components/Inputs/TextInput";
-import {
-  customersAcquisitionChannels,
-  customersNich,
-  signMethods,
-} from "@/utils/constants";
-import { stateCities } from "@/utils/estados_cidades";
-import {
-  formatDate,
-  formatToCEP,
-  formatToCPForCNPJ,
-  formatToPhone,
-  getCEPInfo,
-} from "@/utils/methods";
-import { IContractRequest } from "@/utils/models";
-import React from "react";
-import { toast } from "react-hot-toast";
+import DateInput from '@/components/Inputs/DateInput'
+import SelectInput from '@/components/Inputs/SelectInput'
+import TextInput from '@/components/Inputs/TextInput'
+
+import { stateCities } from '@/utils/estados_cidades'
+import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getCEPInfo } from '@/utils/methods'
+
+import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { CustomersAcquisitionChannels, SigningForms } from '@/utils/select-options'
+import React from 'react'
+import { toast } from 'react-hot-toast'
 type ContractInfoProps = {
-  requestInfo: IContractRequest;
-  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>;
-  goToNextStage: () => void;
-};
-function ContractInfo({
-  requestInfo,
-  setRequestInfo,
-  goToNextStage,
-}: ContractInfoProps) {
+  requestInfo: TContractRequest
+  setRequestInfo: React.Dispatch<React.SetStateAction<TContractRequest>>
+  goToNextStage: () => void
+}
+function ContractInfo({ requestInfo, setRequestInfo, goToNextStage }: ContractInfoProps) {
   async function setAddressDataByCEP(cep: string) {
-    const addressInfo = await getCEPInfo(cep);
-    const toastID = toast.loading("Buscando informações sobre o CEP...", {
+    const addressInfo = await getCEPInfo(cep)
+    const toastID = toast.loading('Buscando informações sobre o CEP...', {
       duration: 2000,
-    });
+    })
     setTimeout(() => {
       if (addressInfo) {
-        toast.dismiss(toastID);
-        toast.success("Dados do CEP buscados com sucesso.", {
+        toast.dismiss(toastID)
+        toast.success('Dados do CEP buscados com sucesso.', {
           duration: 1000,
-        });
+        })
         setRequestInfo((prev) => ({
           ...prev,
           enderecoCobranca: addressInfo.logradouro,
           bairro: addressInfo.bairro,
           uf: addressInfo.uf as keyof typeof stateCities,
           cidade: addressInfo.localidade.toUpperCase(),
-        }));
+        }))
       }
-    }, 1000);
+    }, 1000)
   }
   function validateFields() {
-    if (requestInfo.nomeVendedor == "NÃO DEFINIDO") {
-      toast.error("Por favor, preencha o vendedor.");
-      return false;
+    if (requestInfo.nomeVendedor == 'NÃO DEFINIDO') {
+      toast.error('Por favor, preencha o vendedor.')
+      return false
     }
     if (requestInfo.telefoneVendedor.trim().length < 5) {
-      toast.error("Por favor, preencha o contato do vendedor.");
-      return false;
+      toast.error('Por favor, preencha o contato do vendedor.')
+      return false
     }
     if (requestInfo.nomeDoContrato.trim().length < 5) {
-      toast.error("Por favor, preencha um nome ou razão social válido.");
-      return false;
+      toast.error('Por favor, preencha um nome ou razão social válido.')
+      return false
     }
     if (requestInfo.telefone.trim().length < 8) {
-      toast.error("Por favor, preencha um telefone válido.");
-      return false;
+      toast.error('Por favor, preencha um telefone válido.')
+      return false
     }
     if (requestInfo.cpf_cnpj.trim().length < 11) {
-      toast.error("Por favor, preencha um CPF/CNPJ válido.");
-      return false;
+      toast.error('Por favor, preencha um CPF/CNPJ válido.')
+      return false
     }
     if (requestInfo.dataDeNascimento == null) {
-      toast.error("Por favor, preencha uma data de nascimento.");
-      return false;
+      toast.error('Por favor, preencha uma data de nascimento.')
+      return false
     }
     if (!requestInfo.estadoCivil) {
-      toast.error("Por favor, preencha o estado civil do cliente.");
-      return false;
+      toast.error('Por favor, preencha o estado civil do cliente.')
+      return false
     }
     if (requestInfo.email.trim().length < 5) {
-      toast.error("Por favor, preencha um email válido.");
-      return false;
+      toast.error('Por favor, preencha um email válido.')
+      return false
     }
     if (requestInfo.profissao.trim().length < 3) {
-      toast.error("Por favor, preencha uma profissão válida.");
-      return false;
+      toast.error('Por favor, preencha uma profissão válida.')
+      return false
     }
-    if (requestInfo.cidade == "NÃO DEFINIDO") {
-      toast.error("Por favor, preencha uma cidade válida.");
-      return false;
+    if (requestInfo.cidade == 'NÃO DEFINIDO') {
+      toast.error('Por favor, preencha uma cidade válida.')
+      return false
     }
     if (requestInfo.enderecoCobranca.trim().length < 3) {
-      toast.error("Por favor, preencha um endereço de cobrança válido.");
-      return false;
+      toast.error('Por favor, preencha um endereço de cobrança válido.')
+      return false
     }
 
     if (requestInfo.numeroResCobranca.trim().length == 0) {
-      toast.error("Por favor, preencha um numéro de residência válido.");
-      return false;
+      toast.error('Por favor, preencha um numéro de residência válido.')
+      return false
     }
     if (requestInfo.bairro.trim().length < 3) {
-      toast.error("Por favor, preencha um bairro válido.");
-      return false;
+      toast.error('Por favor, preencha um bairro válido.')
+      return false
     }
-    if (
-      requestInfo.possuiDeficiencia == "SIM" &&
-      requestInfo.qualDeficiencia.trim().length < 3
-    ) {
-      toast.error("Por favor, preencha a deficiência.");
-      return false;
+    if (requestInfo.possuiDeficiencia == 'SIM' && requestInfo.qualDeficiencia.trim().length < 3) {
+      toast.error('Por favor, preencha a deficiência.')
+      return false
     }
     if (!requestInfo.segmento) {
-      toast.error("Por favor, preencha o segmento do projeto.");
-      return false;
+      toast.error('Por favor, preencha o segmento do projeto.')
+      return false
     }
-    if (
-      requestInfo.canalVenda == "INDICAÇÃO DE AMIGO" &&
-      requestInfo.nomeIndicador.trim().length < 3
-    ) {
-      toast.error("Por favor, preencha o nome do indicador.");
-      return false;
+    if (requestInfo.canalVenda == 'INDICAÇÃO DE AMIGO' && requestInfo.nomeIndicador.trim().length < 3) {
+      toast.error('Por favor, preencha o nome do indicador.')
+      return false
     }
-    return true;
+    return true
   }
   return (
     <div className="flex w-full flex-col  bg-[#fff] pb-2">
-      <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">
-        DADOS PARA CONTRATO
-      </span>
+      <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">DADOS PARA CONTRATO</span>
       <div className="flex flex-col flex-wrap justify-around gap-2 p-2 lg:grid lg:grid-cols-3">
-        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">
-          SOBRE O CLIENTE
-        </h1>
+        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">SOBRE O CLIENTE</h1>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"NOME/RAZÃO SOCIAL"}
+            width={'450px'}
+            label={'NOME/RAZÃO SOCIAL'}
             placeholder="Digite o nome do contrato."
             value={requestInfo.nomeDoContrato}
             editable={true}
@@ -148,8 +126,8 @@ function ContractInfo({
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"TELEFONE"}
+            width={'450px'}
+            label={'TELEFONE'}
             editable={true}
             placeholder="Digite aqui o telefone do cliente."
             value={requestInfo.telefone}
@@ -163,8 +141,8 @@ function ContractInfo({
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"CPF/CNPJ"}
+            width={'450px'}
+            label={'CPF/CNPJ'}
             editable={true}
             value={requestInfo.cpf_cnpj}
             placeholder="Digite aqui o CPF ou CNPJ para o contrato."
@@ -172,32 +150,26 @@ function ContractInfo({
               setRequestInfo({
                 ...requestInfo,
                 cpf_cnpj: formatToCPForCNPJ(value),
-              });
+              })
             }}
           />
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"RG"}
+            width={'450px'}
+            label={'RG'}
             editable={true}
             placeholder="Digite aqui o RG do cliente."
             value={requestInfo.rg}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, rg: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, rg: value })}
           />
         </div>
         <div className="flex items-center justify-center">
           <DateInput
-            width={"450px"}
-            label={"DATA DE NASCIMENTO"}
+            width={'450px'}
+            label={'DATA DE NASCIMENTO'}
             editable={true}
-            value={
-              requestInfo.dataDeNascimento
-                ? formatDate(requestInfo.dataDeNascimento)
-                : undefined
-            }
+            value={requestInfo.dataDeNascimento ? formatDate(requestInfo.dataDeNascimento) : undefined}
             handleChange={(value) =>
               setRequestInfo({
                 ...requestInfo,
@@ -208,70 +180,66 @@ function ContractInfo({
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            width={"450px"}
-            label={"ESTADO CIVIL"}
+            width={'450px'}
+            label={'ESTADO CIVIL'}
             options={[
               {
                 id: 1,
-                label: "CASADO(A)",
-                value: "CASADO(A)",
+                label: 'CASADO(A)',
+                value: 'CASADO(A)',
               },
               {
                 id: 2,
-                label: "SOLTEIRO(A)",
-                value: "SOLTEIRO(A)",
+                label: 'SOLTEIRO(A)',
+                value: 'SOLTEIRO(A)',
               },
               {
                 id: 3,
-                label: "UNIÃO ESTÁVEL",
-                value: "UNIÃO ESTÁVEL",
+                label: 'UNIÃO ESTÁVEL',
+                value: 'UNIÃO ESTÁVEL',
               },
               {
                 id: 4,
-                label: "DIVORCIADO(A)",
-                value: "DIVORCIADO(A)",
+                label: 'DIVORCIADO(A)',
+                value: 'DIVORCIADO(A)',
               },
               {
                 id: 5,
-                label: "VIUVO(A)",
-                value: "VIUVO(A)",
+                label: 'VIUVO(A)',
+                value: 'VIUVO(A)',
               },
               {
                 id: 6,
-                label: "NÃO DEFINIDO",
-                value: "NÃO DEFINIDO",
+                label: 'NÃO DEFINIDO',
+                value: 'NÃO DEFINIDO',
               },
             ]}
             editable={true}
             value={requestInfo.estadoCivil}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, estadoCivil: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, estadoCivil: value })}
             onReset={() => {
               setRequestInfo((prev) => ({
                 ...prev,
                 estadoCivil: undefined,
-              }));
+              }))
             }}
             selectedItemLabel="NÃO DEFINIDO"
           />
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"EMAIL"}
+            width={'450px'}
+            label={'EMAIL'}
             editable={true}
             placeholder="Preencha aqui o email do cliente."
             value={requestInfo.email}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, email: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, email: value })}
           />
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"PROFISSÃO"}
+            width={'450px'}
+            label={'PROFISSÃO'}
             editable={true}
             placeholder="Preencha aqui a profissão do cliente."
             value={requestInfo.profissao}
@@ -285,36 +253,32 @@ function ContractInfo({
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"ONDE TRABALHA"}
+            width={'450px'}
+            label={'ONDE TRABALHA'}
             placeholder="Preencha aqui onde o cliente trabalha."
             editable={true}
             value={requestInfo.ondeTrabalha}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, ondeTrabalha: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, ondeTrabalha: value })}
           />
         </div>
-        {requestInfo.tipoDeServico != "SISTEMA FOTOVOLTAICO" && (
+        {requestInfo.tipoDeServico != 'SISTEMA FOTOVOLTAICO' && (
           <div className="col-span-3 flex items-center justify-center">
             <SelectInput
-              label={"TIPO DO CLIENTE"}
-              width={"450px"}
+              label={'TIPO DO CLIENTE'}
+              width={'450px'}
               editable={true}
               value={requestInfo.tipoDoTitular}
-              handleChange={(value) =>
-                setRequestInfo({ ...requestInfo, tipoDoTitular: value })
-              }
+              handleChange={(value) => setRequestInfo({ ...requestInfo, tipoDoTitular: value })}
               options={[
                 {
                   id: 1,
-                  label: "PESSOA FISICA",
-                  value: "PESSOA FISICA",
+                  label: 'PESSOA FISICA',
+                  value: 'PESSOA FISICA',
                 },
                 {
                   id: 2,
-                  label: "PESSOA JURIDICA",
-                  value: "PESSOA JURIDICA",
+                  label: 'PESSOA JURIDICA',
+                  value: 'PESSOA JURIDICA',
                 },
               ]}
               selectedItemLabel="NÃO DEFINIDO"
@@ -322,15 +286,15 @@ function ContractInfo({
                 setRequestInfo((prev) => ({
                   ...prev,
                   tipoDoTitular: null,
-                }));
+                }))
               }}
             />
           </div>
         )}
         <div className="col-span-3 flex items-center justify-center gap-2">
           <SelectInput
-            width={"450px"}
-            label={"POSSUI ALGUMA DEFICIÊNCIA"}
+            width={'450px'}
+            label={'POSSUI ALGUMA DEFICIÊNCIA'}
             editable={true}
             value={requestInfo.possuiDeficiencia}
             handleChange={(value) =>
@@ -342,28 +306,28 @@ function ContractInfo({
             options={[
               {
                 id: 1,
-                label: "SIM",
-                value: "SIM",
+                label: 'SIM',
+                value: 'SIM',
               },
               {
                 id: 2,
-                label: "NÃO",
-                value: "NÃO",
+                label: 'NÃO',
+                value: 'NÃO',
               },
             ]}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() =>
               setRequestInfo((prev) => ({
                 ...prev,
-                possuiDeficiencia: "NÃO",
+                possuiDeficiencia: 'NÃO',
               }))
             }
           />
-          {requestInfo.possuiDeficiencia == "SIM" && (
+          {requestInfo.possuiDeficiencia == 'SIM' && (
             <>
               <TextInput
-                width={"450px"}
-                label={"SE SIM, QUAL ?"}
+                width={'450px'}
+                label={'SE SIM, QUAL ?'}
                 editable={true}
                 placeholder="Preencha aqui a deficiência do cliente em questão."
                 value={requestInfo.qualDeficiencia}
@@ -377,24 +341,22 @@ function ContractInfo({
             </>
           )}
         </div>
-        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">
-          ENDEREÇO
-        </h1>
+        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">ENDEREÇO</h1>
         <div className="flex flex-wrap items-center justify-center gap-2">
           <TextInput
-            width={"450px"}
-            label={"CEP"}
+            width={'450px'}
+            label={'CEP'}
             editable={true}
             placeholder="Preencha aqui o CEP do cliente."
             value={requestInfo.cep}
             handleChange={(value) => {
               if (value.length == 9) {
-                setAddressDataByCEP(value);
+                setAddressDataByCEP(value)
               }
               setRequestInfo({
                 ...requestInfo,
                 cep: formatToCEP(value),
-              });
+              })
             }}
           />
           {/* <button
@@ -406,37 +368,35 @@ function ContractInfo({
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            width={"450px"}
-            label={"CIDADE"}
+            width={'450px'}
+            label={'CIDADE'}
             editable={true}
             value={requestInfo.cidade}
             options={
               requestInfo.uf
-                ? stateCities[requestInfo.uf].map((city, index) => {
+                ? stateCities[requestInfo.uf as keyof typeof stateCities].map((city, index) => {
                     return {
                       id: index,
                       value: city,
                       label: city,
-                    };
+                    }
                   })
                 : null
             }
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, cidade: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, cidade: value })}
             onReset={() => {
               setRequestInfo((prev) => ({
                 ...prev,
                 cidade: undefined,
-              }));
+              }))
             }}
             selectedItemLabel="NÃO DEFINIDO"
           />
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            width={"450px"}
-            label={"UF"}
+            width={'450px'}
+            label={'UF'}
             editable={true}
             options={Object.keys(stateCities).map((state, index) => ({
               id: index + 1,
@@ -444,19 +404,17 @@ function ContractInfo({
               value: state,
             }))}
             value={requestInfo.uf}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, uf: value })
-            }
+            handleChange={(value) => setRequestInfo({ ...requestInfo, uf: value })}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() => {
-              setRequestInfo((prev) => ({ ...prev, uf: null }));
+              setRequestInfo((prev) => ({ ...prev, uf: null }))
             }}
           />
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"ENDEREÇO DE COBRANÇA"}
+            width={'450px'}
+            label={'ENDEREÇO DE COBRANÇA'}
             placeholder="Preencha aqui o endereço de cobrança (correspondências) do cliente."
             editable={true}
             value={requestInfo.enderecoCobranca}
@@ -470,8 +428,8 @@ function ContractInfo({
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"Nº"}
+            width={'450px'}
+            label={'Nº'}
             placeholder="Preencha aqui o número/identificador do endereço de cobrança (correspondências) do cliente."
             value={requestInfo.numeroResCobranca}
             editable={true}
@@ -485,8 +443,8 @@ function ContractInfo({
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"BAIRRO"}
+            width={'450px'}
+            label={'BAIRRO'}
             editable={true}
             placeholder="Preencha aqui o bairro do cliente."
             value={requestInfo.bairro}
@@ -500,8 +458,8 @@ function ContractInfo({
         </div>
         <div className="flex items-center justify-center">
           <TextInput
-            width={"450px"}
-            label={"PONTO DE REFERÊNCIA"}
+            width={'450px'}
+            label={'PONTO DE REFERÊNCIA'}
             placeholder="Preencha aqui o nome de um ponto de referência para o endereço do cliente."
             editable={true}
             value={requestInfo.pontoDeReferencia}
@@ -513,83 +471,71 @@ function ContractInfo({
             }
           />
         </div>
-        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">
-          CONTRATO/VENDA
-        </h1>
+        <h1 className="col-span-3 py-2 text-center font-bold text-[#fead61]">CONTRATO/VENDA</h1>
         <div className="flex items-center justify-center">
           <SelectInput
-            width={"450px"}
-            label={"SEGMENTO"}
+            width={'450px'}
+            label={'SEGMENTO'}
             value={requestInfo.segmento}
             editable={true}
-            options={customersNich.map((nich, index) => {
-              return {
-                id: index + 1,
-                label: nich.label,
-                value: nich.value,
-              };
-            })}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, segmento: value })
-            }
+            options={[
+              { id: 1, label: 'RESIDENCIAL', value: 'RESIDENCIAL' },
+              { id: 2, label: 'COMERCIAL', value: 'COMERCIAL' },
+              { id: 3, label: 'RURAL', value: 'RURAL' },
+              { id: 4, label: 'INDUSTRIAL', value: 'INDUSTRIAL' },
+            ]}
+            handleChange={(value) => setRequestInfo({ ...requestInfo, segmento: value })}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() => {
               setRequestInfo((prev) => ({
                 ...prev,
                 segmento: undefined,
-              }));
+              }))
             }}
           />
         </div>
         <div className="flex items-center justify-center">
           <SelectInput
-            width={"450px"}
-            label={"FORMA DE ASSINATURA"}
+            width={'450px'}
+            label={'FORMA DE ASSINATURA'}
             editable={true}
             value={requestInfo.formaAssinatura}
-            options={signMethods.map((method, index) => {
-              return {
-                id: index + 1,
-                label: method.label,
-                value: method.value,
-              };
-            })}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, formaAssinatura: value })
-            }
+            options={[
+              { id: 1, label: 'FISICA', value: 'FISICA' },
+              { id: 2, label: 'DIGITAL', value: 'DIGITAL' },
+            ]}
+            handleChange={(value) => setRequestInfo({ ...requestInfo, formaAssinatura: value })}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() => {
               setRequestInfo((prev) => ({
                 ...prev,
                 formaAssinatura: undefined,
-              }));
+              }))
             }}
           />
         </div>
         <div className="flex w-full items-center justify-center">
           <SelectInput
-            label={"CANAL DE VENDA"}
+            label={'CANAL DE VENDA'}
             editable={true}
             value={requestInfo.canalVenda}
-            handleChange={(value) =>
-              setRequestInfo({ ...requestInfo, canalVenda: value })
-            }
-            options={customersAcquisitionChannels.map((value) => value)}
+            handleChange={(value) => setRequestInfo({ ...requestInfo, canalVenda: value })}
+            options={CustomersAcquisitionChannels.map((value) => value)}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() => {
               setRequestInfo((prev) => ({
                 ...prev,
                 canalVenda: null,
-              }));
+              }))
             }}
           />
         </div>
-        {requestInfo.canalVenda == "INDICAÇÃO DE AMIGO" && (
+        {requestInfo.canalVenda == 'INDICAÇÃO DE AMIGO' && (
           <div className="col-span-3 flex w-full flex-wrap items-center justify-center gap-2">
             <div className="flex  grow items-center justify-center">
               <TextInput
                 width="100%"
-                label={"NOME INDICADOR"}
+                label={'NOME INDICADOR'}
                 editable={true}
                 placeholder="Preencha aqui o nomo do indicador"
                 value={requestInfo.nomeIndicador}
@@ -604,7 +550,7 @@ function ContractInfo({
             <div className="flex grow items-center justify-center">
               <TextInput
                 width="100%"
-                label={"TELEFONE INDICADOR"}
+                label={'TELEFONE INDICADOR'}
                 editable={true}
                 placeholder="Preencha aqui o contato do indicador."
                 value={requestInfo.telefoneIndicador}
@@ -620,11 +566,9 @@ function ContractInfo({
         )}
       </div>
       <div className="mt-2 flex w-full flex-col items-center self-center px-2">
-        <span className="font-raleway text-center text-sm font-bold uppercase">
-          COMO VOCÊ CHEGOU A ESSE CLIENTE?
-        </span>
+        <span className="font-raleway text-center text-sm font-bold uppercase">COMO VOCÊ CHEGOU A ESSE CLIENTE?</span>
         <textarea
-          placeholder={"Descreva aqui como esse cliente chegou até voce.."}
+          placeholder={'Descreva aqui como esse cliente chegou até voce..'}
           value={requestInfo.comoChegouAoCliente}
           onChange={(e) =>
             setRequestInfo({
@@ -636,12 +580,10 @@ function ContractInfo({
         />
       </div>
       <div className="mt-2 flex w-full flex-col items-center self-center px-2">
-        <span className="font-raleway text-center text-sm font-bold uppercase">
-          OBSERVAÇÃO ADICIONAL ACERCA DO SERVIÇO PRESTADO
-        </span>
+        <span className="font-raleway text-center text-sm font-bold uppercase">OBSERVAÇÃO ADICIONAL ACERCA DO SERVIÇO PRESTADO</span>
         <textarea
           placeholder={
-            "Preencha aqui, se houver, observações acerca desse contrato. Peculiaridades desse serviço (ex: somente instalação/equipamentos), detalhes e esclarecimentos para financiamento, entre outras informações relevantes."
+            'Preencha aqui, se houver, observações acerca desse contrato. Peculiaridades desse serviço (ex: somente instalação/equipamentos), detalhes e esclarecimentos para financiamento, entre outras informações relevantes.'
           }
           value={requestInfo.obsComercial}
           onChange={(e) =>
@@ -657,7 +599,7 @@ function ContractInfo({
         <button
           onClick={() => {
             if (validateFields()) {
-              goToNextStage();
+              goToNextStage()
             }
           }}
           className="rounded p-2 font-bold hover:bg-black hover:text-white"
@@ -666,7 +608,7 @@ function ContractInfo({
         </button>
       </div>
     </div>
-  );
+  )
 }
 
-export default ContractInfo;
+export default ContractInfo

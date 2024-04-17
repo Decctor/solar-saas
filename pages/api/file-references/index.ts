@@ -25,7 +25,7 @@ const createFileReference: NextApiHandler<PostResponse> = async (req, res) => {
   // Parsing payload and validating fields
   const fileReference = InsertFileReferenceSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TFileReference> = db.collection('file-references')
 
   const insertResponse = await insertFileReference({ collection: collection, info: fileReference, partnerId: partnerId || '' })
@@ -42,7 +42,7 @@ const getFileReferences: NextApiHandler<GetResponse> = async (req, res) => {
   const { opportunityId, clientId, analysisId, homologationId } = req.query
   // if (!opportunityId && !clientId && analysisId) throw new createHttpError.BadRequest('Necessário ID de referência do arquivo.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TFileReference> = db.collection('file-references')
 
   if (opportunityId) {

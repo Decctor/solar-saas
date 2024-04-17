@@ -1,20 +1,13 @@
-import { storage } from '@/services/firebase/storage-config'
+import { storage } from '@/services/firebase'
 import { fileTypes } from '@/utils/constants'
 import { isFile } from '@/utils/methods'
-import { IContractRequest, IProject, IProposalInfo } from '@/utils/models'
+import { IContractRequest, IProposeInfo } from '@/utils/models'
+import { TProjectDTO } from '@/utils/schemas/project.schema'
 import { FullMetadata, UploadResult, getDownloadURL, getMetadata, ref, uploadBytes } from 'firebase/storage'
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { BsCheckCircleFill } from 'react-icons/bs'
 
-type DocumentAttachmentInfoProps = {
-  projectInfo?: IProject
-  requestInfo: IContractRequest
-  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>
-  goToPreviousStage: () => void
-  goToNextStage: () => void
-  proposalInfo: IProposalInfo
-}
 function formatLongString(str: string) {
   if (str.length > 35) {
     return str.substring(0, 35) + '\u2026'
@@ -24,8 +17,8 @@ function formatLongString(str: string) {
 }
 async function getPreviouslyAttachedFiles(
   links: { title: string; link: string; format: string }[],
-  attachments: IProject['anexos'],
-  proposalFileLink?: string
+  attachments: TProjectDTO['anexos'],
+  proposeFileLink?: string
 ) {
   if (attachments) {
     if (attachments.contaDeEnergia) {
@@ -58,26 +51,48 @@ async function getPreviouslyAttachedFiles(
         format: metadata.contentType && fileTypes[metadata.contentType] ? fileTypes[metadata.contentType].title : 'INDEFINIDO',
       })
     }
-    if (proposalFileLink) {
-      let fileRef = ref(storage, proposalFileLink)
+    if (proposeFileLink) {
+      let fileRef = ref(storage, proposeFileLink)
       const metadata = await getMetadata(fileRef)
       const md = metadata as FullMetadata
       links.push({
         title: 'PROPOSTA COMERCIAL',
-        link: proposalFileLink,
+        link: proposeFileLink,
         format: metadata.contentType && fileTypes[metadata.contentType] ? fileTypes[metadata.contentType].title : 'INDEFINIDO',
       })
     }
   }
   return links
 }
-function DocumentAttachmentInfo({ projectInfo, requestInfo, setRequestInfo, goToPreviousStage, goToNextStage, proposalInfo }: DocumentAttachmentInfoProps) {
+
+type DocumentAttachmentInfoProps = {
+  projectInfo?: TProjectDTO
+  requestInfo: IContractRequest
+  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>
+  sameProjectHolder: boolean
+  goToPreviousStage: () => void
+  goToNextStage: () => void
+  proposeInfo: IProposeInfo
+  documentsFile: { [key: string]: File | string | null }
+  setDocumentsFile: React.Dispatch<React.SetStateAction<{ [key: string]: File | string | null }>>
+}
+function DocumentAttachmentInfo({
+  projectInfo,
+  requestInfo,
+  setRequestInfo,
+  sameProjectHolder,
+  goToPreviousStage,
+  goToNextStage,
+  proposeInfo,
+  documentsFile,
+  setDocumentsFile,
+}: DocumentAttachmentInfoProps) {
   const savingRef = projectInfo ? `formSolicitacao/${projectInfo.nome}` : `formSolicitacao/naodefinido`
   const [files, setFiles] = useState<{ [key: string]: File | null | string }>({
     contaDeEnergia: projectInfo?.anexos?.contaDeEnergia ? projectInfo?.anexos?.contaDeEnergia : null,
     documentoComFoto: projectInfo?.anexos?.documentoComFoto ? projectInfo?.anexos?.documentoComFoto : null,
     iptu: projectInfo?.anexos?.iptu ? projectInfo?.anexos?.iptu : null,
-    propostaComercial: proposalInfo.linkArquivo ? proposalInfo.linkArquivo : null,
+    propostaComercial: proposeInfo.linkArquivo ? proposeInfo.linkArquivo : null,
   })
   const [uploadOK, setUploadOK] = useState<boolean | 'loading'>(false)
   function validateDocuments() {
@@ -191,7 +206,10 @@ function DocumentAttachmentInfo({ projectInfo, requestInfo, setRequestInfo, goTo
           })
         }
         if (files.comprovanteEnderecoCorrespondente && typeof files.comprovanteEnderecoCorrespondente != 'string') {
-          var imageRef = ref(storage, `formSolicitacao/${requestInfo.nomeDoContrato}/comprovanteEnderecoCorrespondente${(Math.random() * 10000).toFixed(0)}`)
+          var imageRef = ref(
+            storage,
+            `formSolicitacao/${requestInfo.nomeDoContrato}/comprovanteEnderecoCorrespondente${(Math.random() * 10000).toFixed(0)}`
+          )
           let res = await uploadBytes(imageRef, files.comprovanteEnderecoCorrespondente)
           let url = await getDownloadURL(ref(storage, res.metadata.fullPath))
           const uploadResult = res as UploadResult
@@ -265,6 +283,22 @@ function DocumentAttachmentInfo({ projectInfo, requestInfo, setRequestInfo, goTo
                   : 'INDEFINIDO',
             })
           }
+          if (!sameProjectHolder) {
+            if (files.documentoFotoTitularInstalacao && typeof files.documentoFotoTitularInstalacao != 'string') {
+              var imageRef = ref(storage, `${savingRef}/documentoFotoTitularInstalacao${(Math.random() * 10000).toFixed(0)}`)
+              let res = await uploadBytes(imageRef, files.documentoFotoTitularInstalacao)
+              const uploadResult = res as UploadResult
+              let url = await getDownloadURL(ref(storage, res.metadata.fullPath))
+              links.push({
+                title: 'DOCUMENTO COM FOTO - TITULAR DA INSTALAÇÃO',
+                link: url,
+                format:
+                  uploadResult.metadata.contentType && fileTypes[uploadResult.metadata.contentType]
+                    ? fileTypes[uploadResult.metadata.contentType].title
+                    : 'INDEFINIDO',
+              })
+            }
+          }
         }
         if (requestInfo.tipoDoTitular == 'PESSOA JURIDICA') {
           if (files.contratoSocial && typeof files.contratoSocial != 'string') {
@@ -296,7 +330,10 @@ function DocumentAttachmentInfo({ projectInfo, requestInfo, setRequestInfo, goTo
             })
           }
           if (files.comprovanteEnderecoRepresentante && typeof files.comprovanteEnderecoRepresentante != 'string') {
-            var imageRef = ref(storage, `formSolicitacao/${requestInfo.nomeDoContrato}/comprovanteEnderecoRepresentante${(Math.random() * 10000).toFixed(0)}`)
+            var imageRef = ref(
+              storage,
+              `formSolicitacao/${requestInfo.nomeDoContrato}/comprovanteEnderecoRepresentante${(Math.random() * 10000).toFixed(0)}`
+            )
             let res = await uploadBytes(imageRef, files.comprovanteEnderecoRepresentante)
             const uploadResult = res as UploadResult
             let url = await getDownloadURL(ref(storage, res.metadata.fullPath))
@@ -366,7 +403,7 @@ function DocumentAttachmentInfo({ projectInfo, requestInfo, setRequestInfo, goTo
       }
       if (holder === undefined) {
         setUploadOK(true)
-        links = await getPreviouslyAttachedFiles(links, projectInfo?.anexos, proposalInfo.linkArquivo)
+        links = await getPreviouslyAttachedFiles(links, projectInfo?.anexos, proposeInfo.linkArquivo)
         setRequestInfo((prev) => ({ ...prev, links: links }))
         toast.dismiss(toastID)
         toast.success('Arquivos enviados com sucesso !')
@@ -685,6 +722,46 @@ function DocumentAttachmentInfo({ projectInfo, requestInfo, setRequestInfo, goTo
               </div>
             </>
           )}
+          {!sameProjectHolder ? (
+            <div className="flex w-full flex-col items-center justify-center self-center">
+              <div className="flex items-center gap-2">
+                <label className="ml-2 text-center text-sm font-bold text-[#15599a]" htmlFor="documentoFotoTitularInstalacao">
+                  DOCUMENTO COM FOTO - TITULAR DA INSTALAÇÃO
+                </label>
+                {files.documentoFotoTitularInstalacao ? <BsCheckCircleFill style={{ color: 'rgb(34,197,94)' }} /> : null}
+              </div>
+              <div className="relative mt-2 flex h-fit items-center justify-center rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
+                <div className="absolute">
+                  {files.documentoFotoTitularInstalacao ? (
+                    <div className="flex flex-col items-center">
+                      <i className="fa fa-folder-open fa-4x text-blue-700"></i>
+                      <span className="block text-center font-normal text-gray-400">
+                        {typeof files.documentoFotoTitularInstalacao != 'string'
+                          ? files.documentoFotoTitularInstalacao.name
+                          : formatLongString(files.documentoFotoTitularInstalacao)}
+                      </span>
+                    </div>
+                  ) : (
+                    <div className="flex flex-col items-center">
+                      <i className="fa fa-folder-open fa-4x text-blue-700"></i>
+                      <span className="block font-normal text-gray-400">Adicione o arquivo aqui</span>
+                    </div>
+                  )}
+                </div>
+                <input
+                  onChange={(e) =>
+                    setFiles({
+                      ...files,
+                      documentoFotoTitularInstalacao: e.target.files ? e.target.files[0] : null,
+                    })
+                  }
+                  className="h-full w-full opacity-0"
+                  type="file"
+                  accept=".png, .jpeg, .pdf"
+                />
+              </div>
+            </div>
+          ) : null}
           {requestInfo.tipoDoTitular == 'PESSOA JURIDICA' && (
             <>
               <div className="flex w-full flex-col items-center justify-center self-center">
@@ -810,7 +887,9 @@ function DocumentAttachmentInfo({ projectInfo, requestInfo, setRequestInfo, goTo
                       <div className="flex flex-col items-center">
                         <i className="fa fa-folder-open fa-4x text-blue-700"></i>
                         <span className="block text-center font-normal text-gray-400">
-                          {typeof files.documentoComFotoSocios != 'string' ? files.documentoComFotoSocios.name : formatLongString(files.documentoComFotoSocios)}
+                          {typeof files.documentoComFotoSocios != 'string'
+                            ? files.documentoComFotoSocios.name
+                            : formatLongString(files.documentoComFotoSocios)}
                         </span>
                       </div>
                     ) : (

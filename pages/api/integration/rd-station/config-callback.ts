@@ -17,7 +17,7 @@ const handleRDIntegrationUpdate: NextApiHandler<GetResponse> = async (req, res) 
   // state is supposed to be the ID of the integration config document that needs to be update
   if (!state || typeof state != 'string' || !ObjectId.isValid(state)) throw new createHttpError.BadRequest('ID de atualização não fornecido.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const integrationsCollection: Collection<TIntegrationRDStation> = db.collection('integrations')
   // Getting the current document information in database
   const configDocument = await integrationsCollection.findOne({ _id: new ObjectId(state) })

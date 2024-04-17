@@ -19,7 +19,7 @@ const createSaleGoal: NextApiHandler<PostResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
   const info = InsertSaleGoalSchema.parse(req.body)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const saleGoalsCollection: Collection<TSaleGoal> = db.collection('sale-goals')
 
   const insertResponse = await saleGoalsCollection.insertOne({ ...info, idParceiro: partnerId || '', dataInsercao: new Date().toISOString() })
@@ -35,7 +35,7 @@ const getSaleGoals: NextApiHandler<GetResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
   const { id } = req.query
   if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const saleGoalsCollections: Collection<TSaleGoal> = db.collection('sale-goals')
   const saleGoalsById = await getSaleGoalsByUserId({ collection: saleGoalsCollections, userId: id, partnerId: partnerId || '' })
   res.status(200).json({ data: saleGoalsById })
@@ -52,7 +52,7 @@ const editSaleGoal: NextApiHandler<PutResponse> = async (req, res) => {
   const { id } = req.query
   if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const saleGoalsCollections: Collection<TSaleGoal> = db.collection('sale-goals')
   // if (typeof id != 'string') throw new createHttpError.BadRequest('ID inválido.')
 
@@ -72,7 +72,7 @@ const deleteSaleGoal: NextApiHandler<DeleteResponse> = async (req, res) => {
   const { id } = req.query
   if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const saleGoalsCollections: Collection<TSaleGoal> = db.collection('sale-goals')
 
   const deleteResponse = await saleGoalsCollections.deleteOne({ _id: new ObjectId(id), idParceiro: partnerId || '' })

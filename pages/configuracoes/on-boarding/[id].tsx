@@ -37,9 +37,7 @@ function OnBoarding({ partnerJSON, error }: OnBoardingProps) {
           {stage == 2 ? (
             <User partnerId={partner._id} setAuthorHolder={setAuthorHolder} goToNextStage={() => setStage(3)} goToPreviousStage={() => setStage(1)} />
           ) : null}
-          {stage == 3 ? (
-            <Funnel partnerId={partner._id} author={authorHolder} goToNextStage={() => setStage(4)} goToPreviousStage={() => setStage(2)} />
-          ) : null}
+          {stage == 3 ? <Funnel partnerId={partner._id} author={authorHolder} goToNextStage={() => setStage(4)} goToPreviousStage={() => setStage(2)} /> : null}
           {stage == 4 ? (
             <PricingMethod partnerId={partner._id} author={authorHolder} goToNextStage={() => setStage(5)} goToPreviousStage={() => setStage(3)} />
           ) : null}
@@ -64,7 +62,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         error: 'ID inválido.',
       },
     }
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
   const partner = await partnersCollection.findOne({ _id: new ObjectId(id) })

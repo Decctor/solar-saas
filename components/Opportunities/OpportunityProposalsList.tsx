@@ -18,6 +18,7 @@ type ProposalListBlockProps = {
   opportunityId: string
   idActiveProposal?: string
   setBlockMode: React.Dispatch<React.SetStateAction<TOpportunityBlockMode>>
+  opportunityHasContractRequested: boolean
   opportunityIsWon: boolean
   opportunityWonProposalId?: string | null
 }
@@ -27,6 +28,7 @@ function ProposalListBlock({
   opportunityId,
   idActiveProposal,
   session,
+  opportunityHasContractRequested,
   opportunityIsWon,
   opportunityWonProposalId,
   setBlockMode,
@@ -96,6 +98,7 @@ function ProposalListBlock({
               <ProposalItem
                 key={index}
                 info={proposal}
+                opportunityHasContractRequested={opportunityHasContractRequested}
                 opportunityIsWon={opportunityIsWon}
                 opportunityActiveProposalId={idActiveProposal}
                 opportunityWonProposalId={opportunityWonProposalId}

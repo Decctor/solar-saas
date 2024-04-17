@@ -2,13 +2,15 @@ import DateInput from '@/components/Inputs/DateInput'
 import NumberInput from '@/components/Inputs/NumberInput'
 import SelectInput from '@/components/Inputs/SelectInput'
 import TextInput from '@/components/Inputs/TextInput'
-import { creditors, customersAcquisitionChannels, customersNich, paTypes, signMethods, structureTypes } from '@/utils/constants'
 import { stateCities } from '@/utils/estados_cidades'
 import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getPeakPotByModules } from '@/utils/methods'
-import { IContractRequest, IProposalInfo, IProposalOeMInfo } from '@/utils/models'
-import { handleContractRequest } from '@/utils/mutations/contract-request'
+
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
-import { getOeMPrices } from '@/utils/pricing/methods'
+import { getOeMPrices } from '@/utils/pricing/oem/methods'
+import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
+import { CustomersAcquisitionChannels, StructureTypes } from '@/utils/select-options'
+
 import { useMutation, useQueryClient } from '@tanstack/react-query'
 import axios, { AxiosError } from 'axios'
 import React, { useState } from 'react'
@@ -17,100 +19,52 @@ import { AiFillCloseCircle } from 'react-icons/ai'
 import { BsPatchCheckFill } from 'react-icons/bs'
 import { FaSolarPanel } from 'react-icons/fa'
 import { ImAttachment, ImPower, ImPriceTag } from 'react-icons/im'
-import { MdAttachMoney } from 'react-icons/md'
+import { MdAttachFile, MdAttachMoney } from 'react-icons/md'
 import { TbTopologyFullHierarchy } from 'react-icons/tb'
 type ReviewInfoProps = {
-  requestInfo: IContractRequest
-  setRequestInfo: React.Dispatch<React.SetStateAction<IContractRequest>>
+  requestInfo: TContractRequest
+  setRequestInfo: React.Dispatch<React.SetStateAction<TContractRequest>>
   goToPreviousStage: () => void
   goToNextStage: () => void
   distance: number
   activePlanId?: number
   projectId?: string
-  proposalInfo?: IProposalOeMInfo
+  proposeInfo?: TProposalDTOWithOpportunity
+  documentsFile: { [key: string]: File | string | null }
+  handleRequestContract: () => void
 }
-function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextStage, distance, activePlanId, projectId, proposalInfo }: ReviewInfoProps) {
-  const [pricing, setPricing] = useState(getOeMPrices(proposalInfo ? proposalInfo.premissas.qtdeModulos : 0, distance))
+function ReviewInfo({
+  requestInfo,
+  setRequestInfo,
+  goToPreviousStage,
+  goToNextStage,
+  distance,
+  activePlanId,
+  projectId,
+  proposeInfo,
+  documentsFile,
+  handleRequestContract,
+}: ReviewInfoProps) {
+  const [pricing, setPricing] = useState(getOeMPrices({ modulesQty: proposeInfo?.premissas.numModulos || 0, distance }))
   const queryClient = useQueryClient()
-  const { mutate, isLoading, isSuccess } = useMutationWithFeedback({
+  const { mutate, isPending, isSuccess } = useMutationWithFeedback({
     queryClient: queryClient,
     mutationKey: ['create-oem-contract-request'],
-    mutationFn: handleContractRequest,
-    affectedQueryKey: ['proposal', proposalInfo?._id],
+    mutationFn: handleRequestContract,
+    affectedQueryKey: ['propose', proposeInfo?._id],
   })
-  // const {
-  //   mutate: createContractRequest,
-  //   isLoading,
-  //   isSuccess, //64adb93249f94d9354becb64
-  // } = useMutation({
-  //   mutationKey: ['createContractRequest'],
-  //   mutationFn: async () => {
-  //     try {
-  //       const { data } = await axios.post(`/api/integration/app-ampere/contractRequest`, {
-  //         ...requestInfo,
-  //         idProjetoCRM: projectId,
-  //         idPropostaCRM: proposalInfo?._id,
-  //       })
 
-  //       const projectPipelineUpdate = [
-  //         {
-  //           $set: {
-  //             'funis.$[elem].etapaId': 8,
-  //             solicitacaoContrato: {
-  //               id: data.data,
-  //               idProposta: proposalInfo?._id,
-  //               dataSolicitacao: new Date().toISOString(),
-  //             },
-  //             propostaAtiva: proposalInfo?._id,
-  //           },
-  //         },
-  //         {
-  //           arrayFilters: [{ 'elem.id': 1 }],
-  //         },
-  //       ]
-  //       const { data: projectUpdate } = await axios.put(
-  //         `/api/projects/personalizedUpdate?id=${proposalInfo?.infoProjeto?._id}&responsible=${proposalInfo?.infoProjeto?.responsavel.id}`,
-  //         {
-  //           pipeline: projectPipelineUpdate,
-  //         }
-  //       )
-  //       console.log('UPDATE', projectUpdate)
-  //       await queryClient.invalidateQueries({
-  //         queryKey: ['proposal', proposalInfo?._id],
-  //       })
-  //       if (data.message) toast.success(data.message)
-  //     } catch (error) {
-  //       if (error instanceof AxiosError) {
-  //         let errorMsg = error.response?.data.error.message
-  //         toast.error(errorMsg)
-  //         return
-  //       }
-  //       if (error instanceof Error) {
-  //         let errorMsg = error.message
-  //         toast.error(errorMsg)
-  //         return
-  //       }
-  //     }
-  //   },
-  // })
   function requestContract() {
-    const proposalId = proposalInfo?._id || ''
-    const projectResponsibleId = proposalInfo?.infoProjeto?.responsavel.id || ''
-    const kitCost = null
-    const opportunityId = proposalInfo?.infoProjeto?.idOportunidade
+    const proposeId = proposeInfo?._id || ''
+    const projectResponsibleId = proposeInfo?.oportunidadeDados?.responsaveis.find((r) => r.papel == 'VENDEDOR')?.id
+    const kitCost = 0
+    const opportunityId = proposeInfo?.oportunidadeDados?.idMarketing
     const clientEmail = requestInfo.email
-    const mutateObject = {
-      requestInfo,
-      projectId,
-      proposalId,
-      projectResponsibleId,
-      kitCost,
-    }
     // @ts-ignore
     mutate({
       requestInfo,
       projectId,
-      proposalId,
+      proposeId,
       projectResponsibleId,
       kitCost,
       opportunityId,
@@ -387,7 +341,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                 value={requestInfo.cidade}
                 options={
                   requestInfo.uf
-                    ? stateCities[requestInfo.uf].map((city, index) => {
+                    ? stateCities[requestInfo.uf as keyof typeof stateCities].map((city, index) => {
                         return {
                           id: index,
                           value: city,
@@ -491,13 +445,12 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                 label={'SEGMENTO'}
                 value={requestInfo.segmento}
                 editable={true}
-                options={customersNich.map((nich, index) => {
-                  return {
-                    id: index + 1,
-                    label: nich.label,
-                    value: nich.value,
-                  }
-                })}
+                options={[
+                  { id: 1, label: 'RESIDENCIAL', value: 'RESIDENCIAL' },
+                  { id: 2, label: 'COMERCIAL', value: 'COMERCIAL' },
+                  { id: 3, label: 'RURAL', value: 'RURAL' },
+                  { id: 4, label: 'INDUSTRIAL', value: 'INDUSTRIAL' },
+                ]}
                 handleChange={(value) => setRequestInfo({ ...requestInfo, segmento: value })}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => {
@@ -514,13 +467,10 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                 label={'FORMA DE ASSINATURA'}
                 editable={true}
                 value={requestInfo.formaAssinatura}
-                options={signMethods.map((method, index) => {
-                  return {
-                    id: index + 1,
-                    label: method.label,
-                    value: method.value,
-                  }
-                })}
+                options={[
+                  { id: 1, label: 'FISICA', value: 'FISICA' },
+                  { id: 2, label: 'DIGITAL', value: 'DIGITAL' },
+                ]}
                 handleChange={(value) => setRequestInfo({ ...requestInfo, formaAssinatura: value })}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => {
@@ -537,7 +487,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                 editable={true}
                 value={requestInfo.canalVenda}
                 handleChange={(value) => setRequestInfo({ ...requestInfo, canalVenda: value })}
-                options={customersAcquisitionChannels.map((value) => value)}
+                options={CustomersAcquisitionChannels.map((value) => value)}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => {
                   setRequestInfo((prev) => ({
@@ -886,7 +836,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                 value={requestInfo.cidadeInstalacao}
                 options={
                   requestInfo.ufInstalacao
-                    ? stateCities[requestInfo.ufInstalacao].map((city, index) => {
+                    ? stateCities[requestInfo.ufInstalacao as keyof typeof stateCities].map((city, index) => {
                         return {
                           id: index,
                           value: city,
@@ -1015,7 +965,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
               <SelectInput
                 label={'TIPO DA ESTRUTURA'}
                 editable={true}
-                options={structureTypes.map((type, index) => {
+                options={StructureTypes.map((type, index) => {
                   return {
                     id: index + 1,
                     label: type.label,
@@ -1026,7 +976,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                 handleChange={(value) => setRequestInfo({ ...requestInfo, tipoEstrutura: value })}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => {
-                  setRequestInfo((prev) => ({ ...prev, tipoEstrutura: null }))
+                  setRequestInfo((prev) => ({ ...prev, tipoEstrutura: '' }))
                 }}
                 width="100%"
               />
@@ -1071,7 +1021,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                 onReset={() => {
                   setRequestInfo((prev) => ({
                     ...prev,
-                    estruturaAmpere: undefined,
+                    estruturaAmpere: 'NÃO',
                   }))
                 }}
                 width="100%"
@@ -1107,7 +1057,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                 onReset={() =>
                   setRequestInfo((prev) => ({
                     ...prev,
-                    responsavelEstrutura: undefined,
+                    responsavelEstrutura: 'NÃO SE APLICA',
                   }))
                 }
                 width="100%"
@@ -1243,7 +1193,60 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                     editable={true}
                     value={requestInfo.tipoDePadrao}
                     handleChange={(value) => setRequestInfo({ ...requestInfo, tipoDePadrao: value })}
-                    options={paTypes.map((type, index) => {
+                    options={[
+                      {
+                        label: 'MONO 40A',
+                        value: 'MONO 40A',
+                      },
+                      {
+                        label: 'MONO 63A',
+                        value: 'MONO 63A',
+                      },
+                      {
+                        label: 'BIFASICO 63A',
+                        value: 'BIFASICO 63A',
+                      },
+                      {
+                        label: 'BIFASICO 70A',
+                        value: 'BIFASICO 70A',
+                      },
+                      {
+                        label: 'BIFASICO 100A',
+                        value: 'BIFASICO 100A',
+                      },
+                      {
+                        label: 'BIFASICO 125A',
+                        value: 'BIFASICO 125A',
+                      },
+                      {
+                        label: 'BIFASICO 150A',
+                        value: 'BIFASICO 150A',
+                      },
+                      {
+                        label: 'BIFASICO 200A',
+                        value: 'BIFASICO 200A',
+                      },
+                      {
+                        label: 'TRIFASICO 63A',
+                        value: 'TRIFASICO 63A',
+                      },
+                      {
+                        label: 'TRIFASICO 100A',
+                        value: 'TRIFASICO 100A',
+                      },
+                      {
+                        label: 'TRIFASICO 125A',
+                        value: 'TRIFASICO 125A',
+                      },
+                      {
+                        label: 'TRIFASICO 150A',
+                        value: 'TRIFASICO 150A',
+                      },
+                      {
+                        label: 'TRIFASICO 200A',
+                        value: 'TRIFASICO 200A',
+                      },
+                    ].map((type, index) => {
                       return {
                         id: index + 1,
                         label: type.label,
@@ -1735,7 +1738,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                     width={'450px'}
                     label={'VALOR DO CONTRATO FOTOVOLTAICO(SEM CUSTOS ADICIONAIS)'}
                     editable={true}
-                    value={requestInfo.valorContrato}
+                    value={requestInfo.valorContrato || null}
                     placeholder={'Preencha aqui o valor do contrato (sem custos adicionais de estrutura/padrão/O&M, etc...'}
                     handleChange={(value) =>
                       setRequestInfo((prev) => ({
@@ -1778,7 +1781,56 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                         width={'450px'}
                         label={'CREDOR'}
                         editable={true}
-                        options={creditors.map((creditor, index) => {
+                        options={[
+                          {
+                            label: 'BANCO DO BRASIL',
+                            value: 'BANCO DO BRASIL',
+                          },
+                          {
+                            label: 'BRADESCO',
+                            value: 'BRADESCO',
+                          },
+                          {
+                            label: 'BV FINANCEIRA',
+                            value: 'BV FINANCEIRA',
+                          },
+                          {
+                            label: 'CAIXA',
+                            value: 'CAIXA',
+                          },
+                          {
+                            label: 'COOPACREDI',
+                            value: 'COOPACREDI',
+                          },
+                          {
+                            label: 'CREDICAMPINA',
+                            value: 'CREDICAMPINA',
+                          },
+                          {
+                            label: 'CREDIPONTAL',
+                            value: 'CREDIPONTAL',
+                          },
+                          {
+                            label: 'SANTANDER',
+                            value: 'SANTANDER',
+                          },
+                          {
+                            label: 'SOL FÁCIL',
+                            value: 'SOL FÁCIL',
+                          },
+                          {
+                            label: 'SICRED',
+                            value: 'SICRED',
+                          },
+                          {
+                            label: 'SICOOB ARACOOP',
+                            value: 'SICOOB ARACOOP',
+                          },
+                          {
+                            label: 'SICOOB',
+                            value: 'SICOOB',
+                          },
+                        ].map((creditor, index) => {
                           return {
                             id: index + 1,
                             label: creditor.label,
@@ -1826,7 +1878,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                     label={'SE CARTÃO OU CHEQUE, QUANTAS PARCELAS?'}
                     placeholder="Preencha aqui o número de parcelas."
                     editable={true}
-                    value={requestInfo.numParcelas}
+                    value={requestInfo.numParcelas || null}
                     handleChange={(value) =>
                       setRequestInfo({
                         ...requestInfo,
@@ -1842,7 +1894,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                     label={'VALOR DA PARCELA'}
                     placeholder="Preencha aqui o valor das parcelas."
                     editable={true}
-                    value={requestInfo.valorParcela}
+                    value={requestInfo.valorParcela || null}
                     handleChange={(value) =>
                       setRequestInfo({
                         ...requestInfo,
@@ -1892,8 +1944,8 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
                     options={[
                       {
                         id: 1,
-                        label: '70% A VISTA NA ENTRADA + 15% NA FINALIZAÇÃO DA INSTALAÇÃO E 15% APÓS TROCA DO MEDIDOR',
-                        value: '70% A VISTA NA ENTRADA + 15% NA FINALIZAÇÃO DA INSTALAÇÃO E 15% APÓS TROCA DO MEDIDOR',
+                        label: '80% A VISTA NA ENTRADA + 20% NA FINALIZAÇÃO DA INSTALAÇÃO',
+                        value: '80% A VISTA NA ENTRADA + 20% NA FINALIZAÇÃO DA INSTALAÇÃO',
                       },
                       {
                         id: 2,
@@ -2036,13 +2088,11 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
         </div>
         <div className="flex w-full grow flex-col bg-[#fff] pb-2">
           <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">DOCUMENTAÇÃO</span>
-          <div className="flex w-full flex-col items-center">
-            {requestInfo.links?.map((file, index) => (
-              <div key={index} className="flex items-center justify-center gap-2">
-                <p className="text-sm italic text-gray-500">
-                  {file.title} ({file.format})
-                </p>
-                <ImAttachment />
+          <div className="flex w-full flex-wrap items-start justify-around gap-2">
+            {Object.entries(documentsFile).map(([key, value]) => (
+              <div className="flex items-center gap-1 rounded-md bg-blue-800 px-2 py-1 text-white">
+                <MdAttachFile />
+                <p className="text-sm">{key}</p>
               </div>
             ))}
           </div>
@@ -2060,12 +2110,12 @@ function ReviewInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextSt
             onClick={() => {
               requestContract()
             }}
-            disabled={isLoading || isSuccess}
+            disabled={isPending || isSuccess}
             className="rounded p-2 font-bold hover:bg-black hover:text-white"
           >
-            {isLoading ? 'Criando solicitação...' : null}
+            {isPending ? 'Criando solicitação...' : null}
             {isSuccess ? 'Criação concluida!' : null}
-            {!isLoading && !isSuccess ? 'Criar solicitação' : null}
+            {!isPending && !isSuccess ? 'Criar solicitação' : null}
           </button>
         </div>
       </div>

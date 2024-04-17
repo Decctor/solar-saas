@@ -25,7 +25,7 @@ const createOpportunityHistory: NextApiHandler<PostResponse> = async (req, res) 
 
   const opportunityHistory = InsertOpportunityHistorySchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunityHistoryCollection: Collection<TOpportunityHistory> = db.collection('opportunities-history')
 
   const insertResponse = await insertOpportunityHistory({ collection: opportunityHistoryCollection, info: opportunityHistory, partnerId: partnerId || '' })
@@ -48,7 +48,7 @@ const getOpportunitiesHistory: NextApiHandler<GetResponse> = async (req, res) =>
   if (!opportunityId || typeof opportunityId != 'string' || !ObjectId.isValid(opportunityId))
     throw new createHttpError.BadRequest('ID de oportunidade inválido.')
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TOpportunityHistory> = db.collection('opportunities-history')
 
   const history = await getOpportunityHistory({ opportunityId: opportunityId, collection: collection, partnerId: partnerId || '' })
@@ -90,7 +90,7 @@ const editOpportunityHistory: NextApiHandler<PutResponse> = async (req, res) => 
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
   const changes = UpdateOpportunityHistorySchema.parse(req.body)
   // const changes = req.body
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunityHistoryCollection: Collection<TOpportunityHistory> = db.collection('opportunities-history')
   // Validating existence of opportunity history
   const opportunityHistory = await getOpportunityHistoryById({ collection: opportunityHistoryCollection, id: id, partnerId: partnerId || '' })

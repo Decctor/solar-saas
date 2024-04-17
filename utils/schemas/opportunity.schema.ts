@@ -60,6 +60,8 @@ const GeneralOpportunitySchema = z.object({
     idProposta: z.string().optional().nullable(),
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime().optional().nullable(),
+    idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
   }),
   instalacao: z.object({
     concessionaria: z.string().optional().nullable(),
@@ -148,6 +150,8 @@ export const InsertOpportunitySchema = z.object({
     idProposta: z.string().optional().nullable(),
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
   }),
   instalacao: z.object({
     concessionaria: z.string().optional().nullable(),

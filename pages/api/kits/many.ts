@@ -18,7 +18,7 @@ const createKits: NextApiHandler<PostResponse> = async (req, res) => {
   const partnerId = null // session.user.idParceiro
 
   const kits = z.array(InsertNewKitSchema).parse(req.body)
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
 
   const insertResponse = await insertManyKits({ collection: kitsCollection, info: kits, partnerId: partnerId || '' })
@@ -35,7 +35,7 @@ const updateKits: NextApiHandler<PutResponse> = async (req, res) => {
   const partnerId = session.user.idParceiro
   const kits = z.array(KitDTOSchema).parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
 
   const bulkwriteArr = kits.map((kit) => {
@@ -73,7 +73,7 @@ const deleteKits: NextApiHandler<DeleteResponse> = async (req, res) => {
 
   const objectIds = parsedIds.map((id) => new ObjectId(id))
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
 
   const deleteResponse = await kitsCollection.deleteMany({ _id: { $in: objectIds }, idParceiro: partnerId || '' })

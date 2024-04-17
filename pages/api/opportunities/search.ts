@@ -19,7 +19,7 @@ const getOpportunitiesBySearch: NextApiHandler<GetResponse> = async (req, res) =
   await validateAuthentication(req)
   const search = ParamSchema.parse(req.query.param)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TOpportunity> = db.collection('opportunities')
 
   const opportunities = await collection

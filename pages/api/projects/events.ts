@@ -23,9 +23,7 @@ const eventSchema = z.union([
       nome: z.string(),
       avatar_url: z.string().nullable(),
     }),
-    titulo: z
-      .string({ required_error: 'Por favor, forneça o título da atividade.' })
-      .min(5, 'Por favor, dê um título de ao menos 5 letras à atividade.'),
+    titulo: z.string({ required_error: 'Por favor, forneça o título da atividade.' }).min(5, 'Por favor, dê um título de ao menos 5 letras à atividade.'),
     categoria: z.literal('ATIVIDADE'),
     tipo: z.union([z.literal('LIGAÇÃO'), z.literal('REUNIÃO'), z.literal('VISITA TÉCNICA')], {
       required_error: 'Por favor, forneça o tipo da atividade.',
@@ -65,7 +63,7 @@ const eventSchema = z.union([
 const createEvent: NextApiHandler<PostResponse> = async (req, res) => {
   await validateAuthentication(req)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('projectsEvents')
   console.log(req.body)
   const event = eventSchema.parse(req.body)
@@ -95,7 +93,7 @@ const getEvents: NextApiHandler<GetResponse> = async (req, res) => {
   if (!id || typeof id !== 'string') {
     throw 'ID de projeto inválido.'
   }
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('projectsEvents')
   const events = await collection.find({ 'projeto.id': id }).sort({ dataInsercao: -1 }).toArray()
   const open = events.filter((event: any) => event.categoria == 'ATIVIDADE' && !event.dataConclusao)
@@ -173,7 +171,7 @@ const updateEvent: NextApiHandler<PutResponse> = async (req, res) => {
   console.log(req.body, req.query)
   const changes = eventEditSchema.parse(req.body)
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('projectsEvents')
   if (!session.user.permissoes.projetos.editar && responsible != session.user.id) {
     throw new createHttpError.Unauthorized('Somente o responsável ou administradores podem alterar essa anotação/atividade.')
