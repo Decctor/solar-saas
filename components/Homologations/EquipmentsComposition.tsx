@@ -9,9 +9,11 @@ import Modules from '@/utils/json-files/pvmodules.json'
 import NumberInput from '../Inputs/NumberInput'
 import TextInput from '../Inputs/TextInput'
 import { ImPower } from 'react-icons/im'
-import { FaIndustry } from 'react-icons/fa'
+import { FaIndustry, FaSolarPanel } from 'react-icons/fa'
 import { MdDelete } from 'react-icons/md'
 import { renderCategoryIcon } from '@/lib/methods/rendering'
+import { getInverterPeakPowerByProducts, getModulesPeakPotByProducts } from '@/lib/methods/extracting'
+import { TProduct } from '@/utils/schemas/products.schema'
 type EquipmentsCompositionProps = {
   infoHolder: THomologation
   setInfoHolder: React.Dispatch<React.SetStateAction<THomologation>>
@@ -340,7 +342,20 @@ function EquipmentsComposition({ infoHolder, setInfoHolder }: EquipmentsComposit
           </button>
         </div>
       </div>
-      <h1 className="mb-2 text-start font-Inter font-bold leading-none tracking-tight">EQUIPAMENTOS A SEREM HOMOLOGADOS</h1>
+      <div className="mt-2 flex w-full items-center justify-between gap-2">
+        <h1 className="mb-2 text-start font-Inter font-bold leading-none tracking-tight">EQUIPAMENTOS A SEREM HOMOLOGADOS</h1>
+        <div className="flex items-center gap-2">
+          <div className="flex items-center gap-1 rounded-md bg-[#15599a] px-2 py-1 text-white">
+            <FaSolarPanel />
+            <p className="text-xs font-medium tracking-tight">{getModulesPeakPotByProducts(infoHolder.equipamentos as TProductItem[])} kWp EM MÓDULOS</p>
+          </div>
+          <div className="flex items-center gap-1 rounded-md bg-[#fead41] px-2 py-1 text-white">
+            <ImPower />
+            <p className="tracking-tigh text-xs font-medium">{getInverterPeakPowerByProducts(infoHolder.equipamentos as TProductItem[])} kWp EM INVERSORES</p>
+          </div>
+        </div>
+      </div>
+
       <div className="flex w-full flex-wrap items-center justify-around gap-2">
         {infoHolder.equipamentos.length > 0 ? (
           infoHolder.equipamentos.map((product, index) => (

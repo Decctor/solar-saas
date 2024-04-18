@@ -1,20 +1,20 @@
 import React, { useEffect, useState } from 'react'
 import { AnimatePresence, motion } from 'framer-motion'
 import { MdDashboard, MdLogout, MdNotifications, MdNotificationsActive, MdOutlineMiscellaneousServices } from 'react-icons/md'
-import { FaTag, FaUser, FaUsers } from 'react-icons/fa'
+import { FaProjectDiagram, FaTag, FaUser, FaUsers } from 'react-icons/fa'
 import { TfiAngleRight } from 'react-icons/tfi'
 import { BsBookmarksFill, BsCart, BsFillClipboardDataFill, BsFillGearFill, BsGraphUpArrow, BsPatchCheckFill } from 'react-icons/bs'
 import SidebarItem from './SidebarItem'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
-import Logo from '../utils/images/logo-with-color.png'
-import { signOut, useSession } from 'next-auth/react'
+import Logo from '../utils/images/ampere-logo-azul.png'
+import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 
 import { BiStats } from 'react-icons/bi'
 import { IoMdSettings } from 'react-icons/io'
 import { Session } from 'next-auth'
-import { usePartnerOwnInfo } from '@/utils/queries/partners'
+
 //react-icons.github.io/react-icons
 
 type SidebarProps = {
@@ -41,11 +41,7 @@ export const Sidebar = ({ session }: SidebarProps) => {
       >
         <div className="flex h-[70px] w-full items-start justify-center">
           <div className="relative h-[37px] w-[37px]">
-            {session.user.parceiro?.logo_url ? (
-              <Image src={session.user.parceiro?.logo_url} alt="LOGO" title="LOGO" fill={true} />
-            ) : (
-              <Image src={Logo} alt="LOGO" title="LOGO" fill={true} />
-            )}
+            <Image src={Logo} alt="LOGO" title="LOGO" fill={true} />
           </div>
         </div>
         <div className="flex w-full grow flex-col">
@@ -65,28 +61,35 @@ export const Sidebar = ({ session }: SidebarProps) => {
             <TfiAngleRight />
           </motion.div>
           {sidebarExtended ? <h2 className="h-[18px] text-xs text-gray-500">PRINCIPAL</h2> : <div className="h-[18px] w-full "></div>}
-          <SidebarItem text="Dashboard" isOpen={sidebarExtended} url="/" icon={<BiStats style={{ fontSize: '20px', color: '#264653' }} />} />
+          <SidebarItem text="Dashboard" isOpen={sidebarExtended} url="/" icon={<BiStats style={{ fontSize: '15px', color: '#264653' }} />} />
           <SidebarItem
             text="Projetos"
             isOpen={sidebarExtended}
             url="/comercial/oportunidades"
-            icon={<MdDashboard style={{ fontSize: '20px', color: '#264653' }} />}
+            icon={<MdDashboard style={{ fontSize: '15px', color: '#264653' }} />}
           />
-          <SidebarItem text="Clientes" isOpen={sidebarExtended} url="/clientes" icon={<FaUser style={{ fontSize: '20px', color: '#264653' }} />} />
+          <SidebarItem text="Clientes" isOpen={sidebarExtended} url="/clientes" icon={<FaUser style={{ fontSize: '15px', color: '#264653' }} />} />
           {sidebarExtended ? <h2 className="mt-2 h-[18px] text-xs text-gray-500">COMPOSIÇÕES</h2> : <div className="mt-2 h-[18px]"></div>}
-          <SidebarItem text="Kits" isOpen={sidebarExtended} url="/kits" icon={<FaTag style={{ fontSize: '20px', color: '#264653' }} />} />
+          <SidebarItem text="Kits" isOpen={sidebarExtended} url="/kits" icon={<FaTag style={{ fontSize: '15px', color: '#264653' }} />} />
           <SidebarItem
             text="Planos de assinatura"
             isOpen={sidebarExtended}
             url="/planos"
-            icon={<BsBookmarksFill style={{ fontSize: '20px', color: '#264653' }} />}
+            icon={<BsBookmarksFill style={{ fontSize: '15px', color: '#264653' }} />}
           />
-          <SidebarItem text="Produtos" isOpen={sidebarExtended} url="/produtos" icon={<BsCart style={{ fontSize: '20px', color: '#264653' }} />} />
+          <SidebarItem text="Produtos" isOpen={sidebarExtended} url="/produtos" icon={<BsCart style={{ fontSize: '15px', color: '#264653' }} />} />
           <SidebarItem
             text="Serviços"
             isOpen={sidebarExtended}
             url="/servicos"
-            icon={<MdOutlineMiscellaneousServices style={{ fontSize: '20px', color: '#264653' }} />}
+            icon={<MdOutlineMiscellaneousServices style={{ fontSize: '15px', color: '#264653' }} />}
+          />
+          {sidebarExtended ? <h2 className="mt-2 h-[18px] text-xs text-gray-500">OPERACIONAL</h2> : <div className="mt-2 h-[18px]"></div>}
+          <SidebarItem
+            text="Homologações"
+            isOpen={sidebarExtended}
+            url="/operacional/homologacoes"
+            icon={<FaProjectDiagram style={{ fontSize: '15px', color: '#264653' }} />}
           />
         </div>
         {/* <NotificationBlock sidebarExtended={sidebarExtended} /> */}
@@ -104,7 +107,7 @@ export const Sidebar = ({ session }: SidebarProps) => {
             text="Configurações"
             isOpen={sidebarExtended}
             url={'/configuracoes'}
-            icon={<IoMdSettings style={{ fontSize: '20px', color: '#264653' }} />}
+            icon={<IoMdSettings style={{ fontSize: '15px', color: '#264653' }} />}
           />
           <div className={`mt-2 flex cursor-pointer items-center justify-center rounded p-2  duration-300 ease-in  hover:bg-blue-100`}>
             <MdLogout
@@ -113,7 +116,7 @@ export const Sidebar = ({ session }: SidebarProps) => {
                 push('/auth/signin')
               }}
               style={{
-                fontSize: '20px',
+                fontSize: '15px',
                 color: '#264653',
                 cursor: 'pointer',
                 alignSelf: 'center',
@@ -144,11 +147,7 @@ export const Sidebar = ({ session }: SidebarProps) => {
             <div className="flex h-[37px] w-full items-start justify-center">
               <Link href={'/'}>
                 <div className="relative h-[37px] w-[37px]">
-                  {session.user.parceiro?.logo_url ? (
-                    <Image src={session.user.parceiro?.logo_url} alt="LOGO" title="LOGO" fill={true} />
-                  ) : (
-                    <Image src={Logo} alt="LOGO" title="LOGO" fill={true} />
-                  )}
+                  <Image src={Logo} alt="LOGO" title="LOGO" fill={true} />
                 </div>
               </Link>
             </div>
@@ -185,7 +184,7 @@ export const Sidebar = ({ session }: SidebarProps) => {
           >
             <div className="flex items-center justify-center p-2 text-[#264653] duration-300 ease-in hover:scale-105 hover:bg-blue-100">
               <Link href={'/'}>
-                <BiStats style={{ fontSize: '20px', color: '#264653' }} />
+                <BiStats style={{ fontSize: '15px', color: '#264653' }} />
               </Link>
             </div>
             <div className="flex items-center justify-center p-2 text-[#264653] duration-300 ease-in hover:scale-105 hover:bg-blue-100">

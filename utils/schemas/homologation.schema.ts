@@ -28,6 +28,21 @@ const HomologationOpportunitySchema = z.object({
     invalid_type_error: 'Tipo não válido para o nome da oportunidade de referência.',
   }),
 })
+const HomologationAccessStatusSchema = z.union(
+  [
+    z.literal('PENDENTE'),
+    z.literal('ELABORANDO DOCUMENTAÇÕES'),
+    z.literal('AGUARDANDO ASSINATURA'),
+    z.literal('AGUARDANDO FATURAMENTO'),
+    z.literal('AGUARDANDO PENDÊNCIAS'),
+    z.literal('APROVADO COM OBRAS'),
+    z.literal('APROVADO COM REDUÇÃO'), // houve redução e optou-se por prosseguir com termo de responsabilidade
+    z.literal('APROVADO'), // houve aprovação, sem restrições
+    z.literal('REPROVADO'),
+    z.literal('REPROVADO COM REDUÇÃO'), // houve redução e optou-se por não prosseguir com o contrato
+  ],
+  { required_error: 'Status da homologação não informado.', invalid_type_error: 'Tipo não válido para o status da homologação.' }
+)
 const HomologationEquipmentSchema = z.object({
   categoria: z.union([z.literal('MÓDULO'), z.literal('INVERSOR')]),
   fabricante: z.string({
@@ -138,20 +153,7 @@ const HomologationUpdatesSchema = z.object({
   }),
   autor: AuthorSchema,
 })
-const HomologationStatusSchema = z.union(
-  [
-    z.literal('PENDENTE'),
-    z.literal('ELABORANDO DOCUMENTAÇÕES'),
-    z.literal('AGUARDANDO ASSINATURA'),
-    z.literal('AGUARDANDO FATURAMENTO'),
-    z.literal('AGUARDANDO PENDÊNCIAS'),
-    z.literal('APROVADO COM OBRAS'),
-    z.literal('APROVADO COM RESTRIÇÕES'),
-    z.literal('APROVADO'),
-    z.literal('REPROVADO'),
-  ],
-  { required_error: 'Status da homologação não informado.', invalid_type_error: 'Tipo não válido para o status da homologação.' }
-)
+
 const HomologationVistorySchema = z.object({
   dataSolicitacao: z
     .string({ invalid_type_error: 'Tipo não válido para a data de solicitação da vistoria.' })
@@ -166,33 +168,25 @@ const HomologationVistorySchema = z.object({
 })
 
 const GeneralHomologationSchema = z.object({
-  status: HomologationStatusSchema,
   idParceiro: z.string({
     required_error: 'ID de referência do parceiro não informado.',
     invalid_type_error: 'Tipo não válido para ID de referência do parceiro.',
   }),
-  oportunidade: HomologationOpportunitySchema,
-  titular: HolderSchema,
-  equipamentos: z.array(HomologationEquipmentSchema, {
-    required_error: 'Lista de equipamentos não informada.',
-    invalid_type_error: 'Tipo não válido para a lista de equipamentos.',
-  }),
-  localizacao: HomologationLocationSchema,
-  instalacao: HomologationInstalationSchema,
-  documentacao: HomologationDocumentationSchema,
-  acesso: HomologationAccessControlSchema,
-  atualizacoes: z.array(HomologationUpdatesSchema),
-  vistoria: HomologationVistorySchema,
-  dataEfetivacao: z.string().optional().nullable(),
-  autor: AuthorSchema,
-  dataInsercao: z.string().datetime(),
-})
-
-export const InsertHomologationSchema = z.object({
-  status: HomologationStatusSchema,
-  idParceiro: z.string({
-    required_error: 'ID de referência do parceiro não informado.',
-    invalid_type_error: 'Tipo não válido para ID de referência do parceiro.',
+  idProposta: z
+    .string({
+      required_error: 'ID de referência de proposta não informado.',
+      invalid_type_error: 'Tipo não válido para o ID de referência de proposta.',
+    })
+    .optional()
+    .nullable(),
+  status: HomologationAccessStatusSchema,
+  potencia: z
+    .number({ required_error: 'Potência de homologação não informada.', invalid_type_error: 'Tipo não válido para a potência de homologação.' })
+    .optional()
+    .nullable(),
+  distribuidora: z.string({
+    required_error: 'Nome da concessionária/distribuidora de energia não informada.',
+    invalid_type_error: 'Tipo não válido para o nome da concessionária/distribuidora de energia.',
   }),
   oportunidade: HomologationOpportunitySchema,
   titular: HolderSchema,
@@ -207,17 +201,52 @@ export const InsertHomologationSchema = z.object({
   atualizacoes: z.array(HomologationUpdatesSchema),
   vistoria: HomologationVistorySchema,
   dataEfetivacao: z
-    .string({
-      required_error: 'Data de conclusão da homologação não informada.',
-      invalid_type_error: 'Tipo não válido para a data da conclusão da homologação.',
-    })
-    .datetime({ message: 'Formato inválido para a data de conclusão da homologação.' })
+    .string({ required_error: 'Data de efetivação não informada.', invalid_type_error: 'Tipo não válido para data de efetivação.' })
     .optional()
     .nullable(),
   autor: AuthorSchema,
-  dataInsercao: z
-    .string({ required_error: 'Data de inserção não fornecida.', invalid_type_error: 'Tipo não válido para a data de inserção.' })
-    .datetime({ message: 'Formato inválido para a data de inserção.' }),
+  dataInsercao: z.string().datetime(),
+})
+
+export const InsertHomologationSchema = z.object({
+  idParceiro: z.string({
+    required_error: 'ID de referência do parceiro não informado.',
+    invalid_type_error: 'Tipo não válido para ID de referência do parceiro.',
+  }),
+  idProposta: z
+    .string({
+      required_error: 'ID de referência de proposta não informado.',
+      invalid_type_error: 'Tipo não válido para o ID de referência de proposta.',
+    })
+    .optional()
+    .nullable(),
+  status: HomologationAccessStatusSchema,
+  potencia: z
+    .number({ required_error: 'Potência de homologação não informada.', invalid_type_error: 'Tipo não válido para a potência de homologação.' })
+    .optional()
+    .nullable(),
+  distribuidora: z.string({
+    required_error: 'Nome da concessionária/distribuidora de energia não informada.',
+    invalid_type_error: 'Tipo não válido para o nome da concessionária/distribuidora de energia.',
+  }),
+  oportunidade: HomologationOpportunitySchema,
+  titular: HolderSchema,
+  equipamentos: z.array(HomologationEquipmentSchema, {
+    required_error: 'Lista de equipamentos não informada.',
+    invalid_type_error: 'Tipo não válido para a lista de equipamentos.',
+  }),
+  localizacao: HomologationLocationSchema,
+  instalacao: HomologationInstalationSchema,
+  documentacao: HomologationDocumentationSchema,
+  acesso: HomologationAccessControlSchema,
+  atualizacoes: z.array(HomologationUpdatesSchema),
+  vistoria: HomologationVistorySchema,
+  dataEfetivacao: z
+    .string({ required_error: 'Data de efetivação não informada.', invalid_type_error: 'Tipo não válido para data de efetivação.' })
+    .optional()
+    .nullable(),
+  autor: AuthorSchema,
+  dataInsercao: z.string().datetime(),
 })
 
 export type THomologation = z.infer<typeof GeneralHomologationSchema>

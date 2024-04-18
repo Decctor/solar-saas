@@ -50,8 +50,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
   const { data: proposal, isLoading: proposalLoading, isError: proposalError, isSuccess: proposalSuccess } = useProposalById({ id: proposalId })
   const clientId = proposal?.oportunidadeDados.idCliente
   const { data: client } = useClientById({ id: clientId || '' })
-  const { data: partner } = usePartnerById({ id: session.user.idParceiro || '' })
-  const { data: pricingMethods, isSuccess, isLoading, isError } = usePricingMethods()
+  const { data: pricingMethods } = usePricingMethods()
 
   const userHasPricingViewPermission = session?.user.permissoes.precos.visualizar
   const userHasPricingEditPermission = session?.user.permissoes.precos.editar

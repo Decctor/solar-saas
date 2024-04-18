@@ -4,17 +4,10 @@ import { IUsuario } from '@/utils/models'
 import { FaPercentage } from 'react-icons/fa'
 import StatListItem from '../StatListItem'
 import dayjs from 'dayjs'
+import { TSellerSalesResults } from '@/pages/api/stats/comercial-results/sales-sellers'
 import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
-import { TSalesStats } from '@/pages/api/stats/sales'
 const currentDate = new Date()
 const periodStr = dayjs(currentDate).format('MM/YYYY')
-type ConversionStatCardProps = {
-  stats?: TSalesStats['vendas']
-  statsLoading: boolean
-  numeratorStatKey: keyof TSalesStats['vendas'][string]['ATUAL']
-  denominatorStatKey: keyof TSalesStats['vendas'][string]['ATUAL']
-  promoters: TUserDTOWithSaleGoals[]
-}
 function getConversionGoal({ promoterName, promoters }: { promoterName: string; promoters: TUserDTOWithSaleGoals[] }) {
   const promoter = promoters.find((p) => p.nome == promoterName)
   if (!promoter) return 0
@@ -33,18 +26,18 @@ function getPromoterListOrdenatedByKeyStat({
   denominatorStatKey,
   promoters,
 }: {
-  stats?: TSalesStats['vendas']
-  numeratorStatKey: keyof TSalesStats['vendas'][string]['ATUAL']
-  denominatorStatKey: keyof TSalesStats['vendas'][string]['ATUAL']
+  stats?: TSellerSalesResults
+  numeratorStatKey: string
+  denominatorStatKey: string
   promoters: TUserDTOWithSaleGoals[]
 }) {
   if (!stats) return []
   const statsAsList = Object.entries(stats).map(([key, value]) => {
     const promoterName = key
 
-    const numerator = value['ATUAL'][numeratorStatKey].atingido
+    const numerator = value[numeratorStatKey as keyof typeof value].atingido
 
-    const denominator = value['ATUAL'][denominatorStatKey].atingido
+    const denominator = value[numeratorStatKey as keyof typeof value].atingido
     const relation = numerator / denominator || 0
 
     const goal = getConversionGoal({ promoterName, promoters })
@@ -69,10 +62,18 @@ function getPromoterListOrdenatedByKeyStat({
     }
   })
   const orderedStatsList = statsAsList.sort((a, b) => {
-    return b.percentual - a.percentual
+    return b.atingido - a.atingido
   })
 
   return orderedStatsList
+}
+
+type ConversionStatCardProps = {
+  stats: TSellerSalesResults | undefined
+  statsLoading: boolean
+  numeratorStatKey: string
+  denominatorStatKey: string
+  promoters: TUserDTOWithSaleGoals[]
 }
 function ConversionStatCard({ stats, statsLoading, promoters, numeratorStatKey, denominatorStatKey }: ConversionStatCardProps) {
   return (

@@ -5,7 +5,7 @@ type LossesByReasonProps = {
 }
 function getListOrdenated(stats: any) {
   if (!stats) return []
-  const lossesByReasonObject = stats['ATUAL'].perdasPorMotivo
+  const lossesByReasonObject = stats.perdasPorMotivo
   const lossesByReasonAsArray = Object.entries(lossesByReasonObject).map(([key, value]) => {
     return {
       motivo: key,
@@ -25,21 +25,15 @@ function LossesByReason({ stats }: LossesByReasonProps) {
         <FaAlignJustify />
       </div>
       <div className="mt-4 flex w-full flex-col flex-wrap items-center justify-between gap-2 md:flex-row">
-        {getListOrdenated(stats).length > 0 ? (
-          getListOrdenated(stats).map((reasonStat, index) => (
-            <div key={index} className="flex min-h-[70px] w-full items-center justify-between gap-1 rounded border border-[#F31559] md:w-[200px]">
-              <div className="flex h-full min-h-[70px] w-[30px] min-w-[30px] items-center justify-center bg-[#F31559] font-bold text-white">
-                {index + 1}º
-              </div>
-              <div className="flex h-full min-h-[70px] grow flex-col items-center justify-between gap-1 p-2">
-                <h1 className="text-center text-xs font-medium leading-none tracking-tight">{reasonStat.motivo.toUpperCase()}</h1>
-                <h1 className="text-sm font-bold text-[#F31559]">{reasonStat.quantidade}</h1>
-              </div>
+        {getListOrdenated(stats).map((reasonStat, index) => (
+          <div key={index} className="flex min-h-[70px] w-full items-center justify-between gap-1 rounded border border-[#F31559] md:w-[200px]">
+            <div className="flex h-full min-h-[70px] w-[30px] min-w-[30px] items-center justify-center bg-[#F31559] font-bold text-white">{index + 1}º</div>
+            <div className="flex h-full min-h-[70px] grow flex-col items-center justify-between gap-1 p-2">
+              <h1 className="text-center text-xs font-medium leading-none tracking-tight">{reasonStat.motivo.toUpperCase()}</h1>
+              <h1 className="text-sm font-bold text-[#F31559]">{reasonStat.quantidade}</h1>
             </div>
-          ))
-        ) : (
-          <p className="w-full text-center tracking-tight text-gray-500">Sem registros de razões de perda.</p>
-        )}
+          </div>
+        ))}
       </div>
     </div>
   )

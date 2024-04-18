@@ -1,39 +1,44 @@
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
-import dayjs from 'dayjs'
 
-import { formatDate, formatToMoney, getFirstDayOfMonth, getLastDayOfMonth } from '@/utils/methods'
-import { useSaleStats } from '@/utils/queries/stats'
+import { checkQueryEnableStatus, formatDate, formatToMoney, getFirstDayOfMonth, getLastDayOfMonth } from '@/utils/methods'
+
 import { useSalePromoters } from '@/utils/queries/users'
-import { useFunnels } from '@/utils/queries/funnels'
 
 import { Sidebar } from '@/components/Sidebar'
 import Avatar from '@/components/utils/Avatar'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import LoadingPage from '@/components/utils/LoadingPage'
 
-import { GrConfigure, GrSend } from 'react-icons/gr'
-import { BsFileEarmarkText, BsFillBookmarkFill, BsFillGearFill, BsFunnelFill, BsPatchCheck, BsTicketPerforated } from 'react-icons/bs'
-import { IUsuario } from '@/utils/models'
+import { GrSend } from 'react-icons/gr'
+import { BsDownload, BsFileEarmarkText, BsFillBookmarkFill, BsFillGearFill, BsFunnelFill, BsPatchCheck, BsTicketPerforated } from 'react-icons/bs'
+
 import EditPromoter from '@/components/Modals/EditPromoter'
 
+import dayjs from 'dayjs'
 import { ImPower } from 'react-icons/im'
 import { AiOutlineCloseCircle, AiOutlineThunderbolt } from 'react-icons/ai'
 import { MdAttachMoney, MdCreate, MdSell } from 'react-icons/md'
 import { VscDiffAdded } from 'react-icons/vsc'
 import { FaPercentage } from 'react-icons/fa'
 
+import { IUsuario } from '@/utils/models'
+
+import NewUserGroup from '@/components/Modals/NewUserGroup'
+
 import DateInput from '@/components/Inputs/DateInput'
 import MultipleSelectInput from '@/components/Inputs/MultipleSelectInput'
-import StatCard from '@/components/Stats/sale-team/StatCard'
-import ConversionStatCard from '@/components/Stats/sale-team/ConversionStatCard'
-import SdrStatCard from '@/components/Stats/sdr-team/SdrStatCard'
-import SdrSentCard from '@/components/Stats/sdr-team/SdrSentCard'
-import SdrConversionStatCard from '@/components/Stats/sdr-team/SdrConversionStatCard'
-import LossesByReason from '@/components/Stats/general/LossesByReason'
-
+import axios from 'axios'
+import { getExcelFromJSON } from '@/lib/methods/excel-utils'
+import toast from 'react-hot-toast'
+import { getErrorMessage } from '@/lib/methods/errors'
+import OverallResults from '@/components/Stats/Results/Overall'
+import InProgressResults from '@/components/Stats/Results/InProgress'
+import SalesTeamResults from '@/components/Stats/Results/SalesTeam'
+import SDRTeamResults from '@/components/Stats/Results/SDRTeam'
+import { formatDateInputChange } from '@/lib/methods/formatting'
 import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
-import { TSalesStats } from '@/pages/api/stats/sales'
+
 const currentDate = new Date()
 const periodStr = dayjs(currentDate).format('MM/YYYY')
 const firstDayOfMonth = getFirstDayOfMonth(currentDate.getFullYear(), currentDate.getMonth()).toISOString()
@@ -49,25 +54,7 @@ function getSaleGoals(promoter: TUserDTOWithSaleGoals) {
   return currentPeriodSaleGoals.metas
 }
 
-type GetFunnelStageData = {
-  funnelName: string
-  stageName: string
-  stats?: TSalesStats['funis']
-}
-function getFunnelStageData({ funnelName, stageName, stats }: GetFunnelStageData): { projetos: number; valor: number } {
-  const baseReturn = { projetos: 0, valor: 0 }
-  if (!stats) return baseReturn
-  const funnelStats = stats[funnelName]
-  if (!funnelStats) return baseReturn
-  const stageStats = funnelStats[stageName]
-  const projects = stageStats.projetos ? Number(Number(stageStats.projetos).toFixed(2)) : 0
-  const value = stageStats.valor ? Number(Number(stageStats.valor).toFixed(2)) : 0
-  return {
-    projetos: projects,
-    valor: value,
-  }
-}
-function ManagementResultsPage() {
+function Equipe() {
   const { data: session, status } = useSession({ required: true })
   const [period, setPeriod] = useState({
     after: firstDayOfMonth,
@@ -80,8 +67,21 @@ function ManagementResultsPage() {
   })
   const [newGroupModalIsOpen, setNewGroupModalIsOpen] = useState(false)
   const { data: promoters, isLoading: promotersLoading, isSuccess: promotersSuccess } = useSalePromoters()
-  const { data: funnels } = useFunnels()
-  const { data: stats, isLoading: statsLoading } = useSaleStats(period.after, period.before, users)
+
+  async function handleDataExport() {
+    const loadingToastId = toast.loading('Carregando...')
+    try {
+      const { data } = await axios.get(`/api/stats/sales-export?after=${period.after}&before=${period.before}`)
+      getExcelFromJSON(data.data, 'RELATORIO_VENDAS')
+      toast.dismiss(loadingToastId)
+      return toast.success('Exportação feita com sucesso !')
+    } catch (error) {
+      console.log(error)
+      toast.dismiss(loadingToastId)
+      const msg = getErrorMessage(error)
+      return toast.error(msg)
+    }
+  }
   if (status != 'authenticated') return <LoadingPage />
   return (
     <div className="flex h-full flex-col md:flex-row">
@@ -92,6 +92,12 @@ function ManagementResultsPage() {
           <div className="flex items-center gap-2">
             <div className="flex flex-col items-center gap-4 lg:flex-row">
               <h1 className="text-end text-sm font-medium uppercase tracking-tight">PERÍODO</h1>
+              <button
+                onClick={() => handleDataExport()}
+                className="flex h-[46.6px] items-center justify-center gap-2 rounded-md border bg-[#2c6e49] p-2 px-3 text-sm font-medium text-white shadow-sm duration-300 ease-in-out hover:scale-105"
+              >
+                <BsDownload style={{ fontSize: '18px' }} />
+              </button>
               <div className="flex w-full flex-col items-center gap-2 md:flex-row lg:w-fit">
                 <div className="w-full md:w-[150px]">
                   <DateInput
@@ -101,7 +107,7 @@ function ManagementResultsPage() {
                     handleChange={(value) =>
                       setPeriod((prev) => ({
                         ...prev,
-                        after: value ? value : firstDayOfMonth,
+                        after: formatDateInputChange(value) || firstDayOfMonth,
                       }))
                     }
                     width="100%"
@@ -115,7 +121,7 @@ function ManagementResultsPage() {
                     handleChange={(value) =>
                       setPeriod((prev) => ({
                         ...prev,
-                        before: value ? value : firstDayOfMonth,
+                        before: formatDateInputChange(value) || lastDayOfMonth,
                       }))
                     }
                     width="100%"
@@ -137,224 +143,10 @@ function ManagementResultsPage() {
             </div>
           </div>
         </div>
-        <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">GERAL</h1>
-        <div className="mt-2 flex w-full flex-col items-center justify-around gap-2 lg:flex-row">
-          <div className="flex min-h-[110px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:w-1/5">
-            <div className="flex items-center justify-between">
-              <h1 className="text-sm font-medium uppercase tracking-tight">Projetos Criados</h1>
-              <VscDiffAdded />
-            </div>
-            <div className="mt-2 flex w-full flex-col">
-              <div className="text-2xl font-bold text-[#15599a]">{stats?.geral.ATUAL.projetosCriados?.total || 0}</div>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosCriados.inbound || 0} INBOUND</p>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosCriados.outboundVendedor} OUTBOUND (VENDEDOR)</p>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosCriados.outboundSdr} OUTBOUND (SDR)</p>
-              <p className="text-xs text-gray-500">{stats?.geral.ANTERIOR.projetosCriados || 0} no último período</p>
-            </div>
-          </div>
-          <div className="flex min-h-[110px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:w-1/5">
-            <div className="flex items-center justify-between">
-              <h1 className="text-sm font-medium uppercase tracking-tight">Projetos Ganhos</h1>
-              <BsPatchCheck />
-            </div>
-            <div className="mt-2 flex w-full flex-col">
-              <div className="text-2xl font-bold text-[#15599a]">{stats?.geral.ATUAL.projetosGanhos?.total || 0}</div>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosGanhos.inbound} INBOUND</p>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosGanhos.outboundVendedor} OUTBOUND (VENDEDOR)</p>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosGanhos.outboundSdr} OUTBOUND (SDR)</p>
-              <p className="text-xs text-gray-500">{stats?.geral.ANTERIOR.projetosGanhos || 0} no último período</p>
-            </div>
-          </div>
-          <div className="flex min-h-[110px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:w-1/5">
-            <div className="flex items-center justify-between">
-              <h1 className="text-sm font-medium uppercase tracking-tight">Projetos Perdidos</h1>
-              <AiOutlineCloseCircle size={'20px'} />
-            </div>
-            <div className="mt-2 flex w-full flex-col">
-              <div className="text-2xl font-bold text-[#15599a]">{stats?.geral.ATUAL.projetosPerdidos?.total || 0}</div>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosPerdidos.inbound} INBOUND</p>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosPerdidos.outboundVendedor} OUTBOUND (VENDEDOR)</p>
-              <p className="text-xs font-medium text-gray-800">{stats?.geral.ATUAL.projetosPerdidos.outboundSdr} OUTBOUND (SDR)</p>
-              <p className="text-xs text-gray-500">{stats?.geral.ANTERIOR.projetosPerdidos || 0} no último período</p>
-            </div>
-          </div>
-          <div className="flex min-h-[110px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:w-1/5">
-            <div className="flex items-center justify-between">
-              <h1 className="text-sm font-medium uppercase tracking-tight">Total Vendido</h1>
-              <BsFileEarmarkText />
-            </div>
-            <div className="mt-2 flex w-full flex-col">
-              <div className="text-2xl font-bold text-[#15599a]">
-                {stats?.geral.ATUAL.totalVendido ? formatToMoney(stats?.geral.ATUAL.totalVendido.total) : 0}
-              </div>
-              <p className="text-xs font-medium text-gray-800">
-                {stats?.geral.ATUAL.totalVendido.inbound ? formatToMoney(stats?.geral.ATUAL.totalVendido.inbound) : 0} INBOUND
-              </p>
-              <p className="text-xs font-medium text-gray-800">
-                {stats?.geral.ATUAL.totalVendido.outboundVendedor ? formatToMoney(stats?.geral.ATUAL.totalVendido.outboundVendedor) : 0} OUTBOUND (VENDEDOR)
-              </p>
-              <p className="text-xs font-medium text-gray-800">
-                {stats?.geral.ATUAL.totalVendido.outboundSdr ? formatToMoney(stats?.geral.ATUAL.totalVendido.outboundSdr) : 0} OUTBOUND (SDR)
-              </p>
-              <p className="text-xs text-gray-500">
-                {stats?.geral.ANTERIOR.totalVendido ? formatToMoney(stats?.geral.ANTERIOR.totalVendido) : 0} no último período
-              </p>
-            </div>
-          </div>
-          <div className="flex min-h-[110px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:w-1/5">
-            <div className="flex items-center justify-between">
-              <h1 className="text-sm font-medium uppercase tracking-tight">Ticket Médio</h1>
-              <BsTicketPerforated />
-            </div>
-            <div className="mt-2 flex w-full flex-col">
-              <div className="text-2xl font-bold text-[#15599a]">
-                {stats?.geral.ATUAL.totalVendido
-                  ? formatToMoney((stats?.geral.ATUAL.totalVendido.total || 0) / (stats?.geral.ATUAL.projetosGanhos.total || 0))
-                  : 0}
-              </div>
-              <p className="text-xs font-medium text-gray-800">
-                {stats?.geral.ATUAL.totalVendido.inbound && stats?.geral.ATUAL.projetosGanhos.inbound
-                  ? formatToMoney(stats?.geral.ATUAL.totalVendido.inbound / stats?.geral.ATUAL.projetosGanhos.inbound)
-                  : 0}{' '}
-                INBOUND
-              </p>
-              <p className="text-xs font-medium text-gray-800">
-                {stats?.geral.ATUAL.totalVendido.outboundVendedor
-                  ? formatToMoney(stats?.geral.ATUAL.totalVendido.outboundVendedor / stats?.geral.ATUAL.projetosGanhos.outboundVendedor)
-                  : 0}{' '}
-                OUTBOUND (VENDEDOR)
-              </p>
-              <p className="text-xs font-medium text-gray-800">
-                {stats?.geral.ATUAL.totalVendido.outboundSdr
-                  ? formatToMoney(stats?.geral.ATUAL.totalVendido.outboundSdr / stats?.geral.ATUAL.projetosGanhos.outboundSdr)
-                  : 0}{' '}
-                OUTBOUND (SDR)
-              </p>
-              <p className="text-xs text-gray-500">
-                {stats?.geral.ANTERIOR.totalVendido ? formatToMoney(stats?.geral.ANTERIOR.totalVendido / stats?.geral.ANTERIOR.projetosGanhos) : 0} no último
-                período
-              </p>{' '}
-            </div>
-          </div>
-        </div>
-        <LossesByReason stats={stats?.geral} />
-        <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">EM ANDAMENTO</h1>
-        <div className="mt-2 flex w-full flex-col items-start gap-6">
-          {funnels?.map((funnel, funnelIndex) => (
-            <div key={funnelIndex} className="flex w-full flex-col ">
-              <div className="mb-4 flex w-full items-center justify-center gap-2 rounded-sm bg-[#fead41] text-white">
-                <h1 className="text-lg font-medium uppercase tracking-tight">{funnel.nome}</h1>
-                <BsFunnelFill />
-              </div>
-              <div className="flex w-full flex-wrap items-start justify-around gap-4">
-                {funnel.etapas.map((stage, stageIndex) => (
-                  <div
-                    key={stageIndex}
-                    className={`flex w-[350px] min-w-[350px] max-w-[350px] grow flex-col rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm`}
-                  >
-                    <div className="flex w-full items-center justify-between">
-                      <h1 className="text-sm font-medium uppercase tracking-tight">{stage.nome}</h1>
-                      <BsFillBookmarkFill />
-                    </div>
-                    <h1 className="text-center text-2xl font-bold text-[#15599a]">
-                      {getFunnelStageData({ funnelName: funnel.nome, stageName: stage.nome, stats: stats?.funis }).projetos}
-                    </h1>
-                    <h1 className="text-center text-2xl font-bold text-green-800">
-                      {formatToMoney(getFunnelStageData({ funnelName: funnel.nome, stageName: stage.nome, stats: stats?.funis }).valor)}
-                    </h1>
-                  </div>
-                ))}
-              </div>
-            </div>
-          ))}
-        </div>
-        <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">TIME DE VENDAS</h1>
-        <div className="mt-2 flex w-full flex-col items-start gap-2 lg:flex-row">
-          <StatCard
-            icon={<AiOutlineThunderbolt />}
-            label="Potência Vendida"
-            promoters={promoters || []}
-            statKey="potenciaPico"
-            stats={stats?.vendas}
-            statsLoading={statsLoading}
-          />
-          <StatCard
-            icon={<MdAttachMoney />}
-            label="Valor Vendido"
-            promoters={promoters || []}
-            statKey="valorVendido"
-            stats={stats?.vendas}
-            statsLoading={statsLoading}
-          />
-        </div>
-        <div className="mt-2 flex w-full flex-col items-start gap-2 lg:flex-row">
-          <StatCard
-            icon={<MdSell />}
-            label="Projetos Vendidos"
-            promoters={promoters || []}
-            statKey="projetosVendidos"
-            stats={stats?.vendas}
-            statsLoading={statsLoading}
-          />
-          <StatCard
-            icon={<MdCreate />}
-            label="Projetos Criados"
-            promoters={promoters || []}
-            statKey="projetosCriados"
-            stats={stats?.vendas}
-            statsLoading={statsLoading}
-          />
-        </div>
-        <div className="mt-2 flex w-full flex-col items-start gap-2 lg:flex-row">
-          <ConversionStatCard
-            numeratorStatKey="projetosVendidos"
-            denominatorStatKey="projetosCriados"
-            promoters={promoters || []}
-            stats={stats?.vendas}
-            statsLoading={statsLoading}
-          />
-        </div>
-        <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">TIME DE SDR</h1>
-        <div className="mt-2 flex w-full flex-col items-start gap-2 lg:flex-row">
-          <SdrStatCard
-            icon={<AiOutlineThunderbolt />}
-            label="Potência Vendida"
-            promoters={promoters || []}
-            statKey="potenciaPico"
-            stats={stats?.sdr}
-            statsLoading={statsLoading}
-          />
-          <SdrStatCard
-            icon={<MdAttachMoney />}
-            label="Valor Vendido"
-            promoters={promoters || []}
-            statKey="valorVendido"
-            stats={stats?.sdr}
-            statsLoading={statsLoading}
-          />
-        </div>
-        <div className="mt-2 flex w-full flex-col items-start gap-2 lg:flex-row">
-          <SdrStatCard
-            icon={<MdSell />}
-            label="Projetos vendidos"
-            promoters={promoters || []}
-            statKey="projetosVendidos"
-            stats={stats?.sdr}
-            statsLoading={statsLoading}
-          />
-          <SdrStatCard
-            icon={<MdAttachMoney />}
-            label="Projetos criados"
-            promoters={promoters || []}
-            statKey="projetosCriados"
-            stats={stats?.sdr}
-            statsLoading={statsLoading}
-          />
-        </div>
-        <div className="mt-2 flex w-full flex-col items-start gap-2 lg:flex-row">
-          <SdrSentCard stats={stats?.sdr} promoters={promoters || []} />
-          <SdrConversionStatCard stats={stats?.sdr} statsLoading={statsLoading} promoters={promoters || []} />
-        </div>
+        <OverallResults after={period.after} before={period.before} responsibles={users} />
+        <InProgressResults responsibles={users} />
+        <SalesTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} />
+        <SDRTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} />
         <h1 className="mt-4 font-Raleway text-xl font-black text-black">CONTROLE DE EQUIPE</h1>
         <div className="flex grow flex-col flex-wrap justify-around gap-2 py-2 lg:flex-row">
           {promotersSuccess ? (
@@ -436,8 +228,9 @@ function ManagementResultsPage() {
       {editModal.isOpen && editModal.promoter ? (
         <EditPromoter session={session} promoter={editModal.promoter} closeModal={() => setEditModal({ isOpen: false, promoter: null })} />
       ) : null}
+      {newGroupModalIsOpen ? <NewUserGroup /> : null}
     </div>
   )
 }
 
-export default ManagementResultsPage
+export default Equipe

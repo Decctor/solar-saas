@@ -4,14 +4,10 @@ import { FaPercentage } from 'react-icons/fa'
 import StatListItem from '../StatListItem'
 import dayjs from 'dayjs'
 import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
+import { TSDRTeamResults } from '@/pages/api/stats/comercial-results/sales-sdr'
 const currentDate = new Date()
 const periodStr = dayjs(currentDate).format('MM/YYYY')
-type SdrConversionStatCardProps = {
-  stats: any
-  statsLoading: boolean
 
-  promoters: TUserDTOWithSaleGoals[]
-}
 function getConversionGoal({ promoterName, promoters }: { promoterName: string; promoters: TUserDTOWithSaleGoals[] }) {
   const promoter = promoters.find((p) => p.nome == promoterName)
   if (!promoter) return 0
@@ -24,12 +20,11 @@ function getConversionGoal({ promoterName, promoters }: { promoterName: string; 
 
   return currentPeriodSaleGoals.metas.conversao || 0
 }
-function getPromoterListOrdenatedByKeyStat({ stats, promoters }: { stats?: any; promoters: TUserDTOWithSaleGoals[] }) {
+function getPromoterListOrdenatedByKeyStat({ stats, promoters }: { stats?: TSDRTeamResults; promoters: TUserDTOWithSaleGoals[] }) {
   if (!stats) return []
   const statsAsList = Object.entries(stats).map(([key, value]) => {
     const promoterName = key
-    // @ts-ignore
-    const numerator = value['ATUAL']['projetosVendidos'].atingido
+    const numerator = value['projetosVendidos'].atingido
     // @ts-ignore
     const denominator: number = Object.values(value['POR VENDEDOR']).reduce((acc: number, current: number) => {
       return acc + current
@@ -63,6 +58,13 @@ function getPromoterListOrdenatedByKeyStat({ stats, promoters }: { stats?: any; 
   })
 
   return orderedStatsList
+}
+
+type SdrConversionStatCardProps = {
+  stats?: TSDRTeamResults
+  statsLoading: boolean
+
+  promoters: TUserDTOWithSaleGoals[]
 }
 function SdrConversionStatCard({ stats, statsLoading, promoters }: SdrConversionStatCardProps) {
   return (

@@ -14,7 +14,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
   return (
     <SessionProvider session={session}>
       <Head>
-        <title>Synergia CRM</title>
+        <title>CRM Ampère</title>
       </Head>
       <QueryClientProvider client={queryClient}>
         <FullScreenWrapper>

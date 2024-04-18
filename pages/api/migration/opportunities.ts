@@ -51,26 +51,29 @@ const migrate: NextApiHandler<any> = async (req, res) => {
   const ampereProjectsCollection = ampereDb.collection('projects')
   const ampereUsersCollection: Collection<TAmpereUser> = ampereDb.collection('users')
   const ampereProjects = (await ampereProjectsCollection.find({}).toArray()) as WithId<TAmpereProject>[]
-  //   const ampereUsers = await ampereUsersCollection.find({}).toArray()
+  const ampereUsers = await ampereUsersCollection.find({}).toArray()
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection = db.collection('opportunities')
   const funnelReferencesCollection = db.collection('funnel-references')
   const opportunities = ampereProjects.map((project) => {
     const responsibles: TOpportunity['responsaveis'] = []
+
+    const sellerUser = ampereUsers.find((au) => au._id.toString() == project.responsavel.id)
     const seller: TOpportunity['responsaveis'][number] = {
       id: project.responsavel.id,
       nome: project.responsavel.nome,
       papel: 'VENDEDOR',
-      avatar_url: project.responsavel.avatar_url,
+      avatar_url: project.responsavel.avatar_url || sellerUser?.avatar_url,
     }
     responsibles.push(seller)
     // In case there was an SDR
     if (project.representante.id != project.responsavel.id) {
+      const sdrUser = ampereUsers.find((au) => au._id.toString() == project.representante.id)
       const sdr: TOpportunity['responsaveis'][number] = {
         id: project.representante.id,
         nome: project.representante.nome,
         papel: 'SDR',
-        avatar_url: project.representante.avatar_url,
+        avatar_url: project.representante.avatar_url || sdrUser?.avatar_url,
       }
       responsibles.push(sdr)
     }

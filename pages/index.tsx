@@ -23,11 +23,6 @@ import PendingActivityCard from '@/components/ProjectEvents/PendingActivityCard'
 
 import { useOpportunityCreators } from '@/utils/queries/users'
 
-function renderIcon(icon: React.ComponentType) {
-  const IconComponent = icon
-  return <IconComponent />
-}
-
 const currentDate = new Date()
 const firstDayOfMonth = getFirstDayOfMonth(currentDate.getFullYear(), currentDate.getMonth()).toISOString()
 const lastDayOfMonth = getLastDayOfMonth(currentDate.getFullYear(), currentDate.getMonth()).toISOString()

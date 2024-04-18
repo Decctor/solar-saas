@@ -39,6 +39,8 @@ function NewHomologation({ opportunity, session, closeModal }: NewHomologationPr
   const [infoHolder, setInfoHolder] = useState<THomologation>({
     status: 'PENDENTE',
     idParceiro: session.user.idParceiro || '',
+    distribuidora: '',
+    idProposta: opportunity.idPropostaAtiva,
     oportunidade: {
       id: opportunity._id,
       nome: opportunity.nome,

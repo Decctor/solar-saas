@@ -3,22 +3,21 @@ import StatListItem from '../StatListItem'
 import { IUsuario } from '@/utils/models'
 import StatListSkeleton from '../sale-team/StatListSkeleton'
 import SdrStatListItem from '../SdrStatListItem'
-import { TSalesStats } from '@/pages/api/stats/sales'
 import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
+import { TSDRTeamResults } from '@/pages/api/stats/comercial-results/sales-sdr'
 type SdrStatCardProps = {
   label: string
   icon: React.ReactNode
-  stats: TSalesStats['sdr'] | undefined
+  stats?: TSDRTeamResults
   statsLoading: boolean
-  statKey: keyof TSalesStats['vendas'][string]['ATUAL']
+  statKey: string
   promoters: TUserDTOWithSaleGoals[]
 }
-function getPromoterListOrdenatedByKeyStat({ stats, statKey }: { stats?: any; statKey: string }) {
+function getPromoterListOrdenatedByKeyStat({ stats, statKey }: { stats?: TSDRTeamResults; statKey: string }) {
   if (!stats) return []
   const statsAsList = Object.entries(stats).map(([key, value]) => {
     const promoterName = key
-    // @ts-ignore
-    const statByKey = value['ATUAL'][statKey]
+    const statByKey = value[statKey as keyof typeof value]
 
     const goal = statByKey.objetivo
     const hit = statByKey.atingido
@@ -42,7 +41,7 @@ function getPromoterListOrdenatedByKeyStat({ stats, statKey }: { stats?: any; st
     }
   })
   const orderedStatsList = statsAsList.sort((a, b) => {
-    return b.percentual - a.percentual
+    return b.atingido - a.atingido
   })
 
   return orderedStatsList

@@ -8,7 +8,7 @@ export default async function connectToDatabase(uri: unknown, database: string) 
     return cachedDb
   }
   const client = await MongoClient.connect(uri)
-  const db = client.db(database)
+  const db = client.db('crm')
   cachedDb = db
   return db
 }

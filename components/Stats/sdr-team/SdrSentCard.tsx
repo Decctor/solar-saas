@@ -5,21 +5,20 @@ import { getUserAvatarUrl } from '@/lib/methods/extracting'
 import { IUsuario } from '@/utils/models'
 import Avatar from '@/components/utils/Avatar'
 import { GrSend } from 'react-icons/gr'
-import { TUser, TUserDTO, TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
-import { TSalesStats } from '@/pages/api/stats/sales'
+import { TSDRTeamResults } from '@/pages/api/stats/comercial-results/sales-sdr'
+import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
 type SdrSentCardProps = {
-  stats?: TSalesStats['sdr']
+  stats?: TSDRTeamResults
   promoters: TUserDTOWithSaleGoals[]
 }
 
-type KeyValue = any[]
-function getSDRSendInfoOrdenated({ stats }: { stats?: any }) {
+function getSDRSendInfoOrdenated({ stats }: { stats?: TSDRTeamResults }) {
   if (!stats) return []
-  const statsAsList = Object.entries(stats).map(([key, value]: KeyValue) => {
+  const statsAsList = Object.entries(stats).map(([key, value]) => {
     const sdrName = key
 
-    const goal = value['ATUAL'].projetosEnviados.objetivo
-    const hit = value['ATUAL'].projetosEnviados.atingido
+    const goal = value.projetosEnviados.objetivo
+    const hit = value.projetosEnviados.atingido
     var percentage = 0
 
     if (goal != 0) {
@@ -40,12 +39,11 @@ function getSDRSendInfoOrdenated({ stats }: { stats?: any }) {
     }
   })
   const orderedStatsList = statsAsList.sort((a, b) => {
-    return b.percentual - a.percentual
+    return b.atingido - a.atingido
   })
   return orderedStatsList
 }
 function SdrSentCard({ stats, promoters }: SdrSentCardProps) {
-  console.log(getSDRSendInfoOrdenated({ stats: stats }))
   return (
     <div className="flex h-[400px] max-h-[600px] w-full flex-col rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:h-[600px] lg:w-[50%]">
       <div className="flex items-center justify-between">
@@ -65,9 +63,7 @@ function SdrSentCard({ stats, promoters }: SdrSentCardProps) {
                     fallback={formatNameAsInitials(promoter.nome)}
                   />
                 </div>
-                <p className="hidden min-w-[150px] max-w-[150px] font-medium uppercase tracking-tight text-gray-500 md:flex lg:text-sm">
-                  {promoter.nome}
-                </p>
+                <p className="hidden min-w-[150px] max-w-[150px] font-medium uppercase tracking-tight text-gray-500 md:flex lg:text-sm">{promoter.nome}</p>
               </div>
               <div className="grow">
                 <GoalTrackingBar

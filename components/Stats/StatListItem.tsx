@@ -5,16 +5,7 @@ import { IUsuario } from '@/utils/models'
 import { formatNameAsInitials } from '@/lib/methods/formatting'
 import GoalTrackingBar from './GoalTrackingBar'
 import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
-type StatListItemProps = {
-  promoter: {
-    nome: string
-    objetivo: number
-    atingido: number
-    percentual: number
-    origem?: any
-  }
-  promoters: TUserDTOWithSaleGoals[]
-}
+
 function renderByLeadsStats({ origins }: { origins: any }) {
   const entries = Object.entries(origins)
   if (entries.length > 0) {
@@ -77,6 +68,16 @@ function renderByAquisitionOriginStats({ origins }: { origins: any }) {
     )
   }
 }
+type StatListItemProps = {
+  promoter: {
+    nome: string
+    objetivo: number
+    atingido: number
+    percentual: number
+    origem?: any
+  }
+  promoters: TUserDTOWithSaleGoals[]
+}
 function StatListItem({ promoter, promoters }: StatListItemProps) {
   const [originsVisible, setOriginsVisible] = useState<boolean>(false)
   return (
@@ -99,13 +100,7 @@ function StatListItem({ promoter, promoters }: StatListItemProps) {
           </p>
         </div>
         <div className="grow">
-          <GoalTrackingBar
-            barBgColor="black"
-            goalText={`${promoter.objetivo}`}
-            barHeigth="25px"
-            valueGoal={promoter.objetivo}
-            valueHit={promoter.atingido}
-          />
+          <GoalTrackingBar barBgColor="black" goalText={`${promoter.objetivo}`} barHeigth="25px" valueGoal={promoter.objetivo} valueHit={promoter.atingido} />
         </div>
       </div>
       {originsVisible && promoter.origem ? (

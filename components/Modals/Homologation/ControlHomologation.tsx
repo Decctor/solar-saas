@@ -29,6 +29,7 @@ import VistoryInformation from '@/components/Homologations/VistoryInformation'
 import UpdatesInformation from '@/components/Homologations/UpdatesInformation'
 import ActivitiesInformation from '@/components/Homologations/ActivitiesInformation'
 import HomologationFiles from '@/components/Homologations/Files'
+import StatusInformation from '@/components/Homologations/StatusInformation'
 
 type ControlHomologationProps = {
   homologationId: string
@@ -41,6 +42,7 @@ function ControlHomologation({ homologationId, session, closeModal }: ControlHom
   const [infoHolder, setInfoHolder] = useState<THomologationDTO>({
     _id: 'id-holder',
     status: 'PENDENTE',
+    distribuidora: '',
     idParceiro: session.user.idParceiro || '',
     oportunidade: {
       id: '',
@@ -187,6 +189,7 @@ function ControlHomologation({ homologationId, session, closeModal }: ControlHom
 
                 <ActivitiesInformation session={session} homologation={homologation} opportunity={homologation.oportunidade} />
                 <UpdatesInformation session={session} infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+                <StatusInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<THomologation>>} />
                 <HolderInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<THomologation>>} />
                 <HomologationFiles session={session} homologationId={homologationId} />
                 <InstallationInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<THomologation>>} />
@@ -195,7 +198,7 @@ function ControlHomologation({ homologationId, session, closeModal }: ControlHom
                 <DocumentationInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <AccessInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <VistoryInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
-                <AttachFiles opportunityId={homologation.oportunidade.id} files={files} setFiles={setFiles} />
+                {/* <AttachFiles opportunityId={homologation.oportunidade.id} files={files} setFiles={setFiles} /> */}
               </div>
               <div className="flex w-full items-center justify-end p-2">
                 <button
