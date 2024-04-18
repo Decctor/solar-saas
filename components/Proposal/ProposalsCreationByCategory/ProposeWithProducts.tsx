@@ -92,6 +92,7 @@ function ProposalWithProducts({ opportunity, infoHolder, setInfoHolder, session,
           infoHolder={infoHolder}
           setInfoHolder={setInfoHolder}
           opportunity={opportunity}
+          projectTypes={projectTypes || []}
           moveToPreviousStage={() => setStage((prev) => prev - 1)}
           moveToNextStage={() => setStage((prev) => prev + 1)}
           session={session}

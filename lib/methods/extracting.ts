@@ -47,7 +47,30 @@ export function getInverterQty(products: TProductItem[] | undefined) {
   const qty = products.filter((p) => p.categoria == 'INVERSOR').reduce((acc, current) => acc + current.qtde, 0)
   return qty
 }
-
+export function getModulesStrByProducts(products: TProductItem[]) {
+  const modules = products.filter((p) => p.categoria == 'MÓDULO')
+  var str = ''
+  for (let i = 0; i < modules.length; i++) {
+    if (i < modules.length - 1) {
+      str = str + `${modules[i].qtde}x ${modules[i].modelo} (${modules[i].potencia}W) & ` // `${modules[i].qtde}x PAINÉIS PROMOCIONAIS DE ${modules[i].potencia}W & `
+    } else {
+      str = str + `${modules[i].qtde}x ${modules[i].modelo} (${modules[i].potencia}W)` //  `${modules[i].qtde}x PAINÉIS PROMOCIONAIS DE ${modules[i].potencia}W`
+    }
+  }
+  return str
+}
+export function getInvertersStrByProducts(products: TProductItem[]) {
+  const inverters = products.filter((p) => p.categoria == 'INVERSOR')
+  var str = ''
+  for (let i = 0; i < inverters.length; i++) {
+    if (i < inverters.length - 1) {
+      str = str + `${inverters[i].qtde}x ${inverters[i].modelo} (${inverters[i].potencia}W) & ` // `${inverters[i].qtde}x PAINÉIS PROMOCIONAIS DE ${inverters[i].potencia}W & `
+    } else {
+      str = str + `${inverters[i].qtde}x ${inverters[i].modelo} (${inverters[i].potencia}W)` //  `${inverters[i].qtde}x PAINÉIS PROMOCIONAIS DE ${inverters[i].potencia}W`
+    }
+  }
+  return str
+}
 export function getModulesAveragePower(modules: TProductItem[]) {
   const averagepower = modules.filter((m) => m.categoria == 'MÓDULO').reduce((acc, current) => acc + (current.potencia || 0), 0) / modules.length
   return averagepower

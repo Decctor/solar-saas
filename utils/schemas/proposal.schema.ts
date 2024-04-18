@@ -84,6 +84,7 @@ const PremissesSchema = z.object({
   potenciaPico: z.number({ invalid_type_error: 'Tipo inválido para a premissa de potência pico.' }).optional().nullable(),
   numModulos: z.number({ invalid_type_error: 'Tipo inválido para a premissa de nº de módulos.' }).optional().nullable(),
   numInversores: z.number({ invalid_type_error: 'Tipo inválido para a premissa de nº de inversores.' }).optional().nullable(),
+  eficienciaGeracao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de eficiência de geração.' }).optional().nullable(),
 })
 export type TProposalPremisses = z.infer<typeof PremissesSchema>
 
@@ -105,6 +106,7 @@ export const GeneralProposalSchema = z.object({
   nome: z.string(),
   idParceiro: z.string(),
   idMetodologiaPrecificacao: z.string(),
+  idModelo: z.string().optional().nullable(),
   valor: z.number(),
   premissas: PremissesSchema,
   oportunidade: z.object({
@@ -142,6 +144,13 @@ export const InsertProposalSchema = z.object({
     required_error: 'Vínculo de metodologia de precificação não informado.',
     invalid_type_error: 'Tipo não válido para o vínculo de metodologia.',
   }),
+  idModelo: z
+    .string({
+      required_error: 'ID de referência do modelo de proposta não informado.',
+      invalid_type_error: 'Tipo não válido para o ID de referência do modelo de proposta.',
+    })
+    .optional()
+    .nullable(),
   valor: z.number({ required_error: 'Valor da proposta não informado.', invalid_type_error: 'Tipo não válido para o valor da proposta.' }),
   premissas: PremissesSchema,
   oportunidade: z.object({
@@ -190,17 +199,13 @@ const ProposalEntitySchema = z.object({
   nome: z.string(),
   idParceiro: z.string(),
   idMetodologiaPrecificacao: z.string(),
+  idModelo: z.string().optional().nullable(),
   valor: z.number(),
   premissas: PremissesSchema,
   oportunidade: z.object({
     id: z.string(),
     nome: z.string(),
   }),
-  // kit: z.object({
-  //   ids: z.array(z.string()),
-  //   nome: z.string(),
-  //   valor: z.number(),
-  // }),
   kits: z.array(ProposalKitSchema),
   planos: z.array(ProposalPlanSchema),
   produtos: z.array(ProductItemSchema),

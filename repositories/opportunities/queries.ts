@@ -1,4 +1,3 @@
-import { TClientEntity } from '@/utils/schemas/client.schema'
 import {
   SimplifiedOpportunityWithProposalProjection,
   TOpportunity,

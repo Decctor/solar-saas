@@ -33,6 +33,7 @@ export const PremissesFieldOptions: TPremissesFieldOptions[] = [
   { id: 11, value: 'tarifaEnergia', label: 'TARIFA DE ENERGIA' },
   { id: 12, value: 'tarifaFioB', label: 'TARIFA DE FIO B' },
   { id: 13, value: 'orientacao', label: 'ORIENTAÇÃO' },
+  { id: 14, value: 'eficienciaGeracao', label: 'EFICIÊNCIA DE GERAÇÃO' },
 ]
 
 type TAutomaticPremissesBySaleCategory = {

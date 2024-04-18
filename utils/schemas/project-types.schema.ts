@@ -27,6 +27,12 @@ const GeneralProjectTypeSchema = z.object({
       ),
     })
   ),
+  modelosProposta: z.array(
+    z.object({
+      titulo: z.string({ required_error: 'Título do modelo de proposta não informado.' }),
+      idAnvil: z.string({ required_error: 'ID de referência da integração do modelo não fornecido.' }),
+    })
+  ),
   autor: AuthorSchema,
   dataInsercao: z
     .string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para a data de inserção.' })
@@ -56,6 +62,12 @@ export const InsertProjectTypeSchema = z.object({
           invalid_type_error: 'Tipo não válido para a lista dos campos de dimensionamento.',
         }
       ),
+    })
+  ),
+  modelosProposta: z.array(
+    z.object({
+      titulo: z.string({ required_error: 'Título do modelo de proposta não informado.' }),
+      idAnvil: z.string({ required_error: 'ID de referência da integração do modelo não fornecido.' }),
     })
   ),
   autor: AuthorSchema,

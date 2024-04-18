@@ -19,6 +19,7 @@ function ResponsiblesInformationBlock({ opportunity, setOpportunity, opportunity
     nome: '',
     papel: OpportunityResponsibilityRoles[0].value,
     avatar_url: null,
+    telefone: '',
   })
   function addOpportunityResponsible(responsible: TOpportunity['responsaveis'][number]) {
     if (responsible.id.trim().length < 20) return toast.error('Escolha um responsável válido.')
@@ -52,6 +53,7 @@ function ResponsiblesInformationBlock({ opportunity, setOpportunity, opportunity
                 id: equivalentUser?._id.toString() || '',
                 nome: equivalentUser?.nome || '',
                 avatar_url: equivalentUser?.avatar_url || null,
+                telefone: equivalentUser?.telefone || '',
               }))
             }}
             selectedItemLabel="NÃO DEFINIDO"
@@ -61,6 +63,7 @@ function ResponsiblesInformationBlock({ opportunity, setOpportunity, opportunity
                 id: '',
                 papel: '',
                 avatar_url: null,
+                telefone: '',
               })
             }
             width="100%"

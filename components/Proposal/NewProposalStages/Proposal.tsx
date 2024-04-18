@@ -13,7 +13,7 @@ import Products from '../Blocks/Products'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { createProposal } from '@/utils/mutations/proposals'
 import { TProposal } from '@/utils/schemas/proposal.schema'
-import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TOpportunity, TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
 import { formatToMoney } from '@/utils/methods'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import Link from 'next/link'
@@ -26,17 +26,44 @@ import Kits from '../Blocks/Kits'
 import Plans from '../Blocks/Plans'
 import ProposalWithProductsTemplate from '../Templates/ProposalWithProductsTemplate'
 import ProposalWithServicesTemplate from '../Templates/ProposalWithServicesTemplate'
+import { TProjectTypeDTO } from '@/utils/schemas/project-types.schema'
+import SelectInput from '@/components/Inputs/SelectInput'
+
+function renderProposalPreview({
+  proposal,
+  opportunity,
+  partner,
+}: {
+  proposal: TProposal
+  opportunity: TOpportunityDTOWithClient
+  partner: TPartnerSimplifiedDTO
+}) {
+  if (proposal.idModelo)
+    return (
+      <div className="relative flex h-fit w-full flex-col items-center justify-center overflow-hidden bg-white lg:h-[297mm] lg:w-[210mm]">
+        <p className="w-full text-center text-lg font-medium italic tracking-tight text-gray-500">
+          Oops, o preview não está disponível para templates específicos.
+        </p>
+      </div>
+    )
+  if (opportunity.categoriaVenda == 'KIT') return <ProposalWithKitTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
+  if (opportunity.categoriaVenda == 'PLANO') return <ProposalWithPlanTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
+  if (opportunity.categoriaVenda == 'PRODUTOS') return <ProposalWithProductsTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
+  if (opportunity.categoriaVenda == 'SERVIÇOS') return <ProposalWithServicesTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
+}
+
 type ProposalProps = {
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
+  projectTypes: TProjectTypeDTO[]
   opportunity: TOpportunityDTOWithClient
   moveToNextStage: () => void
   moveToPreviousStage: () => void
   session: Session
   partner: TPartnerSimplifiedDTO
 }
-
-function Proposal({ opportunity, infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, session, partner }: ProposalProps) {
+function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, session, partner }: ProposalProps) {
+  const ProposalTemplateOptions = projectTypes.find((t) => t._id == opportunity.tipo.id)?.modelosProposta || null
   const queryClient = useQueryClient()
 
   const [saveAsActive, setSaveAsActive] = useState<boolean>(false)
@@ -52,9 +79,7 @@ function Proposal({ opportunity, infoHolder, setInfoHolder, moveToNextStage, mov
     queryClient: queryClient,
     affectedQueryKey: ['opportunity-proposals', opportunity._id],
   })
-  console.log('PROPOSTA', infoHolder)
-  console.log('OPORTUNIDADE', opportunity)
-  console.log('PARCEIRO', partner)
+
   return (
     <div className="flex w-full flex-col gap-2">
       {isPending ? (
@@ -102,14 +127,7 @@ function Proposal({ opportunity, infoHolder, setInfoHolder, moveToNextStage, mov
               <h1 className="w-full rounded-tl-md rounded-tr-md bg-cyan-500 p-2 text-center font-bold leading-none tracking-tight text-white">
                 PREVIEW DA PROPOSTA
               </h1>
-              {opportunity.categoriaVenda == 'KIT' ? <ProposalWithKitTemplate proposal={infoHolder} opportunity={opportunity} partner={partner} /> : null}
-              {opportunity.categoriaVenda == 'PLANO' ? <ProposalWithPlanTemplate proposal={infoHolder} opportunity={opportunity} partner={partner} /> : null}
-              {opportunity.categoriaVenda == 'PRODUTOS' ? (
-                <ProposalWithProductsTemplate proposal={infoHolder} opportunity={opportunity} partner={partner} />
-              ) : null}
-              {opportunity.categoriaVenda == 'SERVIÇOS' ? (
-                <ProposalWithServicesTemplate proposal={infoHolder} opportunity={opportunity} partner={partner} />
-              ) : null}
+              {renderProposalPreview({ proposal: infoHolder, opportunity: opportunity, partner: partner })}
             </div>
             <div className="flex grow flex-col">
               <div className="flex w-full flex-col gap-2">
@@ -131,6 +149,17 @@ function Proposal({ opportunity, infoHolder, setInfoHolder, moveToNextStage, mov
                   handleChange={(value) => setInfoHolder((prev) => ({ ...prev, nome: value }))}
                   width="100%"
                 />
+                {ProposalTemplateOptions ? (
+                  <SelectInput
+                    label="TEMPLATE DA PROPOSTA"
+                    value={infoHolder.idModelo || null}
+                    selectedItemLabel="TEMPLATE PADRÃO"
+                    options={ProposalTemplateOptions.map((t, index) => ({ id: index + 1, label: t.titulo, value: t.idAnvil }))}
+                    handleChange={(value) => setInfoHolder((prev) => ({ ...prev, idModelo: value }))}
+                    onReset={() => setInfoHolder((prev) => ({ ...prev, idModelo: undefined }))}
+                    width="100%"
+                  />
+                ) : null}
                 <Kits infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <Plans infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <Services infoHolder={infoHolder} setInfoHolder={setInfoHolder} />

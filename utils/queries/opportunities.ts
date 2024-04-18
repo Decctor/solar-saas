@@ -8,6 +8,7 @@ import {
   TOpportunityWithFunnelReferenceAndActivitiesByStatus,
 } from '../schemas/opportunity.schema'
 import { useQuery } from '@tanstack/react-query'
+import { TResultsExportsItem } from '@/pages/api/stats/comercial-results/results-export'
 
 type UseOpportunitiesParams = {
   responsible: string | null
@@ -61,4 +62,13 @@ export function useOpportunitiesBySearch({ param }: { param: string }) {
     queryKey: ['opportunities-by-search', param],
     queryFn: async () => await fetchOpportunitiesBySearch({ param }),
   })
+}
+
+export async function fetchOpportunityExport({ responsible, funnel, after, before, status }: UseOpportunitiesParams) {
+  try {
+    const { data } = await axios.get(`/api/opportunities/export?responsible=${responsible}&funnel=${funnel}&after=${after}&before=${before}&status=${status}`)
+    return data.data as TResultsExportsItem[]
+  } catch (error) {
+    throw error
+  }
 }

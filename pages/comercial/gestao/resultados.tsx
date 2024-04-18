@@ -1,9 +1,8 @@
 import React, { useState } from 'react'
 import { useSession } from 'next-auth/react'
-
-import { checkQueryEnableStatus, formatDate, formatToMoney, getFirstDayOfMonth, getLastDayOfMonth } from '@/utils/methods'
-
-import { useSalePromoters } from '@/utils/queries/users'
+import toast from 'react-hot-toast'
+import axios from 'axios'
+import dayjs from 'dayjs'
 
 import { Sidebar } from '@/components/Sidebar'
 import Avatar from '@/components/utils/Avatar'
@@ -11,33 +10,28 @@ import LoadingComponent from '@/components/utils/LoadingComponent'
 import LoadingPage from '@/components/utils/LoadingPage'
 
 import { GrSend } from 'react-icons/gr'
-import { BsDownload, BsFileEarmarkText, BsFillBookmarkFill, BsFillGearFill, BsFunnelFill, BsPatchCheck, BsTicketPerforated } from 'react-icons/bs'
+import { BsDownload, BsFillGearFill } from 'react-icons/bs'
 
-import EditPromoter from '@/components/Modals/EditPromoter'
-
-import dayjs from 'dayjs'
 import { ImPower } from 'react-icons/im'
-import { AiOutlineCloseCircle, AiOutlineThunderbolt } from 'react-icons/ai'
 import { MdAttachMoney, MdCreate, MdSell } from 'react-icons/md'
-import { VscDiffAdded } from 'react-icons/vsc'
 import { FaPercentage } from 'react-icons/fa'
 
-import { IUsuario } from '@/utils/models'
-
-import NewUserGroup from '@/components/Modals/NewUserGroup'
-
-import DateInput from '@/components/Inputs/DateInput'
-import MultipleSelectInput from '@/components/Inputs/MultipleSelectInput'
-import axios from 'axios'
-import { getExcelFromJSON } from '@/lib/methods/excel-utils'
-import toast from 'react-hot-toast'
-import { getErrorMessage } from '@/lib/methods/errors'
 import OverallResults from '@/components/Stats/Results/Overall'
 import InProgressResults from '@/components/Stats/Results/InProgress'
 import SalesTeamResults from '@/components/Stats/Results/SalesTeam'
 import SDRTeamResults from '@/components/Stats/Results/SDRTeam'
+import EditPromoter from '@/components/Modals/EditPromoter'
+import DateInput from '@/components/Inputs/DateInput'
+import MultipleSelectInput from '@/components/Inputs/MultipleSelectInput'
+
+import { getExcelFromJSON } from '@/lib/methods/excel-utils'
+import { getErrorMessage } from '@/lib/methods/errors'
 import { formatDateInputChange } from '@/lib/methods/formatting'
+
+import { formatDate, getFirstDayOfMonth, getLastDayOfMonth } from '@/utils/methods'
+import { useSalePromoters } from '@/utils/queries/users'
 import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
+import { fetchResultsExports } from '@/utils/queries/stats/exports'
 
 const currentDate = new Date()
 const periodStr = dayjs(currentDate).format('MM/YYYY')
@@ -54,25 +48,24 @@ function getSaleGoals(promoter: TUserDTOWithSaleGoals) {
   return currentPeriodSaleGoals.metas
 }
 
-function Equipe() {
+function ComercialResults() {
   const { data: session, status } = useSession({ required: true })
-  const [period, setPeriod] = useState({
-    after: firstDayOfMonth,
-    before: lastDayOfMonth,
-  })
+
+  const [period, setPeriod] = useState({ after: firstDayOfMonth, before: lastDayOfMonth })
   const [users, setUsers] = useState<string[] | null>(null)
+
   const [editModal, setEditModal] = useState<{ isOpen: boolean; promoter: TUserDTOWithSaleGoals | null }>({
     isOpen: false,
     promoter: null,
   })
-  const [newGroupModalIsOpen, setNewGroupModalIsOpen] = useState(false)
+
   const { data: promoters, isLoading: promotersLoading, isSuccess: promotersSuccess } = useSalePromoters()
 
   async function handleDataExport() {
     const loadingToastId = toast.loading('Carregando...')
     try {
-      const { data } = await axios.get(`/api/stats/sales-export?after=${period.after}&before=${period.before}`)
-      getExcelFromJSON(data.data, 'RELATORIO_VENDAS')
+      const results = await fetchResultsExports({ after: period.after, before: period.before, responsibles: users })
+      getExcelFromJSON(results, 'RELATORIO_VENDAS')
       toast.dismiss(loadingToastId)
       return toast.success('Exportação feita com sucesso !')
     } catch (error) {
@@ -82,6 +75,7 @@ function Equipe() {
       return toast.error(msg)
     }
   }
+
   if (status != 'authenticated') return <LoadingPage />
   return (
     <div className="flex h-full flex-col md:flex-row">
@@ -228,9 +222,8 @@ function Equipe() {
       {editModal.isOpen && editModal.promoter ? (
         <EditPromoter session={session} promoter={editModal.promoter} closeModal={() => setEditModal({ isOpen: false, promoter: null })} />
       ) : null}
-      {newGroupModalIsOpen ? <NewUserGroup /> : null}
     </div>
   )
 }
 
-export default Equipe
+export default ComercialResults

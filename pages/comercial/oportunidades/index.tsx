@@ -1,13 +1,16 @@
 import { useEffect, useState } from 'react'
-import axios, { AxiosError } from 'axios'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-
+import { useQueryClient } from '@tanstack/react-query'
 import { Session, getServerSession } from 'next-auth'
-
 import { DragDropContext, DropResult } from 'react-beautiful-dnd'
-import toast from 'react-hot-toast'
+import { Collection } from 'mongodb'
+import { GetServerSidePropsContext } from 'next'
+import { authOptions } from '../../api/auth/[...nextauth]'
+
+import { getPartnerFunnels } from '@/repositories/funnels/queries'
+import connectToDatabase from '@/services/mongodb/main-db-connection'
 
 import { AiOutlinePlus } from 'react-icons/ai'
+import { BsDownload } from 'react-icons/bs'
 
 import { Sidebar } from '@/components/Sidebar'
 import FunnelList from '@/components/dnd/FunnelList'
@@ -18,21 +21,18 @@ import SearchOpportunities from '@/components/Opportunities/SearchOpportunities'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 
 import SelectInput from '@/components/Inputs/SelectInput'
-import { useOpportunityCreators } from '@/utils/queries/users'
-import { TUserDTOSimplified } from '@/utils/schemas/user.schema'
 
+import { useOpportunityCreators } from '@/utils/queries/users'
+import { fetchOpportunityExport, useOpportunities } from '@/utils/queries/opportunities'
+
+import { TOpportunitySimplifiedDTOWithProposalAndActivitiesAndFunnels } from '@/utils/schemas/opportunity.schema'
+import { TUserDTOSimplified } from '@/utils/schemas/user.schema'
 import { TFunnel, TFunnelDTO } from '@/utils/schemas/funnel.schema'
-import { useOpportunities } from '@/utils/queries/opportunities'
-import {
-  TOpportunityDTOWithFunnelReferenceAndActivitiesByStatus,
-  TOpportunitySimplifiedDTOWithProposalAndActivitiesAndFunnels,
-} from '@/utils/schemas/opportunity.schema'
-import { authOptions } from '../../api/auth/[...nextauth]'
-import { GetServerSidePropsContext } from 'next'
-import { getPartnerFunnels } from '@/repositories/funnels/queries'
-import { Collection } from 'mongodb'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+
 import { useFunnelReferenceUpdate } from '@/utils/mutations/funnel-references'
+
+import { getExcelFromJSON } from '@/lib/methods/excel-utils'
+import { formatDateAsLocale } from '@/lib/methods/formatting'
 
 type Options = {
   activeResponsible: string | null
@@ -173,6 +173,16 @@ export default function OpportunitiesMainPage({ userJSON, funnelsJSON }: Opportu
     handleFunnelReferenceUpdate({ funnelReferenceId, newStageId })
   }
 
+  async function handleExportData() {
+    const results = await fetchOpportunityExport({
+      responsible: responsible,
+      funnel: funnel,
+      after: dateParam.after,
+      before: dateParam.before,
+      status: params.status,
+    })
+    getExcelFromJSON(results, `EXPORTAÇÃO DE OPORTUNIDADES ${formatDateAsLocale(new Date().toISOString())}`)
+  }
   useEffect(() => {
     if (!funnel) {
       setFunnel(getOptions({ session, opportunityCreators, funnels }).activeFunnel)
@@ -248,6 +258,13 @@ export default function OpportunitiesMainPage({ userJSON, funnelsJSON }: Opportu
                 width="100%"
               />
             </div>
+
+            <button
+              onClick={() => handleExportData()}
+              className="flex h-[46.6px] items-center justify-center gap-2 rounded-md border bg-[#2c6e49] p-2 px-3 text-sm font-medium text-white shadow-sm duration-300 ease-in-out hover:scale-105"
+            >
+              <BsDownload style={{ fontSize: '18px' }} />
+            </button>
 
             <SearchOpportunities />
             <button

@@ -64,6 +64,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
       nome: project.responsavel.nome,
       papel: 'VENDEDOR',
       avatar_url: project.responsavel.avatar_url || sellerUser?.avatar_url,
+      telefone: sellerUser?.telefone || '',
     }
     responsibles.push(seller)
     // In case there was an SDR
@@ -74,6 +75,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
         nome: project.representante.nome,
         papel: 'SDR',
         avatar_url: project.representante.avatar_url || sdrUser?.avatar_url,
+        telefone: sdrUser?.telefone || '',
       }
       responsibles.push(sdr)
     }

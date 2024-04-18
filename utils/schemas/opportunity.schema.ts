@@ -1,5 +1,5 @@
 import z from 'zod'
-import { TClientDTO } from './client.schema'
+import { ClientDTOSchema, InsertClientSchema, TClientDTO } from './client.schema'
 
 import { ActivitiesByStatus } from '@/pages/api/opportunities'
 import { TActivityDTO } from './activities.schema'
@@ -16,7 +16,7 @@ export const SaleCategorySchema = z.enum(['KIT', 'PLANO', 'PRODUTOS', 'SERVIÇOS
 })
 export type TSaleCategory = z.infer<typeof SaleCategorySchema>
 
-const GeneralOpportunitySchema = z.object({
+export const GeneralOpportunitySchema = z.object({
   nome: z.string(),
   idParceiro: z.string(),
   tipo: z.object({
@@ -37,6 +37,7 @@ const GeneralOpportunitySchema = z.object({
       nome: z.string(),
       papel: z.string(),
       avatar_url: z.string().optional().nullable(),
+      telefone: z.string(),
     })
   ),
   idCliente: z.string(),
@@ -119,11 +120,119 @@ export const InsertOpportunitySchema = z.object({
         nome: z.string(),
         papel: z.string(),
         avatar_url: z.string().optional().nullable(),
+        telefone: z.string(),
       }),
       { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
     )
     .min(1, 'É necessário ao menos 1 responsável.'),
   idCliente: z.string({ required_error: 'Vínculo de cliente não informado.', invalid_type_error: 'Tipo não válido para vínculo de cliente.' }),
+  idPropostaAtiva: z.string().optional().nullable(),
+  localizacao: z.object({
+    cep: z.string().optional().nullable(),
+    uf: z.string({
+      required_error: 'UF de localização da oportunidade não informada.',
+      invalid_type_error: 'Tipo não válido para a UF de localização da oportunidade.',
+    }),
+    cidade: z.string({
+      required_error: 'Cidade de localização da oportunidade não informada.',
+      invalid_type_error: 'Tipo não válido para a cidade de localização da oportunidade.',
+    }),
+    bairro: z.string().optional().nullable(),
+    endereco: z.string().optional().nullable(),
+    numeroOuIdentificador: z.string().optional().nullable(),
+    complemento: z.string().optional().nullable(),
+    // distancia: z.number().optional().nullable(),
+  }),
+  perda: z.object({
+    idMotivo: z.string().optional().nullable(),
+    descricaoMotivo: z.string().optional().nullable(),
+    data: z.string().datetime({ message: 'Formato inválido para data de perda.' }).optional().nullable(),
+  }),
+  ganho: z.object({
+    idProposta: z.string().optional().nullable(),
+    idProjeto: z.string().optional().nullable(),
+    data: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+  }),
+  instalacao: z.object({
+    concessionaria: z.string().optional().nullable(),
+    numero: z.string().optional().nullable(),
+    grupo: ElectricalInstallationGroupsSchema.optional().nullable(),
+    tipoLigacao: z
+      .union([z.literal('EXISTENTE'), z.literal('NOVA')])
+      .optional()
+      .nullable(),
+    tipoTitular: z
+      .union([z.literal('PESSOA FÍSICA'), z.literal('PESSOA JURÍDICA')])
+      .optional()
+      .nullable(),
+    nomeTitular: z.string().optional().nullable(),
+  }),
+  autor: z.object({
+    id: z.string({
+      required_error: 'ID do criador da oportunidade não informado.',
+      invalid_type_error: 'Tipo não válido para id do criador da oportunidade.',
+    }),
+    nome: z.string({
+      required_error: 'Nome do criador da oportunidade não informado.',
+      invalid_type_error: 'Tipo não válido para nome do criador da oportunidade.',
+    }),
+    avatar_url: z.string().optional().nullable(),
+  }),
+  idMarketing: z
+    .string({
+      required_error: 'ID de referência do Lead Marketing não fornecido.',
+      invalid_type_error: 'Tipo não válido para o ID de referência do Lead Marketing',
+    })
+    .optional()
+    .nullable(),
+  dataInsercao: z.string().datetime(),
+})
+export const OpportunityWithClientSchema = z.object({
+  _id: z.string({
+    required_error: 'ID de referência da oportunidade não informado.',
+    invalid_type_error: 'Tipo não válido para o ID de referência da oportunidade.',
+  }),
+  nome: z
+    .string({ required_error: 'Nome da oportunidade não informado.', invalid_type_error: 'Tipo não válido para nome da oportunidade.' })
+    .min(3, 'É necessário um nome de ao menos 3 caractéres para a oportunidade.'),
+  idParceiro: z.string({
+    required_error: 'Referência a parceiro não informado.',
+    invalid_type_error: 'Tipo não válido para a referência de parceiro.',
+  }),
+  tipo: z.object({
+    id: z
+      .string({
+        required_error: 'ID de referência do tipo de projeto não encontrado.',
+        invalid_type_error: 'Tipo não válido para o ID de referência do tipo de projeto.',
+      })
+      .min(12, 'Tipo inválido para ID de tipo deprojeto.'),
+    titulo: z.string({ required_error: 'Titulo do tipo de projeto não encontrado.', invalid_type_error: 'Tipo não válido para o titulo do tipo de projeto.' }),
+  }),
+  categoriaVenda: SaleCategorySchema,
+  descricao: z.string({
+    required_error: 'Descrição da oportunidade não informada.',
+    invalid_type_error: 'Tipo não válido para descrição da oportunidade.',
+  }),
+  identificador: z.string({
+    required_error: 'Identificador da oportunidade não informado.',
+    invalid_type_error: 'Tipo inválido para identificador da oportunidade.',
+  }),
+  responsaveis: z
+    .array(
+      z.object({
+        id: z.string(),
+        nome: z.string(),
+        papel: z.string(),
+        avatar_url: z.string().optional().nullable(),
+        telefone: z.string(),
+      }),
+      { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
+    )
+    .min(1, 'É necessário ao menos 1 responsável.'),
+  idCliente: z.string({ required_error: 'Vínculo de cliente não informado.', invalid_type_error: 'Tipo não válido para vínculo de cliente.' }),
+  cliente: ClientDTOSchema,
   idPropostaAtiva: z.string().optional().nullable(),
   localizacao: z.object({
     cep: z.string().optional().nullable(),

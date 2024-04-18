@@ -283,7 +283,7 @@ async function getOpportunities({ opportunitiesCollection, responsiblesQuery, af
       clientObjectId: { $toObjectId: '$idCliente' },
     }
     const proposeLookup = { from: 'proposals', localField: 'activeProposeObjectID', foreignField: '_id', as: 'proposta' }
-    const clientLookup = { from: 'clients', localField: 'clienteObjectId', foreignField: '_id', as: 'cliente' }
+    const clientLookup = { from: 'clients', localField: 'clientObjectId', foreignField: '_id', as: 'cliente' }
     const projection = {
       idMarketing: 1,
       responsaveis: 1,

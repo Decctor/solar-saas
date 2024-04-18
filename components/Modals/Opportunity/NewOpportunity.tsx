@@ -214,31 +214,6 @@ function NewOpportunity({ session, closeModal, opportunityCreators, funnels }: N
     queryClient: queryClient,
     affectedQueryKey: ['opportunities'],
   })
-  function addOpportunityResponsible() {
-    if (!newOpportunityResponsible.nome || !newOpportunityResponsible.id) return toast.error('Responsável inválido ou não preenchido.')
-    if (!newOpportunityResponsible.papel) return toast.error('Papel de responsável inválido.')
-    const opportunityResponsibles = [...newOpportunity.responsaveis]
-    const responsible = {
-      nome: newOpportunityResponsible.nome,
-      id: newOpportunityResponsible.id,
-      papel: newOpportunityResponsible.papel,
-      avatar_url: newOpportunityResponsible.avatar_url,
-    }
-    opportunityResponsibles.push(responsible)
-    setNewOpportunity((prev) => ({ ...prev, responsaveis: opportunityResponsibles }))
-    setNewOpportunityResponsible({
-      nome: session.user.nome,
-      id: session.user.id,
-      papel: null,
-      avatar_url: session.user.avatar_url,
-    })
-    return toast.success('Responsável adicionado com sucesso !')
-  }
-  function removeOpportunityResponsible(index: number) {
-    const opportunityResponsibles = [...newOpportunity.responsaveis]
-    opportunityResponsibles.splice(index, 1)
-    setNewOpportunity((prev) => ({ ...prev, responsaveis: opportunityResponsibles }))
-  }
 
   function handleSelectSimilarClient(client: TSimilarClientSimplifiedDTO) {
     setSimilarClient(client)

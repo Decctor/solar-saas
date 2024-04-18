@@ -1,4 +1,5 @@
 import GeneralInformationBlock from '@/components/ProjectType/GeneralInformationBlock'
+import ProposalTemplatesInformationBlock from '@/components/ProjectType/ProposalTemplatesInformationBlock'
 import SizingInformationBlock from '@/components/ProjectType/SizingInformationBlock'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { createProjectType, editProjectType } from '@/utils/mutations/project-types'
@@ -22,6 +23,7 @@ function EditProjectType({ projectTypeId, session, closeModal }: EditProjectType
     nome: '',
     categoriaVenda: 'KIT',
     dimensionamento: [],
+    modelosProposta: [],
     autor: {
       id: session.user.id,
       nome: session.user.nome,
@@ -62,6 +64,7 @@ function EditProjectType({ projectTypeId, session, closeModal }: EditProjectType
             </div>
             <GeneralInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
             <SizingInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+            <ProposalTemplatesInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
           </div>
           <div className="flex w-full items-center justify-end p-2">
             <button

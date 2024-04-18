@@ -93,6 +93,7 @@ function ProposalWithKits({ opportunity, infoHolder, setInfoHolder, session, par
           infoHolder={infoHolder}
           setInfoHolder={setInfoHolder}
           opportunity={opportunity}
+          projectTypes={projectTypes || []}
           moveToPreviousStage={() => setStage((prev) => prev - 1)}
           moveToNextStage={() => setStage((prev) => prev + 1)}
           session={session}

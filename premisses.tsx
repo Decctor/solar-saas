@@ -171,4 +171,15 @@ export function renderProposalPremisseField<T extends keyof TProposalPremisses>(
       />
     )
   }
+  if (field == 'eficienciaGeracao') {
+    return (
+      <NumberInput
+        label="Eficiência de geração"
+        placeholder="Preencha aqui a eficiência de geração do sistema..."
+        value={(value as number) || null}
+        handleChange={handleChange as (value: number) => void}
+        width="100%"
+      />
+    )
+  }
 }
