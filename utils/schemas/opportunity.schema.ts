@@ -37,7 +37,7 @@ export const GeneralOpportunitySchema = z.object({
       nome: z.string(),
       papel: z.string(),
       avatar_url: z.string().optional().nullable(),
-      telefone: z.string(),
+      telefone: z.string().optional().nullable(),
     })
   ),
   idCliente: z.string(),
@@ -120,7 +120,7 @@ export const InsertOpportunitySchema = z.object({
         nome: z.string(),
         papel: z.string(),
         avatar_url: z.string().optional().nullable(),
-        telefone: z.string(),
+        telefone: z.string().optional().nullable(),
       }),
       { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
     )
@@ -226,7 +226,7 @@ export const OpportunityWithClientSchema = z.object({
         nome: z.string(),
         papel: z.string(),
         avatar_url: z.string().optional().nullable(),
-        telefone: z.string(),
+        telefone: z.string().optional().nullable(),
       }),
       { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
     )

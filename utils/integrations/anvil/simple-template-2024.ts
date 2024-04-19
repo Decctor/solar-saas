@@ -5,14 +5,14 @@ import ptBr from 'dayjs/locale/pt-br'
 import { getExpenseAndEconomyProgression } from '../general'
 import { formatDecimalPlaces } from '@/lib/methods/formatting'
 import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TProposal, TProposalDTO } from '@/utils/schemas/proposal.schema'
 import { getInvertersStrByProducts, getModulesStrByProducts } from '@/lib/methods/extracting'
 
 dayjs.locale(ptBr)
 
 type GetTemplateDataParams = {
   opportunity: TOpportunityDTOWithClient
-  proposal: TProposal
+  proposal: TProposalDTO
 }
 export function getSimpleTemplate2024Data({ opportunity, proposal }: GetTemplateDataParams) {
   const paInformation = !!proposal.precificacao.find((p) => p.descricao.includes('PADRÃO')) ? 'ADEQUAÇÕES DE PADRÃO' : ''
@@ -64,7 +64,7 @@ export function getSimpleTemplate2024Data({ opportunity, proposal }: GetTemplate
       economyAnually: formatToMoney(annualSavedValue),
       economy25years: formatToMoney(twentyFiveYearsSavedValue),
       investment: proposal.valor ? formatToMoney(proposal.valor) : 'R$ N/A',
-      proposeId: opportunity._id,
+      proposeId: `#${proposal._id}`,
       paInformation: paInformation,
     },
   }

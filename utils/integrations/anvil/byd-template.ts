@@ -3,12 +3,12 @@ import { formatToMoney, getAverageValue, getEstimatedGen, getInverterStr, getMod
 import { formatDecimalPlaces, formatLocation } from '@/lib/methods/formatting'
 import dayjs from 'dayjs'
 import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TProposal, TProposalDTO } from '@/utils/schemas/proposal.schema'
 import { getInvertersStrByProducts, getModulesStrByProducts } from '@/lib/methods/extracting'
 
 type GetTemplateDataParams = {
   opportunity: TOpportunityDTOWithClient
-  proposal: TProposal
+  proposal: TProposalDTO
 }
 export function getBYDTemplateData({ opportunity, proposal }: GetTemplateDataParams) {
   const seller = opportunity.responsaveis.find((r) => r.papel == 'VENDEDOR')
@@ -47,7 +47,7 @@ export function getBYDTemplateData({ opportunity, proposal }: GetTemplateDataPar
     fontSize: 10,
     textColor: '#333333',
     data: {
-      idProposta: `#${opportunity._id}`,
+      idProposta: `#${proposal._id}`,
       vendedor: seller?.nome || sdr?.nome || '',
       telefoneVendedor: seller?.telefone || sdr?.telefone || '',
       dataEmissao: dayjs().format('DD/MM/YYYY'),

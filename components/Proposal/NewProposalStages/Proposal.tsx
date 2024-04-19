@@ -11,7 +11,7 @@ import Services from '../Blocks/Services'
 import Products from '../Blocks/Products'
 
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
-import { createProposal } from '@/utils/mutations/proposals'
+import { createProposal, createProposalPersonalized } from '@/utils/mutations/proposals'
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { TOpportunity, TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
 import { formatToMoney } from '@/utils/methods'
@@ -28,6 +28,7 @@ import ProposalWithProductsTemplate from '../Templates/ProposalWithProductsTempl
 import ProposalWithServicesTemplate from '../Templates/ProposalWithServicesTemplate'
 import { TProjectTypeDTO } from '@/utils/schemas/project-types.schema'
 import SelectInput from '@/components/Inputs/SelectInput'
+import { handleDownload } from '@/lib/methods/download'
 
 function renderProposalPreview({
   proposal,
@@ -67,6 +68,30 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
   const queryClient = useQueryClient()
 
   const [saveAsActive, setSaveAsActive] = useState<boolean>(false)
+
+  async function handleCreation({
+    proposal,
+    opportunityWithClient,
+    saveAsActive,
+    idAnvil,
+  }: {
+    proposal: TProposal
+    opportunityWithClient: TOpportunityDTOWithClient
+    saveAsActive: boolean
+    idAnvil?: string | null
+  }) {
+    try {
+      const response = await createProposalPersonalized({ proposal, opportunityWithClient, saveAsActive, idAnvil })
+      const fileName = proposal.nome
+      const fileUrl = response.data?.fileUrl
+      if (fileUrl) await handleDownload({ fileName, fileUrl })
+
+      if (typeof response.message != 'string') return 'Proposta criada com sucesso !'
+      return response.message as string
+    } catch (error) {
+      throw error
+    }
+  }
   const {
     data,
     mutate: handleCreateProposal,
@@ -75,7 +100,7 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
     isError,
   } = useMutationWithFeedback({
     mutationKey: ['create-proposal'],
-    mutationFn: createProposal,
+    mutationFn: handleCreation,
     queryClient: queryClient,
     affectedQueryKey: ['opportunity-proposals', opportunity._id],
   })
@@ -115,8 +140,10 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
               Voltar
             </button>
             <button
-              // @ts-ignore
-              onClick={() => handleCreateProposal({ info: infoHolder })}
+              onClick={() =>
+                // @ts-ignore
+                handleCreateProposal({ proposal: infoHolder, opportunityWithClient: opportunity, saveAsActive: saveAsActive, idAnvil: infoHolder.idModelo })
+              }
               className="rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-gray-800 enabled:hover:text-white"
             >
               CRIAR PROPOSTA

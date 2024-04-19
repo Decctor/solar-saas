@@ -3,12 +3,12 @@ import { formatToMoney, getEstimatedGen, getInverterStr, getModulesStr } from '@
 import dayjs from 'dayjs'
 import { formatDecimalPlaces } from '@/lib/methods/formatting'
 import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TProposal, TProposalDTO } from '@/utils/schemas/proposal.schema'
 import { getInvertersStrByProducts, getModulesStrByProducts } from '@/lib/methods/extracting'
 
 type GetTemplateDataParams = {
   opportunity: TOpportunityDTOWithClient
-  proposal: TProposal
+  proposal: TProposalDTO
 }
 export function getComplexTemplate2024Data({ opportunity, proposal }: GetTemplateDataParams) {
   const seller = opportunity.responsaveis.find((r) => r.papel == 'VENDEDOR')
@@ -45,7 +45,7 @@ export function getComplexTemplate2024Data({ opportunity, proposal }: GetTemplat
       projectIdentifier: opportunity.identificador,
       sellerName: seller?.nome || sdr?.nome || '',
       sellerPhone: seller?.telefone || sdr?.telefone || '',
-      proposeId: `#${opportunity._id}`,
+      proposeId: `#${proposal._id}`,
       energyConsumption: formatDecimalPlaces(averageEnergyConsumption),
       energyExpense: formatToMoney(monthlyEnergyExpense),
       energyExpenseAnnually: formatToMoney(annualEnergyExpense),

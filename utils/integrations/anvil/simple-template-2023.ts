@@ -4,12 +4,12 @@ import { formatToMoney, getEstimatedGen, getInverterStr, getModulesStr } from '@
 import dayjs from 'dayjs'
 import { getExpenseAndEconomyProgression } from '../general'
 import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TProposal, TProposalDTO } from '@/utils/schemas/proposal.schema'
 import { getInvertersStrByProducts, getModulesStrByProducts } from '@/lib/methods/extracting'
 
 type GetTemplateDataParams = {
   opportunity: TOpportunityDTOWithClient
-  proposal: TProposal
+  proposal: TProposalDTO
 }
 export function getSimpleTemplate2023Data({ opportunity, proposal }: GetTemplateDataParams) {
   const paInformation = !!proposal.precificacao.find((p) => p.descricao.includes('PADRÃO')) ? 'ADEQUAÇÕES DE PADRÃO' : ''
@@ -41,7 +41,7 @@ export function getSimpleTemplate2023Data({ opportunity, proposal }: GetTemplate
     fontSize: 10,
     textColor: '#333333',
     data: {
-      idProposta: `#${opportunity._id}`,
+      idProposta: `#${proposal._id}`,
       dataEmissao: dayjs().format('DD/MM/YYYY'),
       vendedor: seller?.nome || sdr?.nome || '',
       nomeCliente: opportunity.cliente.nome,

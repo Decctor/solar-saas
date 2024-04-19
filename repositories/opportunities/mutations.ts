@@ -83,7 +83,7 @@ export async function insertOpportunityWithExistingClient({ collection, info, pa
 type UpdateOpportunityParams = {
   id: string
   collection: Collection<TOpportunity>
-  changes: any
+  changes: Partial<TOpportunity>
   partnerId: string
 }
 

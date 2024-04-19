@@ -1,4 +1,4 @@
-import { ProposeTemplates } from '@/utils/integrations/general'
+import { ProposalTemplates } from '@/utils/integrations/general'
 import { TProjectType } from '@/utils/schemas/project-types.schema'
 import React from 'react'
 
@@ -7,7 +7,7 @@ type ProposalTemplatesInformationBlockProps = {
   setInfoHolder: React.Dispatch<React.SetStateAction<TProjectType>>
 }
 function ProposalTemplatesInformationBlock({ infoHolder, setInfoHolder }: ProposalTemplatesInformationBlockProps) {
-  function addTemplate(template: (typeof ProposeTemplates)[number]) {
+  function addTemplate(template: (typeof ProposalTemplates)[number]) {
     const models = [...infoHolder.modelosProposta]
     models.push({ titulo: template.value, idAnvil: template.idAnvil })
     setInfoHolder((prev) => ({ ...prev, modelosProposta: models }))
@@ -25,7 +25,7 @@ function ProposalTemplatesInformationBlock({ infoHolder, setInfoHolder }: Propos
       </p>
       <h1 className="my-2 w-full text-start text-xs font-black text-[#FF9B50]">MODELOS DISPONÍVEIS</h1>
       <div className="my-2 flex flex-wrap items-center gap-2">
-        {ProposeTemplates.filter((t) => !infoHolder.modelosProposta.map((m) => m.idAnvil).includes(t.idAnvil)).map((template, index) => (
+        {ProposalTemplates.filter((t) => !infoHolder.modelosProposta.map((m) => m.idAnvil).includes(t.idAnvil)).map((template, index) => (
           <button
             key={index}
             onClick={() => addTemplate(template)}

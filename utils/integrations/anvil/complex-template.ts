@@ -3,12 +3,12 @@ import { formatToMoney, getAverageValue, getEstimatedGen, getInverterStr, getMod
 import { formatDecimalPlaces } from '@/lib/methods/formatting'
 import dayjs from 'dayjs'
 import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TProposal, TProposalDTO } from '@/utils/schemas/proposal.schema'
 import { getInvertersStrByProducts, getModulesStrByProducts } from '@/lib/methods/extracting'
 
 type GetTemplateDataParams = {
   opportunity: TOpportunityDTOWithClient
-  proposal: TProposal
+  proposal: TProposalDTO
 }
 export function getComplexTemplateData({ opportunity, proposal }: GetTemplateDataParams) {
   const seller = opportunity.responsaveis.find((r) => r.papel == 'VENDEDOR')

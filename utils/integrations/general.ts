@@ -2,7 +2,7 @@ import { getEstimatedGen } from '../methods'
 
 import { TOpportunityDTOWithClient } from '../schemas/opportunity.schema'
 
-import { TProposal } from '../schemas/proposal.schema'
+import { TProposal, TProposalDTO } from '../schemas/proposal.schema'
 
 import { getBYDTemplateData } from './anvil/byd-template'
 import { getComplexTemplateData } from './anvil/complex-template'
@@ -12,7 +12,7 @@ import { getOeMTemplateData } from './anvil/oem-template'
 import { getSimpleTemplate2023Data } from './anvil/simple-template-2023'
 import { getSimpleTemplate2024Data } from './anvil/simple-template-2024'
 
-export const ProposeTemplates = [
+export const ProposalTemplates = [
   {
     active: true,
     label: 'TEMPLATE SIMPLES 2024',
@@ -67,7 +67,7 @@ export const ProposeTemplateOptions = [
 
 type GetTemplateDataParams = {
   opportunity: TOpportunityDTOWithClient
-  proposal: TProposal
+  proposal: TProposalDTO
   template: (typeof ProposeTemplateOptions)[number]
 }
 export function getTemplateData({ opportunity, proposal, template }: GetTemplateDataParams) {
@@ -83,6 +83,7 @@ export function getTemplateData({ opportunity, proposal, template }: GetTemplate
 
   if (template == 'TEMPLATE O&M') return getOeMTemplateData({ opportunity, proposal })
 
+  return getSimpleTemplate2024Data({ opportunity, proposal })
   // if (template == 'TEMPLATE MONTAGEM E DESMONTAGEM') return getDisassemblyAndAssemblyTemplateData({ opportunity, proposal })
   // if (template == 'TEMPLATE MONTAGEM E DESMONTAGEM 2024')
   //   return getDisassemblyAndAssemblyTemplate2024Data(client, project, proposal as IProposeDisassemblyAssemblyInfo, seller)
