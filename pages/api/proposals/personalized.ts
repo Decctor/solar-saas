@@ -1,4 +1,4 @@
-import { uploadFile } from '@/lib/methods/firebase'
+import { uploadFile, uploadFileAsPDF } from '@/lib/methods/firebase'
 import { getPDFByAnvil } from '@/repositories/integrations/anvil'
 import { updateOpportunity } from '@/repositories/opportunities/mutations'
 import { insertProposal, updateProposal } from '@/repositories/proposals/mutations'
@@ -62,7 +62,7 @@ const createProposalPersonalized: NextApiHandler<PostResponse> = async (req, res
     })
     const anvilFileResponse = await getPDFByAnvil({ info: anvilTemplateData, idAnvil: idAnvil })
 
-    const { format, size, url } = await uploadFile({ file: anvilFileResponse, fileName: proposal.nome, vinculationId: opportunityWithClient._id })
+    const { format, size, url } = await uploadFileAsPDF({ file: anvilFileResponse, fileName: proposal.nome, vinculationId: opportunityWithClient._id })
 
     await updateProposal({ id: insertedId, collection: proposalsCollection, changes: { urlArquivo: url }, partnerId: partnerId || '' })
 

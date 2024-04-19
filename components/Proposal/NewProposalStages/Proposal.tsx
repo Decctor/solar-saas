@@ -29,6 +29,7 @@ import ProposalWithServicesTemplate from '../Templates/ProposalWithServicesTempl
 import { TProjectTypeDTO } from '@/utils/schemas/project-types.schema'
 import SelectInput from '@/components/Inputs/SelectInput'
 import { handleDownload } from '@/lib/methods/download'
+import CheckboxInput from '@/components/Inputs/CheckboxInput'
 
 function renderProposalPreview({
   proposal,
@@ -187,6 +188,16 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
                     width="100%"
                   />
                 ) : null}
+                <div className="flex w-full items-center justify-center">
+                  <div className="w-fit">
+                    <CheckboxInput
+                      labelFalse="SALVAR COMO PROPOSTA ATIVA"
+                      labelTrue="SALVAR COMO PROPOSTA ATIVA"
+                      checked={saveAsActive}
+                      handleChange={(value) => setSaveAsActive(value)}
+                    />
+                  </div>
+                </div>
                 <Kits infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <Plans infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <Services infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
