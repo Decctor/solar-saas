@@ -91,6 +91,12 @@ export const Sidebar = ({ session }: SidebarProps) => {
             url="/operacional/homologacoes"
             icon={<FaProjectDiagram style={{ fontSize: '15px', color: '#264653' }} />}
           />
+          <SidebarItem
+            text="Análises Técnicas"
+            isOpen={sidebarExtended}
+            url="/operacional/analises-tecnicas"
+            icon={<BsFillClipboardDataFill style={{ fontSize: '15px', color: '#264653' }} />}
+          />
         </div>
         {/* <NotificationBlock sidebarExtended={sidebarExtended} /> */}
         {session?.user.avatar_url ? (

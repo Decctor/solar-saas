@@ -108,7 +108,7 @@ function TechnicalAnalysisCard({ analysis, handleOpenModal }: TechnicalAnalysisC
           <div className={`flex items-center gap-2`}>
             <div className="ites-center flex gap-1">
               <BsCalendarPlus />
-              <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(analysis.dataInsercao)}</p>
+              <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(analysis.dataInsercao, true)}</p>
             </div>
             {analysis.dataEfetivacao ? (
               <div className="ites-center flex gap-1">

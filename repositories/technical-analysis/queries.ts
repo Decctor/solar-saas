@@ -7,7 +7,7 @@ type GetTechnicalAnalysisParams = {
 }
 export async function getTechnicalAnalysis({ collection, partnerId }: GetTechnicalAnalysisParams) {
   try {
-    const allAnalysis = await collection.find({ idParceiro: partnerId }).toArray()
+    const allAnalysis = await collection.find({ idParceiro: partnerId }, { sort: { _id: -1 } }).toArray()
     return allAnalysis
   } catch (error) {
     throw error

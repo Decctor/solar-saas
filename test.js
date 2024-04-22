@@ -1,151 +1,79 @@
-const pricingOne = [
+const equipments = [
   {
-    descricao: 'VALOR DO KIT',
-    custoCalculado: 8150.42,
-    custoFinal: 8150.42,
-    faturavel: false,
-    margemLucro: 20.34269296905492,
-    valorCalculado: 9261.84090909091,
-    valorFinal: 10231.854808792048,
+    modelo: '(JINKO) PAINEL SOLAR 525/(JINKO) PAINEL SOLAR 325',
+    qtde: '15/24',
+    potencia: '525/325',
   },
   {
-    descricao: 'CUSTOS DE INSTALAÇÃO',
-    custoCalculado: 577.5,
-    custoFinal: 577.5,
-    faturavel: true,
-    margemLucro: 20.34269296905491,
-    valorCalculado: 656.25,
-    valorFinal: 724.9805718082512,
+    modelo: '(TRINA SOLAR) VERTEX TSM-DE21 660/(TRINA SOLAR) VERTEX TSM-DE21 660',
+    potencia: '660/660',
+    qtde: '12/8',
   },
   {
-    descricao: 'CUSTOS DE MÃO DE OBRA',
-    custoCalculado: 1655.5,
-    custoFinal: 1655.5,
-    faturavel: true,
-    margemLucro: 20.34269296905492,
-    valorCalculado: 1881.25,
-    valorFinal: 2078.2776391836537,
+    modelo: '(PROMO) PAINEL FOTOVOLTAICO MONOCRISTALINO/(PROMO) PAINEL FOTOVOLTAICO MONOCRISTALINO',
+    potencia: '660/660',
+    qtde: '8/12',
   },
   {
-    descricao: 'CUSTOS DE PROJETO',
-    custoCalculado: 308,
-    custoFinal: 308,
-    faturavel: true,
-    margemLucro: 20.34269296905491,
-    valorCalculado: 350,
-    valorFinal: 386.65630496440065,
+    modelo: '(TRINA SOLAR) VERTEX TSM-DE21 660/(TRINA SOLAR) VERTEX TSM-DE21 660',
+    potencia: '660/660',
+    qtde: '8/8',
   },
   {
-    descricao: 'CUSTO DE DESLOCAMENTO',
-    custoCalculado: 76.53333333333335,
-    custoFinal: 76.53333333333335,
-    faturavel: true,
-    margemLucro: 20.34269296905492,
-    valorCalculado: 86.96969696969698,
-    valorFinal: 96.07823335479048,
+    modelo: '(BYD) MLK-36-535/(BYD) MLK-36-535',
+    potencia: '535/535',
+    qtde: '296/296',
   },
   {
-    descricao: 'CUSTO DE ALIMENTAÇÃO',
-    custoCalculado: 0,
-    custoFinal: 0,
-    faturavel: true,
-    margemLucro: 0,
-    valorCalculado: 0,
-    valorFinal: 0,
+    modelo: '(HOYMILES) HMS-1800-4T/(HOYMILES) HMS-1800-4T',
+    potencia: '1800/1800',
+    qtde: '1/1',
   },
   {
-    descricao: 'CUSTO DE COMISSÕES',
-    custoCalculado: 868.9887553066926,
-    custoFinal: 868.9887553066926,
-    faturavel: true,
-    margemLucro: 20.34269296905492,
-    valorCalculado: 987.4872219394234,
-    valorFinal: 1090.90902981331,
+    modelo: '(BYD) MLK-36-540/(CANADIAN SOLAR) HIKU CS3W-455MS (35MM)',
+    potencia: '540/455',
+    qtde: '38/20',
   },
   {
-    descricao: 'CUSTO DE IMPOSTOS',
-    custoCalculado: 1108.2270363111868,
-    custoFinal: 1108.2270363111868,
-    faturavel: true,
-    margemLucro: 20.34269296905491,
-    valorCalculado: 1259.348904899076,
-    valorFinal: 1391.243412083546,
+    modelo: '(PROMO) TRINA/(PROMO) TRINA',
+    qtde: '12/8',
+    potencia: '565/565',
   },
 ]
 
-const pricingTwo = [
-  {
-    descricao: 'VALOR DO KIT',
-    custoCalculado: 8150.42,
-    custoFinal: 8150.42,
-    faturavel: false,
-    margemLucro: 20.34269296905492,
-    valorCalculado: 9261.84090909091,
-    valorFinal: 10231.854808792048,
-  },
-  {
-    descricao: 'CUSTOS DE INSTALAÇÃO',
-    custoCalculado: 577.5,
-    custoFinal: 577.5,
-    faturavel: true,
-    margemLucro: 20.34269296905491,
-    valorCalculado: 656.25,
-    valorFinal: 724.9805718082512,
-  },
-  {
-    descricao: 'CUSTOS DE MÃO DE OBRA',
-    custoCalculado: 1655.5,
-    custoFinal: 1655.5,
-    faturavel: true,
-    margemLucro: 20.34269296905492,
-    valorCalculado: 1881.25,
-    valorFinal: 2078.2776391836537,
-  },
-  {
-    descricao: 'CUSTOS DE PROJETO',
-    custoCalculado: 308,
-    custoFinal: 308,
-    faturavel: true,
-    margemLucro: 20.34269296905491,
-    valorCalculado: 350,
-    valorFinal: 386.65630496440065,
-  },
-  {
-    descricao: 'CUSTO DE DESLOCAMENTO',
-    custoCalculado: 76.53333333333335,
-    custoFinal: 76.53333333333335,
-    faturavel: true,
-    margemLucro: 20.34269296905492,
-    valorCalculado: 86.96969696969698,
-    valorFinal: 96.07823335479048,
-  },
-  {
-    descricao: 'CUSTO DE ALIMENTAÇÃO',
-    custoCalculado: 0,
-    custoFinal: 0,
-    faturavel: true,
-    margemLucro: 0,
-    valorCalculado: 0,
-    valorFinal: 0,
-  },
-  {
-    descricao: 'CUSTO DE COMISSÕES',
-    custoCalculado: 868.9887553066926,
-    custoFinal: 868.9887553066926,
-    faturavel: true,
-    margemLucro: 20.34269296905492,
-    valorCalculado: 987.4872219394234,
-    valorFinal: 1090.90902981331,
-  },
-  {
-    descricao: 'CUSTO DE IMPOSTOS',
-    custoCalculado: 1108.2270363111868,
-    custoFinal: 1108.2270363111868,
-    faturavel: true,
-    margemLucro: 20.34269296905491,
-    valorCalculado: 1259.348904899076,
-    valorFinal: 1391.243412083546,
-  },
-]
+const regex = /\(([^)]+)\)\s*(.*)/
 
-console.log(pricingOne == pricingTwo)
+function getEquipmentInformation(s) {
+  if (s.qtde.includes('/')) {
+    const qtys = s.qtde.split('/')
+    for (let i = 0; i < qtys.length; i++) {
+      const equivalentModelStr = s.modelo.split('/')[i]
+      const matches = equivalentModelStr.match(regex)
+      const matchedProducer = matches ? matches[1] : ''
+      const matchedModel = matches ? matches[2] : equivalentModelStr || ''
+      const equivalentPower = s.potencia.split('/')[i] ? Number(s.potencia.split('/')[i]) : 0
+      const equivalentQty = Number(qtys[i])
+      console.log({
+        fabricante: matchedProducer,
+        modelo: matchedModel,
+        qtde: equivalentQty,
+        potencia: equivalentPower,
+      })
+    }
+  } else {
+    const matches = s.modelo.match(regex)
+    const matchedProducer = matches ? matches[1] : ''
+    const matchedModel = matches ? matches[2] : s.modelo || ''
+    const equivalentPower = s.potencia.split('/')[i] ? Number(s.potencia.split('/')[i]) : 0
+    const equivalentQty = Number(s.qtde)
+    console.log({
+      fabricante: matchedProducer,
+      modelo: matchedModel,
+      qtde: equivalentQty,
+      potencia: equivalentPower,
+    })
+  }
+}
+equipments.forEach((s) => {
+  getEquipmentInformation(s)
+})
