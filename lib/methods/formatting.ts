@@ -28,6 +28,8 @@ export function formatNameAsInitials(name: string) {
   var secondLetter
   if (['DE', 'DA', 'DO', 'DOS', 'DAS'].includes(splittedName[1])) secondLetter = splittedName[2] ? splittedName[2][0] : ''
   else secondLetter = splittedName[1] ? splittedName[1][0] : ''
+  console.log(splittedName, splittedName[0][0], splittedName[0][1], name)
+  if (!firstLetter && !secondLetter) return 'N'
   return firstLetter + secondLetter
 }
 

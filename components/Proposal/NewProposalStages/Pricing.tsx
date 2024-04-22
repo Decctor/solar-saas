@@ -34,7 +34,12 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
       <div className="flex w-full flex-col gap-4 py-4">
         <h1 className="font-Raleway font-bold text-gray-800">DESCRITIVO DA VENDA</h1>
       </div>
-      <PricingTable pricing={pricing} setPricing={setPricing} userHasEditPermission={session?.user.permissoes.precos.visualizar} />
+      <PricingTable
+        pricing={pricing}
+        setPricing={setPricing}
+        userHasPricingEditPermission={session?.user.permissoes.precos.editar}
+        userHasPricingViewPermission={session.user.permissoes.precos.visualizar}
+      />
       {/* {session?.user.permissoes.precos.editar ? (
         <button
           onClick={() => setAddCostModalIsOpen(true)}

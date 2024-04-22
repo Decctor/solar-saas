@@ -20,9 +20,10 @@ type EditProposalProps = {
   closeModal: () => void
   info: TProposalDTO
   userHasPricingEditPermission: boolean
+  userHasPricingViewPermission: boolean
   session: Session
 }
-function EditProposal({ closeModal, info, userHasPricingEditPermission, session }: EditProposalProps) {
+function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasPricingEditPermission, session }: EditProposalProps) {
   const queryClient = useQueryClient()
   const [proposalName, setProposalName] = useState(info.nome)
   const [pricing, setPricing] = useState<TPricingItem[]>(info.precificacao)
@@ -106,7 +107,12 @@ function EditProposal({ closeModal, info, userHasPricingEditPermission, session 
               handleChange={(value) => setProposalName(value)}
               width="100%"
             />
-            <PricingTable pricing={pricing} setPricing={setPricing} userHasEditPermission={userHasPricingEditPermission} />
+            <PricingTable
+              pricing={pricing}
+              setPricing={setPricing}
+              userHasPricingEditPermission={userHasPricingEditPermission}
+              userHasPricingViewPermission={userHasPricingViewPermission}
+            />
             <div className="flex w-full items-center justify-center gap-2 py-1">
               <div className="flex gap-2 rounded border border-gray-600 px-2 py-1 font-medium text-gray-600">
                 <p>{formatToMoney(pricingTotal)}</p>

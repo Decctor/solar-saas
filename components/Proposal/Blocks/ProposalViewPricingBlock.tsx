@@ -111,7 +111,33 @@ function ProposalViewPricingBlock({ userHasPricingViewPermission, pricing }: Pro
             </div>
           </div>
         </>
-      ) : null}
+      ) : (
+        <div className="mt-2 flex w-full grow flex-col gap-1">
+          <div className="flex w-full items-center rounded bg-cyan-500">
+            <div className="flex w-full items-center justify-center p-1">
+              <h1 className="font-bold text-white">ITEM</h1>
+            </div>
+          </div>
+          {pricing.map((priceItem, index) => {
+            const { descricao, valorCalculado, valorFinal } = priceItem
+            return (
+              <div className={`flex w-full items-center rounded ${Math.abs(valorFinal - valorCalculado) > 1 ? 'bg-orange-200' : ''}`} key={index}>
+                <div className="flex w-full items-center justify-center p-1">
+                  <h1 className="text-gray-500">{descricao}</h1>
+                </div>
+              </div>
+            )
+          })}
+          <div className="flex w-full items-center rounded border-t border-gray-200 py-1">
+            <div className="flex w-8/12 items-center justify-center p-1">
+              <h1 className="font-bold text-gray-800">TOTAIS</h1>
+            </div>
+            <div className="flex w-4/12 items-center justify-center p-1">
+              <h1 className="font-medium text-gray-800">{formatToMoney(getPricingTotals(pricing).total)}</h1>
+            </div>
+          </div>
+        </div>
+      )}
     </>
   )
 }

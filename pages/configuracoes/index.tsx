@@ -32,7 +32,7 @@ function ConfigurationMain() {
           <p className="text-[#71717A]">Gerencie configurações e preferências</p>
         </div>
         <div className="flex grow flex-col items-center gap-2 py-2 lg:flex-row">
-          <div className="flex h-fit w-full flex-row gap-1 px-2 py-2 lg:h-full lg:w-1/5 lg:flex-col">
+          <div className="flex h-fit w-full flex-col gap-1 px-2 py-2 lg:h-full lg:w-1/5">
             <button
               onClick={() => setMode('profile')}
               className={`${
@@ -112,7 +112,7 @@ function ConfigurationMain() {
               </button>
             ) : null}
           </div>
-          <div className="flex h-full w-4/5 flex-col gap-1 px-2 py-2">
+          <div className="flex h-full w-full flex-col gap-1 px-2 py-2 lg:w-4/5">
             {mode == 'profile' ? <Profile session={session} /> : null}
             {mode == 'partner' ? <Partner session={session} /> : null}
             {mode == 'users' ? <Users session={session} /> : null}

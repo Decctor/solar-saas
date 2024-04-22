@@ -34,9 +34,9 @@ function CardUserControl({ userInfo, admin, openModal }: CardUserControlProps) {
   }, [onClickOutside])
 
   return (
-    <div ref={ref} className="flex h-[100px] w-full gap-2 rounded-md border border-gray-300 shadow-sm">
-      <div className={`h-full w-[4px] ${userInfo.ativo ? 'bg-blue-500' : 'bg-gray-500'} rounded-bl-md rounded-tl-md`}></div>
-      <div className="flex grow items-center">
+    <div ref={ref} className="flex min-h-[100px] w-full flex-col gap-2 rounded-md border border-gray-300 shadow-sm lg:flex-row">
+      <div className={`h-[4px] w-full lg:h-full lg:w-[4px] ${userInfo.ativo ? 'bg-blue-500' : 'bg-gray-500'} rounded-bl-md rounded-tl-md`}></div>
+      <div className="flex grow flex-col items-center lg:flex-row">
         <div className="flex h-full min-w-[60px] flex-col items-center justify-center gap-2">
           {userInfo.avatar_url ? (
             <div className="relative h-[50px] w-[50px]">
@@ -60,13 +60,11 @@ function CardUserControl({ userInfo, admin, openModal }: CardUserControlProps) {
         </div>
         <div className="flex h-full grow flex-col justify-center p-3">
           <h5 className="font-Raleway font-black leading-none tracking-tight">{userInfo.nome}</h5>
-          <span className="text-sm text-gray-500">{userInfo.email}</span>
+          <span className="text-[0.65rem] text-gray-500 lg:text-sm">{userInfo.email}</span>
           <div className="mt-2 flex w-full items-center justify-between">
             <div className="flex items-center gap-1 text-xs">
               <BsFillCalendarFill />
-              <p className="leading-none tracking-tight text-gray-500">
-                {userInfo.dataInsercao ? formatDateAsLocale(userInfo.dataInsercao) : 'NÃO DEFINIDO'}
-              </p>
+              <p className="leading-none tracking-tight text-gray-500">{userInfo.dataInsercao ? formatDateAsLocale(userInfo.dataInsercao) : 'NÃO DEFINIDO'}</p>
             </div>
             <button onClick={() => openModal(userInfo._id.toString())} className="text-sm text-gray-500 duration-300 ease-in-out hover:text-cyan-500">
               <AiFillEdit />

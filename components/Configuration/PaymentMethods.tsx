@@ -49,7 +49,7 @@ function PaymentMethods({ session }: PaymentMethodsProps) {
                   <p className="cursor-pointer text-sm font-medium leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500">{method.nome}</p>
                 </div>
                 <h1 className='"w-full mt-2 text-start text-xs font-medium'>FRACIONAMENTO</h1>
-                <div className="flex w-full items-center justify-start gap-2">
+                <div className="flex w-full flex-wrap items-center justify-start gap-2">
                   {method.fracionamento.map((item, itemIndex) => (
                     <div key={itemIndex} className="rounded-lg border border-gray-300 bg-gray-50 px-2 py-1 text-[0.57rem] font-medium">
                       {item.porcentagem}% {item.metodo}

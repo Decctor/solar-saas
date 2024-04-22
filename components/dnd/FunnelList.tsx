@@ -57,20 +57,20 @@ function FunnelList({ stageName, session, items, id }: IFunnelListProps) {
     <Droppable droppableId={id.toString()}>
       {(provided) => (
         <div className="flex w-full min-w-[350px] flex-col p-2 px-4 lg:w-[350px]">
-          <div className="flex h-[60px] w-full flex-col rounded bg-[#15599a] px-2">
-            <h1 className="rounded p-1 text-center font-medium text-white">{stageName}</h1>
-            <div className="mt-1 flex w-full justify-between px-2 pb-2">
-              <div className="flex w-1/3 items-center justify-start gap-1 text-xs text-white">
+          <div className="flex h-[100px] w-full flex-col rounded bg-[#15599a] px-2 lg:h-[60px]">
+            <h1 className="w-full rounded p-1 text-center font-medium text-white">{stageName}</h1>
+            <div className="mt-1 flex w-full flex-col items-center justify-between px-2 pb-2 lg:flex-row">
+              <div className="flex w-full items-center justify-center gap-1 text-xs text-white lg:w-1/3 lg:justify-start">
                 <p>R$</p>
                 <p>{getListCumulativeProposalValues()}</p>
               </div>
-              <div className="flex w-1/3 items-center justify-center gap-1 text-xs text-white">
+              <div className="flex w-full items-center justify-center gap-1 text-xs text-white lg:w-1/3">
                 <p>
                   <ImPower />
                 </p>
                 <p>{getListCumulativeProposalPeakPower()} kWp</p>
               </div>
-              <div className="flex w-1/3 items-center justify-end gap-1 text-xs text-white">
+              <div className="flex w-full items-center justify-center gap-1 text-xs text-white lg:w-1/3 lg:justify-end">
                 <p>
                   <MdDashboard />
                 </p>

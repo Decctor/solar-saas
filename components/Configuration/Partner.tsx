@@ -20,7 +20,7 @@ function Partner({ session }: PartnerProps) {
   const { data: partner, isLoading, isError, isSuccess } = usePartnerOwnInfo({ id: partnerId })
   return (
     <div className="flex h-full grow flex-col">
-      <div className="flex w-full items-center justify-between border-b border-gray-200 pb-2">
+      <div className="flex w-full flex-col items-center justify-between border-b border-gray-200 pb-2 lg:flex-row">
         <div className="flex flex-col">
           <h1 className={`text-lg font-bold`}>Informações da Empresa</h1>
           <p className="text-sm text-[#71717A]">Gerencie e configure informações e personalizações da empresa</p>
@@ -37,11 +37,10 @@ function Partner({ session }: PartnerProps) {
       {isError ? <ErrorComponent msg="Erro ao buscar informações da empresa." /> : null}
       {isSuccess ? (
         <div className="flex w-full grow flex-col gap-2 py-6">
-          <div className="flex w-full items-center gap-2">
+          <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
             <div className="flex min-w-[150px] flex-col items-center gap-2">
               <Avatar url={partner?.logo_url || undefined} fallback={formatNameAsInitials(partner.nome || '')} height={100} width={100} />
             </div>
-
             <div className="flex grow flex-col">
               <h1 className="text-lg font-bold leading-none tracking-tight">{partner.nome}</h1>
               <h1 className="mt-2 text-xs font-medium text-gray-800">DESCRIÇÃO</h1>
@@ -50,7 +49,7 @@ function Partner({ session }: PartnerProps) {
           </div>
           <div className="flex w-full flex-col">
             <h1 className="mt-2 text-sm font-medium text-gray-800">CONTATOS</h1>
-            <div className="mt-1 flex items-center gap-2">
+            <div className="mt-1 flex flex-col items-center gap-2 lg:flex-row">
               <div className="flex items-center gap-1">
                 <MdOutlineEmail size={18} />
                 <p className="text-sm text-gray-500">{partner.contatos.email || 'NÃO POSSUI'}</p>
@@ -63,7 +62,7 @@ function Partner({ session }: PartnerProps) {
               </div>
             </div>
             <h1 className="mt-2 text-sm font-medium text-gray-800">LOCALIZAÇÃO</h1>
-            <div className="mt-1 flex items-center gap-2">
+            <div className="mt-1 flex flex-col items-center gap-2 lg:flex-row">
               <div className="flex items-center gap-1">
                 <GiBrazil size={16} />
                 <p className="text-sm text-gray-500">{partner.localizacao.uf || 'NÃO PREENCHIDO'}</p>

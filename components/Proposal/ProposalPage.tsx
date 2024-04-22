@@ -335,6 +335,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
           <EditProposal
             session={session}
             info={proposal}
+            userHasPricingViewPermission={userHasPricingViewPermission}
             userHasPricingEditPermission={userHasPricingEditPermission}
             closeModal={() => setEditProposalModalIsOpen(false)}
           />
