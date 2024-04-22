@@ -18,6 +18,10 @@ type PricingProps = {
   session: Session
 }
 function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, session }: PricingProps) {
+  const userHasPricingEditPermission = session?.user.permissoes.precos.editar
+  const userHasPricingViewPermission = session.user.permissoes.precos.visualizar
+  const alterationLimit = userHasPricingEditPermission ? undefined : 0.02
+
   const [pricing, setPricing] = useState<TPricingItem[]>(infoHolder.precificacao)
   const [editFinalPriceModalIsOpen, setEditFinalPriceModalIsOpen] = useState<boolean>(false)
   const pricingTotal = getPricingTotal({ pricing: pricing })
@@ -37,8 +41,8 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
       <PricingTable
         pricing={pricing}
         setPricing={setPricing}
-        userHasPricingEditPermission={session?.user.permissoes.precos.editar}
-        userHasPricingViewPermission={session.user.permissoes.precos.visualizar}
+        userHasPricingEditPermission={userHasPricingEditPermission}
+        userHasPricingViewPermission={userHasPricingViewPermission}
       />
       {/* {session?.user.permissoes.precos.editar ? (
         <button
@@ -71,10 +75,10 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
           Prosseguir
         </button>
       </div>
-      {/* {addCostModalIsOpen && session?.user.permissoes.precos.editar ? (
-        <NewCost closeModal={() => setAddCostModalIsOpen(false)} pricing={pricing} setPricing={setPricing} />
-      ) : null} */}
-      {editFinalPriceModalIsOpen ? <EditFinalPrice pricing={pricing} setPricing={setPricing} closeModal={() => setEditFinalPriceModalIsOpen(false)} /> : null}
+
+      {editFinalPriceModalIsOpen ? (
+        <EditFinalPrice pricing={pricing} setPricing={setPricing} closeModal={() => setEditFinalPriceModalIsOpen(false)} alterationLimit={alterationLimit} />
+      ) : null}
     </>
   )
 }

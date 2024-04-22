@@ -13,9 +13,10 @@ type HandlePricingCorrectionParams = {
 type EditFinalPriceProps = {
   pricing: TPricingItem[]
   setPricing: React.Dispatch<React.SetStateAction<TPricingItem[]>>
+  alterationLimit: number | undefined
   closeModal: () => void
 }
-function EditFinalPrice({ pricing, setPricing, closeModal }: EditFinalPriceProps) {
+function EditFinalPrice({ pricing, setPricing, alterationLimit, closeModal }: EditFinalPriceProps) {
   const pricingTotal = getPricingTotal({ pricing })
   const pricingSuggestedTotal = getPricingSuggestedTotal({ pricing })
 
@@ -60,30 +61,32 @@ function EditFinalPrice({ pricing, setPricing, closeModal }: EditFinalPriceProps
                 width="100%"
               />
             </div>
-            {/* {limit ? (
+            {alterationLimit ? (
               <>
                 <p className="text-center text-sm italic text-gray-500">
                   Valor mínimo permitido de R${' '}
-                  {(pricingSuggestedTotal * (1 - limit)).toLocaleString('pt-br', {
+                  {(pricingSuggestedTotal * (1 - alterationLimit)).toLocaleString('pt-br', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
                 </p>
                 <p className="text-center text-sm italic text-gray-500">
                   Valor máximo permitido de R${' '}
-                  {(pricingSuggestedTotal * (1 + limit)).toLocaleString('pt-br', {
+                  {(pricingSuggestedTotal * (1 + alterationLimit)).toLocaleString('pt-br', {
                     minimumFractionDigits: 2,
                     maximumFractionDigits: 2,
                   })}
                 </p>
               </>
-            ) : null} */}
+            ) : null}
           </div>
           <div className="flex w-full items-center justify-end py-2">
             <button
               onClick={() => {
                 const diff = pricingSuggestedTotal - priceHolder
                 const diffPercentage = diff / pricingSuggestedTotal
+                // In case there is a defined alteration limit, checking if alterations surpass that limit
+                if (alterationLimit && Math.abs(diffPercentage) > Math.abs(alterationLimit)) return toast.error('Alteração ultrapassa o limite permitido.')
                 handlePricingCorrection({ diffPercentage: diffPercentage })
                 toast.success('Preços alterados com sucesso !')
                 return closeModal()

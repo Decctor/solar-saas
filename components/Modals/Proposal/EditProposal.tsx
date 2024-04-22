@@ -25,6 +25,8 @@ type EditProposalProps = {
 }
 function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasPricingEditPermission, session }: EditProposalProps) {
   const queryClient = useQueryClient()
+  const alterationLimit = userHasPricingEditPermission ? undefined : 0.02
+
   const [proposalName, setProposalName] = useState(info.nome)
   const [pricing, setPricing] = useState<TPricingItem[]>(info.precificacao)
   const [editFinalPriceModalIsOpen, setEditFinalPriceModalIsOpen] = useState<boolean>(false)
@@ -136,7 +138,9 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
           </div>
         </div>
       </div>
-      {editFinalPriceModalIsOpen ? <EditFinalPrice pricing={pricing} setPricing={setPricing} closeModal={() => setEditFinalPriceModalIsOpen(false)} /> : null}
+      {editFinalPriceModalIsOpen ? (
+        <EditFinalPrice pricing={pricing} setPricing={setPricing} alterationLimit={alterationLimit} closeModal={() => setEditFinalPriceModalIsOpen(false)} />
+      ) : null}
     </div>
   )
 }
