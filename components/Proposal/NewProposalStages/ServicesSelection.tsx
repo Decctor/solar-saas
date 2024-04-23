@@ -52,6 +52,7 @@ function ServicesSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       cidade: opportunity.localizacao.cidade,
       topologia: topology || 'INVERSOR',
       tipoEstrutura: infoHolder.premissas.tipoEstrutura || undefined,
+      grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
     }
     const variableData: TPricingVariableData = {
       kit: 0,
@@ -62,6 +63,7 @@ function ServicesSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       distancia: infoHolder.premissas.distancia || 0,
       plan: 0,
       numInversores: infoHolder.premissas.numInversores || 0,
+      valorReferencia: infoHolder.premissas.valorReferencia || 0,
     }
 
     const pricing = handlePricingCalculation({

@@ -136,6 +136,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       cidade: opportunity.localizacao.cidade,
       topologia: topology,
       tipoEstrutura: infoHolder.premissas.tipoEstrutura || undefined,
+      grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
     }
     const variableData: TPricingVariableData = {
       kit: price,
@@ -146,6 +147,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       distancia: infoHolder.premissas.distancia || 0,
       plan: 0,
       numInversores: inverterQty,
+      valorReferencia: infoHolder.premissas.valorReferencia || 0,
     }
     const pricing = handlePricingCalculation({
       methodology: methodology,
@@ -259,6 +261,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       uf: opportunity.localizacao.uf,
       cidade: opportunity.localizacao.cidade,
       topologia: topology,
+      grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
     }
     const variableData: TPricingVariableData = {
       kit: price,
@@ -269,6 +272,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       distancia: infoHolder.premissas.distancia || 0,
       plan: 0,
       numInversores: inverterQty,
+      valorReferencia: infoHolder.premissas.valorReferencia || 0,
     }
 
     const pricing = handlePricingCalculation({

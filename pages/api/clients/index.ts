@@ -90,7 +90,7 @@ const editClients: NextApiHandler<PutResponse> = async (req, res) => {
   const userScope = session.user.permissoes.oportunidades.escopo
 
   const { id } = req.query
-  const changes = InsertClientSchema.parse(req.body)
+  const changes = InsertClientSchema.partial().parse(req.body)
   // if(session.user.id)
 
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID de cliente inválido.')

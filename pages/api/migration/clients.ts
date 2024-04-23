@@ -36,7 +36,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
       complemento: client.complemento,
       dataNascimento: client.dataNascimento,
       profissao: client.profissao,
-      canalAquisicao: client.canalVenda,
+      canalAquisicao: client.canalVenda || 'PASSIVO',
       idMarketing: client.idOportunidade,
       indicador: {
         contato: null,

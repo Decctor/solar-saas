@@ -1,7 +1,7 @@
 import z from 'zod'
 import { InverterSchema, ModuleSchema, ProductItemSchema, ServiceItemSchema } from './kits.schema'
 import { ObjectId } from 'mongodb'
-import { TOpportunityDTO } from './opportunity.schema'
+import { ElectricalInstallationGroupsSchema, TOpportunityDTO } from './opportunity.schema'
 import { FractionnementItemSchema } from './payment-methods'
 import { PlanDescriptiveItemSchema, PlanIntervalSchema } from './signature-plans.schema'
 
@@ -85,7 +85,7 @@ const PremissesSchema = z.object({
   numModulos: z.number({ invalid_type_error: 'Tipo inválido para a premissa de nº de módulos.' }).optional().nullable(),
   numInversores: z.number({ invalid_type_error: 'Tipo inválido para a premissa de nº de inversores.' }).optional().nullable(),
   eficienciaGeracao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de eficiência de geração.' }).optional().nullable(),
-  grupoInstalacao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de grupo da instalação.' }).optional().nullable(),
+  grupoInstalacao: ElectricalInstallationGroupsSchema.optional().nullable(),
   valorReferencia: z.number({ invalid_type_error: 'Tipo inválido para a premissa de valor genérico de referência.' }).optional().nullable(),
 })
 export type TProposalPremisses = z.infer<typeof PremissesSchema>

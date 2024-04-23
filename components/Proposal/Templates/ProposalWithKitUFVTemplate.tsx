@@ -7,13 +7,14 @@ import { TProposal } from '@/utils/schemas/proposal.schema'
 import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
 import { formatDecimalPlaces, formatLocation, formatProductStr } from '@/lib/methods/formatting'
 import { formatToMoney, getEstimatedGen } from '@/utils/methods'
-import { getPaymentMethodFinalValue } from '@/utils/payment'
+import { getFractionnementValue, getPaymentMethodFinalValue } from '@/utils/payment'
 import { getScenariosInfo } from '@/utils/proposal'
 import { TPartnerSimplifiedDTO } from '@/utils/schemas/partner.schema'
 import { TbWorld } from 'react-icons/tb'
 import { FaInstagram, FaPhone } from 'react-icons/fa'
 import { FaLocationDot } from 'react-icons/fa6'
-import { MdEmail } from 'react-icons/md'
+import { MdEmail, MdPayment } from 'react-icons/md'
+import { BsCircleHalf } from 'react-icons/bs'
 
 type SolarSystemProposalTemplateProps = {
   proposal: TProposal
@@ -106,19 +107,6 @@ function SolarSystemProposalTemplate({ proposal, opportunity, partner }: SolarSy
             <h1 className="w-1/4 text-center text-[0.7rem] font-bold text-black">{product.garantia} ANOS</h1>
           </div>
         ))}
-        {/* 
-        <div className="flex w-full items-center gap-1">
-          <h1 className="w-3/4 text-center text-[0.7rem] font-bold text-black">ESTRUTURA DE FIXAÇÃO</h1>
-          <h1 className="w-1/4 text-center text-[0.7rem] font-bold text-black">20 ANOS</h1>
-        </div>
-        <div className="flex w-full items-center gap-1">
-          <h1 className="w-3/4 text-center text-[0.7rem] font-bold text-black">INFRAESTRUTURA ELÉTRICA CC & CA</h1>
-          <h1 className="w-1/4 text-center text-[0.7rem] font-bold text-black">01 ANO</h1>
-        </div>
-        <div className="flex w-full items-center gap-1">
-          <h1 className="w-3/4 text-center text-[0.7rem] font-bold text-black">DISPOSITIVOS DE PROTEÇÃO CC & CA</h1>
-          <h1 className="w-1/4 text-center text-[0.7rem] font-bold text-black">01 ANO</h1>
-        </div> */}
       </div>
       <div className="mt-2 flex w-full flex-col gap-1">
         <div className="flex w-full items-center gap-1 rounded-bl-md rounded-br-md bg-cyan-500 p-3">
@@ -136,13 +124,33 @@ function SolarSystemProposalTemplate({ proposal, opportunity, partner }: SolarSy
         <div className="flex w-full items-center gap-1 rounded-bl-md rounded-br-md bg-black p-3">
           <h1 className="w-full text-center text-[0.7rem] font-bold text-white">FORMAS DE PAGAMENTO</h1>
         </div>
-        {proposal.pagamento.metodos.map((method, index) => (
-          <div key={method.id} className="flex w-full items-center gap-1">
-            <h1 className="w-full pl-3 text-start text-[0.7rem] font-bold text-black">
-              <strong className="pr-3 text-cyan-500">{index + 1}ª OPÇÃO</strong> {method.descricao}
-            </h1>
-          </div>
-        ))}
+        <div className="flex w-full flex-col gap-1">
+          {proposal.pagamento.metodos.map((method, index) => (
+            <div key={index} className="flex w-full flex-col border border-gray-500 p-2">
+              <div className="flex w-full items-center justify-between gap-2">
+                <div className="flex items-center gap-1">
+                  <div className="flex h-[35px] w-[35px] items-center justify-center rounded-full border border-black p-1">
+                    <MdPayment size={18} />
+                  </div>
+                  <p className="text-[0.7rem] font-bold leading-none tracking-tight">{method.descricao}</p>
+                </div>
+                <div className="flex grow items-center justify-end gap-2">
+                  {method.fracionamento.map((fractionnement, itemIndex) => (
+                    <div key={itemIndex} className={`flex w-fit min-w-fit items-center gap-1 rounded-md border border-gray-200 p-2 shadow-sm`}>
+                      <BsCircleHalf color="#ed174c" />
+                      <h1 className="text-[0.55rem] font-medium leading-none tracking-tight">
+                        {fractionnement.maximoParcelas} x{' '}
+                        <strong>
+                          {formatToMoney(getFractionnementValue({ fractionnement, proposalValue: proposal.valor }) / fractionnement.maximoParcelas)}
+                        </strong>
+                      </h1>
+                    </div>
+                  ))}
+                </div>
+              </div>
+            </div>
+          ))}
+        </div>
       </div>
       <span className="mt-2 px-2 text-center text-[0.47rem] font-medium">
         OBS.: EFETIVAÇÃO DE VÍNCULO COMERCIAL PODE ESTAR SUJEITA A UMA VISITA TÉCNICA IN LOCO E CONFECÇÃO DE UM CONTRATO DE PRESTAÇÃO DE SERVIÇO ENTRE AS
@@ -166,12 +174,12 @@ function SolarSystemProposalTemplate({ proposal, opportunity, partner }: SolarSy
         <div className="flex w-1/3 flex-col">
           <div className="mb-1 h-[2px] w-full bg-black"></div>
           <p className="w-full text-center text-[0.7rem] font-bold text-black">{opportunity.cliente.nome.toUpperCase()}</p>
-          <p className="w-full text-center text-[0.7rem] font-bold text-black">{opportunity.cliente.cpfCnpj}</p>
+          <p className="w-full text-center text-[0.7rem] font-bold text-black">{opportunity.cliente.cpfCnpj || 'N/A'}</p>
         </div>
         <div className="flex w-1/3 flex-col">
           <div className="mb-1 h-[2px] w-full bg-black"></div>
           <p className="w-full text-center text-[0.7rem] font-bold text-black">{partner.nome.toUpperCase()}</p>
-          <p className="w-full text-center text-[0.7rem] font-bold text-black">{partner.cpfCnpj}</p>
+          <p className="w-full text-center text-[0.7rem] font-bold text-black">{partner.cpfCnpj || 'N/A'}</p>
         </div>
       </div>
       <div className="mt-4 flex w-full flex-col gap-4 bg-black p-4">

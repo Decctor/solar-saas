@@ -148,17 +148,7 @@ function NewOpportunity({ session, closeModal, opportunityCreators, funnels }: N
     idEstagioFunil: '',
     dataInsercao: new Date().toISOString(),
   })
-  const [newOpportunityResponsible, setNewOpportunityResponsible] = useState<{
-    nome: string | null
-    id: string | null
-    papel: string | null
-    avatar_url?: string | null
-  }>({
-    nome: session.user.nome,
-    id: session.user.id,
-    papel: null,
-    avatar_url: session.user.avatar_url,
-  })
+
   const {
     data: similarClients,
     isSuccess: clientsSuccess,

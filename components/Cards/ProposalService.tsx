@@ -24,6 +24,7 @@ function ProposalService({ index, selectedIds, service, proposal, opportunity, h
     uf: opportunity.localizacao.uf,
     cidade: opportunity.localizacao.cidade,
     topologia: proposal.premissas.topologia || 'INVERSOR',
+    grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
   }
   const variableData: TPricingVariableData = {
     kit: 0,
@@ -34,6 +35,7 @@ function ProposalService({ index, selectedIds, service, proposal, opportunity, h
     numInversores: proposal.premissas.numInversores || 0,
     potenciaPico: proposal.premissas.potenciaPico || 0,
     distancia: proposal.premissas.distancia || 0,
+    valorReferencia: proposal.premissas.valorReferencia || 0,
   }
   const pricing = handlePricingCalculation({
     methodology: service.metodologia,
