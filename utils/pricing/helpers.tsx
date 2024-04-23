@@ -10,6 +10,7 @@ export const variablesAlias: TVariablesAlias[] = [
   { label: 'Nº DE INVERSORES', value: 'numInversores' },
   { label: 'POTÊNCIA PICO', value: 'potenciaPico' },
   { label: 'DISTÂNCIA', value: 'distancia' },
+  { label: 'VALOR DE REFERÊNCIA', value: 'valorReferencia' },
   { label: 'TOTAL FINAL', value: 'total' },
   { label: 'TOTAL FATURÁVEL FINAL', value: 'totalFaturavelFinal' },
   { label: 'TOTAL NÃO FATURÁVEL FINAL', value: 'totalNaoFaturavelFinal' },
@@ -23,6 +24,7 @@ export const conditionsAlias: TConditionsAlias[] = [
   { label: 'CIDADE', value: 'cidade' },
   { label: 'TOPOLOGIA', value: 'topologia' },
   { label: 'TIPO DE ESTRUTURA', value: 'tipoEstrutura' },
+  { label: 'GRUPO DA INSTALAÇÃO', value: 'grupoInstalacao' },
 ]
 
 export function formatFormulaItem(value: string) {

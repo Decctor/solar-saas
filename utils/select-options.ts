@@ -28,12 +28,13 @@ export const PremissesFieldOptions: TPremissesFieldOptions[] = [
   { id: 6, value: 'numInversores', label: 'Nº DE INVERSORES' },
   { id: 7, value: 'potenciaPico', label: 'POTÊNCIA PICO' },
   { id: 8, value: 'distancia', label: 'DISTÂNCIA' },
-  { id: 9, value: 'consumoEnergiaMensal', label: 'CONSUMO DE ENERGIA' },
-  { id: 10, value: 'fatorSimultaneidade', label: 'FATOR DE SIMULTANEIDADE' },
-  { id: 11, value: 'tarifaEnergia', label: 'TARIFA DE ENERGIA' },
-  { id: 12, value: 'tarifaFioB', label: 'TARIFA DE FIO B' },
-  { id: 13, value: 'orientacao', label: 'ORIENTAÇÃO' },
-  { id: 14, value: 'eficienciaGeracao', label: 'EFICIÊNCIA DE GERAÇÃO' },
+  { id: 0, value: 'valorReferencia', label: 'VALOR DE REFERÊNCIA' },
+  { id: 10, value: 'consumoEnergiaMensal', label: 'CONSUMO DE ENERGIA' },
+  { id: 11, value: 'fatorSimultaneidade', label: 'FATOR DE SIMULTANEIDADE' },
+  { id: 12, value: 'tarifaEnergia', label: 'TARIFA DE ENERGIA' },
+  { id: 13, value: 'tarifaFioB', label: 'TARIFA DE FIO B' },
+  { id: 14, value: 'orientacao', label: 'ORIENTAÇÃO' },
+  { id: 15, value: 'eficienciaGeracao', label: 'EFICIÊNCIA DE GERAÇÃO' },
 ]
 
 type TAutomaticPremissesBySaleCategory = {
@@ -586,8 +587,10 @@ export const CustomersAcquisitionChannels = [
   { id: 16, label: 'MARKETING (GERAL)', value: 'MARKETING (GERAL)' },
 ]
 export const ConsumerUnitGroups = [
-  { id: 1, label: 'URBANO', value: 'URBANO' },
-  { id: 2, label: 'RURAL', value: 'RURAL' },
+  { id: 1, label: 'RESIDENCIAL', value: 'RESIDENCIAL' },
+  { id: 2, label: 'COMERCIAL', value: 'COMERCIAL' },
+  { id: 3, label: 'INDUSTRIAL', value: 'INDUSTRIAL' },
+  { id: 4, label: 'RURAL', value: 'RURAL' },
 ]
 export const ConsumerUnitLigationType = [
   { id: 1, label: 'EXISTENTE', value: 'EXISTENTE' },
@@ -603,8 +606,9 @@ export const SigningForms = [
 ]
 export const ComercialSegments = [
   { id: 1, label: 'RESIDENCIAL', value: 'RESIDENCIAL' },
-  { id: 2, label: 'RURAL', value: 'RURAL' },
-  { id: 3, label: 'COMERCIAL', value: 'COMERCIAL' },
+  { id: 2, label: 'COMERCIAL', value: 'COMERCIAL' },
+  { id: 3, label: 'INDUSTRIAL', value: 'INDUSTRIAL' },
+  { id: 4, label: 'RURAL', value: 'RURAL' },
 ]
 export const HomologationControlStatus = [
   { id: 1, label: 'PENDENTE', value: 'PENDENTE' },

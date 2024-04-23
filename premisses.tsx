@@ -3,6 +3,7 @@ import SelectInput from './components/Inputs/SelectInput'
 import TextInput from './components/Inputs/TextInput'
 import { orientations, structureTypes } from './utils/constants'
 import { TProposalPremisses } from './utils/schemas/proposal.schema'
+import { ElectricalInstallationGroups } from './utils/select-options'
 
 type PremissesFieldOptions<T extends keyof TProposalPremisses> = {
   label: string
@@ -176,6 +177,30 @@ export function renderProposalPremisseField<T extends keyof TProposalPremisses>(
       <NumberInput
         label="Eficiência de geração"
         placeholder="Preencha aqui a eficiência de geração do sistema..."
+        value={(value as number) || null}
+        handleChange={handleChange as (value: number) => void}
+        width="100%"
+      />
+    )
+  }
+  if (field == 'grupoInstalacao') {
+    return (
+      <SelectInput
+        label="Grupo da instalação"
+        value={value as TProposalPremisses['grupoInstalacao']}
+        handleChange={handleChange as (value: TProposalPremisses['grupoInstalacao']) => void}
+        onReset={() => handleChange(null)}
+        selectedItemLabel="NÃO DEFINIDO"
+        options={ElectricalInstallationGroups}
+        width="100%"
+      />
+    )
+  }
+  if (field == 'valorReferencia') {
+    return (
+      <NumberInput
+        label="Valor de referência"
+        placeholder="Preencha aqui um valor de referência para precificação..."
         value={(value as number) || null}
         handleChange={handleChange as (value: number) => void}
         width="100%"

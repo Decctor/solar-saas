@@ -8,7 +8,7 @@ import { stateCities } from '@/utils/estados_cidades'
 import { VscChromeClose } from 'react-icons/vsc'
 import { MdContentCopy, MdDelete } from 'react-icons/md'
 import { TPricingMethod, TPricingMethodItemResultItem } from '@/utils/schemas/pricing-method.schema'
-import { StructureTypes } from '@/utils/select-options'
+import { ElectricalInstallationGroups, StructureTypes } from '@/utils/select-options'
 import { conditionsAlias, formatCondition, formatFormulaItem, variablesAlias } from '@/utils/pricing/helpers'
 
 const options = {
@@ -18,6 +18,7 @@ const options = {
     .flat(1),
   topologia: ['INVERSOR', 'MICRO-INVERSOR'],
   tipoEstrutura: StructureTypes.map((s) => s.value),
+  grupoInstalacao: ElectricalInstallationGroups.map((s) => s.value),
 }
 const operators = ['(', ')', '/', '*', '+', '-']
 

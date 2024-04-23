@@ -1,3 +1,4 @@
+import { TElectricalInstallationGroups } from '../schemas/opportunity.schema'
 import { TPricingMethodDTO } from '../schemas/pricing-method.schema'
 import { TPricingItem, TProposal } from '../schemas/proposal.schema'
 
@@ -35,6 +36,7 @@ export type TPricingConditionData = {
   cidade: string // automatic based on opportunity's location (in premisses as well)
   topologia: 'MICRO-INVERSOR' | 'INVERSOR' // automatic based on kits's topology (in premisses as well)
   tipoEstrutura?: string // in premisses
+  grupoInstalacao: TElectricalInstallationGroups
 }
 export type TPricingVariableData = {
   kit: number // automatic
@@ -45,6 +47,7 @@ export type TPricingVariableData = {
   numInversores: number
   potenciaPico: number
   distancia: number
+  valorReferencia: number
   total?: number
   totalFaturavelFinal?: number
   totalNaoFaturavelFinal?: number
