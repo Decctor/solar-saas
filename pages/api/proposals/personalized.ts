@@ -94,7 +94,7 @@ export type TPersonalizedProposalUpdateResponse = {
 type PutResponse = TPersonalizedProposalUpdateResponse
 
 const PersonalizedProposalUpdateSchema = z.object({
-  proposal: UpdateProposalSchema,
+  proposal: InsertProposalSchema,
   client: UpdateClientSchema,
   opportunity: UpdateOpportunitySchema,
   regenerateFile: z.boolean({
@@ -127,7 +127,7 @@ const updateProposalPersonalized: NextApiHandler<PutResponse> = async (req, res)
       const template = ProposalTemplates.find((t) => t.idAnvil == idAnvil) || ProposalTemplates[0]
       const anvilTemplateData = getTemplateData({
         opportunity: { ...opportunity, cliente: client },
-        proposal: proposal,
+        proposal: { _id: id, ...proposal },
         template: template.value as (typeof ProposeTemplateOptions)[number],
       })
       const anvilFileResponse = await getPDFByAnvil({ info: anvilTemplateData, idAnvil: idAnvil })
