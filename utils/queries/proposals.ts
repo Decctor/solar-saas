@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { useQuery } from '@tanstack/react-query'
-import { TProposalDTO, TProposalDTOWithOpportunity } from '../schemas/proposal.schema'
+import { TProposalDTO, TProposalDTOWithOpportunity, TProposalDTOWithOpportunityAndClient } from '../schemas/proposal.schema'
 
 async function fetchOpportunityProposals(opportunityId?: string) {
   try {
@@ -24,7 +24,7 @@ export function useOpportunityProposals({ opportunityId }: { opportunityId?: str
 async function fetchProposalById(id?: string) {
   try {
     const { data } = await axios.get(`/api/proposals?id=${id}`)
-    return data.data as TProposalDTOWithOpportunity
+    return data.data as TProposalDTOWithOpportunityAndClient
   } catch (error) {
     throw error
   }

@@ -73,7 +73,6 @@ export const GeneralVisibleHiddenExitMotionVariants = {
   visible: {
     opacity: 1,
     scale: 1, // Scale down slightly
-
     transition: {
       duration: 0.5,
       ease: easeBackInOut, // Use an easing function

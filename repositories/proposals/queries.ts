@@ -1,4 +1,4 @@
-import { TProposal, TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
+import { TProposal, TProposalDTOWithOpportunity, TProposalDTOWithOpportunityAndClient } from '@/utils/schemas/proposal.schema'
 import { Collection, ObjectId } from 'mongodb'
 
 type GetOpportunityProposalsParams = {
@@ -27,6 +27,7 @@ export async function getProposalById({ id, collection, partnerId }: GetProposal
         {
           $addFields: {
             opportunityObjectId: { $toObjectId: '$oportunidade.id' },
+            clientObjectId: { $toObjectId: '$idCliente' },
           },
         },
         {
@@ -37,13 +38,21 @@ export async function getProposalById({ id, collection, partnerId }: GetProposal
             as: 'oportunidadeDados',
           },
         },
+        {
+          $lookup: {
+            from: 'clients',
+            localField: 'clientObjectId',
+            foreignField: '_id',
+            as: 'clienteDados',
+          },
+        },
       ])
       .toArray()
     // console.log('propostas', proposals)
     const proposal = proposals.map((p) => {
-      return { ...p, oportunidadeDados: p.oportunidadeDados[0] }
+      return { ...p, oportunidadeDados: p.oportunidadeDados[0], clienteDados: p.clienteDados[0] }
     })
-    return proposal[0] as TProposalDTOWithOpportunity
+    return proposal[0] as TProposalDTOWithOpportunityAndClient
   } catch (error) {
     throw error
   }

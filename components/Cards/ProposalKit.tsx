@@ -1,7 +1,7 @@
 import React from 'react'
 
 import { AiOutlineSafety } from 'react-icons/ai'
-import { FaIndustry } from 'react-icons/fa'
+import { FaBolt, FaIndustry } from 'react-icons/fa'
 import { ImPower } from 'react-icons/im'
 import { MdAttachMoney, MdOutlineMiscellaneousServices, MdSell } from 'react-icons/md'
 import { TbTopologyFull } from 'react-icons/tb'
@@ -13,9 +13,9 @@ import { TOpportunityDTO } from '@/utils/schemas/opportunity.schema'
 import { TKitDTOWithPricingMethod } from '@/utils/schemas/kits.schema'
 import { TPricingConditionData, TPricingVariableData, getPricingTotal, handlePricingCalculation } from '@/utils/pricing/methods'
 
-import { formatToMoney } from '@/utils/methods'
+import { formatToMoney, getEstimatedGen } from '@/utils/methods'
 
-import { formatDateAsLocale } from '@/lib/methods/formatting'
+import { formatDateAsLocale, formatDecimalPlaces } from '@/lib/methods/formatting'
 import { getInverterQty, getModulesPeakPotByProducts, getModulesQty } from '@/lib/methods/extracting'
 import { renderCategoryIcon } from '@/lib/methods/rendering'
 type KitCardProps = {
@@ -31,6 +31,8 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
     uf: opportunity.localizacao.uf,
     cidade: opportunity.localizacao.cidade,
     topologia: kit.topologia,
+    grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
+    tipoEstrutura: proposal.premissas.tipoEstrutura || 'Fibrocimento',
   }
   const variableData: TPricingVariableData = {
     kit: kit.preco,
@@ -41,6 +43,7 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
     numInversores: getInverterQty(kit.produtos),
     potenciaPico: getModulesPeakPotByProducts(kit.produtos),
     distancia: proposal.premissas.distancia || 0,
+    valorReferencia: proposal.premissas.valorReferencia || 0,
   }
   const pricing = handlePricingCalculation({
     methodology: kit.metodologia,
@@ -49,7 +52,12 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
     variableData,
   })
   const proposalTotalPreview = getPricingTotal({ pricing: pricing })
-
+  const estimatedGeneration = getEstimatedGen(
+    getModulesPeakPotByProducts(kit.produtos),
+    opportunity.localizacao.cidade,
+    opportunity.localizacao.uf,
+    proposal.premissas.orientacao || 'NORTE'
+  )
   return (
     <div className="flex min-h-[325px] w-full gap-2 rounded-md border border-gray-300 font-Inter shadow-sm lg:w-[600px]">
       <div className={`h-full w-[6px] ${kit.ativo ? 'bg-blue-500' : 'bg-gray-500'} rounded-bl-md rounded-tl-md`}></div>
@@ -60,23 +68,29 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
           <div className="mt-2 flex w-full flex-wrap items-center gap-2">
             <div className="flex items-center gap-1 text-green-500">
               <MdSell />
-              <p className="text-[0.65rem] font-bold lg:text-sm">{formatToMoney(proposalTotalPreview)}</p>
+              <p className="text-[0.65rem] font-bold lg:text-[0.8rem]">{formatToMoney(proposalTotalPreview)}</p>
             </div>
 
             {userHasPricingView ? (
               <div className="flex items-center gap-1 text-yellow-500">
                 <MdAttachMoney />
-                <p className="text-[0.65rem] font-bold lg:text-sm">{formatToMoney(kit.preco)}</p>
+                <p className="text-[0.65rem] font-bold lg:text-[0.8rem]">{formatToMoney(kit.preco)}</p>
               </div>
             ) : null}
 
             <div className="flex items-center gap-1 text-red-500">
               <ImPower color="rgb(239,68,68)" />
-              <p className="text-[0.65rem] font-bold lg:text-sm">{kit.potenciaPico} kW</p>
+              <p className="text-[0.65rem] font-bold lg:text-[0.8rem]">{kit.potenciaPico} kW</p>
             </div>
+            {estimatedGeneration ? (
+              <div className="flex items-center gap-1 text-[#9e0059]">
+                <FaBolt />
+                <p className="text-[0.65rem] font-bold lg:text-[0.8rem]">{formatDecimalPlaces(estimatedGeneration)} kWh</p>
+              </div>
+            ) : null}
             <div className="flex items-center gap-1">
               <TbTopologyFull />
-              <p className="text-[0.65rem] font-light lg:text-sm">{kit.topologia}</p>
+              <p className="text-[0.65rem] font-light lg:text-[0.8rem]">{kit.topologia}</p>
             </div>
           </div>
           <h1 className="my-2 mb-0 text-xs font-bold leading-none tracking-tight text-gray-500 lg:text-sm">PRODUTOS</h1>
@@ -136,6 +150,7 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
               </div>
             ) : null}
           </div>
+
           <div className="flex items-center gap-2">
             <div className={`hidden items-center gap-2 text-gray-500 lg:flex`}>
               <BsCalendarPlusFill />

@@ -1,33 +1,35 @@
-import { InverterType, ModuleType } from '@/utils/models'
-import React, { useEffect, useState } from 'react'
-import genFactors from '../../../utils/json-files/generationFactors.json'
-import { useQuery } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
-import LoadingComponent from '../../utils/LoadingComponent'
-import Kit from '../../Cards/Kit'
-import { ImPower, ImPriceTag, ImSad } from 'react-icons/im'
-import { checkQueryEnableStatus, getEstimatedGen, getModulesQty, getPeakPotByModules, useKitQueryPipelines } from '@/utils/methods'
+import React, { useState } from 'react'
+import { Session } from 'next-auth'
+import { AnimatePresence, motion } from 'framer-motion'
 import { toast } from 'react-hot-toast'
+
 import ProposalKit from '../../Cards/ProposalKit'
+import LoadingComponent from '../../utils/LoadingComponent'
+import FilterMenu from '@/components/Kits/FilterMenu'
+
 import { VscFilter, VscFilterFilled } from 'react-icons/vsc'
 
-import { orientations } from '@/utils/constants'
-import { IoMdRemoveCircle } from 'react-icons/io'
-import { MdAttachMoney, MdDelete, MdOutlineKeyboardArrowDown, MdOutlineKeyboardArrowUp, MdOutlineMiscellaneousServices, MdSell } from 'react-icons/md'
+import { MdAttachMoney, MdOutlineMiscellaneousServices } from 'react-icons/md'
 import { useKitsByQuery } from '@/utils/queries/kits'
-import FilterMenu from '@/components/Kits/FilterMenu'
-import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
-import { TInverter, TKit, TKitDTOWithPricingMethod, TModule } from '@/utils/schemas/kits.schema'
-import { formatDecimalPlaces, formatToMoney } from '@/lib/methods/formatting'
-import { FaIndustry, FaSolarPanel, FaTruck } from 'react-icons/fa'
-import { TPricingConditionData, TPricingVariableData, getPricingTotal, handlePricingCalculation } from '@/utils/pricing/methods'
-import { combineUniqueInverters, combineUniqueModules, combineUniqueProducts, combineUniqueServices } from '@/lib/methods/array-manipulation'
+
+import { ImPower, ImSad } from 'react-icons/im'
+import { FaIndustry } from 'react-icons/fa'
 import { TbTopologyFull } from 'react-icons/tb'
 import { AiOutlineSafety } from 'react-icons/ai'
+
+import { formatDecimalPlaces, formatToMoney } from '@/lib/methods/formatting'
+import { combineUniqueProducts, combineUniqueServices } from '@/lib/methods/array-manipulation'
 import { getInverterQty, getModulesPeakPotByProducts } from '@/lib/methods/extracting'
 import { renderCategoryIcon } from '@/lib/methods/rendering'
-import { Session } from 'next-auth'
+
+import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TKitDTOWithPricingMethod } from '@/utils/schemas/kits.schema'
+
+import { TPricingConditionData, TPricingVariableData, getPricingTotal, handlePricingCalculation } from '@/utils/pricing/methods'
+import { getModulesQty, useKitQueryPipelines } from '@/utils/methods'
+import { GeneralVisibleHiddenExitMotionVariants, orientations } from '@/utils/constants'
+import genFactors from '../../../utils/json-files/generationFactors.json'
 
 type QueryTypes = 'KITS POR PREMISSA' | 'TODOS OS KITS'
 
@@ -172,73 +174,81 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
     if (!data) return <p className="w-full text-center text-xs italic text-gray-500">Nenhum kit selecionado para a composição do sistema...</p>
     const { nome, topologia, produtos, servicos, valor, potenciaPico } = data
     return (
-      <div className="flex w-full flex-col gap-1">
-        <h1 className="font-bold leading-none tracking-tight">{nome}</h1>
-        <div className="mt-2 flex w-full items-center gap-2">
-          <div className="flex items-center gap-1 text-green-500">
-            <MdAttachMoney />
-            <p className="text-[0.65rem] font-bold lg:text-sm">{formatToMoney(valor)}</p>
+      <AnimatePresence>
+        <motion.div variants={GeneralVisibleHiddenExitMotionVariants} initial="hidden" animate="visible" exit="exit" className="flex w-full flex-col gap-1">
+          <h1 className="font-bold leading-none tracking-tight">{nome}</h1>
+          <div className="mt-2 flex w-full items-center gap-2">
+            <div className="flex items-center gap-1 text-green-500">
+              <MdAttachMoney />
+              <p className="text-[0.65rem] font-bold lg:text-sm">{formatToMoney(valor)}</p>
+            </div>
+            <div className="flex items-center gap-1 text-red-500">
+              <ImPower color="rgb(239,68,68)" />
+              <p className="text-[0.65rem] font-bold lg:text-sm">{potenciaPico} kW</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <TbTopologyFull />
+              <p className="text-[0.65rem] font-light lg:text-sm">{topologia}</p>
+            </div>
           </div>
-          <div className="flex items-center gap-1 text-red-500">
-            <ImPower color="rgb(239,68,68)" />
-            <p className="text-[0.65rem] font-bold lg:text-sm">{potenciaPico} kW</p>
-          </div>
-          <div className="flex items-center gap-1">
-            <TbTopologyFull />
-            <p className="text-[0.65rem] font-light lg:text-sm">{topologia}</p>
-          </div>
-        </div>
-        <h1 className="mb-0 mt-2 text-xs font-bold leading-none tracking-tight text-gray-500 lg:text-sm">PRODUTOS</h1>
-        {produtos.map((product, index) => (
-          <div key={index} className="mt-1 flex w-full flex-col rounded-md border border-gray-200 p-2">
-            <div className="flex w-full flex-col items-start justify-between gap-2 lg:flex-row lg:items-center">
-              <div className="flex items-center gap-1">
-                <div className="flex h-[20px] w-[20px] items-center justify-center rounded-full border border-black p-1 text-[15px]">
-                  {renderCategoryIcon(product.categoria)}
-                </div>
-                <p className="text-[0.6rem] font-medium leading-none tracking-tight lg:text-xs">
-                  <strong className="text-[#FF9B50]">{product.qtde}</strong> x {product.modelo}
-                </p>
-              </div>
-              <div className="flex w-full grow items-center justify-end gap-2 pl-2 lg:w-fit">
+          <h1 className="mb-0 mt-2 text-xs font-bold leading-none tracking-tight text-gray-500 lg:text-sm">PRODUTOS</h1>
+          {produtos.map((product, index) => (
+            <div key={index} className="mt-1 flex w-full flex-col rounded-md border border-gray-200 p-2">
+              <div className="flex w-full flex-col items-start justify-between gap-2 lg:flex-row lg:items-center">
                 <div className="flex items-center gap-1">
-                  <FaIndustry size={12} />
-                  <p className="text-[0.6rem] font-light text-gray-500">{product.fabricante}</p>
+                  <div className="flex h-[20px] w-[20px] items-center justify-center rounded-full border border-black p-1 text-[15px]">
+                    {renderCategoryIcon(product.categoria)}
+                  </div>
+                  <p className="text-[0.6rem] font-medium leading-none tracking-tight lg:text-xs">
+                    <strong className="text-[#FF9B50]">{product.qtde}</strong> x {product.modelo}
+                  </p>
                 </div>
-                <div className="flex items-center gap-1">
-                  <ImPower size={12} />
-                  <p className="text-[0.6rem] font-light text-gray-500">{product.potencia} W</p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <AiOutlineSafety size={12} />
-                  <p className="text-[0.6rem] font-light text-gray-500">{product.garantia} ANOS</p>
+                <div className="flex w-full grow items-center justify-end gap-2 pl-2 lg:w-fit">
+                  <div className="flex items-center gap-1">
+                    <FaIndustry size={12} />
+                    <p className="text-[0.6rem] font-light text-gray-500">{product.fabricante}</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <ImPower size={12} />
+                    <p className="text-[0.6rem] font-light text-gray-500">{product.potencia} W</p>
+                  </div>
+                  <div className="flex items-center gap-1">
+                    <AiOutlineSafety size={12} />
+                    <p className="text-[0.6rem] font-light text-gray-500">{product.garantia} ANOS</p>
+                  </div>
                 </div>
               </div>
             </div>
-          </div>
-        ))}
-        <h1 className="my-2 mb-0 text-xs font-bold leading-none tracking-tight text-gray-500 lg:text-sm">SERVIÇOS</h1>
-        {servicos.map((service, index) => (
-          <div key={index} className="mt-1 flex w-full flex-col rounded-md border border-gray-200 p-2">
-            <div className="flex w-full items-center justify-between gap-2">
-              <div className="flex  items-center gap-1">
-                <div className="flex h-[20px] w-[20px] items-center justify-center rounded-full border border-black p-1">
-                  <MdOutlineMiscellaneousServices />
+          ))}
+          <h1 className="my-2 mb-0 text-xs font-bold leading-none tracking-tight text-gray-500 lg:text-sm">SERVIÇOS</h1>
+          {servicos.map((service, index) => (
+            <div key={index} className="mt-1 flex w-full flex-col rounded-md border border-gray-200 p-2">
+              <div className="flex w-full items-center justify-between gap-2">
+                <div className="flex  items-center gap-1">
+                  <div className="flex h-[20px] w-[20px] items-center justify-center rounded-full border border-black p-1">
+                    <MdOutlineMiscellaneousServices />
+                  </div>
+                  <p className="text-[0.6rem] font-medium leading-none tracking-tight lg:text-xs">{service.descricao}</p>
                 </div>
-                <p className="text-[0.6rem] font-medium leading-none tracking-tight lg:text-xs">{service.descricao}</p>
               </div>
             </div>
-          </div>
-        ))}
-      </div>
+          ))}
+        </motion.div>
+      </AnimatePresence>
     )
+  }
+  function renderPowerComparison({ achieved, expected }: { achieved: number; expected: number }) {
+    if (achieved > expected)
+      return <h1 className="rounded border border-green-500 p-1 font-bold text-green-500">{formatDecimalPlaces(achieved - expected)} kWp acima do esperado</h1>
+
+    return <h1 className="rounded border border-orange-500 p-1 font-bold text-orange-500">{formatDecimalPlaces(expected - achieved)} kWp abaixo do esperado</h1>
   }
   function getSelectedKitsTotalPower(kits: TKitDTOWithPricingMethod[]) {
     const total = kits.reduce((acc, current) => {
       const currentPower = getModulesPeakPotByProducts(current.produtos)
       return acc + currentPower
     }, 0)
-    return formatDecimalPlaces(total, 2)
+    return total
   }
   function handleProceed() {
     if (selectedKits.length == 0) return toast.error('Selecione ao menos um kit para prosseguir.')
@@ -308,7 +318,12 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       <div className="flex w-full flex-col rounded-md border border-gray-200 p-3">
         <div className="flex w-full items-center justify-between">
           <h1 className="font-bold leading-none tracking-tight">COMPOSIÇÃO DO SISTEMA</h1>
-          <h1 className="rounded border border-cyan-500 p-1 font-bold text-cyan-500">{getSelectedKitsTotalPower(selectedKits)} kWp</h1>
+          <div className="flex items-center gap-2">
+            {renderPowerComparison({ expected: ideal, achieved: getSelectedKitsTotalPower(selectedKits) })}
+            <h1 className="rounded border border-cyan-500 p-1 font-bold text-cyan-500">
+              {formatDecimalPlaces(getSelectedKitsTotalPower(selectedKits), 2)} kWp
+            </h1>
+          </div>
         </div>
         <div className="mt-2 flex w-full flex-col gap-1">{renderSystemCompostion()}</div>
       </div>

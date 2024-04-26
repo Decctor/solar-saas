@@ -9,9 +9,7 @@ import LoadingPage from '@/components/utils/LoadingPage'
 import ProposalPage from '@/components/Proposal/ProposalPage'
 
 function Proposal() {
-  const { data: session, status } = useSession({
-    required: true,
-  })
+  const { data: session, status } = useSession({ required: true })
   const { query } = useRouter()
 
   const proposalId = query.id

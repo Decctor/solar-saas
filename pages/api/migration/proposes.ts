@@ -3,7 +3,7 @@ import { apiHandler } from '@/utils/api'
 
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 
-import { ObjectId, WithId } from 'mongodb'
+import { Collection, ObjectId, WithId } from 'mongodb'
 import { TSolarSystemPropose } from '@/ampere-migration/proposes-schemas/solar-system.schema'
 import { THomologationPropose } from '@/ampere-migration/proposes-schemas/homologation.schema'
 import { TOeMPropose } from '@/ampere-migration/proposes-schemas/oem.schema'
@@ -11,6 +11,7 @@ import { TMonitoringPropose } from '@/ampere-migration/proposes-schemas/monitori
 import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import { TProductItem } from '@/utils/schemas/kits.schema'
 import connectToAmpereDatabase from '@/services/mongodb/ampere-db-connection'
+import { z } from 'zod'
 type PostResponse = any
 
 const migrate: NextApiHandler<any> = async (req, res) => {
@@ -18,16 +19,18 @@ const migrate: NextApiHandler<any> = async (req, res) => {
 
   const ampereDb = await connectToAmpereDatabase(process.env.MONGODB_CRM, 'main')
   const ampereProposalsCollection = ampereDb.collection('proposes')
+  const ampereProjectsCollection: Collection<TAmpereProject> = ampereDb.collection('projects')
 
   const ampereProposals = (await ampereProposalsCollection.find({}).toArray()) as WithId<
     TSolarSystemPropose | THomologationPropose | TOeMPropose | TMonitoringPropose
   >[]
-
+  const ampereProjects = await ampereProjectsCollection.find({}, { projection: { clienteId: 1 } }).toArray()
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const proposalsCollection = db.collection('proposals')
-
   const proposals = ampereProposals
     .map((proposal) => {
+      const equivalentProject = ampereProjects.find((p) => p._id.toString() == proposal.projeto.id)
+      const clientId = equivalentProject?.clienteId || ''
       if ((proposal as WithId<TOeMPropose>).precificacao.manutencaoSimples) {
         const info = proposal as WithId<TOeMPropose>
         // Generating a proposal in case of O&M
@@ -36,6 +39,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
           nome: info.nome,
           idParceiro: '65454ba15cf3e3ecf534b308',
           idMetodologiaPrecificacao: '',
+          idCliente: clientId,
           valor: info.valorProposta || 0,
           premissas: {
             consumoEnergiaMensal: info.premissas.consumoEnergiaMensal,
@@ -107,6 +111,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
           _id: new ObjectId(info._id),
           nome: info.nome,
           idParceiro: '65454ba15cf3e3ecf534b308',
+          idCliente: clientId,
           idMetodologiaPrecificacao: '',
           valor: info.valorProposta || 0,
           premissas: {
@@ -215,6 +220,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
           _id: new ObjectId(info._id),
           nome: info.nome,
           idParceiro: '65454ba15cf3e3ecf534b308',
+          idCliente: clientId,
           idMetodologiaPrecificacao: '',
           valor: info.valorProposta || 0,
           premissas: {
@@ -466,3 +472,81 @@ const priceDescription = {
   homologacao: 'HOMOLOGAÇÃO',
   deslocamento: 'DESLOCAMENTO',
 }
+
+const GeneralProjectSchema = z.object({
+  nome: z.string(),
+  tipoProjeto: z.string(),
+  identificador: z.string(),
+  idOportunidade: z.string().optional().nullable(),
+  idParceiro: z.string(),
+  idIndicacao: z.string({ invalid_type_error: 'Tipo não válido para o ID de referência da indicação.' }).optional().nullable(),
+  responsavel: z.object({
+    id: z.string(),
+    nome: z.string(),
+    avatar_url: z.string().optional().nullable(),
+  }),
+  representante: z.object({
+    id: z.string(),
+    nome: z.string(),
+    avatar_url: z.string().optional().nullable(),
+  }),
+  localizacao: z.object({
+    cep: z.string().optional().nullable(),
+    uf: z.string(),
+    cidade: z.string(),
+    bairro: z.string().optional().nullable(),
+    endereco: z.string().optional().nullable(),
+    numeroOuIdentificador: z.string().optional().nullable(),
+    complemento: z.string().optional().nullable(),
+    // distancia: z.number().optional().nullable(),
+  }),
+  clienteId: z.string(),
+  propostaAtiva: z.string().optional().nullable(),
+  titularInstalacao: z.string().optional().nullable(),
+  numeroInstalacaoConcessionaria: z.string().optional().nullable(),
+  tipoTitular: z
+    .union([z.literal('PESSOA FISICA'), z.literal('PESSOA JURIDICA')])
+    .optional()
+    .nullable(),
+  tipoLigacao: z
+    .union([z.literal('EXISTENTE'), z.literal('NOVA')])
+    .optional()
+    .nullable(),
+  tipoInstalacao: z
+    .union([z.literal('URBANO'), z.literal('RURAL')])
+    .optional()
+    .nullable(),
+  credor: z.string().optional().nullable(),
+  anexos: z
+    .object({
+      documentoComFoto: z.string().optional().nullable(),
+      iptu: z.string().optional().nullable(),
+      contaDeEnergia: z.string().optional().nullable(),
+      laudo: z.string().optional().nullable(),
+    })
+    .optional()
+    .nullable(),
+  descricao: z.string().optional().nullable(),
+  funis: z.array(z.object({ id: z.union([z.string(), z.number()]), etapaId: z.union([z.string(), z.number()]) })),
+  dataPerda: z.string().optional().nullable(),
+  motivoPerda: z.string().optional().nullable(),
+  contrato: z
+    .object({
+      id: z.string().optional().nullable(),
+      idProposta: z.string().nullable(),
+      dataAssinatura: z.string().optional().nullable(),
+    })
+    .optional()
+    .nullable(),
+  solicitacaoContrato: z
+    .object({
+      id: z.string().optional().nullable(),
+      idProposta: z.string().nullable(),
+      dataSolicitacao: z.string().optional().nullable(),
+    })
+    .optional()
+    .nullable(),
+  dataInsercao: z.string().datetime(),
+})
+
+export type TAmpereProject = z.infer<typeof GeneralProjectSchema>

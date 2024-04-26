@@ -47,6 +47,7 @@ function NewProposalPage({ session, opportunityId }: NewProposalPageprops) {
   const [infoHolder, setInfoHolder] = useState<TProposal>({
     nome: '',
     idParceiro: session.user.idParceiro || '',
+    idCliente: '',
     idMetodologiaPrecificacao: '',
     valor: 0,
     premissas: {
@@ -79,7 +80,7 @@ function NewProposalPage({ session, opportunityId }: NewProposalPageprops) {
     dataInsercao: new Date().toISOString(),
   })
   useEffect(() => {
-    if (opportunity) setInfoHolder((prev) => ({ ...prev, oportunidade: { id: opportunity._id, nome: opportunity.nome } }))
+    if (opportunity) setInfoHolder((prev) => ({ ...prev, oportunidade: { id: opportunity._id, nome: opportunity.nome }, idCliente: opportunity.idCliente }))
   }, [opportunity])
 
   if (opportunityLoading) return <LoadingPage />

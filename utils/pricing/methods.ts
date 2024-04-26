@@ -8,7 +8,6 @@ type getSalePriceParams = {
   tax: number
 }
 export function getCalculatedFinalValue({ value, margin }: { value: number; margin: number }) {
-  console.log('VALOR', value, 'MARGEM', margin)
   return value / (1 - margin)
 }
 export function getSalePrice({ cost, profitMargin, tax }: getSalePriceParams) {

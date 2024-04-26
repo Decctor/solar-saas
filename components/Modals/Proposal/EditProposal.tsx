@@ -1,15 +1,17 @@
+import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import TextInput from '@/components/Inputs/TextInput'
 import EditFinalPrice from '@/components/Proposal/Blocks/EditFinalPrice'
 import PricingTable from '@/components/Proposal/Blocks/PricingTable'
+import { handleDownload } from '@/lib/methods/download'
 
 import { formatToMoney } from '@/lib/methods/formatting'
 import { updateProposalUpdateRecord } from '@/repositories/proposal-update-records/mutations'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { createProposalUpdateRecord } from '@/utils/mutations/proposal-update-records'
-import { editProposal } from '@/utils/mutations/proposals'
+import { editProposal, editProposalPersonalized } from '@/utils/mutations/proposals'
 import { getPricingTotal } from '@/utils/pricing/methods'
 import { TProposalUpdateRecord } from '@/utils/schemas/proposal-update-records.schema'
-import { TPricingItem, TProposalDTO } from '@/utils/schemas/proposal.schema'
+import { TPricingItem, TProposalDTO, TProposalDTOWithOpportunityAndClient } from '@/utils/schemas/proposal.schema'
 import { useQueryClient } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import React, { useState } from 'react'
@@ -18,7 +20,7 @@ import { VscChromeClose } from 'react-icons/vsc'
 
 type EditProposalProps = {
   closeModal: () => void
-  info: TProposalDTO
+  info: TProposalDTOWithOpportunityAndClient
   userHasPricingEditPermission: boolean
   userHasPricingViewPermission: boolean
   session: Session
@@ -28,6 +30,7 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
   const alterationLimit = userHasPricingEditPermission ? undefined : 0.02
 
   const [proposalName, setProposalName] = useState(info.nome)
+  const [regenerateFile, setRegenerateFile] = useState<boolean>(false)
   const [pricing, setPricing] = useState<TPricingItem[]>(info.precificacao)
   const [editFinalPriceModalIsOpen, setEditFinalPriceModalIsOpen] = useState<boolean>(false)
   const pricingTotal = getPricingTotal({ pricing: pricing })
@@ -72,9 +75,21 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
       }
       await createProposalUpdateRecord({ info: record })
 
-      const updateResponse = await editProposal({ id: info._id, changes: { nome: newName, precificacao: newPricing, valor: newTotal } })
+      const response = await editProposalPersonalized({
+        id: info._id,
+        proposal: { ...info, nome: newName, precificacao: newPricing, valor: newTotal },
+        opportunity: info.oportunidadeDados,
+        client: info.clienteDados,
+        regenerateFile: regenerateFile,
+        idAnvil: info.idModelo,
+      })
 
-      return updateResponse as string
+      const fileName = info.nome
+      const fileUrl = response.data?.fileUrl
+      if (fileUrl) await handleDownload({ fileName, fileUrl })
+
+      if (typeof response.message != 'string') return 'Proposta atualizado com sucesso !'
+      return response.message as string
     } catch (error) {
       throw error
     }
@@ -126,7 +141,17 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
               </div>
             </div>
           </div>
-          <div className="flex w-full items-center justify-end p-2">
+          <div className="flex w-full items-center justify-end gap-2 p-2">
+            {info.idModelo ? (
+              <div className="w-fit">
+                <CheckboxInput
+                  labelFalse="GERAR NOVO DOCUMENTO"
+                  labelTrue="GERAR NOVO DOCUMENTO"
+                  checked={regenerateFile}
+                  handleChange={(value) => setRegenerateFile(value)}
+                />
+              </div>
+            ) : null}
             <button
               disabled={isPending}
               // @ts-ignore

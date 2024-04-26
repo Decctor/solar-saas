@@ -4,6 +4,7 @@ import { ObjectId } from 'mongodb'
 import { ElectricalInstallationGroupsSchema, TOpportunityDTO } from './opportunity.schema'
 import { FractionnementItemSchema } from './payment-methods'
 import { PlanDescriptiveItemSchema, PlanIntervalSchema } from './signature-plans.schema'
+import { TClientDTO } from './client.schema'
 
 const OrientationsSchema = z.union(
   [
@@ -107,6 +108,7 @@ const ProposalPlanSchema = z.object({
 export const GeneralProposalSchema = z.object({
   nome: z.string(),
   idParceiro: z.string(),
+  idCliente: z.string(),
   idMetodologiaPrecificacao: z.string(),
   idModelo: z.string().optional().nullable(),
   valor: z.number(),
@@ -142,6 +144,72 @@ export const InsertProposalSchema = z.object({
     required_error: 'Referência a parceiro não informado.',
     invalid_type_error: 'Tipo não válido para a referência de parceiro.',
   }),
+  idCliente: z.string({ required_error: 'Vínculo de cliente não informado.', invalid_type_error: 'Tipo não válido para vínculo de cliente.' }),
+  idMetodologiaPrecificacao: z.string({
+    required_error: 'Vínculo de metodologia de precificação não informado.',
+    invalid_type_error: 'Tipo não válido para o vínculo de metodologia.',
+  }),
+  idModelo: z
+    .string({
+      required_error: 'ID de referência do modelo de proposta não informado.',
+      invalid_type_error: 'Tipo não válido para o ID de referência do modelo de proposta.',
+    })
+    .optional()
+    .nullable(),
+  valor: z.number({ required_error: 'Valor da proposta não informado.', invalid_type_error: 'Tipo não válido para o valor da proposta.' }),
+  premissas: PremissesSchema,
+  oportunidade: z.object({
+    id: z.string({
+      required_error: 'Referência a oportunidade não fornecida.',
+      invalid_type_error: 'Tipo não válido para a referência a oportunidade.',
+    }),
+    nome: z.string({
+      required_error: 'Nome da oportunidade não fornecido.',
+      invalid_type_error: 'Tipo não válido para o nome da oportunidade.',
+    }),
+  }),
+  kits: z.array(ProposalKitSchema, {
+    required_error: 'Lista de kits da proposta não informada.',
+    invalid_type_error: 'Tipo não válido para lista de kits da proposta.',
+  }),
+  planos: z.array(ProposalPlanSchema, {
+    required_error: 'Lista de planos da proposta não informada.',
+    invalid_type_error: 'Tipo não válido para lista de planos da proposta.',
+  }),
+  produtos: z.array(ProductItemSchema),
+  servicos: z.array(ServiceItemSchema),
+  precificacao: z.array(PricingItemSchema),
+  pagamento: z.object({
+    metodos: z.array(PaymentMethodItemSchema),
+  }),
+  potenciaPico: z.number().optional().nullable(),
+  urlArquivo: z
+    .string({
+      required_error: 'URL do arquivo da proposta não informado.',
+      invalid_type_error: 'Tipo não válido para o URL do arquivo da proposta.',
+    })
+    .optional()
+    .nullable(),
+  autor: z.object({
+    id: z.string({ required_error: 'ID do autor não informado.', invalid_type_error: 'Tipo não válido para ID do autor.' }),
+    nome: z.string({ required_error: 'Nome do autor não informado.', invalid_type_error: 'Tipo não válido para o nome do autor.' }),
+    avatar_url: z.string().optional().nullable(),
+  }),
+  dataInsercao: z
+    .string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para a data de inserção.' })
+    .datetime({ message: 'Tipo não válido para a data de inserção.' }),
+})
+export const UpdateProposalSchema = z.object({
+  _id: z.string({
+    required_error: 'ID de referência da proposta não informado.',
+    invalid_type_error: 'Tipo não válido para o ID de referência da proposta.',
+  }),
+  nome: z.string({ required_error: 'Nome da proposta não informado.', invalid_type_error: 'Tipo não válido para o nome da proposta.' }),
+  idParceiro: z.string({
+    required_error: 'Referência a parceiro não informado.',
+    invalid_type_error: 'Tipo não válido para a referência de parceiro.',
+  }),
+  idCliente: z.string({ required_error: 'Vínculo de cliente não informado.', invalid_type_error: 'Tipo não válido para vínculo de cliente.' }),
   idMetodologiaPrecificacao: z.string({
     required_error: 'Vínculo de metodologia de precificação não informado.',
     invalid_type_error: 'Tipo não válido para o vínculo de metodologia.',
@@ -200,6 +268,7 @@ const ProposalEntitySchema = z.object({
   _id: z.instanceof(ObjectId),
   nome: z.string(),
   idParceiro: z.string(),
+  idCliente: z.string(),
   idMetodologiaPrecificacao: z.string(),
   idModelo: z.string().optional().nullable(),
   valor: z.number(),
@@ -237,6 +306,7 @@ export type TProposalEntity = z.infer<typeof ProposalEntitySchema>
 export type TProposalDTO = TProposal & { _id: string }
 
 export type TProposalDTOWithOpportunity = TProposalDTO & { oportunidadeDados: TOpportunityDTO }
+export type TProposalDTOWithOpportunityAndClient = TProposalDTO & { oportunidadeDados: TOpportunityDTO; clienteDados: TClientDTO }
 
 // TIPOS DE PROPOSTA
 

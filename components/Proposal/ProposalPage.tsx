@@ -47,9 +47,8 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
   const queryClient = useQueryClient()
   const [editProposalModalIsOpen, setEditProposalModalIsOpen] = useState<boolean>(false)
   const [newContractRequestIsOpen, setNewContractRequestIsOpen] = useState<boolean>(false)
+
   const { data: proposal, isLoading: proposalLoading, isError: proposalError, isSuccess: proposalSuccess } = useProposalById({ id: proposalId })
-  const clientId = proposal?.oportunidadeDados.idCliente
-  const { data: client } = useClientById({ id: clientId || '' })
   const { data: pricingMethods } = usePricingMethods()
 
   const userHasPricingViewPermission = session?.user.permissoes.precos.visualizar
@@ -112,7 +111,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
               wonProposalId={proposal.oportunidadeDados.ganho.idProposta}
               proposalValue={proposal.valor}
               idMarketing={proposal.oportunidadeDados.idMarketing}
-              opportunityEmail={client?.email}
+              opportunityEmail={proposal.clienteDados?.email}
               handleWin={() => setNewContractRequestIsOpen(true)}
             />
           </div>
@@ -340,7 +339,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
             closeModal={() => setEditProposalModalIsOpen(false)}
           />
         ) : null}
-        {newContractRequestIsOpen && client ? (
+        {newContractRequestIsOpen ? (
           <NewContractRequest
             responsible={{
               _id: session.user.id,
@@ -349,7 +348,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
               avatar_url: session.user.avatar_url,
               telefone: session.user.telefone,
             }}
-            client={client}
+            client={proposal.clienteDados}
             proposeInfo={proposal}
             closeModal={() => setNewContractRequestIsOpen(false)}
           />
