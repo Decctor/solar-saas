@@ -14,6 +14,65 @@ import connectToAmpereDatabase from '@/services/mongodb/ampere-db-connection'
 import { z } from 'zod'
 type PostResponse = any
 
+const AmpereProposeTemplates = [
+  {
+    active: true,
+    label: 'TEMPLATE SIMPLES 2024',
+    value: 'TEMPLATE SIMPLES 2024',
+    templateId: 'jNegIQ837v9VvQ5XBkOF',
+    applicableProjectTypes: ['SISTEMA FOTOVOLTAICO'],
+  },
+  {
+    active: false,
+    label: 'TEMPLATE SIMPLES',
+    value: 'TEMPLATE SIMPLES',
+    templateId: 'LPHl6ETXfSmY3QsHJqAW',
+    applicableProjectTypes: ['SISTEMA FOTOVOLTAICO'],
+  },
+  {
+    active: false,
+    label: 'TEMPLATE COMERCIAL 2023',
+    value: 'TEMPLATE COMERCIAL 2023',
+    templateId: 'atY9ZFVb7eVbAKuXVJuS',
+    applicableProjectTypes: ['SISTEMA FOTOVOLTAICO'],
+  },
+  {
+    active: true,
+    label: 'TEMPLATE COMPLEXO 2024',
+    value: 'TEMPLATE COMPLEXO 2024',
+    templateId: '7q9aUSkD67g9q3jqQjq0',
+    applicableProjectTypes: ['SISTEMA FOTOVOLTAICO'],
+  },
+  {
+    active: true,
+    label: 'TEMPLATE PARCEIRA BYD',
+    value: 'TEMPLATE PARCEIRA BYD',
+    templateId: 'QMIYo5Aw51DGlb1n8dUp',
+    applicableProjectTypes: ['SISTEMA FOTOVOLTAICO'],
+  },
+  {
+    active: true,
+    label: 'TEMPLATE O&M',
+    value: 'TEMPLATE O&M',
+    templateId: 'Cf2vPPIkSi7XEpuXV8Xv',
+    applicableProjectTypes: ['OPERAÇÃO E MANUTENÇÃO'],
+  },
+  {
+    active: false,
+    label: 'TEMPLATE MONTAGEM E DESMONTAGEM',
+    value: 'TEMPLATE MONTAGEM E DESMONTAGEM',
+    templateId: 'lVJehmCJyvzqYSAbQwBe',
+    applicableProjectTypes: ['MONTAGEM E DESMONTAGEM'],
+  },
+  {
+    active: true,
+    label: 'TEMPLATE MONTAGEM E DESMONTAGEM 2024',
+    value: 'TEMPLATE MONTAGEM E DESMONTAGEM 2024',
+    templateId: 'QiAjovgEpAt2RCJx5Am7',
+    applicableProjectTypes: ['MONTAGEM E DESMONTAGEM'],
+  },
+]
+
 const migrate: NextApiHandler<any> = async (req, res) => {
   const { id } = req.query
 
@@ -31,6 +90,12 @@ const migrate: NextApiHandler<any> = async (req, res) => {
     .map((proposal) => {
       const equivalentProject = ampereProjects.find((p) => p._id.toString() == proposal.projeto.id)
       const clientId = equivalentProject?.clienteId || ''
+
+      // Getting information about the template
+      const usedTemplate = AmpereProposeTemplates.find((ampTemplate) => ampTemplate.value == proposal.template)
+      const usedTemplateId = usedTemplate?.templateId || null
+
+      // Defining proposal objects based on the proposal type
       if ((proposal as WithId<TOeMPropose>).precificacao.manutencaoSimples) {
         const info = proposal as WithId<TOeMPropose>
         // Generating a proposal in case of O&M
@@ -39,6 +104,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
           nome: info.nome,
           idParceiro: '65454ba15cf3e3ecf534b308',
           idMetodologiaPrecificacao: '',
+          idModeloAnvil: usedTemplateId,
           idCliente: clientId,
           valor: info.valorProposta || 0,
           premissas: {
@@ -113,6 +179,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
           idParceiro: '65454ba15cf3e3ecf534b308',
           idCliente: clientId,
           idMetodologiaPrecificacao: '',
+          idModeloAnvil: usedTemplateId,
           valor: info.valorProposta || 0,
           premissas: {
             tarifaEnergia: info.premissas.tarifaEnergia,
@@ -222,6 +289,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
           idParceiro: '65454ba15cf3e3ecf534b308',
           idCliente: clientId,
           idMetodologiaPrecificacao: '',
+          idModeloAnvil: usedTemplateId,
           valor: info.valorProposta || 0,
           premissas: {
             consumoEnergiaMensal: info.premissas.consumoEnergiaMensal,

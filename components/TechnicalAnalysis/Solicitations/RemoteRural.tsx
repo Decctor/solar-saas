@@ -1,36 +1,32 @@
-import { IProposalInfo, ITechnicalAnalysis } from '@/utils/models'
 import React, { useState } from 'react'
-import GeneralInfo from './Blocks/GeneralInfo'
-import SystemInfo from './Blocks/SystemInfo'
-import PAInfo from './Blocks/PAInfo'
-import TransformerInfo from './Blocks/TransformerInfo'
-import StructureInfo from './Blocks/StructureInfo'
-import InstallationInfo from './Blocks/InstallationInfo'
-import ReviewInfo from './Blocks/ReviewInfo'
-import AdditionalServicesInfo from './Blocks/AdditionalServicesInfo'
+import GeneralInfo from '../Stages/GeneralInfo'
+import SystemInfo from '../Stages/SystemInfo'
+import PAInfo from '../Stages/PAInfo'
+import TransformerInfo from '../Stages/TransformerInfo'
+import StructureInfo from '../Stages/StructureInfo'
+import InstallationInfo from '../Stages/InstallationInfo'
+import ReviewInfo from '../Stages/ReviewInfo'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
+import { TFileHolder } from '@/utils/schemas/file-reference.schema'
+import AdditionalServicesInfo from '../Stages/AdditionalServicesInfo'
 type RemoteRuralProps = {
-  requestInfo: TTechnicalAnalysis
-  setRequestInfo: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
+  infoHolder: TTechnicalAnalysis
+  setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   resetSolicitationType: () => void
-  proposal: IProposalInfo | undefined
-  projectId?: string
+  files: TFileHolder
+  setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
+  handleRequestAnalysis: ({ info, files }: { info: TTechnicalAnalysis; files: TFileHolder }) => void
 }
 
-function RemoteRural({ requestInfo, setRequestInfo, resetSolicitationType, proposal, projectId }: RemoteRuralProps) {
+function RemoteRural({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationType, handleRequestAnalysis }: RemoteRuralProps) {
   const [stage, setStage] = useState(1)
-  const [files, setFiles] = useState<{
-    [key: string]: {
-      title: string
-      file: File | null | string
-    }
-  }>()
+
   return (
     <div className="flex w-full grow flex-col ">
       {stage == 1 ? (
         <GeneralInfo
-          requestInfo={requestInfo}
-          setRequestInfo={setRequestInfo}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
           resetSolicitationType={resetSolicitationType}
           files={files}
@@ -39,17 +35,16 @@ function RemoteRural({ requestInfo, setRequestInfo, resetSolicitationType, propo
       ) : null}
       {stage == 2 ? (
         <SystemInfo
-          requestInfo={requestInfo}
-          setRequestInfo={setRequestInfo}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
-          proposal={proposal}
         />
       ) : null}
       {stage == 3 ? (
         <PAInfo
-          requestInfo={requestInfo}
-          setRequestInfo={setRequestInfo}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           files={files}
@@ -58,8 +53,8 @@ function RemoteRural({ requestInfo, setRequestInfo, resetSolicitationType, propo
       ) : null}
       {stage == 4 ? (
         <TransformerInfo
-          requestInfo={requestInfo}
-          setRequestInfo={setRequestInfo}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           files={files}
@@ -68,8 +63,8 @@ function RemoteRural({ requestInfo, setRequestInfo, resetSolicitationType, propo
       ) : null}
       {stage == 5 ? (
         <StructureInfo
-          requestInfo={requestInfo}
-          setRequestInfo={setRequestInfo}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           files={files}
@@ -78,8 +73,8 @@ function RemoteRural({ requestInfo, setRequestInfo, resetSolicitationType, propo
       ) : null}
       {stage == 6 ? (
         <InstallationInfo
-          requestInfo={requestInfo}
-          setRequestInfo={setRequestInfo}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           files={files}
@@ -88,8 +83,8 @@ function RemoteRural({ requestInfo, setRequestInfo, resetSolicitationType, propo
       ) : null}
       {stage == 7 ? (
         <AdditionalServicesInfo
-          requestInfo={requestInfo}
-          setRequestInfo={setRequestInfo}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           files={files}
@@ -98,12 +93,13 @@ function RemoteRural({ requestInfo, setRequestInfo, resetSolicitationType, propo
       ) : null}
       {stage == 8 ? (
         <ReviewInfo
-          requestInfo={requestInfo}
-          setRequestInfo={setRequestInfo}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
+          goToPreviousStage={() => setStage((prev) => prev - 1)}
           files={files}
           setFiles={setFiles}
-          projectId={projectId}
+          handleRequestAnalysis={handleRequestAnalysis}
         />
       ) : null}
     </div>

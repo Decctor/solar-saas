@@ -76,6 +76,7 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
       endereco: '',
       numeroOuIdentificador: '',
     },
+    equipamentosAnteriores: [],
     equipamentos: [],
     padrao: [],
     transformador: {
@@ -167,6 +168,7 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
     if (analysis) setInfoHolder(analysis)
   }, [analysis])
 
+  console.log('TESTE')
   return (
     <div id="control-technical-analysis" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="relative left-[50%] top-[50%] z-[100] h-[80%] max-h-[80%] w-[90%] translate-x-[-50%] translate-y-[-50%] overflow-hidden rounded-md bg-[#fff] p-[10px] lg:w-[90%]">
@@ -356,45 +358,6 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
                   ) : (
                     <p className="w-full py-2 text-center text-sm italic text-gray-500">Sem informações do projeto...</p>
                   )}
-                  {/* {analysis.aumento ? (
-                    <>
-                      <div className="flex w-full items-center justify-center gap-2 rounded-md bg-gray-800 p-2">
-                        <h1 className="font-bold text-white">PROJETO ANTERIOR</h1>
-                      </div>
-                      <div className="flex w-full flex-col items-center justify-center gap-2 md:flex-row md:gap-4">
-                        <div className="flex items-center gap-2">
-                          <BsCode size={'20px'} color="rgb(31,41,55)" />
-                          {analysis.aumento.id ? (
-                            <a className="font-raleway cursor-pointer text-sm font-medium duration-300 ease-in-out hover:text-cyan-300">
-                              #{analysis.aumento.id || 'N/A'}
-                            </a>
-                          ) : null}
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <FaUser size={'20px'} color="rgb(31,41,55)" />
-                          <p className="font-raleway text-sm font-medium">{analysis.aumento.nome || 'N/A'}</p>
-                        </div>
-                      </div>
-                      <div className="mt-4 flex w-full flex-col items-center justify-center gap-2 md:flex-row lg:gap-4">
-                        <div className="flex items-center gap-2">
-                          <FaSolarPanel size={'20px'} color="rgb(31,41,55)" />
-                          <p className="font-raleway text-sm font-medium">
-                            {analysis.aumento.equipamentos.modulos.qtde}x {analysis.aumento.equipamentos.modulos.modelo || 'N/A'}{' '}
-                            {analysis.aumento.equipamentos.modulos.potencia}W
-                          </p>
-                        </div>
-                        <div className="flex items-center gap-2">
-                          <TbWaveSine size={'20px'} color="rgb(31,41,55)" />
-                          <p className="font-raleway text-sm font-medium">
-                            {analysis.aumento.equipamentos?.inversor.qtde}x {analysis.aumento.equipamentos?.inversor.modelo || 'N/A'}{' '}
-                            {analysis.aumento.equipamentos?.inversor.potencia}W
-                          </p>
-                        </div>
-                      </div>
-                    </>
-                  ) : (
-                    <p className="w-full py-2 text-center text-sm italic text-gray-500">Sem informações do projeto...</p>
-                  )} */}
                   <div className="flex w-full flex-col">
                     <h1 className="w-full rounded-tl-sm rounded-tr-sm bg-gray-500 p-1 text-center font-bold text-white">COMENTÁRIOS DO REQUERENTE</h1>
                     <textarea

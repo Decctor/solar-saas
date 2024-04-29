@@ -81,7 +81,7 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
         opportunity: info.oportunidadeDados,
         client: info.clienteDados,
         regenerateFile: regenerateFile,
-        idAnvil: info.idModelo,
+        idAnvil: info.idModeloAnvil,
       })
 
       const fileName = info.nome
@@ -142,7 +142,7 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
             </div>
           </div>
           <div className="flex w-full items-center justify-end gap-2 p-2">
-            {info.idModelo ? (
+            {info.idModeloAnvil ? (
               <div className="w-fit">
                 <CheckboxInput
                   labelFalse="GERAR NOVO DOCUMENTO"

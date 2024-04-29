@@ -1,5 +1,5 @@
 import { ITechnicalAnalysis } from '@/utils/models'
-import React from 'react'
+import React, { useState } from 'react'
 import TextInput from '../../Inputs/TextInput'
 import { formatLongString, formatToCEP, formatToPhone, getCEPInfo } from '@/utils/methods'
 import { toast } from 'react-hot-toast'
@@ -9,6 +9,8 @@ import { BsCheckCircleFill } from 'react-icons/bs'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 import { TFileHolder } from '@/utils/schemas/file-reference.schema'
 import DocumentFileInput from '@/components/Inputs/DocumentFileInput'
+import CheckboxInput from '@/components/Inputs/CheckboxInput'
+import AnalysisVinculationMenu from '../AnalysisVinculationMenu'
 
 type GeneralInfoProps = {
   infoHolder: TTechnicalAnalysis
@@ -19,6 +21,7 @@ type GeneralInfoProps = {
   setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
 }
 function GeneralInfo({ goToNextStage, resetSolicitationType, infoHolder, setInfoHolder, files, setFiles }: GeneralInfoProps) {
+  const [vinculationMenuIsOpen, setVinculationMenuIsOpen] = useState<boolean>(false)
   async function setAddressDataByCEP(cep: string) {
     const addressInfo = await getCEPInfo(cep)
     const toastID = toast.loading('Buscando informações sobre o CEP...', {
@@ -180,6 +183,25 @@ function GeneralInfo({ goToNextStage, resetSolicitationType, infoHolder, setInfo
           value={files['COMPROVANTE DE LOCALIZAÇÃO']}
           handleChange={(value) => setFiles((prev) => ({ ...prev, ['COMPROVANTE DE LOCALIZAÇÃO']: value }))}
         />
+        <div className="flex w-full flex-col gap-1 rounded border border-orange-700 p-2">
+          <p className="my-2 w-full text-center text-sm leading-none tracking-tight text-gray-500">
+            Deseja utilizar uma <strong className="text-orange-700">análise técnica existente de referência</strong>, para alterações ou afins ? Marque a opção
+            abaixo para abrir o menu de seleção.
+          </p>
+          <div className="flex w-full items-center justify-center">
+            <div className="w-fit">
+              <CheckboxInput
+                labelFalse="UTILIZAR ANÁLISE TÉCNICA DE REFERÊNCIA"
+                labelTrue="UTILIZAR ANÁLISE TÉCNICA DE REFERÊNCIA"
+                checked={vinculationMenuIsOpen}
+                handleChange={(value) => setVinculationMenuIsOpen(value)}
+              />
+            </div>
+          </div>
+          {vinculationMenuIsOpen ? (
+            <AnalysisVinculationMenu infoHolder={infoHolder} setInfoHolder={setInfoHolder} closeMenu={() => setVinculationMenuIsOpen(false)} />
+          ) : null}
+        </div>
       </div>
 
       <div className="mt-2 flex w-full justify-between">

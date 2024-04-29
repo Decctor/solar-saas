@@ -1,3 +1,7 @@
+import Budgeting from '@/components/TechnicalAnalysis/Solicitations/Budgeting'
+import Drawing from '@/components/TechnicalAnalysis/Solicitations/Drawing'
+import Inloco from '@/components/TechnicalAnalysis/Solicitations/InLoco'
+import RemoteRural from '@/components/TechnicalAnalysis/Solicitations/RemoteRural'
 import RemoteUrban from '@/components/TechnicalAnalysis/Solicitations/RemoteUrban'
 import SolicitationTypeSelection from '@/components/TechnicalAnalysis/Stages/SolicitationTypeSelection'
 import ErrorComponent from '@/components/utils/ErrorComponent'
@@ -56,6 +60,7 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
       endereco: opportunity.localizacao?.endereco || '',
       numeroOuIdentificador: opportunity.localizacao?.numeroOuIdentificador || '',
     },
+    equipamentosAnteriores: [],
     equipamentos: [],
     padrao: [],
     transformador: {
@@ -149,6 +154,7 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
           const link: TFileReference = {
             idParceiro: session.user.idParceiro || '',
             idAnaliseTecnica: analysisId,
+            idOportunidade: opportunity._id,
             titulo: key,
             formato: format,
             url: file,
@@ -190,7 +196,6 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
       throw error
     }
   }
-
   async function requestAnalysis({ info, files }: { info: TTechnicalAnalysis; files: TFileHolder }) {
     try {
       // Creating the technical analysis document in db via api call
@@ -255,8 +260,72 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
                     }
                   />
                 ) : null}
-                {infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA REMOTA' ? (
+                {infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA REMOTA URBANA' || infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA REMOTA' ? (
                   <RemoteUrban
+                    infoHolder={infoHolder}
+                    setInfoHolder={setInfoHolder}
+                    resetSolicitationType={() =>
+                      setInfoHolder((prev) => ({
+                        ...prev,
+                        tipoSolicitacao: '',
+                      }))
+                    }
+                    files={files}
+                    setFiles={setFiles}
+                    // @ts-ignore
+                    handleRequestAnalysis={handleRequestAnalysis}
+                  />
+                ) : null}
+                {infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA REMOTA RURAL' ? (
+                  <RemoteRural
+                    infoHolder={infoHolder}
+                    setInfoHolder={setInfoHolder}
+                    resetSolicitationType={() =>
+                      setInfoHolder((prev) => ({
+                        ...prev,
+                        tipoSolicitacao: '',
+                      }))
+                    }
+                    files={files}
+                    setFiles={setFiles}
+                    // @ts-ignore
+                    handleRequestAnalysis={handleRequestAnalysis}
+                  />
+                ) : null}
+                {infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA IN LOCO' ? (
+                  <Inloco
+                    infoHolder={infoHolder}
+                    setInfoHolder={setInfoHolder}
+                    resetSolicitationType={() =>
+                      setInfoHolder((prev) => ({
+                        ...prev,
+                        tipoSolicitacao: '',
+                      }))
+                    }
+                    files={files}
+                    setFiles={setFiles}
+                    // @ts-ignore
+                    handleRequestAnalysis={handleRequestAnalysis}
+                  />
+                ) : null}
+                {infoHolder.tipoSolicitacao == 'DESENHO PERSONALIZADO' ? (
+                  <Drawing
+                    infoHolder={infoHolder}
+                    setInfoHolder={setInfoHolder}
+                    resetSolicitationType={() =>
+                      setInfoHolder((prev) => ({
+                        ...prev,
+                        tipoSolicitacao: '',
+                      }))
+                    }
+                    files={files}
+                    setFiles={setFiles}
+                    // @ts-ignore
+                    handleRequestAnalysis={handleRequestAnalysis}
+                  />
+                ) : null}
+                {infoHolder.tipoSolicitacao == 'ORÇAMENTAÇÃO' ? (
+                  <Budgeting
                     infoHolder={infoHolder}
                     setInfoHolder={setInfoHolder}
                     resetSolicitationType={() =>
@@ -274,20 +343,6 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
               </>
             ) : null}
 
-            {/* {infoHolder.tipoSolicitacao == 'VISITA TÉCNICA REMOTA - RURAL' ? (
-              <RemoteRural
-                infoHolder={infoHolder}
-                setInfoHolder={setInfoHolder}
-                resetSolicitationType={() =>
-                  setInfoHolder((prev) => ({
-                    ...prev,
-                    tipoSolicitacao: undefined,
-                  }))
-                }
-                proposal={proposal}
-                projectId={project._id}
-              />
-            ) : null} */}
             {/* {infoHolder.tipoSolicitacao == 'VISITA TÉCNICA IN LOCO - URBANA' || infoHolder.tipoSolicitacao == 'VISITA TÉCNICA IN LOCO - RURAL' ? (
               <InLocoUrban
                 infoHolder={infoHolder}

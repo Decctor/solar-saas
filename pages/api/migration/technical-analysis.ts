@@ -2,6 +2,7 @@ import connectToAmpereDatabase from '@/services/mongodb/ampere/resquests-db-conn
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler } from '@/utils/api'
 import { calculateStringSimilarity } from '@/utils/methods'
+import { TFileReference } from '@/utils/schemas/file-reference.schema'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 import { TUser } from '@/utils/schemas/user.schema'
 import {
@@ -77,7 +78,10 @@ const migrate: NextApiHandler<any> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const analysisCollection: Collection<TTechnicalAnalysis> = db.collection('technical-analysis')
   const usersCollection: Collection<TUser> = db.collection('users')
+  const fileReferencesCollection: Collection<TFileReference> = db.collection('file-references')
   const users = await usersCollection.find({}).toArray()
+
+  var fileReferences: TFileReference[] = []
 
   const analysis = ampereAnalysis.map((analysis) => {
     const requesterUser = users.find((u) => calculateStringSimilarity(u.nome.toUpperCase(), analysis.requerente.nomeCRM?.toUpperCase() || '') > 90)
@@ -101,6 +105,24 @@ const migrate: NextApiHandler<any> = async (req, res) => {
     const modulesEquipment = getEquipmentInformation(analysis.equipamentos.modulos, 'MÓDULO')
     const invertersEquipment = getEquipmentInformation(analysis.equipamentos.inversor, 'INVERSOR')
     const equipments = [...modulesEquipment, ...invertersEquipment]
+
+    const previousModulesEquipment = getEquipmentInformation(analysis.equipamentos.modulos, 'MÓDULO')
+    const previousInverterEquipment = getEquipmentInformation(analysis.equipamentos.modulos, 'INVERSOR')
+    const previousEquipments = [...previousModulesEquipment, ...previousInverterEquipment]
+
+    const analysisFiles: TFileReference[] = analysis.arquivos.map((file) => ({
+      titulo: file.descricao,
+      idParceiro: '65454ba15cf3e3ecf534b308',
+      formato: file.formato,
+      url: file.url,
+      autor: {
+        id: analysis.requerente.idCRM || '',
+        nome: analysis.requerente.nomeCRM || '',
+        avatar_url: analysis.requerente.avatar_url,
+      },
+      dataInsercao: analysis.dataInsercao || new Date().toISOString(),
+    }))
+    fileReferences = [...fileReferences, ...analysisFiles]
     return {
       idParceiro: '65454ba15cf3e3ecf534b308',
       nome: analysis.nome,
@@ -131,6 +153,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
         endereco: analysis.localizacao?.endereco || '',
         numeroOuIdentificador: analysis.localizacao?.numeroOuIdentificador || '',
       },
+      equipamentosAnteriores: previousEquipments,
       equipamentos: equipments,
       padrao: analysis.padrao,
       transformador: {
@@ -211,7 +234,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
       dataInsercao: analysis.dataInsercao,
     } as TTechnicalAnalysis
   })
-
+  const insertManyFileReferences = await fileReferencesCollection.insertMany(fileReferences)
   const insertManyResponse = await analysisCollection.insertMany(analysis)
   return res.status(200).json(insertManyResponse)
 }

@@ -69,7 +69,7 @@ function TechnicalAnalysisCard({ analysis, handleOpenModal }: TechnicalAnalysisC
             <div className="flex items-end gap-2">
               <TbWorld size={18} />
               <p className="text-[0.65rem] font-medium leading-none tracking-tight text-gray-500 lg:text-xs">
-                {analysis.complexidade || 'OPORTUNIDADE NÃO VINCULADA'}
+                {analysis.complexidade || 'COMPLEXIDADE NÃO DEFINIDA'}
               </p>
             </div>
           </div>

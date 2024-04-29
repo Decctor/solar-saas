@@ -54,54 +54,62 @@ function DetailsBlock({ infoHolder, setInfoHolder, changes, setChanges }: Detail
 
         <div className="flex w-full flex-col gap-2 lg:flex-row">
           <div className="flex w-full items-center justify-center lg:w-1/4">
-            <CheckboxInput
-              labelFalse="IMAGENS DE DRONE DISPONÍVEIS"
-              labelTrue="IMAGENS DE DRONE DISPONÍVEIS"
-              checked={infoHolder.detalhes.imagensDrone}
-              justify="justify-center"
-              handleChange={(value) => {
-                setInfoHolder((prev) => ({ ...prev, detalhes: { ...prev.detalhes, imagensDrone: value } }))
-                setChanges((prev) => ({ ...prev, 'detalhes.imagensDrone': value }))
-              }}
-            />
+            <div className="w-fit">
+              <CheckboxInput
+                labelFalse="IMAGENS DE DRONE DISPONÍVEIS"
+                labelTrue="IMAGENS DE DRONE DISPONÍVEIS"
+                checked={infoHolder.detalhes.imagensDrone}
+                justify="justify-center"
+                handleChange={(value) => {
+                  setInfoHolder((prev) => ({ ...prev, detalhes: { ...prev.detalhes, imagensDrone: value } }))
+                  setChanges((prev) => ({ ...prev, 'detalhes.imagensDrone': value }))
+                }}
+              />
+            </div>
           </div>
 
           <div className="flex w-full items-center justify-center lg:w-1/4">
-            <CheckboxInput
-              labelFalse="IMAGENS DA FACHADA DISPONÍVEIS"
-              labelTrue="IMAGENS DA FACHADA DISPONÍVEIS"
-              checked={infoHolder.detalhes.imagensFachada}
-              justify="justify-center"
-              handleChange={(value) => {
-                setInfoHolder((prev) => ({ ...prev, detalhes: { ...prev.detalhes, imagensFachada: value } }))
-                setChanges((prev) => ({ ...prev, 'detalhes.imagensFachada': value }))
-              }}
-            />
+            <div className="w-fit">
+              <CheckboxInput
+                labelFalse="IMAGENS DA FACHADA DISPONÍVEIS"
+                labelTrue="IMAGENS DA FACHADA DISPONÍVEIS"
+                checked={infoHolder.detalhes.imagensFachada}
+                justify="justify-center"
+                handleChange={(value) => {
+                  setInfoHolder((prev) => ({ ...prev, detalhes: { ...prev.detalhes, imagensFachada: value } }))
+                  setChanges((prev) => ({ ...prev, 'detalhes.imagensFachada': value }))
+                }}
+              />
+            </div>
           </div>
 
           <div className="flex w-full items-center justify-center lg:w-1/4">
-            <CheckboxInput
-              labelFalse="IMAGENS DE SATÉLITE DISPONÍVEIS"
-              labelTrue="IMAGENS DE SATÉLITE DISPONÍVEIS"
-              checked={infoHolder.detalhes.imagensSatelite}
-              justify="justify-center"
-              handleChange={(value) => {
-                setInfoHolder((prev) => ({ ...prev, detalhes: { ...prev.detalhes, imagensSatelite: value } }))
-                setChanges((prev) => ({ ...prev, 'detalhes.imagensSatelite': value }))
-              }}
-            />
+            <div className="w-fit">
+              <CheckboxInput
+                labelFalse="IMAGENS DE SATÉLITE DISPONÍVEIS"
+                labelTrue="IMAGENS DE SATÉLITE DISPONÍVEIS"
+                checked={infoHolder.detalhes.imagensSatelite}
+                justify="justify-center"
+                handleChange={(value) => {
+                  setInfoHolder((prev) => ({ ...prev, detalhes: { ...prev.detalhes, imagensSatelite: value } }))
+                  setChanges((prev) => ({ ...prev, 'detalhes.imagensSatelite': value }))
+                }}
+              />
+            </div>
           </div>
           <div className="flex w-full items-center justify-center lg:w-1/4">
-            <CheckboxInput
-              labelFalse="MEDIÇÕES DISPONÍVEIS"
-              labelTrue="MEDIÇÕES DISPONÍVEIS"
-              checked={infoHolder.detalhes.medicoes}
-              justify="justify-center"
-              handleChange={(value) => {
-                setInfoHolder((prev) => ({ ...prev, detalhes: { ...prev.detalhes, medicoes: value } }))
-                setChanges((prev) => ({ ...prev, 'detalhes.medicoes': value }))
-              }}
-            />
+            <div className="w-fit">
+              <CheckboxInput
+                labelFalse="MEDIÇÕES DISPONÍVEIS"
+                labelTrue="MEDIÇÕES DISPONÍVEIS"
+                checked={infoHolder.detalhes.medicoes}
+                justify="justify-center"
+                handleChange={(value) => {
+                  setInfoHolder((prev) => ({ ...prev, detalhes: { ...prev.detalhes, medicoes: value } }))
+                  setChanges((prev) => ({ ...prev, 'detalhes.medicoes': value }))
+                }}
+              />
+            </div>
           </div>
         </div>
       </div>

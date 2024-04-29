@@ -110,7 +110,7 @@ export const GeneralProposalSchema = z.object({
   idParceiro: z.string(),
   idCliente: z.string(),
   idMetodologiaPrecificacao: z.string(),
-  idModelo: z.string().optional().nullable(),
+  idModeloAnvil: z.string().optional().nullable(),
   valor: z.number(),
   premissas: PremissesSchema,
   oportunidade: z.object({
@@ -149,7 +149,7 @@ export const InsertProposalSchema = z.object({
     required_error: 'Vínculo de metodologia de precificação não informado.',
     invalid_type_error: 'Tipo não válido para o vínculo de metodologia.',
   }),
-  idModelo: z
+  idModeloAnvil: z
     .string({
       required_error: 'ID de referência do modelo de proposta não informado.',
       invalid_type_error: 'Tipo não válido para o ID de referência do modelo de proposta.',
@@ -214,7 +214,7 @@ export const UpdateProposalSchema = z.object({
     required_error: 'Vínculo de metodologia de precificação não informado.',
     invalid_type_error: 'Tipo não válido para o vínculo de metodologia.',
   }),
-  idModelo: z
+  idModeloAnvil: z
     .string({
       required_error: 'ID de referência do modelo de proposta não informado.',
       invalid_type_error: 'Tipo não válido para o ID de referência do modelo de proposta.',
@@ -270,7 +270,7 @@ const ProposalEntitySchema = z.object({
   idParceiro: z.string(),
   idCliente: z.string(),
   idMetodologiaPrecificacao: z.string(),
-  idModelo: z.string().optional().nullable(),
+  idModeloAnvil: z.string().optional().nullable(),
   valor: z.number(),
   premissas: PremissesSchema,
   oportunidade: z.object({

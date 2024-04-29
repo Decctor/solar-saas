@@ -1,58 +1,59 @@
-import { ITechnicalAnalysis, InverterType, ModuleType } from '@/utils/models'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
-import React, { useEffect, useState } from 'react'
-import { toast } from 'react-hot-toast'
-import TextInput from '../Inputs/TextInput'
-import { formatToCEP, formatToPhone, getCEPInfo, getPeakPotByModules } from '@/utils/methods'
-import SelectInput from '../Inputs/SelectInput'
+import SelectInput from '@/components/Inputs/SelectInput'
+import TextInput from '@/components/Inputs/TextInput'
+import { renderCategoryIcon } from '@/lib/methods/rendering'
 import { stateCities } from '@/utils/estados_cidades'
-import Suppliers from '../../utils/json-files/pvsuppliers.json'
-import LoadingComponent from '../utils/LoadingComponent'
-import { IoMdRemoveCircle } from 'react-icons/io'
-import MultipleSelectInput from '../Inputs/MultipleSelectInput'
-import { AiOutlineSearch } from 'react-icons/ai'
-import TechAnalysisKit from '../Cards/TechAnalysisKit'
-import { BsClipboardCheckFill } from 'react-icons/bs'
-import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
-import { useKits } from '@/utils/queries/kits'
-import { TKitDTO } from '@/utils/schemas/kit.schema'
+import { formatToCEP, getCEPInfo } from '@/utils/methods'
+import { TFileHolder } from '@/utils/schemas/file-reference.schema'
+import { TInverter, TKitDTO, TModule } from '@/utils/schemas/kits.schema'
+import { TEquipment, TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
+import { useQueryClient } from '@tanstack/react-query'
+import { useState } from 'react'
+import toast from 'react-hot-toast'
+import { FaIndustry } from 'react-icons/fa'
+import { ImPower } from 'react-icons/im'
+import { MdDelete } from 'react-icons/md'
+import Inverters from '@/utils/json-files/pvinverters.json'
+import Modules from '@/utils/json-files/pvmodules.json'
+import NumberInput from '@/components/Inputs/NumberInput'
+import { ProductItemCategories } from '@/utils/select-options'
+import KitsSelectionMenu from '../KitsSelectionMenu'
 
-type InLocoUrbanProps = {
-  requestInfo: TTechnicalAnalysis
-  setRequestInfo: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
+type InlocoProps = {
+  infoHolder: TTechnicalAnalysis
+  setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   resetSolicitationType: () => void
-  projectId?: string
-  projectCode?: string
+  files: TFileHolder
+  setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
+  handleRequestAnalysis: ({ info, files }: { info: TTechnicalAnalysis; files: TFileHolder }) => void
 }
-type Filters = {
-  suppliers: string[]
-  topology: string[]
-  search: string
-  potOrder: null | 'ASC' | 'DESC'
-}
-type SelectedKitsState = {
-  kitId: string | string[]
-  tipo?: 'TRADICIONAL' | 'PROMOCIONAL'
-  nome: string
-  topologia: 'INVERSOR' | 'MICRO-INVERSOR'
-  modulos: ModuleType[]
-  inversores: InverterType[]
-  fornecedor: string
-  preco: number
-}[]
-
-function getSelectedKitsPowerPeak(selectedKits: SelectedKitsState) {
-  var totalSum = 0
-  selectedKits.forEach((kit) => {
-    const kitPeakPower = getPeakPotByModules(kit.modulos)
-    totalSum = totalSum + kitPeakPower
-  })
-  return totalSum
-}
-
-function InLocoUrban({ resetSolicitationType, requestInfo, setRequestInfo, projectId, projectCode }: InLocoUrbanProps) {
+function Inloco({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationType, handleRequestAnalysis }: InlocoProps) {
   const queryClient = useQueryClient()
+  const [showKits, setShowKits] = useState<boolean>(false)
+  const [selectedKitId, setSelectedKitId] = useState<string | null>(null)
+  const [inverterHolder, setInverterHolder] = useState<TInverter>({
+    id: '',
+    fabricante: '',
+    modelo: '',
+    qtde: 1,
+    garantia: 10,
+    potencia: 0,
+  })
+  const [moduleHolder, setModuleHolder] = useState<TModule>({
+    id: '',
+    fabricante: '',
+    modelo: '',
+    qtde: 1,
+    potencia: 0,
+    garantia: 10,
+  })
+  const [personalizedProductHolder, setPersonalizedProductHolder] = useState<TEquipment>({
+    id: null,
+    categoria: 'OUTROS',
+    fabricante: '',
+    modelo: '',
+    qtde: 1,
+    potencia: 0,
+  })
   async function setAddressDataByCEP(cep: string) {
     const addressInfo = await getCEPInfo(cep)
     const toastID = toast.loading('Buscando informações sobre o CEP...', {
@@ -64,7 +65,7 @@ function InLocoUrban({ resetSolicitationType, requestInfo, setRequestInfo, proje
         toast.success('Dados do CEP buscados com sucesso.', {
           duration: 1000,
         })
-        setRequestInfo((prev) => ({
+        setInfoHolder((prev) => ({
           ...prev,
           localizacao: {
             ...prev.localizacao,
@@ -77,477 +78,526 @@ function InLocoUrban({ resetSolicitationType, requestInfo, setRequestInfo, proje
       }
     }, 1000)
   }
-  const { data: kits = [], isFetching: kitsFetching, isSuccess: kitsSuccess } = useKits()
-  const [filteredKits, setFilteredKits] = useState<TKitDTO[] | undefined>(kits)
-  const [filters, setFilters] = useState<Filters>({
-    suppliers: [],
-    topology: [],
-    search: '',
-    potOrder: null,
-  })
 
-  const [selectedKits, setSelectedKits] = useState<SelectedKitsState>([])
-
-  function handleOptionFilters() {
-    var newArr
-    if (filters.suppliers.length > 0) {
-      if (!newArr) newArr = kits
-      newArr = newArr?.filter((x) => filters.suppliers.includes(x.fornecedor))
+  function addInverterToEquipments(info: TInverter) {
+    if (!info.id && !info.fabricante && !info.modelo) {
+      return toast.error('Inversor inválido. Por favor, tente novamente.')
     }
-    if (filters.topology.length > 0) {
-      if (!newArr) newArr = kits
-      newArr = newArr?.filter((x) => filters.topology.includes(x.topologia))
+    if (info.qtde <= 0) {
+      return toast.error('Por favor, preencha um quantidade de inversores válida.')
     }
-    if (!newArr) {
-      setFilteredKits(kits)
-      return kits
-    } else {
-      setFilteredKits(newArr)
-      return newArr
+    var productsArr = [...infoHolder.equipamentos]
+    const productInfo: TEquipment = {
+      id: info.id,
+      categoria: 'INVERSOR',
+      fabricante: info.fabricante,
+      modelo: info.modelo,
+      qtde: info.qtde,
+      potencia: info.potencia,
     }
-  }
-
-  function handleSearchFilter(value: string) {
-    setFilters((prev) => ({ ...prev, search: value }))
-    if (value.trim().length > 0) {
-      if (filters.search.trim().length > 0) {
-        let filtered = handleOptionFilters()
-        let newArr = filtered?.filter((x) => x.nome.toUpperCase().includes(value.toUpperCase()))
-        setFilteredKits(newArr)
-      }
-    } else {
-      setFilteredKits(kits)
-    }
-  }
-  function ordenateKitsByPower(param: string) {
-    if (!filteredKits) return
-    var dumpyCopyOfKits = [...filteredKits]
-    var newArr
-    console.log('PARAMETRO', param)
-    switch (param) {
-      case 'ASC':
-        newArr = dumpyCopyOfKits.sort((a, b) => getPeakPotByModules(a.modulos) - getPeakPotByModules(b.modulos))
-        setFilteredKits(newArr)
-        setFilters((prev) => ({ ...prev, potOrder: 'ASC', order: null }))
-        break
-      case 'DESC':
-        newArr = dumpyCopyOfKits.sort((a, b) => getPeakPotByModules(b.modulos) - getPeakPotByModules(a.modulos))
-        setFilteredKits(newArr)
-        setFilters((prev) => ({ ...prev, potOrder: 'DESC', order: null }))
-        break
-      default:
-        setFilters((prev) => ({ ...prev, potOrder: null, order: null }))
-        setFilteredKits(dumpyCopyOfKits)
-        break
-    }
-  }
-  function selectKit(kit: TKitDTO) {
-    const modules = kit.modulos
-    const inverters = kit.inversores
-    const price = kit.preco
-    const topology = kit.topologia
-    const supplier = kit.fornecedor
-    if (selectedKits.some((prevKit) => prevKit.topologia != topology)) {
-      toast.error('Não é possível selecionar kits de topologia diferente.')
-      return
-    }
-    if (selectedKits.some((prevKit) => prevKit.tipo != kit.tipo)) {
-      toast.error('Não é possível selecionar kits tradicionais e promocionais numa única proposta.')
-      return
-    }
-    if (selectedKits.some((prevKit) => prevKit.fornecedor != kit.fornecedor)) {
-      toast.error('Não é possível selecionar kits de diferentes fornecedores numa única proposta.')
-      return
-    }
-    var currentSelectedKitsCopy = [...selectedKits]
-    currentSelectedKitsCopy.push({
-      kitId: kit._id ? kit._id : '',
-      tipo: kit.tipo,
-      nome: kit.nome,
-      topologia: topology,
-      modulos: modules,
-      inversores: inverters,
-      fornecedor: supplier,
-      preco: price,
+    productsArr.push(productInfo)
+    const orderProducts = productsArr.sort((a, b) => a.categoria.localeCompare(b.categoria))
+    setInfoHolder((prev) => ({ ...prev, equipamentos: orderProducts }))
+    setInverterHolder({
+      id: '',
+      fabricante: '',
+      modelo: '',
+      qtde: 1,
+      garantia: 10,
+      potencia: 0,
     })
-    toast.success('Kit adicionado !')
-    setSelectedKits(currentSelectedKitsCopy)
-    // setProposalInfo((prev) => ({
-    //   ...prev,
-    //   kit: {
-    //     kitId: kit._id ? kit._id : "",
-    //     tipo: kit.tipo,
-    //     nome: kit.nome,
-    //     topologia: topology,
-    //     modulos: modules,
-    //     inversores: inverters,
-    //     fornecedor: supplier,
-    //     preco: price,
-    //   },
-    //   potenciaPico: getPeakPotByModules(modules),
-    // }));
-    // moveToNextStage(null);
   }
-  function handleRequest() {
-    var selectedKitsCopy = [...selectedKits]
-    var kitIdsArr = selectedKitsCopy.flatMap((x) => x.kitId)
-    var invQtdeArr = selectedKitsCopy.flatMap((x) => x.inversores).map((inv) => inv.qtde)
-    var invPotArr = selectedKitsCopy.flatMap((x) => x.inversores).map((inv) => inv.potenciaNominal)
-    var invBrandArr = selectedKitsCopy.flatMap((x) => x.inversores).map((inv) => `(${inv.fabricante}) ${inv.modelo}`)
-    var modQtdeArr = selectedKitsCopy.flatMap((x) => x.modulos).map((mod) => mod.qtde)
-    var modPotArr = selectedKitsCopy.flatMap((x) => x.modulos).map((mod) => mod.potencia)
-    var modBrandArr = selectedKitsCopy.flatMap((x) => x.modulos).map((mod) => `(${mod.fabricante}) ${mod.modelo}`)
+  function addModuleToEquipments(info: TModule) {
+    if (!info.id && !info.fabricante && !info.modelo) {
+      return toast.error('Módulo inválido. Por favor, tente novamente.')
+    }
+    if (info.qtde <= 0) {
+      return toast.error('Por favor, preencha um quantidade de módulos válida.')
+    }
+    var productsArr = [...infoHolder.equipamentos]
+    const productInfo: TEquipment = {
+      id: info.id,
+      categoria: 'MÓDULO',
+      fabricante: info.fabricante,
+      modelo: info.modelo,
+      qtde: info.qtde,
+      potencia: info.potencia,
+    }
+    productsArr.push(productInfo)
+    const orderProducts = productsArr.sort((a, b) => a.categoria.localeCompare(b.categoria))
+    setInfoHolder((prev) => ({ ...prev, equipamentos: orderProducts }))
+    setModuleHolder({
+      id: '',
+      fabricante: '',
+      modelo: '',
+      qtde: 1,
+      potencia: 0,
+      garantia: 10,
+    })
+  }
+  function addPersonalizedEquipment(info: TEquipment) {
+    if (info.fabricante.trim().length < 3) return toast.error('Fabricante do produto não específicado.')
+    if (info.modelo.trim().length < 3) return toast.error('Modelo do produto não específicado.')
+    if (info.qtde <= 0) return toast.error('Quantidade do produto inválida.')
 
-    // Joining into string
-    var joinedInvQtdeArr = invQtdeArr.join('/')
-    var joinedInvPotArr = invPotArr.join('/')
-    var joinedInvBrandArr = invBrandArr.join('/')
-    var joinedModQtdeArr = modQtdeArr.join('/')
-    var joinedModPotArr = modPotArr.join('/')
-    var joinedModBrandArr = modBrandArr.join('/')
-
-    // console.log({ joinedInvQtdeArr, joinedInvPotArr, joinedInvBrandArr });
-    setRequestInfo((prev) => ({
-      ...prev,
-      kitIds: kitIdsArr,
-      equipamentos: {
-        ...prev.equipamentos,
-        modulos: {
-          modelo: joinedModBrandArr,
-          potencia: joinedModPotArr,
-          qtde: joinedModQtdeArr,
-        },
-        inversor: { modelo: joinedInvBrandArr, potencia: joinedInvPotArr, qtde: joinedInvQtdeArr },
-      },
-      detalhes: {
-        ...prev.detalhes,
-        topologia: selectedKitsCopy[0].topologia == 'MICRO-INVERSOR' ? 'MICRO-INVERSOR' : 'INVERSOR',
-      },
+    var productsArr = [...infoHolder.equipamentos]
+    const productInfo: TEquipment = {
+      id: info.id,
+      categoria: info.categoria,
+      fabricante: info.fabricante,
+      modelo: info.modelo,
+      qtde: info.qtde,
+      potencia: info.potencia,
+    }
+    productsArr.push(productInfo)
+    const orderProducts = productsArr.sort((a, b) => a.categoria.localeCompare(b.categoria))
+    setInfoHolder((prev) => ({ ...prev, equipamentos: orderProducts }))
+    setPersonalizedProductHolder({
+      id: null,
+      categoria: 'OUTROS',
+      fabricante: '',
+      modelo: '',
+      qtde: 1,
+      potencia: 0,
+    })
+    return
+  }
+  function removeEquipment(index: number) {
+    const currenTEquipmentList = [...infoHolder.equipamentos]
+    currenTEquipmentList.splice(index, 1)
+    setInfoHolder((prev) => ({ ...prev, equipamentos: currenTEquipmentList }))
+  }
+  function addEquipmentFromKit(kit: TKitDTO) {
+    const equipments: TEquipment[] = kit.produtos.map((p) => ({
+      categoria: p.categoria,
+      fabricante: p.fabricante,
+      modelo: p.modelo,
+      qtde: p.qtde,
+      id: p.id,
+      potencia: p.potencia,
     }))
-    createTechAnalysisRequest()
+    setInfoHolder((prev) => ({ ...prev, equipamentos: equipments, detalhes: { ...prev.detalhes, topologia: kit.topologia } }))
   }
-  const {
-    mutate: createTechAnalysisRequest,
-    isPending,
-    isSuccess, //64adb93249f94d9354becb64
-  } = useMutation({
-    mutationKey: ['createTechAnalysisRequest'],
-    mutationFn: async () => {
-      try {
-        const { data } = await axios.post(`/api/integration/app-ampere/technical-analysis`, {
-          ...requestInfo,
-          idProjetoCRM: projectId,
-        })
-        return data
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          let errorMsg = error.response?.data.error.message
-          toast.error(errorMsg)
-          return
-        }
-        if (error instanceof Error) {
-          let errorMsg = error.message
-          toast.error(errorMsg)
-          return
-        }
-      }
-    },
-    onMutate: async (variables) => {
-      await queryClient.cancelQueries({
-        queryKey: ['technicalAnalysis', projectCode, 'TODOS'],
-      })
-    },
-    onSettled: async (data, variables, context) => {
-      console.log('INVALIDANDO QUERIES COM PROJECTCODE:', projectCode)
-      await queryClient.invalidateQueries({
-        queryKey: ['technicalAnalysis', projectCode, 'TODOS'],
-      })
-      // await queryClient.refetchQueries({ queryKey: ["project"] });
-      if (data.message) toast.success(data.message)
-    },
-  })
-  useEffect(() => {
-    setFilteredKits(kits)
-  }, [kits])
-  if (isSuccess)
-    return (
-      <div className="flex w-full grow flex-col items-center justify-center gap-4">
-        <BsClipboardCheckFill style={{ color: 'rgb(34,197,94)', fontSize: '60px' }} />
-        <h1 className="text-lg font-medium italic text-gray-600">Solicitação criada com sucesso !</h1>
-      </div>
-    )
-  else
-    return (
-      <div className="flex w-full grow flex-col">
-        <div className="flex w-full flex-col bg-[#fff] px-2">
-          <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">DADOS GERAIS</span>
-          <div className="flex w-full grow flex-col gap-2">
-            <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
-              <div className="flex w-full items-center justify-center lg:w-[50%]">
-                <TextInput
-                  label={'NOME DO CLIENTE'}
-                  placeholder="Digite aqui o nome do cliente..."
-                  width={'100%'}
-                  value={requestInfo.nome}
-                  handleChange={(value) =>
-                    setRequestInfo((prev) => ({
-                      ...prev,
-                      nome: value,
-                    }))
-                  }
-                />
-              </div>
-
-              <div className="w-full lg:w-[50%]">
-                <TextInput
-                  label={'CEP'}
-                  placeholder="Digite aqui o CEP do cliente..."
-                  width={'100%'}
-                  value={requestInfo.localizacao.cep || ''}
-                  handleChange={(value) => {
-                    if (value.length == 9) {
-                      setAddressDataByCEP(value)
-                    }
-                    setRequestInfo((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cep: formatToCEP(value) } }))
-                  }}
-                />
-              </div>
-            </div>
-
-            <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
-              <div className="flex w-full items-center justify-center lg:w-[50%]">
-                <SelectInput
-                  width={'100%'}
-                  label={'UF'}
-                  editable={true}
-                  options={Object.keys(stateCities).map((state, index) => ({
-                    id: index + 1,
-                    label: state,
-                    value: state,
-                  }))}
-                  value={requestInfo.localizacao.uf}
-                  handleChange={(value) => setRequestInfo((prev) => ({ ...prev, localizacao: { ...prev.localizacao, uf: value } }))}
-                  selectedItemLabel="NÃO DEFINIDO"
-                  onReset={() => {
-                    setRequestInfo((prev) => ({ ...prev, localizacao: { ...prev.localizacao, uf: null } }))
-                  }}
-                />
-              </div>
-              <div className="flex w-full items-center justify-center lg:w-[50%]">
-                <SelectInput
-                  width={'100%'}
-                  label={'CIDADE'}
-                  editable={true}
-                  value={requestInfo.localizacao.cidade}
-                  options={
-                    requestInfo.localizacao.uf
-                      ? stateCities[requestInfo.localizacao.uf as keyof typeof stateCities].map((city, index) => {
-                          return {
-                            id: index,
-                            value: city,
-                            label: city,
-                          }
-                        })
-                      : null
-                  }
-                  handleChange={(value) => setRequestInfo((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cidade: value } }))}
-                  onReset={() => {
-                    setRequestInfo((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cidade: null } }))
-                  }}
-                  selectedItemLabel="NÃO DEFINIDO"
-                />
-              </div>
-            </div>
-            <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
-              <div className="flex w-full items-center justify-center lg:w-[50%]">
-                <TextInput
-                  label={'BAIRRO'}
-                  placeholder="Digite aqui o bairro do cliente.."
-                  width={'100%'}
-                  value={requestInfo.localizacao.bairro}
-                  handleChange={(value) => setRequestInfo((prev) => ({ ...prev, localizacao: { ...prev.localizacao, bairro: value } }))}
-                />
-              </div>
-              <div className="flex w-full items-center justify-center lg:w-[50%]">
-                <TextInput
-                  label={'LOGRADOURO'}
-                  placeholder="Digite o logradouro do cliente..."
-                  width={'100%'}
-                  value={requestInfo.localizacao.endereco}
-                  handleChange={(value) => setRequestInfo((prev) => ({ ...prev, localizacao: { ...prev.localizacao, endereco: value } }))}
-                />
-              </div>
-            </div>
-            <div className="flex w-full items-center justify-center">
-              <div className="w-full lg:w-[450px]">
-                <TextInput
-                  label={'NÚMERO OU IDENTIFICADOR'}
-                  placeholder="Digite aqui o número/identificador da residência..."
-                  width={'100%'}
-                  value={requestInfo.localizacao.numeroOuIdentificador}
-                  handleChange={(value) => {
-                    setRequestInfo((prev) => ({ ...prev, localizacao: { ...prev.localizacao, numeroOuIdentificador: value } }))
-                  }}
-                />
-              </div>
-            </div>
+  return (
+    <div className="flex w-full grow flex-col gap-2 overflow-y-auto overscroll-y-auto bg-[#fff] px-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
+      <h1 className="w-full rounded-md  bg-gray-700 p-1 text-center font-medium text-white">INFORMAÇÕES GERAIS</h1>
+      <div className="flex w-full flex-col gap-2">
+        <div className="flex w-full flex-col items-center justify-center gap-2 lg:flex-row">
+          <TextInput
+            label={'NOME DO CLIENTE'}
+            placeholder="Digite aqui o nome do cliente..."
+            width={'100%'}
+            value={infoHolder.nome}
+            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, nome: value }))}
+          />
+        </div>
+        <p className="my-2 w-full text-center text-sm leading-none tracking-tight text-gray-500">
+          Preencha abaixo a localização de <strong className="text-cyan-500">instalação</strong> do sistema fotovoltaico.
+        </p>
+        <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+          <div className="w-full lg:w-1/3">
+            <TextInput
+              label={'CEP'}
+              placeholder="Digite aqui o CEP do cliente..."
+              width={'100%'}
+              value={infoHolder.localizacao.cep || ''}
+              handleChange={(value) => {
+                if (value.length == 9) {
+                  setAddressDataByCEP(value)
+                }
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cep: formatToCEP(value) } }))
+              }}
+            />
+          </div>
+          <div className="w-full lg:w-1/3">
+            <SelectInput
+              width={'100%'}
+              label={'UF'}
+              editable={true}
+              options={Object.keys(stateCities).map((state, index) => ({
+                id: index + 1,
+                label: state,
+                value: state,
+              }))}
+              value={infoHolder.localizacao.uf}
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, uf: value } }))}
+              selectedItemLabel="NÃO DEFINIDO"
+              onReset={() => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, uf: null } }))
+              }}
+            />
+          </div>
+          <div className="w-full lg:w-1/3">
+            <SelectInput
+              width={'100%'}
+              label={'CIDADE'}
+              editable={true}
+              value={infoHolder.localizacao.cidade}
+              options={
+                infoHolder.localizacao.uf
+                  ? stateCities[infoHolder.localizacao.uf as keyof typeof stateCities].map((city, index) => {
+                      return {
+                        id: index,
+                        value: city,
+                        label: city,
+                      }
+                    })
+                  : null
+              }
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cidade: value } }))}
+              onReset={() => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cidade: null } }))
+              }}
+              selectedItemLabel="NÃO DEFINIDO"
+            />
           </div>
         </div>
-        <div className="mt-4 flex w-full flex-col bg-[#fff] px-2">
-          <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">DADOS DO SISTEMA</span>
-          <div className="flex w-full grow flex-col gap-2">
-            <div className="mt-2 flex w-full flex-wrap items-center justify-between gap-1">
-              <div className="flex w-full items-end gap-2">
-                <div className="w-full lg:w-[50%]">
-                  <TextInput
-                    label="PESQUISA"
-                    value={filters.search}
-                    handleChange={(value) => {
-                      handleSearchFilter(value)
-                    }}
-                    placeholder="Pesquisa aqui o nome do kit..."
-                    width="100%"
-                  />
-                </div>
-                <div className="w-full lg:w-[50%]">
-                  <div className="flex w-full justify-center gap-2">
-                    <div
-                      onClick={() => ordenateKitsByPower('ASC')}
-                      className={`flex h-[46px] w-full cursor-pointer items-center justify-center rounded-md border border-[#FEAD41] p-1 text-center lg:w-fit ${
-                        filters.potOrder == 'ASC' ? 'bg-[#FEAD41] text-white' : 'bg-transparent text-[#FEAD41]'
-                      }`}
-                    >
-                      POTÊNCIA CRESCENTE
-                    </div>
-                    <div
-                      onClick={() => ordenateKitsByPower('DESC')}
-                      className={`flex h-[46px] w-full cursor-pointer items-center justify-center rounded-md border border-[#FEAD41] p-1 text-center lg:w-fit ${
-                        filters.potOrder == 'DESC' ? 'bg-[#FEAD41] text-white' : 'bg-transparent text-[#FEAD41]'
-                      }`}
-                    >
-                      POTÊNCIA DECRESCENTE
-                    </div>
+        <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+          <div className="w-full lg:w-1/3">
+            <TextInput
+              label={'BAIRRO'}
+              placeholder="Digite aqui o bairro do cliente.."
+              width={'100%'}
+              value={infoHolder.localizacao.bairro}
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, bairro: value } }))}
+            />
+          </div>
+          <div className="w-full lg:w-1/3">
+            <TextInput
+              label={'LOGRADOURO'}
+              placeholder="Digite o logradouro do cliente..."
+              width={'100%'}
+              value={infoHolder.localizacao.endereco}
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, endereco: value } }))}
+            />
+          </div>
+          <div className="w-full lg:w-1/3">
+            <TextInput
+              label={'NÚMERO OU IDENTIFICADOR'}
+              placeholder="Digite aqui o número/identificador da residência..."
+              width={'100%'}
+              value={infoHolder.localizacao.numeroOuIdentificador}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, numeroOuIdentificador: value } }))
+              }}
+            />
+          </div>
+        </div>
+      </div>
+      <h1 className="w-full rounded-md  bg-gray-700 p-1 text-center font-medium text-white">INFORMAÇÕES DOS EQUIPAMENTOS</h1>
+      <p className="my-2 w-full text-center text-sm leading-none tracking-tight text-gray-500">
+        Preencha abaixo os <strong className="text-cyan-500">equipamentos</strong> a serem análisados, ou, escolha um dos kits ativos.
+      </p>
+      <div className="flex w-full flex-col gap-1">
+        <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+          <div className="w-full lg:w-2/4">
+            <SelectInput
+              label="INVERSOR"
+              value={inverterHolder.id ? Inverters.filter((inverter) => inverter.id == inverterHolder.id)[0] : null}
+              handleChange={(value) =>
+                setInverterHolder((prev) => ({
+                  ...prev,
+                  id: value.id,
+                  fabricante: value.fabricante,
+                  modelo: value.modelo,
+                  potencia: value.potenciaNominal,
+                }))
+              }
+              onReset={() =>
+                setInverterHolder({
+                  id: '',
+                  fabricante: '',
+                  modelo: '',
+                  qtde: 1,
+                  garantia: 10,
+                  potencia: 0,
+                })
+              }
+              selectedItemLabel="NÃO DEFINIDO"
+              options={Inverters.map((inverter) => {
+                return {
+                  id: inverter.id,
+                  label: `${inverter.fabricante} - ${inverter.modelo}`,
+                  value: inverter,
+                }
+              })}
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-1/4">
+            <NumberInput
+              label="QTDE"
+              value={inverterHolder.qtde}
+              handleChange={(value) =>
+                setInverterHolder((prev) => ({
+                  ...prev,
+                  qtde: Number(value),
+                }))
+              }
+              placeholder="QTDE"
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-1/4">
+            <NumberInput
+              label="GARANTIA"
+              value={inverterHolder.garantia || null}
+              handleChange={(value) =>
+                setInverterHolder((prev) => ({
+                  ...prev,
+                  garantia: Number(value),
+                }))
+              }
+              placeholder="GARANTIA"
+              width="100%"
+            />
+          </div>
+        </div>
+        <div className="flex items-center justify-end">
+          <button
+            className="rounded bg-black p-1 px-4 text-sm font-medium text-white duration-300 ease-in-out hover:bg-gray-700"
+            onClick={() => addInverterToEquipments(inverterHolder)}
+          >
+            ADICIONAR INVERSOR
+          </button>
+        </div>
+      </div>
+      <div className="flex w-full flex-col gap-1">
+        <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+          <div className="w-full lg:w-2/4">
+            <SelectInput
+              label="MÓDULO"
+              value={moduleHolder.id ? Modules.filter((module) => module.id == moduleHolder.id)[0] : null}
+              handleChange={(value) =>
+                setModuleHolder((prev) => ({
+                  ...prev,
+                  id: value.id,
+                  fabricante: value.fabricante,
+                  modelo: value.modelo,
+                  potencia: value.potencia,
+                }))
+              }
+              onReset={() =>
+                setModuleHolder({
+                  id: '',
+                  fabricante: '',
+                  modelo: '',
+                  qtde: 1,
+                  potencia: 0,
+                  garantia: 10,
+                })
+              }
+              selectedItemLabel="NÃO DEFINIDO"
+              options={Modules.map((module) => {
+                return {
+                  id: module.id,
+                  label: `${module.fabricante} - ${module.modelo}`,
+                  value: module,
+                }
+              })}
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-1/4">
+            <NumberInput
+              label="QTDE"
+              value={moduleHolder.qtde}
+              handleChange={(value) =>
+                setModuleHolder((prev) => ({
+                  ...prev,
+                  qtde: Number(value),
+                }))
+              }
+              placeholder="QTDE"
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-1/4">
+            <NumberInput
+              label="GARANTIA"
+              value={moduleHolder.garantia || null}
+              handleChange={(value) =>
+                setModuleHolder((prev) => ({
+                  ...prev,
+                  garantia: Number(value),
+                }))
+              }
+              placeholder="GARANTIA"
+              width="100%"
+            />
+          </div>
+        </div>
+        <div className="flex items-center justify-end">
+          <button
+            className="rounded bg-black p-1 px-4 text-sm font-medium text-white duration-300 ease-in-out hover:bg-gray-700"
+            onClick={() => addModuleToEquipments(moduleHolder)}
+          >
+            ADICIONAR MÓDULO
+          </button>
+        </div>
+      </div>
+      <div className="flex w-full flex-col gap-1">
+        <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+          <div className="w-full lg:w-[30%]">
+            <SelectInput
+              label="CATEGORIA"
+              selectedItemLabel="NÃO DEFINIDO"
+              options={ProductItemCategories}
+              value={personalizedProductHolder.categoria}
+              handleChange={(value) =>
+                setPersonalizedProductHolder((prev) => ({
+                  ...prev,
+                  categoria: value,
+                }))
+              }
+              onReset={() => {
+                setPersonalizedProductHolder((prev) => ({
+                  ...prev,
+                  categoria: 'OUTROS',
+                }))
+              }}
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-[40%]">
+            <TextInput
+              label="FABRICANTE"
+              placeholder="FABRICANTE"
+              value={personalizedProductHolder.fabricante}
+              handleChange={(value) =>
+                setPersonalizedProductHolder((prev) => ({
+                  ...prev,
+                  fabricante: value,
+                }))
+              }
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-[40%]">
+            <TextInput
+              label="MODELO"
+              placeholder="MODELO"
+              value={personalizedProductHolder.modelo}
+              handleChange={(value) =>
+                setPersonalizedProductHolder((prev) => ({
+                  ...prev,
+                  modelo: value,
+                }))
+              }
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-[15%]">
+            <NumberInput
+              label="POTÊNCIA"
+              value={personalizedProductHolder.potencia || null}
+              handleChange={(value) =>
+                setPersonalizedProductHolder((prev) => ({
+                  ...prev,
+                  potencia: Number(value),
+                }))
+              }
+              placeholder="POTÊNCIA"
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-[15%]">
+            <NumberInput
+              label="QTDE"
+              value={personalizedProductHolder.qtde}
+              handleChange={(value) =>
+                setPersonalizedProductHolder((prev) => ({
+                  ...prev,
+                  qtde: Number(value),
+                }))
+              }
+              placeholder="QTDE"
+              width="100%"
+            />
+          </div>
+        </div>
+
+        <div className="flex items-center justify-end">
+          <button
+            className="rounded bg-black p-1 px-4 text-sm font-medium text-white duration-300 ease-in-out hover:bg-gray-700"
+            onClick={() => addPersonalizedEquipment(personalizedProductHolder)}
+          >
+            ADICIONAR PRODUTO PERSONALIZADO
+          </button>
+        </div>
+      </div>
+      <p className="w-full text-center text-sm leading-none tracking-tight text-gray-500">
+        Deseja utilizar os equipamentos de um kit específico ? Abra o menu e <strong className="text-cyan-500">Escolha uma das opções de kit.</strong>
+      </p>
+      <div className="my-2 flex w-full items-center justify-center">
+        {showKits ? (
+          <button onClick={() => setShowKits(false)} className="rounded-md bg-red-500 px-2 py-1 text-sm font-bold text-white">
+            FECHAR MENU DE KITS
+          </button>
+        ) : (
+          <button onClick={() => setShowKits(true)} className="rounded-md bg-cyan-500 px-2 py-1 text-sm font-bold text-white">
+            MOSTRAR MENU KITS
+          </button>
+        )}
+      </div>
+      {showKits ? (
+        <KitsSelectionMenu
+          selectedKitId={selectedKitId}
+          handleSelect={(kit) => {
+            addEquipmentFromKit(kit)
+            setSelectedKitId(kit._id)
+          }}
+          closeMenu={() => setShowKits(false)}
+        />
+      ) : null}
+      <h1 className="mt-2 w-full text-start font-sans  font-bold text-cyan-500">EQUIPAMENTOS ESCOLHIDOS</h1>
+      <div className="flex w-full flex-col flex-wrap justify-around gap-2 lg:flex-row">
+        {infoHolder.equipamentos.length > 0 ? (
+          infoHolder.equipamentos.map((equipment, index) => (
+            <div key={index} className="mt-1 flex w-full flex-col rounded-md border border-gray-200 p-2 lg:w-[350px]">
+              <div className="flex w-full flex-col items-start justify-between gap-2 lg:flex-row lg:items-center">
+                <div className="flex items-center gap-1">
+                  <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1 text-[15px]">
+                    {renderCategoryIcon(equipment.categoria, 18)}
                   </div>
+                  <p className="text-[0.6rem] font-medium leading-none tracking-tight lg:text-xs">
+                    <strong className="text-[#FF9B50]">{equipment.qtde}</strong> x {equipment.modelo}
+                  </p>
                 </div>
-              </div>
-              <div className="flex w-full items-end justify-center gap-2">
-                <MultipleSelectInput
-                  label="FORNECEDORES"
-                  selected={filters.suppliers.length > 0 ? filters.suppliers.map((supplier) => supplier) : null}
-                  options={Suppliers.map((supplier) => {
-                    return {
-                      id: supplier.id,
-                      label: supplier.nome,
-                      value: supplier.nome,
-                    }
-                  })}
-                  selectedItemLabel="NÃO DEFINIDO"
-                  handleChange={(value: string[] | []) => {
-                    setFilters((prev) => ({
-                      ...prev,
-                      suppliers: value,
-                    }))
-                  }}
-                  onReset={() => {
-                    setFilters((prev) => ({
-                      ...prev,
-                      suppliers: [],
-                    }))
-                  }}
-                />
-                <MultipleSelectInput
-                  label="TOPOLOGIA"
-                  selected={filters.topology.length > 0 ? filters.topology.map((supplier) => supplier) : null}
-                  options={[
-                    { id: 1, label: 'INVERSOR', value: 'INVERSOR' },
-                    {
-                      id: 2,
-                      label: 'MICRO-INVERSOR',
-                      value: 'MICRO-INVERSOR',
-                    },
-                  ]}
-                  selectedItemLabel="NÃO DEFINIDO"
-                  handleChange={(value: string[] | []) => {
-                    setFilters((prev) => ({
-                      ...prev,
-                      topology: value,
-                    }))
-                  }}
-                  onReset={() => {
-                    setFilters((prev) => ({
-                      ...prev,
-                      topology: [],
-                    }))
-                  }}
-                />
                 <button
-                  onClick={() => handleOptionFilters()}
-                  className="flex h-[46px] w-full items-center justify-center rounded border border-[#fead61] p-3 text-[#fead61] hover:bg-[#fead61] hover:text-black lg:w-fit"
+                  onClick={() => removeEquipment(index)}
+                  type="button"
+                  className="flex items-center justify-center rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
                 >
-                  <AiOutlineSearch />
+                  <MdDelete color="red" size={15} />
                 </button>
               </div>
-            </div>
-            <div className="flex max-h-[500px] grow flex-wrap items-center justify-between gap-2 overflow-y-auto overscroll-y-auto p-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
-              {kitsSuccess && filteredKits
-                ? filteredKits.map((kit) => <TechAnalysisKit key={kit._id} kit={kit} handleSelect={(value) => selectKit(value)} />)
-                : null}
-              {kitsFetching ? <LoadingComponent /> : null}
-            </div>
-          </div>
-          <div className="flex w-full flex-col items-center justify-between gap-2 px-1">
-            <h1 className="w-full text-start font-bold">KITS SELECIONADOS</h1>
-            {selectedKits.length > 0 ? (
-              <>
-                {selectedKits.map((kit, index) => (
-                  <div key={index} className="flex w-full items-center justify-between pb-1">
-                    <p className="italic text-gray-500">{kit.nome}</p>
-                    <button
-                      onClick={() => {
-                        var currentSelectedKitsCopy = [...selectedKits]
-                        currentSelectedKitsCopy.splice(index, 1)
-                        setSelectedKits(currentSelectedKitsCopy)
-                      }}
-                      className="text-gray-500 hover:text-red-500"
-                    >
-                      <IoMdRemoveCircle />
-                    </button>
-                  </div>
-                ))}
-                <div className="flex w-full items-center justify-center gap-2">
-                  <div className="flex flex-col rounded border border-[#15599a] p-2 text-[#15599a]">
-                    <h1 className="text-center">POTÊNCIA PICO TOTAL</h1>
-                    <h1 className="text-center font-medium">
-                      {getSelectedKitsPowerPeak(selectedKits).toLocaleString('pt-br', { minimumFractionDigits: 2, maximumFractionDigits: 2 })} kWp{' '}
-                    </h1>
-                  </div>
+              <div className="flex w-full items-center justify-end gap-2 pl-2">
+                <div className="flex items-center gap-1">
+                  <FaIndustry size={15} />
+                  <p className="text-[0.6rem] font-light text-gray-500">{equipment.fabricante}</p>
                 </div>
-              </>
-            ) : (
-              <div className="flex h-[80px] w-full items-center justify-center">
-                <p className="text-sm italic text-gray-500">Sem kits selecionados...</p>
+                <div className="flex items-center gap-1">
+                  <ImPower size={15} />
+                  <p className="text-[0.6rem] font-light text-gray-500">{equipment.potencia} W</p>
+                </div>
               </div>
-            )}
-          </div>
-        </div>
-        <div className="mt-2 flex w-full justify-between">
-          <button onClick={() => resetSolicitationType()} className="rounded p-2 font-bold text-gray-500 duration-300 ease-in-out hover:scale-105">
-            Voltar
-          </button>
-          <button
-            disabled={isPending || isSuccess}
-            className="rounded p-2 font-bold hover:bg-black hover:text-white"
-            onClick={() => {
-              handleRequest()
-            }}
-          >
-            {isPending ? 'Criando solicitação...' : null}
-            {isSuccess ? 'Criação concluida!' : null}
-            {!isPending && !isSuccess ? 'Criar solicitação' : null}
-          </button>
-        </div>
+            </div>
+          ))
+        ) : (
+          <p className="w-full text-center text-sm font-medium tracking-tight text-gray-500">Nenhum equipamento adicionado à lista.</p>
+        )}
       </div>
-    )
+      <div className="mt-2 flex w-full flex-wrap justify-between  gap-2">
+        <button onClick={() => resetSolicitationType()} className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105">
+          Voltar
+        </button>
+        <button className="rounded p-2 font-bold hover:bg-black hover:text-white" onClick={() => handleRequestAnalysis({ info: infoHolder, files: files })}>
+          SOLICITAR ANÁLISE
+        </button>
+      </div>
+    </div>
+  )
 }
 
-export default InLocoUrban
+export default Inloco

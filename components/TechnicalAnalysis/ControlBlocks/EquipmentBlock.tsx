@@ -15,11 +15,13 @@ import SelectInput from '@/components/Inputs/SelectInput'
 import NumberInput from '@/components/Inputs/NumberInput'
 
 import { TInverter, TModule } from '@/utils/schemas/kits.schema'
-import { TEquipment, TTechnicalAnalysisDTO } from '@/utils/schemas/technical-analysis.schema'
+import { TEquipment, TTechnicalAnalysis, TTechnicalAnalysisDTO } from '@/utils/schemas/technical-analysis.schema'
 import { ProductItemCategories } from '@/utils/select-options'
 import Inverters from '@/utils/json-files/pvinverters.json'
 import Modules from '@/utils/json-files/pvmodules.json'
 import TextInput from '@/components/Inputs/TextInput'
+import CheckboxInput from '@/components/Inputs/CheckboxInput'
+import PreviousEquipmentMenu from '../PreviousEquipmentMenu'
 const variants = {
   hidden: {
     opacity: 0.2,
@@ -58,6 +60,7 @@ type EquipmentBlockProps = {
 }
 function EquipmentBlock({ infoHolder, setInfoHolder, changes, setChanges }: EquipmentBlockProps) {
   const [editEnabled, setEditEnabled] = useState<boolean>(false)
+  const [previousEquipmentMenuIsOpen, setPreviousEquipmentMenuIsOpen] = useState<boolean>(infoHolder.equipamentosAnteriores?.length > 0)
   // Functionality for equipments control
   const [inverterHolder, setInverterHolder] = useState<TInverter>({
     id: '',
@@ -176,9 +179,7 @@ function EquipmentBlock({ infoHolder, setInfoHolder, changes, setChanges }: Equi
     <div className="mt-4 flex w-full flex-col">
       <div className="flex w-full items-center justify-center gap-2 rounded-md bg-gray-800 p-2">
         <h1 className="font-bold text-white">EQUIPAMENTOS</h1>
-        <button onClick={() => setEditEnabled((prev) => !prev)}>
-          {!editEnabled ? <AiFillEdit color="white" /> : <AiFillCloseCircle color="#ff1736" />}
-        </button>
+        <button onClick={() => setEditEnabled((prev) => !prev)}>{!editEnabled ? <AiFillEdit color="white" /> : <AiFillCloseCircle color="#ff1736" />}</button>
       </div>
       <AnimatePresence>
         {
@@ -443,6 +444,22 @@ function EquipmentBlock({ infoHolder, setInfoHolder, changes, setChanges }: Equi
           )}
         </div>
       </AnimatePresence>
+      <div className="my-2 flex w-full items-center justify-center">
+        <div className="w-fit">
+          <CheckboxInput
+            labelFalse="AMPLIAÇÃO DE SISTEMA"
+            labelTrue="AMPLIAÇÃO DE SISTEMA"
+            checked={previousEquipmentMenuIsOpen}
+            handleChange={(value) => setPreviousEquipmentMenuIsOpen(value)}
+          />
+        </div>
+      </div>
+      {previousEquipmentMenuIsOpen ? (
+        <PreviousEquipmentMenu
+          infoHolder={infoHolder as TTechnicalAnalysis}
+          setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>}
+        />
+      ) : null}
     </div>
   )
 }

@@ -269,6 +269,7 @@ export const GeneralTechnicalAnalysisSchema = z.object({
     invalid_type_error: 'Tipo não válido para o ID de referência do parceiro.',
   }),
   nome: z.string({ required_error: 'Nome da análise técnica não informado.', invalid_type_error: 'Tipo não válido para o nome da análise técnica.' }),
+  idAnaliseReferencia: z.string({ invalid_type_error: 'Tipo não válido para o ID da análise de referência.' }).optional().nullable(),
   status: z.string({
     required_error: 'Status da análise técnica não informado.',
     invalid_type_error: 'Tipo não válido para o status da análise técnica.',
@@ -370,14 +371,6 @@ export const GeneralTechnicalAnalysisSchema = z.object({
       .optional()
       .nullable(),
   }),
-  aumento: z
-    .object({
-      id: z.string({ invalid_type_error: 'Tipo não válido para o ID de referência do aumento.' }).optional().nullable(),
-      nome: z.string({ invalid_type_error: 'Tipo não válido para o nome de referência do aumento.' }).optional().nullable(),
-      equipamentos: z.array(EquipmentSchema).optional().nullable(),
-    })
-    .optional()
-    .nullable(),
   localizacao: z.object({
     cep: z.string({
       required_error: 'CEP da localização de análise não informada.',
@@ -422,6 +415,7 @@ export const GeneralTechnicalAnalysisSchema = z.object({
   //     potencia: z.string({ invalid_type_error: 'Tipo não válido para o potência dos inversores.' }).optional().nullable(),
   //   }),
   // }),
+  equipamentosAnteriores: z.array(EquipmentSchema),
   equipamentos: z.array(EquipmentSchema),
   padrao: z.array(
     z.object({

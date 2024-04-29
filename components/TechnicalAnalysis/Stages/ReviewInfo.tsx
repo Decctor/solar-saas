@@ -16,14 +16,7 @@ import { FaIndustry } from 'react-icons/fa'
 import { ImPower } from 'react-icons/im'
 import { MdDelete } from 'react-icons/md'
 import { TInverter, TKitDTO, TModule } from '@/utils/schemas/kits.schema'
-import {
-  AmperageOptions,
-  EnergyMeterBoxModels,
-  EnergyPAConnectionTypes,
-  EnergyPATypes,
-  ProductItemCategories,
-  StructureTypes,
-} from '@/utils/select-options'
+import { AmperageOptions, EnergyMeterBoxModels, EnergyPAConnectionTypes, EnergyPATypes, ProductItemCategories, StructureTypes } from '@/utils/select-options'
 import KitsSelectionMenu from '../KitsSelectionMenu'
 import { renderCategoryIcon } from '@/lib/methods/rendering'
 import { IoMdBarcode } from 'react-icons/io'
@@ -589,8 +582,7 @@ function ReviewInfo({ infoHolder, setInfoHolder, files, setFiles, goToNextStage,
           </div>
         </div>
         <p className="w-full text-center text-sm leading-none tracking-tight text-gray-500">
-          Deseja utilizar os equipamentos de um kit específico ? Abra o menu e{' '}
-          <strong className="text-cyan-500">Escolha uma das opções de kit.</strong>
+          Deseja utilizar os equipamentos de um kit específico ? Abra o menu e <strong className="text-cyan-500">Escolha uma das opções de kit.</strong>
         </p>
         <div className="my-2 flex w-full items-center justify-center">
           {showKits ? (
@@ -610,6 +602,7 @@ function ReviewInfo({ infoHolder, setInfoHolder, files, setFiles, goToNextStage,
               addEquipmentFromKit(kit)
               setSelectedKitId(kit._id)
             }}
+            closeMenu={() => setShowKits(false)}
           />
         ) : null}
         <h1 className="mt-2 w-full text-start font-sans  font-bold text-cyan-500">EQUIPAMENTOS ESCOLHIDOS</h1>
@@ -653,9 +646,8 @@ function ReviewInfo({ infoHolder, setInfoHolder, files, setFiles, goToNextStage,
         {/*PA INFORMATION */}
         <h1 className="w-full rounded-md  bg-gray-700 p-1 text-center font-medium text-white">INFORMAÇÕES DO PADRÃO DE ENERGIA</h1>
         <p className="my-2 w-full self-center text-center text-sm leading-none tracking-tight text-gray-500 lg:w-[60%]">
-          Preencha abaixo as informações do padrão de energia instalação e clique em{' '}
-          <strong className="font-bold text-green-500">adicionar (+)</strong>. Se necessário, você pode adicionar mais de um padrão de energia à
-          lista.
+          Preencha abaixo as informações do padrão de energia instalação e clique em <strong className="font-bold text-green-500">adicionar (+)</strong>. Se
+          necessário, você pode adicionar mais de um padrão de energia à lista.
         </p>
         <div className="flex w-full flex-col justify-around gap-2 lg:flex-row">
           <div className="w-full lg:w-1/4">
@@ -1116,10 +1108,7 @@ function ReviewInfo({ infoHolder, setInfoHolder, files, setFiles, goToNextStage,
         <button onClick={() => {}} className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105">
           Voltar
         </button>
-        <button
-          className="rounded p-2 font-bold hover:bg-black hover:text-white"
-          onClick={() => handleRequestAnalysis({ info: infoHolder, files: files })}
-        >
+        <button className="rounded p-2 font-bold hover:bg-black hover:text-white" onClick={() => handleRequestAnalysis({ info: infoHolder, files: files })}>
           SOLICITAR ANÁLISE
         </button>
       </div>

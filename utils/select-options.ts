@@ -1,5 +1,6 @@
 import { FaSolarPanel } from 'react-icons/fa'
 import {
+  MdAssessment,
   MdEast,
   MdElectricMeter,
   MdNorth,
@@ -638,21 +639,55 @@ export const TechnicalAnalysisComplexity = [
 export const TechnicalAnalysisSolicitationTypes = [
   {
     id: 1,
-    label: 'ANÁLISE TÉCNICA REMOTA',
-    value: 'ANÁLISE TÉCNICA REMOTA',
+    label: 'ANÁLISE TÉCNICA REMOTA URBANA',
+    value: 'ANÁLISE TÉCNICA REMOTA URBANA',
     descriptions: [
-      'Requisite uma análise técnica ao seu time de analistas.',
+      'Requisite uma análise técnica de instalação urbana ao nosso time de analistas.',
       'Clicando aqui, você prosseguirá para um formulário para a coleta de informações e imagens relevantes à análise.',
       'A análise pode contemplar análise de geração, sombreamento, necessidades de adequação de estrutura ou padrão de energia, etc.',
+      'O prazo de análise é de até 72 horas úteis.',
     ],
   },
   {
     id: 2,
+    label: 'ANÁLISE TÉCNICA REMOTA RURAL',
+    value: 'ANÁLISE TÉCNICA REMOTA RURAL',
+    descriptions: [
+      'Requisite uma análise técnica de instalação rural ao nosso time de analistas.',
+      'Clicando aqui, você prosseguirá para um formulário para a coleta de informações e imagens relevantes à análise.',
+      'A análise pode contemplar análise de geração, sombreamento, necessidades de adequação de estrutura ou padrão de energia, etc.',
+      'O prazo de análise é de até 72 horas úteis.',
+    ],
+  },
+  {
+    id: 3,
+    label: 'ANÁLISE TÉCNICA IN LOCO',
+    value: 'ANÁLISE TÉCNICA IN LOCO',
+    descriptions: [
+      'Requisite uma análise técnica in loco ao nosso time de analistas.',
+      'Clicando aqui, você prosseguirá para um formulário para a coleta de informações relevantes para a visita in loco.',
+      'A análise pode contemplar análise de geração, sombreamento, necessidades de adequação de estrutura ou padrão de energia, etc.',
+      'O prazo de análise é de até 72 horas úteis.',
+    ],
+  },
+  {
+    id: 4,
     label: 'ORÇAMENTAÇÃO',
     value: 'ORÇAMENTAÇÃO',
     descriptions: [
-      'Requisite um orçamento de itens específicos ao seu time de analistas.',
+      'Requisite um orçamento de itens específicos ao nosso time de analistas.',
       'Clicando aqui, você prosseguirá para a especificação os itens a serem orçados.',
+      'O prazo de análise é de até 72 horas úteis.',
+    ],
+  },
+  {
+    id: 5,
+    label: 'DESENHO PERSONALIZADO',
+    value: 'DESENHO PERSONALIZADO',
+    descriptions: [
+      'Requisite um desenho personalizado ao nosso time de analistas.',
+      'Clicando aqui, você prosseguirá para um formulário para a coleta de informações relevantes para a execução do desenho.',
+      'O prazo de análise é de até 72 horas úteis.',
     ],
   },
 ]

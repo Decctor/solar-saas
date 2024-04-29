@@ -40,7 +40,7 @@ function renderProposalPreview({
   opportunity: TOpportunityDTOWithClient
   partner: TPartnerSimplifiedDTO
 }) {
-  if (proposal.idModelo)
+  if (proposal.idModeloAnvil)
     return (
       <div className="relative flex h-fit w-full flex-col items-center justify-center overflow-hidden bg-white lg:h-[297mm] lg:w-[210mm]">
         <p className="w-full text-center text-lg font-medium italic tracking-tight text-gray-500">
@@ -143,7 +143,12 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
             <button
               onClick={() =>
                 // @ts-ignore
-                handleCreateProposal({ proposal: infoHolder, opportunityWithClient: opportunity, saveAsActive: saveAsActive, idAnvil: infoHolder.idModelo })
+                handleCreateProposal({
+                  proposal: infoHolder,
+                  opportunityWithClient: opportunity,
+                  saveAsActive: saveAsActive,
+                  idAnvil: infoHolder.idModeloAnvil,
+                })
               }
               className="rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-gray-800 enabled:hover:text-white"
             >
@@ -180,11 +185,11 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
                 {ProposalTemplateOptions ? (
                   <SelectInput
                     label="TEMPLATE DA PROPOSTA"
-                    value={infoHolder.idModelo || null}
+                    value={infoHolder.idModeloAnvil || null}
                     selectedItemLabel="TEMPLATE PADRÃO"
                     options={ProposalTemplateOptions.map((t, index) => ({ id: index + 1, label: t.titulo, value: t.idAnvil }))}
-                    handleChange={(value) => setInfoHolder((prev) => ({ ...prev, idModelo: value }))}
-                    onReset={() => setInfoHolder((prev) => ({ ...prev, idModelo: undefined }))}
+                    handleChange={(value) => setInfoHolder((prev) => ({ ...prev, idModeloAnvil: value }))}
+                    onReset={() => setInfoHolder((prev) => ({ ...prev, idModeloAnvil: undefined }))}
                     width="100%"
                   />
                 ) : null}

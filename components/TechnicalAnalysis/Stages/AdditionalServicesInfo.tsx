@@ -1,65 +1,49 @@
 import SelectInput from '@/components/Inputs/SelectInput'
 import { ITechnicalAnalysis, aditionalServicesType } from '@/utils/models'
+import { TFileHolder } from '@/utils/schemas/file-reference.schema'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 import React from 'react'
 import { toast } from 'react-hot-toast'
 
 type AdditionalServicesInfoProps = {
-  requestInfo: TTechnicalAnalysis
-  setRequestInfo: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
+  infoHolder: TTechnicalAnalysis
+  setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   goToNextStage: () => void
   goToPreviousStage: () => void
-  files:
-    | {
-        [key: string]: {
-          title: string
-          file: File | null | string
-        }
-      }
-    | undefined
-  setFiles: React.Dispatch<
-    React.SetStateAction<
-      | {
-          [key: string]: {
-            title: string
-            file: File | null | string
-          }
-        }
-      | undefined
-    >
-  >
+  files: TFileHolder
+  setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
 }
-function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, goToNextStage, goToPreviousStage }: AdditionalServicesInfoProps) {
+function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, goToNextStage, goToPreviousStage }: AdditionalServicesInfoProps) {
   function validateFields() {
-    if (!requestInfo.servicosAdicionais.casaDeMaquinas) {
+    if (!infoHolder.servicosAdicionais.casaDeMaquinas) {
       toast.error('Preencha sobre a necessidade de construção de uma casa de máquinas.')
       return false
     }
-    if (!requestInfo.servicosAdicionais.alambrado) {
+    if (!infoHolder.servicosAdicionais.alambrado) {
       toast.error('Preencha sobre a necessidade de construção de um alambrado.')
       return false
     }
-    if (!requestInfo.servicosAdicionais.britagem) {
+    if (!infoHolder.servicosAdicionais.britagem) {
       toast.error('Preencha sobre a necessidade de uma operação de britagem.')
       return false
     }
-    if (!requestInfo.servicosAdicionais.barracao) {
+    if (!infoHolder.servicosAdicionais.barracao) {
       toast.error('Preencha sobre a necessidade de construção de um barracão.')
       return false
     }
-    if (!requestInfo.servicosAdicionais.roteador) {
+    if (!infoHolder.servicosAdicionais.roteador) {
       toast.error('Preencha sobre a necessidade de instalação de roteador')
       return false
     }
-    if (!requestInfo.servicosAdicionais.redeReligacao) {
+    if (!infoHolder.servicosAdicionais.redeReligacao) {
       toast.error('Preencha sobre a necessidade de execução da rede de religação da fazenda.')
       return false
     }
-    if (!requestInfo.servicosAdicionais.limpezaLocal) {
+    if (!infoHolder.servicosAdicionais.limpezaLocal) {
       toast.error('Preencha sobre a necessidade de execução de limpeza do local da usina de solo.')
       return false
     }
-    if (!requestInfo.servicosAdicionais.terraplanagem) {
+    if (!infoHolder.servicosAdicionais.terraplanagem) {
       toast.error('Preencha sobre a necessidade de execução de terraplanagem do local da usina de solo.')
       return false
     }
@@ -75,7 +59,7 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               width={'100%'}
               label={'CASA DE MÁQUINAS'}
               editable={true}
-              value={requestInfo.servicosAdicionais.casaDeMaquinas}
+              value={infoHolder.servicosAdicionais.casaDeMaquinas}
               options={[
                 {
                   id: 1,
@@ -89,11 +73,9 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) =>
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, casaDeMaquinas: value } }))
-              }
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, casaDeMaquinas: value } }))}
               onReset={() => {
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, casaDeMaquinas: null } }))
+                setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, casaDeMaquinas: null } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
             />
@@ -103,7 +85,7 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               width={'100%'}
               label={'ALAMBRADO'}
               editable={true}
-              value={requestInfo.servicosAdicionais.alambrado}
+              value={infoHolder.servicosAdicionais.alambrado}
               options={[
                 {
                   id: 1,
@@ -117,9 +99,9 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, alambrado: value } }))}
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, alambrado: value } }))}
               onReset={() => {
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, alambrado: null } }))
+                setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, alambrado: null } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
             />
@@ -131,7 +113,7 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               width={'100%'}
               label={'BRITAGEM'}
               editable={true}
-              value={requestInfo.servicosAdicionais.britagem}
+              value={infoHolder.servicosAdicionais.britagem}
               options={[
                 {
                   id: 1,
@@ -145,9 +127,9 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, britagem: value } }))}
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, britagem: value } }))}
               onReset={() => {
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, britagem: null } }))
+                setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, britagem: null } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
             />
@@ -157,7 +139,7 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               width={'100%'}
               label={'CONSTRUÇÃO DE BARRACÃO'}
               editable={true}
-              value={requestInfo.servicosAdicionais.barracao}
+              value={infoHolder.servicosAdicionais.barracao}
               options={[
                 {
                   id: 1,
@@ -171,9 +153,9 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, barracao: value } }))}
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, barracao: value } }))}
               onReset={() => {
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, barracao: null } }))
+                setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, barracao: null } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
             />
@@ -185,7 +167,7 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               width={'100%'}
               label={'INSTALAÇÃO DE ROTEADOR'}
               editable={true}
-              value={requestInfo.servicosAdicionais.roteador}
+              value={infoHolder.servicosAdicionais.roteador}
               options={[
                 {
                   id: 1,
@@ -199,9 +181,9 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, roteador: value } }))}
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, roteador: value } }))}
               onReset={() => {
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, roteador: null } }))
+                setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, roteador: null } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
             />
@@ -211,7 +193,7 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               width={'100%'}
               label={'REDE DE RELIGAÇÃO DA FAZENDA'}
               editable={true}
-              value={requestInfo.servicosAdicionais.redeReligacao}
+              value={infoHolder.servicosAdicionais.redeReligacao}
               options={[
                 {
                   id: 1,
@@ -225,11 +207,9 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) =>
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, redeReligacao: value } }))
-              }
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, redeReligacao: value } }))}
               onReset={() => {
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, redeReligacao: null } }))
+                setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, redeReligacao: null } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
             />
@@ -241,7 +221,7 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               width={'100%'}
               label={'LIMPEZA DO LOCAL DA USINA DE SOLO'}
               editable={true}
-              value={requestInfo.servicosAdicionais.limpezaLocal}
+              value={infoHolder.servicosAdicionais.limpezaLocal}
               options={[
                 {
                   id: 1,
@@ -255,11 +235,9 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) =>
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: value } }))
-              }
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: value } }))}
               onReset={() => {
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: null } }))
+                setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: null } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
             />
@@ -269,7 +247,7 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               width={'100%'}
               label={'TERRAPLANAGEM PARA USINA DE SOLO'}
               editable={true}
-              value={requestInfo.servicosAdicionais.terraplanagem}
+              value={infoHolder.servicosAdicionais.terraplanagem}
               options={[
                 {
                   id: 1,
@@ -283,11 +261,9 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) =>
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, terraplanagem: value } }))
-              }
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, terraplanagem: value } }))}
               onReset={() => {
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, terraplanagem: null } }))
+                setInfoHolder((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, terraplanagem: null } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
             />
