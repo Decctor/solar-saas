@@ -11,10 +11,11 @@ type SalesTeamResultsProps = {
   after: string
   before: string
   responsibles: string[] | null
+  partners: string[] | null
   promoters: TUserDTOWithSaleGoals[] | undefined
 }
-function SalesTeamResults({ after, before, responsibles, promoters }: SalesTeamResultsProps) {
-  const { data: stats, isLoading } = useSalesTeamResults({ after, before, responsibles })
+function SalesTeamResults({ after, before, responsibles, partners, promoters }: SalesTeamResultsProps) {
+  const { data: stats, isLoading } = useSalesTeamResults({ after, before, responsibles, partners })
   return (
     <div className="flex w-full flex-col">
       <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">TIME DE VENDAS</h1>

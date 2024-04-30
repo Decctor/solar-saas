@@ -54,21 +54,33 @@ type PostResponse = {
 const exportData: NextApiHandler<PostResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'resultados', 'visualizarComercial', true)
   const partnerId = session.user.idParceiro
+  const partnerScope = session.user.permissoes.parceiros.escopo
+
   const userId = session.user.id
   const userScope = session.user.permissoes.resultados.escopo
   const { after, before } = QueryDatesSchema.parse(req.query)
-  const { responsibles } = ResponsiblesBodySchema.parse(req.body)
+  const { responsibles, partners } = ResponsiblesBodySchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
   // to access a overall visualiation, which he/she isnt allowed
   if (!!userScope && !responsibles) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
+
+  // If user has a scope defined and in the request there isnt a partners arr defined, then user is trying
+  // to access a overall visualiation, which he/she isnt allowed
+  if (!!partnerScope && !partners) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
   // If user has a scope defined and in the responsible arr request there is a single responsible that is not in hes/shes scope
   // then user is trying to access a visualization he/she isnt allowed
   if (!!userScope && responsibles?.some((r) => !userScope.includes(r)))
     throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
+  // If user has a scope defined and in the partner arr request there is a single partner that is not in hes/shes scope
+  // then user is trying to access a visualization he/she isnt allowed
+  if (!!partnerScope && partners?.some((r) => !partnerScope.includes(r)))
+    throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
+
   const responsiblesQuery: Filter<TOpportunity> = responsibles ? { 'responsaveis.id': { $in: responsibles } } : {}
+  const partnerQuery = partners ? { idParceiro: { $in: [...partners, null] } } : {}
 
   const afterDate = dayjs(after).startOf('day').subtract(3, 'hour').toDate()
   const beforeDate = dayjs(before).endOf('day').subtract(3, 'hour').toDate()
@@ -76,7 +88,7 @@ const exportData: NextApiHandler<PostResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
 
-  const opportunities = await getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate })
+  const opportunities = await getOpportunities({ opportunitiesCollection, responsiblesQuery, partnerQuery, afterDate, beforeDate })
 
   const exportation = opportunities.map((project) => {
     const wonDate = project.ganho?.data
@@ -128,12 +140,7 @@ const exportData: NextApiHandler<PostResponse> = async (req, res) => {
 }
 
 export default apiHandler({ POST: exportData })
-type GetProjectsParams = {
-  opportunitiesCollection: Collection<TOpportunity>
-  responsiblesQuery: { 'responsaveis.id': { $in: string[] } } | {}
-  afterDate: Date
-  beforeDate: Date
-}
+
 type TResultsExportsOpportunity = {
   nome: TOpportunity['nome']
   identificador: TOpportunity['identificador']
@@ -151,11 +158,19 @@ type TResultsExportsOpportunity = {
   motivoPerda: TOpportunity['perda']['descricaoMotivo']
   dataInsercao: TOpportunity['dataInsercao']
 }
-async function getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate }: GetProjectsParams) {
+type GetProjectsParams = {
+  opportunitiesCollection: Collection<TOpportunity>
+  responsiblesQuery: { 'responsaveis.id': { $in: string[] } } | {}
+  partnerQuery: { idParceiro: { $in: string[] } } | {}
+  afterDate: Date
+  beforeDate: Date
+}
+async function getOpportunities({ opportunitiesCollection, partnerQuery, responsiblesQuery, afterDate, beforeDate }: GetProjectsParams) {
   try {
     const afterDateStr = afterDate.toISOString()
     const beforeDateStr = beforeDate.toISOString()
     const match = {
+      ...partnerQuery,
       ...responsiblesQuery,
       $or: [
         { $and: [{ dataInsercao: { $gte: afterDateStr } }, { dataInsercao: { $lte: beforeDateStr } }] },

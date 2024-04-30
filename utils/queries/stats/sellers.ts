@@ -6,19 +6,20 @@ type UseSalesTeamResultsParams = {
   after: string
   before: string
   responsibles: string[] | null
+  partners: string[] | null
 }
-async function fetchStats({ after, before, responsibles }: UseSalesTeamResultsParams) {
+async function fetchStats({ after, before, responsibles, partners }: UseSalesTeamResultsParams) {
   try {
-    const { data } = await axios.post(`/api/stats/comercial-results/sales-sellers?after=${after}&before=${before}`, { responsibles })
+    const { data } = await axios.post(`/api/stats/comercial-results/sales-sellers?after=${after}&before=${before}`, { responsibles, partners })
     return data.data as TSellerSalesResults
   } catch (error) {
     throw error
   }
 }
 
-export function useSalesTeamResults({ after, before, responsibles }: UseSalesTeamResultsParams) {
+export function useSalesTeamResults({ after, before, responsibles, partners }: UseSalesTeamResultsParams) {
   return useQuery({
-    queryKey: ['sales-team-results', after, before, responsibles],
-    queryFn: async () => await fetchStats({ after, before, responsibles }),
+    queryKey: ['sales-team-results', after, before, responsibles, partners],
+    queryFn: async () => await fetchStats({ after, before, responsibles, partners }),
   })
 }

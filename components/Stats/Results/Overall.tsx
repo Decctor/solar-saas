@@ -10,9 +10,10 @@ type OverallResultsProps = {
   after: string
   before: string
   responsibles: string[] | null
+  partners: string[] | null
 }
-function OverallResults({ after, before, responsibles }: OverallResultsProps) {
-  const { data: stats } = useOverallSalesResults({ after, before, responsibles })
+function OverallResults({ after, before, responsibles, partners }: OverallResultsProps) {
+  const { data: stats } = useOverallSalesResults({ after, before, responsibles, partners })
 
   return (
     <div className="flex w-full flex-col">
@@ -61,9 +62,7 @@ function OverallResults({ after, before, responsibles }: OverallResultsProps) {
           </div>
           <div className="mt-2 flex w-full flex-col">
             <div className="text-2xl font-bold text-[#15599a]">{stats?.totalVendido ? formatToMoney(stats?.totalVendido.total) : 0}</div>
-            <p className="text-xs font-medium text-gray-800">
-              {stats?.totalVendido.inbound ? formatToMoney(stats?.totalVendido.inbound) : 0} INBOUND
-            </p>
+            <p className="text-xs font-medium text-gray-800">{stats?.totalVendido.inbound ? formatToMoney(stats?.totalVendido.inbound) : 0} INBOUND</p>
             <p className="text-xs font-medium text-gray-800">
               {stats?.totalVendido.outboundVendedor ? formatToMoney(stats?.totalVendido.outboundVendedor) : 0} OUTBOUND (VENDEDOR)
             </p>
@@ -85,14 +84,11 @@ function OverallResults({ after, before, responsibles }: OverallResultsProps) {
               {stats?.totalVendido.inbound ? formatToMoney(stats?.totalVendido.inbound / stats?.projetosGanhos.inbound) : 0} INBOUND
             </p>
             <p className="text-xs font-medium text-gray-800">
-              {stats?.totalVendido.outboundVendedor
-                ? formatToMoney(stats?.totalVendido.outboundVendedor / stats?.projetosGanhos.outboundVendedor)
-                : 0}{' '}
-              OUTBOUND (VENDEDOR)
+              {stats?.totalVendido.outboundVendedor ? formatToMoney(stats?.totalVendido.outboundVendedor / stats?.projetosGanhos.outboundVendedor) : 0} OUTBOUND
+              (VENDEDOR)
             </p>
             <p className="text-xs font-medium text-gray-800">
-              {stats?.totalVendido.outboundSdr ? formatToMoney(stats?.totalVendido.outboundSdr / stats?.projetosGanhos.outboundSdr) : 0} OUTBOUND
-              (SDR)
+              {stats?.totalVendido.outboundSdr ? formatToMoney(stats?.totalVendido.outboundSdr / stats?.projetosGanhos.outboundSdr) : 0} OUTBOUND (SDR)
             </p>
           </div>
         </div>

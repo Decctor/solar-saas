@@ -32,6 +32,7 @@ import { formatDate, getFirstDayOfMonth, getLastDayOfMonth } from '@/utils/metho
 import { useSalePromoters } from '@/utils/queries/users'
 import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
 import { fetchResultsExports } from '@/utils/queries/stats/exports'
+import { usePartnersSimplified } from '@/utils/queries/partners'
 
 const currentDate = new Date()
 const periodStr = dayjs(currentDate).format('MM/YYYY')
@@ -53,6 +54,7 @@ function ComercialResults() {
 
   const [period, setPeriod] = useState({ after: firstDayOfMonth, before: lastDayOfMonth })
   const [users, setUsers] = useState<string[] | null>(null)
+  const [partners, setPartners] = useState<string[] | null>(null)
 
   const [editModal, setEditModal] = useState<{ isOpen: boolean; promoter: TUserDTOWithSaleGoals | null }>({
     isOpen: false,
@@ -60,7 +62,7 @@ function ComercialResults() {
   })
 
   const { data: promoters, isLoading: promotersLoading, isSuccess: promotersSuccess } = useSalePromoters()
-
+  const { data: partnersSimplified } = usePartnersSimplified()
   async function handleDataExport() {
     const loadingToastId = toast.loading('Carregando...')
     try {
@@ -135,12 +137,24 @@ function ComercialResults() {
                 width="100%"
               />
             </div>
+            <div className="w-full md:w-[250px]">
+              <MultipleSelectInput
+                label="PARCEIROS"
+                showLabel={false}
+                options={partnersSimplified?.map((promoter) => ({ id: promoter._id || '', label: promoter.nome, value: promoter._id })) || null}
+                selected={partners}
+                handleChange={(value) => setPartners(value as string[])}
+                selectedItemLabel="TODOS"
+                onReset={() => setPartners(null)}
+                width="100%"
+              />
+            </div>
           </div>
         </div>
-        <OverallResults after={period.after} before={period.before} responsibles={users} />
-        <InProgressResults responsibles={users} />
-        <SalesTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} />
-        <SDRTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} />
+        <OverallResults after={period.after} before={period.before} responsibles={users} partners={partners} />
+        <InProgressResults responsibles={users} partners={partners} />
+        <SalesTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} partners={partners} />
+        <SDRTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} partners={partners} />
         <h1 className="mt-4 font-Raleway text-xl font-black text-black">CONTROLE DE EQUIPE</h1>
         <div className="flex grow flex-col flex-wrap justify-around gap-2 py-2 lg:flex-row">
           {promotersSuccess ? (

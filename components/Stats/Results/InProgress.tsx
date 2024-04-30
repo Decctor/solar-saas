@@ -24,10 +24,11 @@ function getFunnelStageData({ funnelName, stageName, stats }: GetFunnelStageData
 }
 type InProgressResultsProps = {
   responsibles: string[] | null
+  partners: string[] | null
 }
-function InProgressResults({ responsibles }: InProgressResultsProps) {
+function InProgressResults({ responsibles, partners }: InProgressResultsProps) {
   const { data: funnels } = useFunnels()
-  const { data: stats } = useInProgressResults({ responsibles })
+  const { data: stats } = useInProgressResults({ responsibles, partners })
   return (
     <div className="flex w-full flex-col">
       <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">EM ANDAMENTO</h1>

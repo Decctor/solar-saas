@@ -6,19 +6,20 @@ type UseOverallResultsParams = {
   after: string
   before: string
   responsibles: string[] | null
+  partners: string[] | null
 }
-async function fetchStats({ after, before, responsibles }: UseOverallResultsParams) {
+async function fetchStats({ after, before, responsibles, partners }: UseOverallResultsParams) {
   try {
-    const { data } = await axios.post(`/api/stats/comercial-results/sales-overall?after=${after}&before=${before}`, { responsibles })
+    const { data } = await axios.post(`/api/stats/comercial-results/sales-overall?after=${after}&before=${before}`, { responsibles, partners })
     return data.data as TOverallResults
   } catch (error) {
     throw error
   }
 }
 
-export function useOverallSalesResults({ after, before, responsibles }: UseOverallResultsParams) {
+export function useOverallSalesResults({ after, before, responsibles, partners }: UseOverallResultsParams) {
   return useQuery({
-    queryKey: ['overall-sales-results', after, before, responsibles],
-    queryFn: async () => await fetchStats({ after, before, responsibles }),
+    queryKey: ['overall-sales-results', after, before, responsibles, partners],
+    queryFn: async () => await fetchStats({ after, before, responsibles, partners }),
   })
 }
