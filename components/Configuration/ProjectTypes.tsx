@@ -10,6 +10,8 @@ import Avatar from '../utils/Avatar'
 import { formatDateAsLocale } from '@/lib/methods/formatting'
 import EditProjectType from '../Modals/ProjectTypes/EditProjectType'
 
+const FixedProjectTypes = ['6615785ddcb7a6e66ede9785']
+
 type ProjectTypesProps = {
   session: Session
 }
@@ -43,7 +45,7 @@ function ProjectTypes({ session }: ProjectTypesProps) {
                     <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
                       <MdDashboard size={13} />
                     </div>
-                    {type.idParceiro ? (
+                    {!FixedProjectTypes.includes(type._id) ? (
                       <p
                         onClick={() => setEditModal({ id: type._id, isOpen: true })}
                         className="cursor-pointer text-sm font-medium leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500"

@@ -1,6 +1,6 @@
 import React, { useState } from 'react'
 
-import TextInput from '../Inputs/TextInput'
+import TextInput from '../../Inputs/TextInput'
 
 import { VscChromeClose } from 'react-icons/vsc'
 import { TFunnel } from '@/utils/schemas/funnel.schema'
@@ -10,6 +10,8 @@ import { MdDelete } from 'react-icons/md'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { createFunnel } from '@/utils/mutations/funnels'
 import { useQueryClient } from '@tanstack/react-query'
+import SelectWithImages from '../../Inputs/SelectWithImages'
+import { usePartnersSimplified } from '@/utils/queries/partners'
 
 type NewFunnelProps = {
   session: Session
@@ -17,6 +19,7 @@ type NewFunnelProps = {
 }
 function NewFunnel({ session, closeModal }: NewFunnelProps) {
   const queryClient = useQueryClient()
+  const { data: partners } = usePartnersSimplified()
   const [infoHolder, setInfoHolder] = useState<TFunnel>({
     nome: '',
     descricao: '',
@@ -80,7 +83,7 @@ function NewFunnel({ session, closeModal }: NewFunnelProps) {
             </button>
           </div>
           <div className="flex h-full grow flex-col gap-y-2 overflow-y-auto overscroll-y-auto p-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
-            <div className="w-full ">
+            <div className="w-full">
               <TextInput
                 label="NOME DO FUNIL"
                 placeholder="Preencha o nome a ser dado ao funil..."
@@ -89,12 +92,33 @@ function NewFunnel({ session, closeModal }: NewFunnelProps) {
                 width="100%"
               />
             </div>
-            <div className="w-full ">
+            <div className="w-full">
               <TextInput
                 label="DESCRIÇÃO DO FUNIL"
                 placeholder="Preencha o descrição a ser dado ao funil..."
                 value={infoHolder.descricao}
                 handleChange={(value) => setInfoHolder((prev) => ({ ...prev, descricao: value }))}
+                width="100%"
+              />
+            </div>
+            <div className="w-full">
+              <SelectWithImages
+                label="VISIBILIDADE DE PARCEIRO"
+                value={infoHolder.idParceiro || null}
+                options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
+                selectedItemLabel="TODOS"
+                handleChange={(value) =>
+                  setInfoHolder((prev) => ({
+                    ...prev,
+                    idParceiro: value,
+                  }))
+                }
+                onReset={() =>
+                  setInfoHolder((prev) => ({
+                    ...prev,
+                    idParceiro: null,
+                  }))
+                }
                 width="100%"
               />
             </div>

@@ -1,15 +1,15 @@
 import { TFunnel } from '@/utils/schemas/funnel.schema'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type GetFunnelByIdParams = {
   collection: Collection<TFunnel>
   id: string
-  partnerId: string
+  query: Filter<TFunnel>
 }
-export async function getFunnelById({ collection, id, partnerId }: GetFunnelByIdParams) {
+export async function getFunnelById({ collection, id, query }: GetFunnelByIdParams) {
   try {
-    const funnel = await collection.findOne({ _id: new ObjectId(id), idParceiro: partnerId })
+    const funnel = await collection.findOne({ _id: new ObjectId(id), ...query })
     if (!funnel) throw new createHttpError.NotFound('Nenhum funil encontrado com o ID fornecido.')
     return funnel
   } catch (error) {
@@ -19,11 +19,11 @@ export async function getFunnelById({ collection, id, partnerId }: GetFunnelById
 
 type GetPartnerFunnelsParams = {
   collection: Collection<TFunnel>
-  partnerId: string
+  query: Filter<TFunnel>
 }
-export async function getPartnerFunnels({ collection, partnerId }: GetPartnerFunnelsParams) {
+export async function getPartnerFunnels({ collection, query }: GetPartnerFunnelsParams) {
   try {
-    const funnels = await collection.find({ idParceiro: partnerId }).toArray()
+    const funnels = await collection.find({ ...query }).toArray()
     return funnels
   } catch (error) {
     throw error

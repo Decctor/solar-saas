@@ -20,7 +20,7 @@ const getPartnersSignaturePlans: NextApiHandler<GetResponse> = async (req, res) 
 
   // Specifing queries
   const queryActiveOnly: Filter<TSignaturePlan> = onlyActive == 'true' ? { ativo: true } : {}
-  const queryPartner: Filter<TSignaturePlan> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
+  const queryPartner: Filter<TSignaturePlan> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
 
   // Final query
   const query: Filter<TSignaturePlan> = { ...queryPartner, ...queryActiveOnly }
@@ -68,7 +68,7 @@ const editSignaturePlan: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'planos', 'criar', true)
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TSignaturePlan> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
+  const partnerQuery: Filter<TSignaturePlan> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
 
   const { id } = req.query
   const changes = InsertSignaturePlanSchema.partial().parse(req.body)

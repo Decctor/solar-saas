@@ -37,7 +37,7 @@ const getKits: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'visualizar', true)
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TKit> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
+  const partnerQuery: Filter<TKit> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')

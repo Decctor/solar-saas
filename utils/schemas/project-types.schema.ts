@@ -3,10 +3,13 @@ import { SaleCategorySchema } from './opportunity.schema'
 import { AuthorSchema } from './user.schema'
 
 const GeneralProjectTypeSchema = z.object({
-  idParceiro: z.string({
-    required_error: 'ID de referência do parceiro não informado.',
-    invalid_type_error: 'Tipo não válido para o ID de referência do parceiro.',
-  }),
+  idParceiro: z
+    .string({
+      required_error: 'ID de referência do parceiro não informado.',
+      invalid_type_error: 'Tipo não válido para o ID de referência do parceiro.',
+    })
+    .optional()
+    .nullable(),
   nome: z.string({ required_error: 'Nome do tipo de projeto não informado.', invalid_type_error: 'Tipo não válido para o nome do tipo de projeto.' }),
   categoriaVenda: SaleCategorySchema,
   dimensionamento: z.array(
@@ -40,10 +43,13 @@ const GeneralProjectTypeSchema = z.object({
 })
 
 export const InsertProjectTypeSchema = z.object({
-  idParceiro: z.string({
-    required_error: 'ID de referência do parceiro não informado.',
-    invalid_type_error: 'Tipo não válido para o ID de referência do parceiro.',
-  }),
+  idParceiro: z
+    .string({
+      required_error: 'ID de referência do parceiro não informado.',
+      invalid_type_error: 'Tipo não válido para o ID de referência do parceiro.',
+    })
+    .optional()
+    .nullable(),
   nome: z.string({ required_error: 'Nome do tipo de projeto não informado.', invalid_type_error: 'Tipo não válido para o nome do tipo de projeto.' }),
   categoriaVenda: SaleCategorySchema,
   dimensionamento: z.array(

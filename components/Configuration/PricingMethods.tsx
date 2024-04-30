@@ -11,6 +11,8 @@ import { BsCalendarPlus } from 'react-icons/bs'
 import { formatDateAsLocale } from '@/lib/methods/formatting'
 import Avatar from '../utils/Avatar'
 
+const FixedPricingMethod = ['660dab0b0fcb72da4ed8c35e', '660de08225fee32a2237fa37', '661400485ce24a96d0c62c30', '661455bf6eaecfde21b552a7']
+
 type PricingMethodsProps = {
   session: Session
 }
@@ -45,7 +47,7 @@ function PricingMethods({ session }: PricingMethodsProps) {
                     <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
                       <ImPriceTag size={13} />
                     </div>
-                    {method.idParceiro ? (
+                    {!FixedPricingMethod.includes(method._id) ? (
                       <p
                         onClick={() => setEditModal({ id: method._id, isOpen: true })}
                         className="cursor-pointer text-sm font-medium leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500"

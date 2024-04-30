@@ -1,14 +1,14 @@
 import { TProjectType } from '@/utils/schemas/project-types.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type GetProjectTypesParams = {
   collection: Collection<TProjectType>
-  partnerId: string
+  query: Filter<TProjectType>
 }
-export async function getProjectTypes({ collection, partnerId }: GetProjectTypesParams) {
+export async function getProjectTypes({ collection, query }: GetProjectTypesParams) {
   try {
     // @ts-ignore
-    const types = await collection.find({ $or: [{ idParceiro: null }, { idParceiro: partnerId }] }, { sort: { dataInsercao: 1 } }).toArray()
+    const types = await collection.find({ ...query }, { sort: { dataInsercao: 1 } }).toArray()
 
     return types
   } catch (error) {
@@ -19,11 +19,11 @@ export async function getProjectTypes({ collection, partnerId }: GetProjectTypes
 type GetProjectTypeByIdParams = {
   collection: Collection<TProjectType>
   id: string
-  partnerId: string
+  query: Filter<TProjectType>
 }
-export async function getProjectTypeById({ collection, id, partnerId }: GetProjectTypeByIdParams) {
+export async function getProjectTypeById({ collection, id, query }: GetProjectTypeByIdParams) {
   try {
-    const type = await collection.findOne({ _id: new ObjectId(id), idParceiro: partnerId })
+    const type = await collection.findOne({ _id: new ObjectId(id), ...query })
     return type
   } catch (error) {
     throw error

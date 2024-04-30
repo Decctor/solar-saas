@@ -1,17 +1,19 @@
 import React, { useState } from 'react'
 import { Inter } from 'next/font/google'
 import { Session } from 'next-auth'
-import NewFunnel from '../Modals/NewFunnel'
+import NewFunnel from '../Modals/Funnels/NewFunnel'
 import { useFunnels } from '@/utils/queries/funnels'
 import LoadingComponent from '../utils/LoadingComponent'
 import ErrorComponent from '../utils/ErrorComponent'
 import { BsFunnelFill } from 'react-icons/bs'
+import EditFunnel from '../Modals/Funnels/EditFunnel'
 
 type FunnelsProps = {
   session: Session
 }
 function Funnels({ session }: FunnelsProps) {
   const [newFunnelModalIsOpen, setNewFunnelModalIsOpen] = useState<boolean>(false)
+  const [editModal, setEditModal] = useState<{ id: string | null; isOpen: boolean }>({ id: null, isOpen: false })
   const { data: funnels, isSuccess, isLoading, isError } = useFunnels()
   return (
     <div className="flex h-full grow flex-col">
@@ -38,7 +40,16 @@ function Funnels({ session }: FunnelsProps) {
                 <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
                   <BsFunnelFill />
                 </div>
-                <p className="text-sm font-medium leading-none tracking-tight">{funnel.nome}</p>
+                {true ? (
+                  <p
+                    onClick={() => setEditModal({ id: funnel._id, isOpen: true })}
+                    className="cursor-pointer text-sm font-medium leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500"
+                  >
+                    {funnel.nome}
+                  </p>
+                ) : (
+                  <p className="text-sm font-medium leading-none tracking-tight">{funnel.nome}</p>
+                )}
               </div>
               <h1 className='"w-full mt-2 text-start text-xs font-medium'>ETAPAS</h1>
               <div className="flex w-full items-center justify-start gap-2">
@@ -51,6 +62,9 @@ function Funnels({ session }: FunnelsProps) {
             </div>
           ))}
       </div>
+      {editModal.id && editModal.isOpen ? (
+        <EditFunnel funnelId={editModal.id} session={session} closeModal={() => setEditModal({ id: null, isOpen: false })} />
+      ) : null}
     </div>
   )
 }
