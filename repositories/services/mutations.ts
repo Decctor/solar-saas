@@ -1,5 +1,5 @@
 import { TService } from '@/utils/schemas/service.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type InsertServiceParams = {
   collection: Collection<TService>
@@ -20,11 +20,11 @@ type UpdateServiceParams = {
   id: string
   collection: Collection<TService>
   changes: Partial<TService>
-  partnerId: string
+  query: Filter<TService>
 }
-export async function updateService({ id, collection, changes, partnerId }: UpdateServiceParams) {
+export async function updateService({ id, collection, changes, query }: UpdateServiceParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), idParceiro: partnerId }, { $set: { ...changes } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), ...query }, { $set: { ...changes } })
     return updateResponse
   } catch (error) {
     throw error
