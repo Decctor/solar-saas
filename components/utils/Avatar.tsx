@@ -11,7 +11,7 @@ function Avatar({ url, width, height, fallback, radiusPercentage = '100%' }: Ava
   if (!url)
     return (
       <div className="flex items-center justify-center rounded-full bg-gray-700" style={{ width: width, height: height }}>
-        <p style={{ fontSize: width * 0.6 }} className="font-bold text-white">
+        <p style={{ fontSize: width * 0.4 }} className="font-bold text-white">
           {fallback || 'U'}
         </p>
       </div>

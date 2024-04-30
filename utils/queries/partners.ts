@@ -49,3 +49,19 @@ export function usePartnerOwnInfo({ id }: { id: string }) {
     queryFn: async () => await fetchPartnerOwnInfo({ id }),
   })
 }
+
+async function fetchPartnersSimplified() {
+  try {
+    const { data } = await axios.get(`/api/partners/simplified`)
+    return data.data as TPartnerSimplifiedDTO[]
+  } catch (error) {
+    throw error
+  }
+}
+
+export function usePartnersSimplified() {
+  return useQuery({
+    queryKey: ['partners-simplified'],
+    queryFn: fetchPartnersSimplified,
+  })
+}

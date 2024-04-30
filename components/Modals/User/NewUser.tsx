@@ -20,6 +20,7 @@ import PermissionsPannel from '../../Users/PermissionsPannel'
 import { BsCheckLg } from 'react-icons/bs'
 import { VscChromeClose } from 'react-icons/vsc'
 import { Session } from 'next-auth'
+import { usePartners } from '@/utils/queries/partners'
 
 type NewUserModalProps = {
   users?: TUserDTO[]
@@ -336,6 +337,12 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
                         editar: value.value.clientes.editar,
                         criar: value.value.clientes.criar,
                       },
+                      parceiros: {
+                        escopo: [],
+                        visualizar: value.value.parceiros.visualizar,
+                        editar: value.value.parceiros.editar,
+                        criar: value.value.parceiros.criar,
+                      },
                       precos: {
                         visualizar: value.value.precos.visualizar,
                         editar: value.value.precos.editar,
@@ -368,7 +375,7 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
                 />
               </div>
             </div>
-            <PermissionsPannel userInfo={userInfo} setUserInfo={setUserInfo} users={users} session={session} />
+            <PermissionsPannel referenceId={null} userInfo={userInfo} setUserInfo={setUserInfo} users={users} session={session} />
           </div>
           <div className="mt-1 flex w-full items-end justify-end">
             <button

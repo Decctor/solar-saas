@@ -142,6 +142,12 @@ export const UserGroups: TUserGroup[] = [
         editar: true,
         criar: true,
       },
+      parceiros: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
       precos: {
         visualizar: true,
         editar: true,
@@ -212,6 +218,12 @@ export const UserGroups: TUserGroup[] = [
         criar: true,
       },
       clientes: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      parceiros: {
         escopo: null,
         visualizar: true,
         editar: true,
@@ -291,6 +303,12 @@ export const UserGroups: TUserGroup[] = [
         editar: true,
         criar: true,
       },
+      parceiros: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
       precos: {
         visualizar: false,
         editar: false,
@@ -360,6 +378,12 @@ export const UserGroups: TUserGroup[] = [
         criar: true,
       },
       clientes: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      parceiros: {
         escopo: null,
         visualizar: true,
         editar: true,

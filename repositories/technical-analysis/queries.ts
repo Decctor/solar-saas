@@ -35,7 +35,7 @@ type GetTechnicalAnalysisByOpportunityIdParams = {
 }
 export async function getTechnicalAnalysisByOpportunityId({ collection, partnerId, opportunityId }: GetTechnicalAnalysisByOpportunityIdParams) {
   try {
-    const analysis = await collection.find({ 'oportunidade.id': opportunityId, idParceiro: partnerId }).toArray()
+    const analysis = await collection.find({ 'oportunidade.id': opportunityId, idParceiro: partnerId }, { sort: { _id: -1 } }).toArray()
     return analysis
   } catch (error) {
     throw error

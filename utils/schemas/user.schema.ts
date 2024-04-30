@@ -199,6 +199,33 @@ const PermissionsSchema = z.object({
       invalid_type_error: 'Tipo não válido para permissão de criação de clientes.',
     }),
   }),
+  parceiros: z.object({
+    escopo: z
+      .array(
+        z.string({
+          required_error: 'Item do escopo de visualização de parceiros não informado.',
+          invalid_type_error: 'Tipo não válido para item do escopo de visualização de parceiros.',
+        }),
+        {
+          required_error: 'Escopo de visualização de parceiros não fornecido.',
+          invalid_type_error: 'Tipo não válido para escopo de visualização de parceiros.',
+        }
+      )
+      .optional()
+      .nullable(),
+    visualizar: z.boolean({
+      required_error: 'Permissão de visualização de parceiros não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de visualização de parceiros.',
+    }),
+    editar: z.boolean({
+      required_error: 'Permissão de edição de parceiros não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de edição de parceiros.',
+    }),
+    criar: z.boolean({
+      required_error: 'Permissão de criação de parceiros não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de criação de parceiros.',
+    }),
+  }),
   precos: z.object({
     visualizar: z.boolean({
       required_error: 'Permissão de edição de preços não informada.',

@@ -4,14 +4,17 @@ import CheckboxInput from '../Inputs/CheckboxInput'
 import { TUser, TUserDTO, TUserEntity } from '@/utils/schemas/user.schema'
 import ScopeSelection from './ScopeSelection'
 import { Session } from 'next-auth'
+import { usePartners, usePartnersSimplified } from '@/utils/queries/partners'
 
 type PermissionsPannelProps = {
   userInfo: TUser
   setUserInfo: React.Dispatch<React.SetStateAction<TUser>>
   users?: TUserDTO[]
+  referenceId: string | null
   session: Session
 }
-function PermissionsPannel({ userInfo, setUserInfo, users, session }: PermissionsPannelProps) {
+function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session }: PermissionsPannelProps) {
+  const { data: partners } = usePartnersSimplified()
   return (
     <>
       <h1 className="w-full pt-4 text-center text-sm font-medium">PERMISSÕES DO USUÁRIO</h1>
@@ -290,8 +293,8 @@ function PermissionsPannel({ userInfo, setUserInfo, users, session }: Permission
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">CLIENTES</h1>
         <ScopeSelection
-          users={users || []}
-          userId={null}
+          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
+          referenceId={referenceId}
           selected={userInfo.permissoes.clientes.escopo}
           handleScopeSelection={(selected) =>
             setUserInfo((prev) => ({
@@ -353,8 +356,8 @@ function PermissionsPannel({ userInfo, setUserInfo, users, session }: Permission
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">OPORTUNIDADES</h1>
         <ScopeSelection
-          users={users || []}
-          userId={null}
+          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
+          referenceId={referenceId}
           selected={userInfo.permissoes.oportunidades.escopo}
           handleScopeSelection={(selected) =>
             setUserInfo((prev) => ({
@@ -413,8 +416,8 @@ function PermissionsPannel({ userInfo, setUserInfo, users, session }: Permission
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">ANÁLISES TÉCNICAS</h1>
         <ScopeSelection
-          users={users || []}
-          userId={null}
+          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
+          referenceId={referenceId}
           selected={userInfo.permissoes.analisesTecnicas.escopo}
           handleScopeSelection={(selected) =>
             setUserInfo((prev) => ({
@@ -469,12 +472,72 @@ function PermissionsPannel({ userInfo, setUserInfo, users, session }: Permission
           }))
         }
       />
+      {/**PARCEIROS */}
+      <div className="flex w-full items-center justify-between">
+        <h1 className="w-full text-start text-sm text-gray-500">PARCEIROS</h1>
+        <ScopeSelection
+          options={partners?.map((p) => ({ id: p._id, label: p.nome, image_url: p.logo_url })) || []}
+          referenceId={userInfo.idParceiro || null}
+          selected={userInfo.permissoes.parceiros.escopo}
+          handleScopeSelection={(selected) =>
+            setUserInfo((prev) => ({
+              ...prev,
+              permissoes: { ...prev.permissoes, parceiros: { ...prev.permissoes.parceiros, escopo: selected } },
+            }))
+          }
+        />
+      </div>
+      <CheckboxInput
+        labelFalse="APTO A VISUALIZAR PARCEIROS"
+        labelTrue="APTO A VISUALIZAR PARCEIROS"
+        checked={userInfo.permissoes.parceiros.visualizar}
+        justify="justify-start"
+        handleChange={(value) =>
+          setUserInfo((prev) => ({
+            ...prev,
+            permissoes: {
+              ...prev.permissoes,
+              parceiros: { ...prev.permissoes.parceiros, visualizar: value },
+            },
+          }))
+        }
+      />
+      <CheckboxInput
+        labelFalse="APTO A CRIAR PARCEIROS"
+        labelTrue="APTO A CRIAR PARCEIROS"
+        checked={userInfo.permissoes.parceiros.criar}
+        justify="justify-start"
+        handleChange={(value) =>
+          setUserInfo((prev) => ({
+            ...prev,
+            permissoes: {
+              ...prev.permissoes,
+              parceiros: { ...prev.permissoes.parceiros, criar: value },
+            },
+          }))
+        }
+      />
+      <CheckboxInput
+        labelFalse="APTO A EDITAR PARCEIROS"
+        labelTrue="APTO A EDITAR PARCEIROS"
+        checked={userInfo.permissoes.parceiros.editar}
+        justify="justify-start"
+        handleChange={(value) =>
+          setUserInfo((prev) => ({
+            ...prev,
+            permissoes: {
+              ...prev.permissoes,
+              parceiros: { ...prev.permissoes.parceiros, editar: value },
+            },
+          }))
+        }
+      />
       {/**PROPOSTAS */}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">PROPOSTAS</h1>
         <ScopeSelection
-          users={users || []}
-          userId={null}
+          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
+          referenceId={referenceId}
           selected={userInfo.permissoes.propostas.escopo}
           handleScopeSelection={(selected) =>
             setUserInfo((prev) => ({
@@ -565,8 +628,8 @@ function PermissionsPannel({ userInfo, setUserInfo, users, session }: Permission
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">RESULTADOS</h1>
         <ScopeSelection
-          users={users || []}
-          userId={null}
+          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
+          referenceId={referenceId}
           selected={userInfo.permissoes.resultados.escopo}
           handleScopeSelection={(selected) =>
             setUserInfo((prev) => ({

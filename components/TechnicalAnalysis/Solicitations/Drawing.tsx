@@ -551,7 +551,7 @@ function Drawing({ infoHolder, setInfoHolder, files, setFiles, resetSolicitation
           closeMenu={() => setShowKits(false)}
         />
       ) : null}
-      <h1 className="mt-2 w-full text-start font-sans  font-bold text-cyan-500">EQUIPAMENTOS ESCOLHIDOS</h1>
+      <h1 className="mt-2 w-full text-start font-sans font-bold text-cyan-500">EQUIPAMENTOS ESCOLHIDOS</h1>
       <div className="flex w-full flex-col flex-wrap justify-around gap-2 lg:flex-row">
         {infoHolder.equipamentos.length > 0 ? (
           infoHolder.equipamentos.map((equipment, index) => (
@@ -588,6 +588,49 @@ function Drawing({ infoHolder, setInfoHolder, files, setFiles, resetSolicitation
         ) : (
           <p className="w-full text-center text-sm font-medium tracking-tight text-gray-500">Nenhum equipamento adicionado à lista.</p>
         )}
+      </div>
+      <h1 className="mt-4 w-full rounded-md  bg-gray-700 p-1 text-center font-medium text-white">INFORMAÇÕES DO DESENHO</h1>
+      <div className="flex w-full flex-col items-center justify-center">
+        <div className="w-full self-center lg:w-1/2">
+          <SelectInput
+            label="TIPO DE DESENHO"
+            width={'100%'}
+            value={infoHolder.desenho.tipo}
+            selectedItemLabel="NÃO DEFINIDO"
+            options={[
+              {
+                id: 1,
+                label: 'SOLAR EDGE DESIGN',
+                value: 'SOLAR EDGE DESIGN',
+              },
+              { id: 2, label: 'REVIT 3D', value: 'REVIT 3D' },
+              { id: 4, label: 'AUTOCAD 2D', value: 'AUTOCAD 2D' },
+              {
+                id: 4,
+                label: 'APENAS VIABILIDADE DE ESPAÇO',
+                value: 'APENAS VIABILIDADE DE ESPAÇO',
+              },
+            ]}
+            handleChange={(value) => {
+              setInfoHolder((prev) => ({ ...prev, desenho: { ...prev.desenho, tipo: value } }))
+            }}
+            onReset={() => setInfoHolder((prev) => ({ ...prev, desenho: { ...prev.desenho, tipo: null } }))}
+          />
+        </div>
+      </div>
+      <div className="mt-2 flex w-full flex-col">
+        <h1 className="w-full rounded-tl-sm rounded-tr-sm bg-gray-500 p-1 text-center font-bold text-white">OBSERVAÇÕES</h1>
+        <textarea
+          placeholder="SEM OBSERVAÇÕES PREENCHIDAS..."
+          value={infoHolder.desenho?.observacoes || ''}
+          onChange={(e) => {
+            setInfoHolder((prev) => ({
+              ...prev,
+              desenho: prev.desenho ? { ...prev.desenho, observacoes: e.target.value } : { observacoes: e.target.value, itens: [] },
+            }))
+          }}
+          className="min-h-[80px] w-full resize-none rounded-bl-sm rounded-br-sm bg-gray-100 p-3 text-center text-xs font-medium text-gray-600 outline-none"
+        />
       </div>
       <h1 className="mt-2 w-full text-start font-sans  font-bold text-cyan-500">ARQUIVOS</h1>
       <div className="flex w-full flex-col items-center gap-2 lg:flex-row">

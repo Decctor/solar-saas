@@ -52,7 +52,7 @@ function DrawBlock({ infoHolder, setInfoHolder, changes, setChanges, updateAnaly
         <h1 className="font-bold text-white">DESENHO</h1>
       </div>
       <div className="flex w-full flex-col">
-        {/* <div className="w-full self-center lg:w-1/2">
+        <div className="w-full self-center lg:w-1/2">
           <SelectInput
             label="TIPO DE DESENHO"
             width={'100%'}
@@ -78,7 +78,7 @@ function DrawBlock({ infoHolder, setInfoHolder, changes, setChanges, updateAnaly
             }}
             onReset={() => setInfoHolder((prev) => ({ ...prev, desenho: { ...prev.desenho, tipo: null } }))}
           />
-        </div> */}
+        </div>
         <div className="mt-2 flex w-full flex-col">
           <h1 className="w-full rounded-tl-sm rounded-tr-sm bg-gray-500 p-1 text-center font-bold text-white">OBSERVAÇÕES</h1>
           <textarea
@@ -98,9 +98,7 @@ function DrawBlock({ infoHolder, setInfoHolder, changes, setChanges, updateAnaly
       <div className="mt-2 flex w-full flex-col gap-2">
         {previewImageURL || infoHolder.desenho.url ? (
           <div className="flex w-full flex-col items-center gap-2">
-            {previewImageURL && !infoHolder.desenho.url ? (
-              <h1 className="text-center font-bold leading-none tracking-tight">PREVIEW DA IMAGEM</h1>
-            ) : null}
+            {previewImageURL && !infoHolder.desenho.url ? <h1 className="text-center font-bold leading-none tracking-tight">PREVIEW DA IMAGEM</h1> : null}
             {!!infoHolder.desenho.url ? <h1 className="text-center font-bold leading-none tracking-tight">IMAGEM</h1> : null}
             <div className="relative flex h-[300px] w-fit min-w-[300px] items-center justify-center rounded-[5%] border border-gray-500">
               {!!previewImageURL ? (
@@ -125,13 +123,7 @@ function DrawBlock({ infoHolder, setInfoHolder, changes, setChanges, updateAnaly
 
               {renderInputText(drawImageFile)}
             </div>
-            <input
-              onChange={(e) => handleFileInput(e)}
-              id="dropzone-file"
-              type="file"
-              className="absolute h-full w-full opacity-0"
-              accept=".png, .jpg"
-            />
+            <input onChange={(e) => handleFileInput(e)} id="dropzone-file" type="file" className="absolute h-full w-full opacity-0" accept=".png, .jpg" />
           </label>
         </div>
         <div className="mb-2 flex w-full items-center justify-end">

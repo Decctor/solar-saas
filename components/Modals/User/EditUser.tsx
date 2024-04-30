@@ -37,7 +37,8 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
   const queryClient = useQueryClient()
   const { data: user, isLoading, isError, isSuccess } = useUserById({ id: userId })
   const [image, setImage] = useState<File | null>()
-  const [userInfo, setUserInfo] = useState<TUserDTO | TUser>({
+  const [userInfo, setUserInfo] = useState<TUserDTO>({
+    _id: 'id-holder',
     nome: '',
     administrador: false,
     telefone: '',
@@ -318,6 +319,12 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                             editar: value.value.clientes.editar,
                             criar: value.value.clientes.criar,
                           },
+                          parceiros: {
+                            escopo: session.user.idParceiro ? [session.user.idParceiro] : null,
+                            visualizar: value.value.clientes.visualizar,
+                            editar: value.value.clientes.editar,
+                            criar: value.value.clientes.criar,
+                          },
                           precos: {
                             visualizar: value.value.precos.visualizar,
                             editar: value.value.precos.editar,
@@ -351,7 +358,13 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                   </div>
                 </div>
 
-                <PermissionsPannel userInfo={userInfo} setUserInfo={setUserInfo} users={users} session={session} />
+                <PermissionsPannel
+                  referenceId={userId}
+                  userInfo={userInfo as TUser}
+                  setUserInfo={setUserInfo as React.Dispatch<React.SetStateAction<TUser>>}
+                  users={users}
+                  session={session}
+                />
               </div>
               <div className="mt-1 flex w-full items-end justify-end">
                 <button

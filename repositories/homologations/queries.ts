@@ -21,7 +21,7 @@ type GetHomologationByOpportunityIdParams = {
 }
 export async function getHomologationByOpportunityId({ collection, opportunityId, partnerId }: GetHomologationByOpportunityIdParams) {
   try {
-    const homologations = await collection.find({ 'oportunidade.id': opportunityId, idParceiro: partnerId }).toArray()
+    const homologations = await collection.find({ 'oportunidade.id': opportunityId, idParceiro: partnerId }, { sort: { _id: -1 } }).toArray()
     return homologations
   } catch (error) {
     throw error
@@ -35,7 +35,7 @@ type GetPartnerHomologationsParams = {
 
 export async function getPartnerHomologations({ collection, partnerId }: GetPartnerHomologationsParams) {
   try {
-    const homologations = await collection.find({ idParceiro: partnerId }).toArray()
+    const homologations = await collection.find({ idParceiro: partnerId }, { sort: { _id: -1 } }).toArray()
 
     return homologations
   } catch (error) {

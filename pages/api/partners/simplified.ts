@@ -1,4 +1,4 @@
-import { getPartnerOwnInformation } from '@/repositories/partner-simplified/query'
+import { getPartnerOwnInformation, getPartnersSimplified } from '@/repositories/partner-simplified/query'
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { TPartner, TPartnerSimplified } from '@/utils/schemas/partner.schema'
@@ -7,21 +7,26 @@ import { Collection, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
 type GetResponse = {
-  data: TPartnerSimplified
+  data: TPartnerSimplified | TPartnerSimplified[]
 }
 const getPartnerSimplified: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
 
   const { id } = req.query
-  if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
-  const partner = await getPartnerOwnInformation({ collection: partnersCollection, id: id })
-  if (!partner) throw new createHttpError.NotFound('Parceiro não encontrado.')
-  res.json({ data: partner })
+  if (id) {
+    if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
+
+    const partner = await getPartnerOwnInformation({ collection: partnersCollection, id: id })
+    if (!partner) throw new createHttpError.NotFound('Parceiro não encontrado.')
+    res.json({ data: partner })
+  }
+  const partners = await getPartnersSimplified({ collection: partnersCollection })
+
+  return res.status(200).json({ data: partners })
 }
 
 export default apiHandler({

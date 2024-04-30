@@ -40,25 +40,31 @@ function validateIsSelected({ id, selected }: { id: string; selected?: string[] 
   if (!selected) return false
   return selected.includes(id)
 }
-function getInitialMode({ userId, selected }: { userId: string | null; selected?: string[] | null }) {
+function getInitialMode({ referenceId, selected }: { referenceId: string | null; selected?: string[] | null }) {
   if (!selected) return 'GERAL'
-  if (selected.length == 0 || (selected.length == 1 && selected[0] == userId)) return 'PRÓPRIO'
+  if (selected.length == 0 || (selected.length == 1 && selected[0] == referenceId)) return 'PRÓPRIO'
   return 'PERSONALIZADO'
 }
 
+type TScopeOption = {
+  id: string
+  label: string
+  image_url?: string | null
+}
+
 type ScopeSelectionProps = {
-  userId: string | null
-  users: TUserDTO[]
+  referenceId: string | null
+  options: TScopeOption[]
   selected?: string[] | null
   handleScopeSelection: (info: string[] | null) => void
 }
-function ScopeSelection({ userId, users, selected, handleScopeSelection }: ScopeSelectionProps) {
-  const [mode, setMode] = useState<'PRÓPRIO' | 'GERAL' | 'PERSONALIZADO'>(getInitialMode({ userId, selected }))
+function ScopeSelection({ referenceId, options, selected, handleScopeSelection }: ScopeSelectionProps) {
+  const [mode, setMode] = useState<'PRÓPRIO' | 'GERAL' | 'PERSONALIZADO'>(getInitialMode({ referenceId, selected }))
   const [selectMenuIsOpen, setSelectMenuIsOpen] = useState<boolean>(false)
   useKey('Escape', () => setSelectMenuIsOpen(false))
   useEffect(() => {
-    setMode(getInitialMode({ userId, selected }))
-  }, [selected, userId])
+    setMode(getInitialMode({ referenceId, selected }))
+  }, [selected, referenceId])
   return (
     <div className="relative flex flex-col">
       <div className="flex items-center gap-2">
@@ -66,7 +72,7 @@ function ScopeSelection({ userId, users, selected, handleScopeSelection }: Scope
         <button
           onClick={() => {
             setMode('PRÓPRIO')
-            if (userId) handleScopeSelection([userId])
+            if (referenceId) handleScopeSelection([referenceId])
             else handleScopeSelection([])
           }}
           className={`${
@@ -119,21 +125,21 @@ function ScopeSelection({ userId, users, selected, handleScopeSelection }: Scope
               </button>
             </div>
             <div className="overscroll-y flex w-full flex-col gap-2 overflow-y-auto pr-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
-              {users.map((user, index) => (
+              {options.map((user, index) => (
                 <div
                   key={index}
                   onClick={() => {
                     var selectedArr = selected ? [...selected] : []
-                    if (selectedArr.includes(user._id.toString())) selectedArr.splice(index, 1)
-                    else selectedArr.push(user._id.toString())
+                    if (selectedArr.includes(user.id.toString())) selectedArr.splice(index, 1)
+                    else selectedArr.push(user.id.toString())
                     handleScopeSelection(selectedArr)
                   }}
                   className={`${
-                    validateIsSelected({ id: user._id.toString(), selected }) ? ' border-cyan-400' : 'border-gray-400 opacity-40'
+                    validateIsSelected({ id: user.id.toString(), selected }) ? ' border-cyan-400' : 'border-gray-400 opacity-40'
                   } flex w-full cursor-pointer items-center gap-2 rounded-md border bg-gray-50 p-1`}
                 >
-                  <Avatar url={user.avatar_url || undefined} height={20} width={20} fallback={formatNameAsInitials(user.nome)} />
-                  <p className="text-xs font-medium text-gray-700">{user.nome}</p>
+                  <Avatar url={user.image_url || undefined} height={20} width={20} fallback={formatNameAsInitials(user.label)} />
+                  <p className="text6-gray-700 text-xs font-medium">{user.label}</p>
                 </div>
               ))}
             </div>

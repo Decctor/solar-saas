@@ -646,9 +646,9 @@ function Budgeting({ infoHolder, setInfoHolder, files, setFiles, resetSolicitati
           <p className="w-full text-center text-sm font-medium tracking-tight text-gray-500">Nenhum equipamento adicionado à lista.</p>
         )}
       </div>
-      <div className="mt-4 flex w-full flex-col bg-[#fff] px-2">
-        <span className="py-2 text-center text-sm font-bold uppercase text-[#15599a]">ORÇAMENTAÇÃO</span>
-        <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+      <div className="mt-4 flex w-full flex-col bg-[#fff]">
+        <h1 className="w-full rounded-md  bg-gray-700 p-1 text-center font-medium text-white">INFORMAÇÕES DO DESENHO</h1>
+        <div className="mt-2 flex w-full flex-col items-center gap-2 lg:flex-row">
           <div className="w-full lg:w-1/4">
             <SelectInput
               label={'CATEGORIA DO CUSTO'}
