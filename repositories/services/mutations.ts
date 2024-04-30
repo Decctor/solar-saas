@@ -8,7 +8,7 @@ type InsertServiceParams = {
 }
 export async function insertService({ collection, info, partnerId }: InsertServiceParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId, dataInsercao: new Date().toISOString() })
+    const insertResponse = await collection.insertOne({ ...info, dataInsercao: new Date().toISOString() })
 
     return insertResponse
   } catch (error) {

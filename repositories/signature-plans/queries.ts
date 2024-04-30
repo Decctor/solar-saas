@@ -3,12 +3,12 @@ import { Collection, Filter, ObjectId } from 'mongodb'
 
 type GetSignaturePlanByIdParams = {
   collection: Collection<TSignaturePlan>
-  partnerId: string
+  query: Filter<TSignaturePlan>
   id: string
 }
-export async function getSignaturePlanById({ id, partnerId, collection }: GetSignaturePlanByIdParams) {
+export async function getSignaturePlanById({ id, query, collection }: GetSignaturePlanByIdParams) {
   try {
-    const plan = await collection.findOne({ _id: new ObjectId(id), idParceiro: partnerId })
+    const plan = await collection.findOne({ _id: new ObjectId(id), ...query })
 
     return plan
   } catch (error) {
@@ -17,12 +17,11 @@ export async function getSignaturePlanById({ id, partnerId, collection }: GetSig
 }
 type GetSignaturePlansParams = {
   collection: Collection<TSignaturePlan>
-  partnerId: string
   query: Filter<TSignaturePlan>
 }
-export async function getSignaturePlans({ partnerId, collection }: GetSignaturePlansParams) {
+export async function getSignaturePlans({ collection, query }: GetSignaturePlansParams) {
   try {
-    const plans = await collection.find({ idParceiro: partnerId }).toArray()
+    const plans = await collection.find({ ...query }).toArray()
 
     return plans
   } catch (error) {

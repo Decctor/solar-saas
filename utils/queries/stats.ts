@@ -56,7 +56,7 @@ async function fetchStats(after: string, before: string, responsible: string | n
 }
 export function useStats(enabled: boolean, after: string, before: string, responsible: string | null, partner: string | null) {
   return useQuery({
-    queryKey: ['stats', after, before, responsible],
+    queryKey: ['stats', after, before, responsible, partner],
     queryFn: async () => await fetchStats(after, before, responsible, partner),
     enabled: !!enabled,
   })

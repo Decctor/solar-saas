@@ -4,7 +4,7 @@ import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 import { InsertPricingMethodSchema, TPricingMethod } from '@/utils/schemas/pricing-method.schema'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId, WithId } from 'mongodb'
+import { Collection, Filter, ObjectId, WithId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
 type PostResponse = {
@@ -35,6 +35,8 @@ type GetResponse = {
 const getPricingMethods: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'editar', true)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TPricingMethod> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
 
   const { id } = req.query
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -42,11 +44,11 @@ const getPricingMethods: NextApiHandler<GetResponse> = async (req, res) => {
 
   if (id) {
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-    const pricingMethod = await getPartnerPricingMethodById({ id: id, collection: collection, partnerId: partnerId || '' })
+    const pricingMethod = await getPartnerPricingMethodById({ id: id, collection: collection, query: partnerQuery })
     if (!pricingMethod) throw new createHttpError.NotFound('Metodologia não encontrada.')
     return res.status(200).json({ data: pricingMethod })
   }
-  const pricingMethods = await getPartnerPricingMethods({ collection: collection, partnerId: partnerId || '' })
+  const pricingMethods = await getPartnerPricingMethods({ collection: collection, query: partnerQuery })
 
   return res.status(200).json({ data: pricingMethods })
 }
@@ -57,7 +59,11 @@ type PutResponse = {
 }
 
 const editPricingMethod: NextApiHandler<PutResponse> = async (req, res) => {
-  // const session = await validateAuthorization(req, res, 'configuracoes', 'precificacao', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'precificacao', true)
+  const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TPricingMethod> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
+
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
 
@@ -66,7 +72,7 @@ const editPricingMethod: NextApiHandler<PutResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPricingMethod> = db.collection('pricing-methods')
 
-  const updateResponse = await collection.updateOne({ _id: new ObjectId(id) }, { $set: { ...changes } })
+  const updateResponse = await collection.updateOne({ _id: new ObjectId(id), ...partnerQuery }, { $set: { ...changes } })
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar metodologia.')
   if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Metodologia não encontrada.')
 

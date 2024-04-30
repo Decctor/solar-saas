@@ -174,7 +174,7 @@ export function getModulesStr(modules: ModuleType[], kitType: string | undefined
   return str
 }
 
-export function useKitQueryPipelines(type: 'TODOS OS KITS' | 'KITS POR PREMISSA', payload: any, partnerId: string) {
+export function useKitQueryPipelines(type: 'TODOS OS KITS' | 'KITS POR PREMISSA', payload: any, partnerQuery: any) {
   const currentDate = new Date().toISOString()
   switch (type) {
     case 'TODOS OS KITS':
@@ -184,7 +184,7 @@ export function useKitQueryPipelines(type: 'TODOS OS KITS' | 'KITS POR PREMISSA'
             ativo: true,
             $or: [{ dataValidade: null }, { dataValidade: { $gt: currentDate } }],
             estruturasCompativeis: payload.structure,
-            idParceiro: partnerId,
+            ...partnerQuery,
           },
         },
         {
@@ -214,6 +214,7 @@ export function useKitQueryPipelines(type: 'TODOS OS KITS' | 'KITS POR PREMISSA'
             $or: [{ dataValidade: null }, { dataValidade: { $gt: currentDate } }],
             estruturasCompativeis: payload.structure,
             $and: [{ potenciaPico: { $gte: payload.min } }, { potenciaPico: { $lte: payload.max } }],
+            ...partnerQuery,
           },
         },
         {
@@ -241,6 +242,7 @@ export function useKitQueryPipelines(type: 'TODOS OS KITS' | 'KITS POR PREMISSA'
           $match: {
             ativo: true,
             $or: [{ dataValidade: null }, { dataValidade: { $gt: currentDate } }],
+            ...partnerQuery,
           },
         },
         {

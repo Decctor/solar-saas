@@ -1,6 +1,8 @@
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import SelectInput from '@/components/Inputs/SelectInput'
+import SelectWithImages from '@/components/Inputs/SelectWithImages'
 import TextInput from '@/components/Inputs/TextInput'
+import { usePartnersSimplified } from '@/utils/queries/partners'
 import { TSignaturePlan } from '@/utils/schemas/signature-plans.schema'
 import { SignaturePlanIntervalTypes } from '@/utils/select-options'
 import React from 'react'
@@ -10,6 +12,7 @@ type GeneralInformationProps = {
   setInfoHolder: React.Dispatch<React.SetStateAction<TSignaturePlan>>
 }
 function GeneralInformation({ infoHolder, setInfoHolder }: GeneralInformationProps) {
+  const { data: partners } = usePartnersSimplified()
   return (
     <div className="flex w-full flex-col gap-1">
       <h1 className="w-full bg-gray-700  p-1 text-center font-medium text-white">INFORMAÇÕES GERAIS</h1>
@@ -54,6 +57,27 @@ function GeneralInformation({ infoHolder, setInfoHolder }: GeneralInformationPro
             width="100%"
           />
         </div>
+      </div>
+      <div className="w-full">
+        <SelectWithImages
+          label="VISIBILIDADE DE PARCEIRO"
+          value={infoHolder.idParceiro || null}
+          options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
+          selectedItemLabel="TODOS"
+          handleChange={(value) =>
+            setInfoHolder((prev) => ({
+              ...prev,
+              idParceiro: value,
+            }))
+          }
+          onReset={() =>
+            setInfoHolder((prev) => ({
+              ...prev,
+              idParceiro: null,
+            }))
+          }
+          width="100%"
+        />
       </div>
     </div>
   )

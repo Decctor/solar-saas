@@ -120,7 +120,7 @@ const getStats: NextApiHandler<GetResponse> = async (req, res) => {
   const opportunityVisibilityScope = session.user.permissoes.oportunidades.escopo
 
   const { after, before, responsible, partner } = req.query
-
+  console.log(req.query)
   if (typeof after != 'string' || typeof before != 'string') throw new createHttpError.BadRequest('Parâmetros de período inválidos.')
 
   // Validating existence of responsible in query and its type
@@ -139,8 +139,8 @@ const getStats: NextApiHandler<GetResponse> = async (req, res) => {
   // Validing parter scope visibility
   if (!!partnerScope && !partnerScope.includes(partner)) throw new createHttpError.BadRequest('Seu escopo de visibilidade não contempla esse parceiro.')
 
-  const queryResponsible: Filter<TOpportunity> = responsible ? { 'responsaveis.id': responsible } : {}
-  const queryPartner: Filter<TOpportunity> = partner ? { idParceiro: partner } : {}
+  const queryResponsible: Filter<TOpportunity> = responsible != 'null' ? { 'responsaveis.id': responsible } : {}
+  const queryPartner: Filter<TOpportunity> = partner != 'null' ? { idParceiro: partner } : {}
   const query = { ...queryResponsible, ...queryPartner }
 
   const afterDate = dayjs(after).set('hour', -3).toDate()

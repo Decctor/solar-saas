@@ -1,9 +1,11 @@
+import SelectWithImages from '@/components/Inputs/SelectWithImages'
 import TextInput from '@/components/Inputs/TextInput'
 import ControlPricingUnit from '@/components/PricingMethods/ControlPricingUnit'
 import NewPricingUnit from '@/components/PricingMethods/NewPricingUnit'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { createPricingMethod } from '@/utils/mutations/pricing-methods'
 import { formatCondition, formatFormulaItem } from '@/utils/pricing/helpers'
+import { usePartnersSimplified } from '@/utils/queries/partners'
 import { TPricingMethod } from '@/utils/schemas/pricing-method.schema'
 import { useQueryClient } from '@tanstack/react-query'
 import { Session } from 'next-auth'
@@ -16,6 +18,7 @@ type NewPricingMethodProps = {
 }
 function NewPricingMethod({ session, closeModal }: NewPricingMethodProps) {
   const queryClient = useQueryClient()
+  const { data: partners } = usePartnersSimplified()
   const [methodology, setMethodology] = useState<TPricingMethod>({
     nome: '',
     idParceiro: session.user.idParceiro || '',
@@ -56,13 +59,39 @@ function NewPricingMethod({ session, closeModal }: NewPricingMethodProps) {
                 <strong className="text-[#E25E3E]">cálculo de custo.</strong>
               </p>
             </div>
-            <TextInput
-              label="NOME DA METODOLOGIA DE PRECIFICAÇÃO"
-              value={methodology.nome}
-              placeholder="Preencha aqui o nome da metodologia de precificação..."
-              handleChange={(value) => setMethodology((prev) => ({ ...prev, nome: value }))}
-              width="100%"
-            />
+            <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+              <div className="w-full lg:w-1/2">
+                <TextInput
+                  label="NOME DA METODOLOGIA DE PRECIFICAÇÃO"
+                  value={methodology.nome}
+                  placeholder="Preencha aqui o nome da metodologia de precificação..."
+                  handleChange={(value) => setMethodology((prev) => ({ ...prev, nome: value }))}
+                  width="100%"
+                />
+              </div>
+              <div className="w-full lg:w-1/2">
+                <SelectWithImages
+                  label="VISIBILIDADE DE PARCEIRO"
+                  value={methodology.idParceiro || null}
+                  options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
+                  selectedItemLabel="TODOS"
+                  handleChange={(value) =>
+                    setMethodology((prev) => ({
+                      ...prev,
+                      idParceiro: value,
+                    }))
+                  }
+                  onReset={() =>
+                    setMethodology((prev) => ({
+                      ...prev,
+                      idParceiro: null,
+                    }))
+                  }
+                  width="100%"
+                />
+              </div>
+            </div>
+
             <ControlPricingUnit methodology={methodology} setMethodology={setMethodology} />
             {/* <h1 className="mt-2 w-full rounded-md bg-gray-700 p-1 text-center text-sm font-bold text-white">UNIDADES DE PREÇO</h1>
             {newPriceUnitMenuIsOpen ? (

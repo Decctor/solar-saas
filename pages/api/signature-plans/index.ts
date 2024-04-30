@@ -14,24 +14,27 @@ type GetResponse = {
 const getPartnersSignaturePlans: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+
   const { id, onlyActive } = req.query
 
   // Specifing queries
   const queryActiveOnly: Filter<TSignaturePlan> = onlyActive == 'true' ? { ativo: true } : {}
+  const queryPartner: Filter<TSignaturePlan> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
 
   // Final query
-  const query: Filter<TSignaturePlan> = { ...queryActiveOnly }
+  const query: Filter<TSignaturePlan> = { ...queryPartner, ...queryActiveOnly }
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TSignaturePlan> = db.collection('signature-plans')
 
   if (id) {
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-    const plan = await getSignaturePlanById({ id: id, collection: collection, partnerId: partnerId || '' })
+    const plan = await getSignaturePlanById({ id: id, collection: collection, query: queryPartner })
     if (!plan) throw new createHttpError.NotFound('Nenhum plano de assinatura encontrado.')
     return res.status(200).json({ data: plan })
   }
 
-  const plans = await getSignaturePlans({ collection: collection, partnerId: partnerId || '', query: query })
+  const plans = await getSignaturePlans({ collection: collection, query: query })
 
   return res.status(200).json({ data: plans })
 }
@@ -64,6 +67,8 @@ type PutResponse = {
 const editSignaturePlan: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'planos', 'criar', true)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TSignaturePlan> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
 
   const { id } = req.query
   const changes = InsertSignaturePlanSchema.partial().parse(req.body)
@@ -72,7 +77,7 @@ const editSignaturePlan: NextApiHandler<PutResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TSignaturePlan> = db.collection('signature-plans')
 
-  const updateResponse = await updateSignaturePlan({ id: id, collection: collection, changes: changes, partnerId: partnerId || '' })
+  const updateResponse = await updateSignaturePlan({ id: id, collection: collection, changes: changes, query: partnerQuery })
 
   if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Nenhum plano não encontrado.')
 

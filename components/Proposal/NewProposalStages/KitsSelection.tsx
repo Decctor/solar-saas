@@ -72,6 +72,9 @@ type KitsSelectionProps = {
   session: Session
 }
 function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, session }: KitsSelectionProps) {
+  const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
   const [queryType, setQueryType] = useState<QueryTypes>('TODOS OS KITS')
   const [showFilters, setShowFilters] = useState(false)
   // Getting peak power measures based on params
