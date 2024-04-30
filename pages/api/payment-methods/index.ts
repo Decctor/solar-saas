@@ -4,7 +4,7 @@ import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertPaymentMethodSchema, TPaymentMethod, TPaymentMethodEntity } from '@/utils/schemas/payment-methods'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
 type PostResponse = {
@@ -36,6 +36,9 @@ type GetResponse = {
 const getPartnerPaymentMethods: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TPaymentMethod> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
+
   const { id } = req.query
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -44,11 +47,11 @@ const getPartnerPaymentMethods: NextApiHandler<GetResponse> = async (req, res) =
   if (!!id) {
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
 
-    const paymentMethod = await getPaymentMethodsById({ collection: collection, id: id, partnerId: partnerId || '' })
+    const paymentMethod = await getPaymentMethodsById({ collection: collection, id: id, query: partnerQuery })
     if (!paymentMethod) throw new createHttpError.NotFound('Método não encontrado.')
     return res.json({ data: paymentMethod })
   }
-  const paymentMethods = await getPaymentMethods({ collection: collection, partnerId: partnerId || '' })
+  const paymentMethods = await getPaymentMethods({ collection: collection, query: partnerQuery })
   return res.json({ data: paymentMethods })
 }
 
@@ -59,6 +62,9 @@ type PutResponse = {
 const editPaymentMethod: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'configuracoes', 'metodosPagamento', true)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TPaymentMethod> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
+
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
   const changes = InsertPaymentMethodSchema.partial().parse(req.body)
@@ -66,7 +72,7 @@ const editPaymentMethod: NextApiHandler<PutResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TPaymentMethod> = db.collection('payment-methods')
 
-  const updateResponse = await updatePaymentMethod({ collection: collection, id: id, changes: changes, partnerId: partnerId || '' })
+  const updateResponse = await updatePaymentMethod({ collection: collection, id: id, changes: changes, query: partnerQuery })
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar método de pagamento.')
   if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Método de pagamento não encontrado.')
 

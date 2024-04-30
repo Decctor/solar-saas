@@ -40,7 +40,7 @@ const GeneralPaymentMethodSchema = z.object({
   nome: z.string(),
   ativo: z.boolean(),
   descricao: z.string(),
-  idParceiro: z.string(),
+  idParceiro: z.string().optional().nullable(),
   fracionamento: z.array(FractionnementItemSchema),
   autor: AuthorSchema,
   dataInsercao: z.string().datetime(),
@@ -57,7 +57,10 @@ export const InsertPaymentMethodSchema = z.object({
     required_error: 'Estado de ativação do método não informado.',
     invalid_type_error: 'Tipo não válido para o estado de ativação do método.',
   }),
-  idParceiro: z.string({ required_error: 'Referência a parceiro não informada.', invalid_type_error: 'Tipo não válido para referência a parceiro.' }),
+  idParceiro: z
+    .string({ required_error: 'Referência a parceiro não informada.', invalid_type_error: 'Tipo não válido para referência a parceiro.' })
+    .optional()
+    .nullable(),
   descricao: z.string({
     required_error: 'Descrição da metodologia de pagamento não informada.',
     invalid_type_error: 'Tipo não válido para a descrição da metodologia de pagamento.',
@@ -73,7 +76,7 @@ const PaymentMethodEntitySchema = z.object({
   _id: z.instanceof(ObjectId),
   ativo: z.boolean(),
   descricao: z.string(),
-  idParceiro: z.string(),
+  idParceiro: z.string().optional().nullable(),
   fracionamento: z.array(FractionnementItemSchema),
   autor: AuthorSchema,
   dataInsercao: z.string().datetime(),

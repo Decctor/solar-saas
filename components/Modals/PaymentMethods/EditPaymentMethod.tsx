@@ -1,9 +1,11 @@
+import SelectWithImages from '@/components/Inputs/SelectWithImages'
 import TextInput from '@/components/Inputs/TextInput'
 import NewFractionnement from '@/components/PaymentMethods/NewFractionnement'
 import ErrorComponent from '@/components/utils/ErrorComponent'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { createPaymentMethod, editPaymentMethod } from '@/utils/mutations/payment-methods'
+import { usePartnersSimplified } from '@/utils/queries/partners'
 import { usePaymentMethodById } from '@/utils/queries/payment-methods'
 import { TFractionnementItem, TPaymentMethod, TPaymentMethodDTO } from '@/utils/schemas/payment-methods'
 import { useQueryClient } from '@tanstack/react-query'
@@ -21,6 +23,7 @@ type EditPaymentMethodProps = {
 }
 function EditPaymentMethod({ paymentMethodId, session, closeModal }: EditPaymentMethodProps) {
   const queryClient = useQueryClient()
+  const { data: partners } = usePartnersSimplified()
   const { data: method, isLoading, isError, isSuccess } = usePaymentMethodById({ id: paymentMethodId })
   const [infoHolder, setInfoHolder] = useState<TPaymentMethodDTO>({
     _id: 'id-holder',
@@ -109,6 +112,27 @@ function EditPaymentMethod({ paymentMethodId, session, closeModal }: EditPayment
                       width="100%"
                     />
                   </div>
+                </div>
+                <div className="w-full">
+                  <SelectWithImages
+                    label="VISIBILIDADE DE PARCEIRO"
+                    value={infoHolder.idParceiro || null}
+                    options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
+                    selectedItemLabel="TODOS"
+                    handleChange={(value) =>
+                      setInfoHolder((prev) => ({
+                        ...prev,
+                        idParceiro: value,
+                      }))
+                    }
+                    onReset={() =>
+                      setInfoHolder((prev) => ({
+                        ...prev,
+                        idParceiro: null,
+                      }))
+                    }
+                    width="100%"
+                  />
                 </div>
                 <h1 className="mt-2 w-full rounded-md bg-gray-700 p-1 text-center text-sm font-bold text-white">FRACIONAMENTO</h1>
                 {newFractionnementItemMenuIsOpen ? (
