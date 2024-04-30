@@ -4,7 +4,10 @@ import { ObjectId } from 'mongodb'
 import { AuthorSchema } from './user.schema'
 
 export const GeneralProductSchema = z.object({
-  idParceiro: z.string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' }),
+  idParceiro: z
+    .string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' })
+    .optional()
+    .nullable(),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean({
     required_error: 'Status de ativação do serviço não informado.',
@@ -28,7 +31,10 @@ export const GeneralProductSchema = z.object({
     .datetime({ message: 'Formato inválido para a data de inserção.' }),
 })
 export const InsertProductSchema = z.object({
-  idParceiro: z.string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' }),
+  idParceiro: z
+    .string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' })
+    .optional()
+    .nullable(),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean({
     required_error: 'Status de ativação do serviço não informado.',
@@ -53,7 +59,10 @@ export const InsertProductSchema = z.object({
 })
 export const ProductSchema = z.object({
   _id: z.instanceof(ObjectId),
-  idParceiro: z.string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' }),
+  idParceiro: z
+    .string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' })
+    .optional()
+    .nullable(),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean({
     required_error: 'Status de ativação do serviço não informado.',

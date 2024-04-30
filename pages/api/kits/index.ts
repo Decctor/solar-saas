@@ -5,7 +5,7 @@ import { apiHandler, validateAuthentication, validateAuthorization } from '@/uti
 import { IKit } from '@/utils/models'
 import { InsertNewKitSchema, TKit } from '@/utils/schemas/kits.schema'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 import { number, z } from 'zod'
 
@@ -36,6 +36,8 @@ type GetResponse = {
 const getKits: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'visualizar', true)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TKit> = { idParceiro: parterScope ? { $in: [...parterScope, null] } : { $ne: undefined } }
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
@@ -45,7 +47,7 @@ const getKits: NextApiHandler<GetResponse> = async (req, res) => {
   // In case query is for especific ID
   if (!!id) {
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-    const kit = await getKitById({ collection: kitsCollection, id: id, partnerId: partnerId || '' })
+    const kit = await getKitById({ collection: kitsCollection, id: id, query: partnerQuery })
     if (!kit) throw new createHttpError.NotFound('Kit não encontrado.')
     return res.status(200).json({ data: kit })
   }
@@ -53,10 +55,10 @@ const getKits: NextApiHandler<GetResponse> = async (req, res) => {
   // Else, getting all partner assotiated kits
   if (active && active == 'true') {
     console.log(active, typeof active)
-    const kits = await getPartnerActiveKits({ collection: kitsCollection, partnerId: partnerId || '' })
+    const kits = await getPartnerActiveKits({ collection: kitsCollection, query: partnerQuery })
     return res.status(200).json({ data: kits })
   }
-  const kits = await getPartnerKits({ collection: kitsCollection, partnerId: partnerId || '' })
+  const kits = await getPartnerKits({ collection: kitsCollection, query: partnerQuery })
 
   return res.status(200).json({ data: kits })
 }

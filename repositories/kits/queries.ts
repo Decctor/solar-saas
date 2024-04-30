@@ -1,23 +1,22 @@
 import { TKit } from '@/utils/schemas/kits.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type GetKitsParams = {
   collection: Collection<TKit>
-  partnerId: string
+  query: Filter<TKit>
 }
-export async function getPartnerKits({ collection, partnerId }: GetKitsParams) {
+export async function getPartnerKits({ collection, query }: GetKitsParams) {
   try {
-    console.log(partnerId)
-    const kits = await collection.find({ idParceiro: partnerId }).toArray()
+    const kits = await collection.find({ ...query }).toArray()
     return kits
   } catch (error) {
     throw error
   }
 }
 
-export async function getPartnerActiveKits({ collection, partnerId }: GetKitsParams) {
+export async function getPartnerActiveKits({ collection, query }: GetKitsParams) {
   try {
-    const kits = await collection.find({ idParceiro: partnerId, ativo: true }).toArray()
+    const kits = await collection.find({ ...query, ativo: true }).toArray()
     return kits
   } catch (error) {
     throw error
@@ -27,11 +26,11 @@ export async function getPartnerActiveKits({ collection, partnerId }: GetKitsPar
 type GetKitByIdParams = {
   collection: Collection<TKit>
   id: string
-  partnerId: string
+  query: Filter<TKit>
 }
-export async function getKitById({ collection, id, partnerId }: GetKitByIdParams) {
+export async function getKitById({ collection, id, query }: GetKitByIdParams) {
   try {
-    const kit = await collection.findOne({ _id: new ObjectId(id), idParceiro: partnerId })
+    const kit = await collection.findOne({ _id: new ObjectId(id), ...query })
     return kit
   } catch (error) {
     throw error

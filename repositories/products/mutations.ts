@@ -1,5 +1,5 @@
 import { TProduct } from '@/utils/schemas/products.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type InsertProductParams = {
   collection: Collection<TProduct>
@@ -20,11 +20,11 @@ type UpdateProductParams = {
   id: string
   collection: Collection<TProduct>
   changes: Partial<TProduct>
-  partnerId: string
+  query: Filter<TProduct>
 }
-export async function updateProduct({ id, collection, changes, partnerId }: UpdateProductParams) {
+export async function updateProduct({ id, collection, changes, query }: UpdateProductParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), idParceiro: partnerId }, { $set: { ...changes } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), ...query }, { $set: { ...changes } })
     return updateResponse
   } catch (error) {
     throw error

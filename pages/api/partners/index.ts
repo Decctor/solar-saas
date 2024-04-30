@@ -10,7 +10,7 @@ type PostResponse = {
 }
 const createPartner: NextApiHandler<PostResponse> = async (req, res) => {
   // Validating authorization and payload
-  const session = await validateAdminAuthorizaton(req, res)
+  const session = await validateAuthorization(req, res, 'parceiros', 'criar', true)
   const insertInfo = InsertPartnerSchema.parse(req.body)
 
   // Passed validations
@@ -26,20 +26,20 @@ type GetResponse = {
 }
 const getClients: NextApiHandler<GetResponse> = async (req, res) => {
   // Validating authorization and payload
-  const session = await validateAuthenticationWithSession(req, res)
-  const userIsAdmin = session.user.administrador
-  const userPartnerId = session.user.idParceiro
+  const session = await validateAuthorization(req, res, 'parceiros', 'visualizar', true)
+  const partnerId = session.user.idParceiro
+  const partnerScope = session.user.permissoes.parceiros.escopo
 
   const { id } = req.query
-  if (id && (typeof id != 'string' || !ObjectId.isValid(id))) throw new createHttpError.BadRequest('ID inválido.')
-  if (!userIsAdmin) throw new createHttpError.Unauthorized('Nível de autorização insuficiente.')
 
   // Passed validations
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
   if (id) {
-    if (!userIsAdmin && id != userPartnerId) throw new createHttpError.Unauthorized('Nível de autorização insuficiente.')
+    if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
+    if (!!partnerScope && !partnerScope.includes(id)) throw new createHttpError.Unauthorized('Nível de autorização insuficiente.')
+
     const partner = await partnersCollection.findOne({ _id: new ObjectId(id) })
     if (!partner) throw new createHttpError.NotFound('Nenhum parceiro encontrado com esse ID.')
     return res.status(200).json({ data: partner })

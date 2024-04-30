@@ -46,18 +46,18 @@ export type TStats = {
     }[]
   }[]
 }
-async function fetchStats(after: string, before: string, responsible: string | null) {
+async function fetchStats(after: string, before: string, responsible: string | null, partner: string | null) {
   try {
-    const { data } = await axios.get(`/api/stats?after=${after}&before=${before}&responsible=${responsible}`)
+    const { data } = await axios.get(`/api/stats?after=${after}&before=${before}&responsible=${responsible}&partner=${partner}`)
     return data.data as TStats
   } catch (error) {
     throw error
   }
 }
-export function useStats(enabled: boolean, after: string, before: string, responsible: string | null) {
+export function useStats(enabled: boolean, after: string, before: string, responsible: string | null, partner: string | null) {
   return useQuery({
     queryKey: ['stats', after, before, responsible],
-    queryFn: async () => await fetchStats(after, before, responsible),
+    queryFn: async () => await fetchStats(after, before, responsible, partner),
     enabled: !!enabled,
   })
 }

@@ -1,6 +1,6 @@
 import { TActivity } from '@/utils/schemas/activities.schema'
 import { TOpportunityHistory } from '@/utils/schemas/opportunity-history.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type GetOpportunityHistoryParams = {
   opportunityId: string
@@ -18,12 +18,12 @@ export async function getOpportunityHistory({ opportunityId, collection, partner
 
 type GetOpenActivitiesParams = {
   collection: Collection<TActivity>
-  partnerId: string
+  query: Filter<TActivity>
 }
-export async function getOpenActivities({ collection, partnerId }: GetOpenActivitiesParams) {
+export async function getOpenActivities({ collection, query }: GetOpenActivitiesParams) {
   try {
     const activities = await collection
-      .find({ dataVencimento: { $ne: null }, dataConclusao: null, idParceiro: partnerId })
+      .find({ dataVencimento: { $ne: null }, dataConclusao: null, ...query })
       .sort({ dataVencimento: -1 })
       .toArray()
     return activities

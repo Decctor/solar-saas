@@ -5,9 +5,9 @@ import { IUsuario } from '../../../utils/models'
 import { z } from 'zod'
 import { hashSync } from 'bcrypt'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { userInfo } from 'os'
-import { InsertUserSchema, TUser, TUserEntity, UserEntitySchema } from '@/utils/schemas/user.schema'
+import { InsertUserSchema, TUser, TUserEntity } from '@/utils/schemas/user.schema'
 import { getAllUsers, getPartnerUsers, getUserById } from '@/repositories/users/queries'
 
 // POST RESPONSE
@@ -50,7 +50,6 @@ const createUser: NextApiHandler<PostResponse> = async (req, res) => {
   if (user.permissoes.resultados.escopo && user.permissoes.resultados.escopo.length == 0) {
     updates.$set = { ...updates.$set, 'permissoes.resultados.escopo': [insertedIdAsString] }
   }
-  console.log('UPDATES', updates)
   await collection.updateOne({ _id: insertResponse.insertedId }, updates)
   // Returning successful insertion
   if (insertResponse.acknowledged) res.status(201).json({ data: { insertedId: insertedIdAsString }, message: 'Usuário adicionado!' })
@@ -63,25 +62,24 @@ type GetResponse = {
 }
 const getUsers: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
+  const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TUser> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
+
+  console.log(partnerQuery)
+
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const usersCollection: Collection<TUserEntity> = db.collection('users')
-  const userIsAdmin = session.user.administrador
-  const userPartnerId = session.user.idParceiro
-
   const { id } = req.query
+
   if (id && typeof id === 'string') {
-    const user = await getUserById({ collection: usersCollection, id: id, userIsAdmin, userPartnerId })
+    const user = await getUserById({ collection: usersCollection, id: id, query: partnerQuery })
     if (!user) throw new createHttpError.NotFound('Nenhum usuário encontrado com o ID fornecido.')
-    res.status(200).json({ data: user })
-  } else {
-    var users = []
-    if (userIsAdmin) {
-      users = await getAllUsers({ collection: usersCollection })
-    } else {
-      users = await getPartnerUsers({ collection: usersCollection, partnerId: userPartnerId })
-    }
-    res.status(200).json({ data: users })
+    return res.status(200).json({ data: user })
   }
+
+  const users = await getPartnerUsers({ collection: usersCollection, query: partnerQuery })
+  return res.status(200).json({ data: users })
 }
 
 // PUT RESPONSE

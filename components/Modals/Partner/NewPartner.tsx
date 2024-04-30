@@ -26,7 +26,6 @@ type NewPartnerProps = {
   closeModal: () => void
 }
 function NewPartner({ closeModal }: NewPartnerProps) {
-  const { data: session, status } = useSession({ required: true })
   const queryClient = useQueryClient()
 
   const [image, setImage] = useState<File | null>()
@@ -53,16 +52,6 @@ function NewPartner({ closeModal }: NewPartnerProps) {
       numeroOuIdentificador: undefined,
       complemento: undefined,
       // distancia: z.number().optional().nullable(),
-    },
-    modulos: SignaturePlans[0].modulos,
-    plano: {
-      id: SignaturePlans[0].id.toString(),
-      nome: SignaturePlans[0].value,
-      dataCobranca: new Date().toISOString(),
-      dataVencimento: new Date().toISOString(),
-    },
-    onboarding: {
-      dataConclusao: null,
     },
     logo_url: null,
     descricao: '',
@@ -100,8 +89,6 @@ function NewPartner({ closeModal }: NewPartnerProps) {
     affectedQueryKey: ['partners'],
     callbackFn: () => closeModal(),
   })
-  if (status != 'authenticated') return <LoadingPage />
-  if (!session?.user.administrador) return <ErrorComponent msg="Seu usuário não possui  permissão para acessar essa área." />
   return (
     <div id="newPartner" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="fixed left-[50%] top-[50%] z-[100] h-[90%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:h-[80%] lg:w-[60%]">
@@ -141,104 +128,6 @@ function NewPartner({ closeModal }: NewPartnerProps) {
             <AddressInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
             <ContactInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
             <MediaInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
-            <h1 className="w-full rounded bg-[#fead41] p-1 text-center text-sm font-bold text-white">PLANO</h1>
-            <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
-              <div className="w-full lg:w-1/3">
-                <SelectInput
-                  label="PLANO"
-                  options={SignaturePlans.map((p) => ({ ...p, value: p.id.toString() }))}
-                  selectedItemLabel="NÃO DEFINIDO"
-                  value={infoHolder.plano.id}
-                  handleChange={(value) => {
-                    const plan = SignaturePlans.find((c) => c.id == Number(value))
-                    setInfoHolder((prev) => ({
-                      ...prev,
-                      plano: { ...prev.plano, id: value, nome: plan?.value || '' },
-                      modulos: plan?.modulos || prev.modulos,
-                    }))
-                  }}
-                  onReset={() => setInfoHolder((prev) => ({ ...prev, plano: { ...prev.plano, id: SignaturePlans[0].id.toString() } }))}
-                  width="100%"
-                />
-              </div>
-              <div className="w-full lg:w-1/3">
-                <DateInput
-                  label="DATA DE COBRANÇA"
-                  value={formatDate(infoHolder.plano.dataCobranca)}
-                  handleChange={(value) => setInfoHolder((prev) => ({ ...prev, plano: { ...prev.plano, dataCobranca: formatDateInputChange(value) } }))}
-                  width="100%"
-                />
-              </div>
-              <div className="w-full lg:w-1/3">
-                <DateInput
-                  label="DATA DE VENCIMENTO"
-                  value={formatDate(infoHolder.plano.dataVencimento)}
-                  handleChange={(value) => setInfoHolder((prev) => ({ ...prev, plano: { ...prev.plano, dataVencimento: formatDateInputChange(value) } }))}
-                  width="100%"
-                />
-              </div>
-            </div>
-            <h1 className="w-full text-start text-sm text-gray-500">NÓDULOS DE ACESSO</h1>
-            <CheckboxInput
-              labelFalse="ACESSO AS FUNCIONALIDADES DE CRM"
-              labelTrue="ACESSO AS FUNCIONALIDADES DE CRM"
-              checked={infoHolder.modulos.crm}
-              justify="justify-start"
-              handleChange={(value) =>
-                setInfoHolder((prev) => ({
-                  ...prev,
-                  modulos: {
-                    ...prev.modulos,
-                    crm: value,
-                  },
-                }))
-              }
-            />
-            <CheckboxInput
-              labelFalse="ACESSO AS FUNCIONALIDADES DE GESTÃO DE PROJETOS"
-              labelTrue="ACESSO AS FUNCIONALIDADES DE GESTÃO DE PROJETOS"
-              checked={infoHolder.modulos.projetos}
-              justify="justify-start"
-              handleChange={(value) =>
-                setInfoHolder((prev) => ({
-                  ...prev,
-                  modulos: {
-                    ...prev.modulos,
-                    projetos: value,
-                  },
-                }))
-              }
-            />
-            <CheckboxInput
-              labelFalse="ACESSO AS FUNCIONALIDADES DE CONTROLE FINANCEIRO"
-              labelTrue="ACESSO AS FUNCIONALIDADES DE CONTROLE FINANCEIRO"
-              checked={infoHolder.modulos.financas}
-              justify="justify-start"
-              handleChange={(value) =>
-                setInfoHolder((prev) => ({
-                  ...prev,
-                  modulos: {
-                    ...prev.modulos,
-                    financas: value,
-                  },
-                }))
-              }
-            />
-            <CheckboxInput
-              labelFalse="ACESSO AS FUNCIONALIDADES DE RECURSOS HUMANOS"
-              labelTrue="ACESSO AS FUNCIONALIDADES DE RECURSOS HUMANOS"
-              checked={infoHolder.modulos.rh}
-              justify="justify-start"
-              handleChange={(value) =>
-                setInfoHolder((prev) => ({
-                  ...prev,
-                  modulos: {
-                    ...prev.modulos,
-                    rh: value,
-                  },
-                }))
-              }
-            />
           </div>
           <div className="mt-2 flex w-full items-center justify-end">
             <button

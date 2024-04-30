@@ -7,14 +7,9 @@ import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import { TUser } from '@/utils/schemas/user.schema'
 import dayjs from 'dayjs'
 import createHttpError from 'http-errors'
-import { Collection } from 'mongodb'
+import { Collection, Filter } from 'mongodb'
 import { NextApiHandler } from 'next'
 
-type GetOpportunititiesParams = {
-  partnerId: string
-  responsibleId: string | null
-  collection: Collection<TOpportunity>
-}
 type GetOpportunititiesResult = {
   _id: string
   nome: string
@@ -44,104 +39,57 @@ type GetOpportunititiesResult = {
   }
   dataInsercao: string
 }
-type GetActivitiesParams = {
-  partnerId: string
-  responsibleId: string | null
-  collection: Collection<TActivity>
-}
-async function GetOpportunitities({ partnerId, responsibleId, collection }: GetOpportunititiesParams) {
-  try {
-    var pipeline: any
 
+type GetOpportunititiesParams = {
+  collection: Collection<TOpportunity>
+  query: Filter<TOpportunity>
+}
+async function getOpportunitities({ collection, query }: GetOpportunititiesParams) {
+  try {
     // In case user has global scope and its querying for overall stats
-    if (!responsibleId) {
-      pipeline = [
-        {
-          $match: {
-            idParceiro: partnerId,
+
+    const pipeline = [
+      {
+        $match: {
+          ...query,
+        },
+      },
+      {
+        $addFields: {
+          proposalObjectID: {
+            $toObjectId: '$idPropostaAtiva',
           },
         },
-        {
-          $addFields: {
-            proposalObjectID: {
-              $toObjectId: '$idPropostaAtiva',
-            },
-          },
+      },
+      {
+        $lookup: {
+          from: 'proposals',
+          localField: 'proposalObjectID',
+          foreignField: '_id',
+          as: 'proposta',
         },
-        {
-          $lookup: {
-            from: 'proposals',
-            localField: 'proposalObjectID',
-            foreignField: '_id',
-            as: 'proposta',
-          },
+      },
+      {
+        $project: {
+          nome: 1,
+          tipoProjeto: 1,
+          responsaveis: 1,
+          idPropostaAtiva: 1,
+          identificador: 1,
+          'proposta._id': 1,
+          'proposta.nome': 1,
+          'proposta.valor': 1,
+          perda: 1,
+          ganho: 1,
+          dataInsercao: 1,
         },
-        {
-          $project: {
-            nome: 1,
-            tipoProjeto: 1,
-            responsaveis: 1,
-            idPropostaAtiva: 1,
-            identificador: 1,
-            'proposta._id': 1,
-            'proposta.nome': 1,
-            'proposta.valor': 1,
-            perda: 1,
-            ganho: 1,
-            dataInsercao: 1,
-          },
+      },
+      {
+        $sort: {
+          dataInsercao: 1,
         },
-        {
-          $sort: {
-            dataInsercao: 1,
-          },
-        },
-      ]
-    } else {
-      pipeline = [
-        {
-          $match: {
-            idParceiro: partnerId,
-            'responsaveis.id': responsibleId,
-          },
-        },
-        {
-          $addFields: {
-            proposalObjectID: {
-              $toObjectId: '$idPropostaAtiva',
-            },
-          },
-        },
-        {
-          $lookup: {
-            from: 'proposals',
-            localField: 'proposalObjectID',
-            foreignField: '_id',
-            as: 'proposta',
-          },
-        },
-        {
-          $project: {
-            nome: 1,
-            tipoProjeto: 1,
-            responsaveis: 1,
-            idPropostaAtiva: 1,
-            identificador: 1,
-            'proposta._id': 1,
-            'proposta.nome': 1,
-            'proposta.valor': 1,
-            perda: 1,
-            ganho: 1,
-            dataInsercao: 1,
-          },
-        },
-        {
-          $sort: {
-            dataInsercao: 1,
-          },
-        },
-      ]
-    }
+      },
+    ]
 
     const projects = await collection.aggregate(pipeline).toArray()
     return projects as GetOpportunititiesResult[]
@@ -149,10 +97,13 @@ async function GetOpportunitities({ partnerId, responsibleId, collection }: GetO
     throw error
   }
 }
-async function getActivities({ partnerId, responsibleId, collection }: GetActivitiesParams) {
+type GetActivitiesParams = {
+  collection: Collection<TActivity>
+  query: Filter<TActivity>
+}
+async function getActivities({ collection, query }: GetActivitiesParams) {
   try {
-    const queryResponsible = responsibleId ? { 'responsaveis.id': responsibleId } : {}
-    const activities = await collection.find({ idParceiro: partnerId, dataConclusao: null, ...queryResponsible }, { sort: { dataVencimento: 1 } }).toArray()
+    const activities = await collection.find({ dataConclusao: null, ...query }, { sort: { dataVencimento: 1 } }).toArray()
     return activities
   } catch (error) {
     throw error
@@ -165,20 +116,32 @@ type GetResponse = {
 const getStats: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'visualizar', true)
   const partnerId = session.user.idParceiro
+  const partnerScope = session.user.permissoes.parceiros.escopo
   const opportunityVisibilityScope = session.user.permissoes.oportunidades.escopo
 
-  const { after, before, responsible } = req.query
+  const { after, before, responsible, partner } = req.query
+
   if (typeof after != 'string' || typeof before != 'string') throw new createHttpError.BadRequest('Parâmetros de período inválidos.')
 
   // Validating existence of responsible in query and its type
   if (!responsible || typeof responsible != 'string') throw new createHttpError.BadRequest('ID de responsável inválido.')
+  // Validating existence of partner in query and its type
+  if (!partner || typeof partner != 'string') throw new createHttpError.BadRequest('ID do parceiro inválido.')
 
-  // If responsible was sent as null, which means all users, validating if users has global scope
-  if (responsible == 'null' && opportunityVisibilityScope) throw new createHttpError.BadRequest('Seu usuário não possui visualização geral.')
+  // If responsible was sent as null, which means all users, validating if user has global scope
+  if (responsible == 'null' && !!opportunityVisibilityScope) throw new createHttpError.BadRequest('Seu usuário não possui permissão de visualização geral.')
+  // If partner was sent as null, which means all partner, validating if user has global scope
+  if (partner == 'null' && !!partnerScope) throw new createHttpError.BadRequest('Seu usuário não possui permissão de visualização geral.')
 
   // Validing user scope visibility
   if (!!opportunityVisibilityScope && !opportunityVisibilityScope.includes(responsible))
     throw new createHttpError.BadRequest('Seu escopo de visibilidade não contempla esse usuário.')
+  // Validing parter scope visibility
+  if (!!partnerScope && !partnerScope.includes(partner)) throw new createHttpError.BadRequest('Seu escopo de visibilidade não contempla esse parceiro.')
+
+  const queryResponsible: Filter<TOpportunity> = responsible ? { 'responsaveis.id': responsible } : {}
+  const queryPartner: Filter<TOpportunity> = partner ? { idParceiro: partner } : {}
+  const query = { ...queryResponsible, ...queryPartner }
 
   const afterDate = dayjs(after).set('hour', -3).toDate()
   const beforeDate = dayjs(before).set('hour', 20).toDate()
@@ -190,16 +153,11 @@ const getStats: NextApiHandler<GetResponse> = async (req, res) => {
 
   const activitiesCollection: Collection<TActivity> = db.collection('activities')
 
-  const opportunities = await GetOpportunitities({
-    partnerId: partnerId || '',
-    responsibleId: responsible == 'null' ? null : responsible,
+  const opportunities = await getOpportunitities({
     collection: opportunitiesCollection,
+    query: query,
   })
-  const activities = await getActivities({
-    partnerId: partnerId || '',
-    responsibleId: responsible == 'null' ? null : responsible,
-    collection: activitiesCollection,
-  })
+  const activities = await getActivities({ collection: activitiesCollection, query: query as Filter<TActivity> })
   // prettier-ignore
   const signedProposals = getSignedProposals({opportunities,afterDate,beforeDate});
 

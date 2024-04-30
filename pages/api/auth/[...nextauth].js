@@ -42,7 +42,6 @@ export const authOptions = {
           idParceiro: userInDb.idParceiro,
           idGrupo: userInDb.idGrupo,
           permissoes: userInDb.permissoes,
-          modulos: userPartner.modulos,
           parceiro: {
             nome: userPartner.nome,
             logo_url: userPartner.logo_url,
@@ -81,7 +80,6 @@ export const authOptions = {
         session.user.idParceiro = token.idParceiro
         session.user.idGrupo = token.idGrupo
         session.user.permissoes = token.permissoes
-        session.user.modulos = token.modulos
         session.user.parceiro = token.parceiro
       }
       return session
@@ -97,7 +95,6 @@ export const authOptions = {
         token.idParceiro = user.idParceiro
         token.idGrupo = user.idGrupo
         token.permissoes = user.permissoes
-        token.modulos = user.modulos
         token.parceiro = user.parceiro
       }
 

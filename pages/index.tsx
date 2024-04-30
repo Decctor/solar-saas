@@ -22,6 +22,7 @@ import { useStats } from '@/utils/queries/stats'
 import PendingActivityCard from '@/components/ProjectEvents/PendingActivityCard'
 
 import { useOpportunityCreators } from '@/utils/queries/users'
+import { usePartnersSimplified } from '@/utils/queries/partners'
 
 const currentDate = new Date()
 const firstDayOfMonth = getFirstDayOfMonth(currentDate.getFullYear(), currentDate.getMonth()).toISOString()
@@ -34,15 +35,17 @@ function EstatisticaPrincipal() {
     before: lastDayOfMonth,
   })
   const [responsible, setResponsible] = useState<string | null>(session?.user.permissoes.oportunidades.escopo ? session.user.id : null)
+  const [partner, setPartner] = useState<string | null>(session?.user.idParceiro || null)
   const { data: opportunityCreators } = useOpportunityCreators()
-  const { data, isLoading, isSuccess, isError, error } = useStats(true, period.after, period.before, responsible)
+  const { data: partners } = usePartnersSimplified()
+  const { data, isLoading, isSuccess, isError, error } = useStats(true, period.after, period.before, responsible, partner)
   // const { data: openCalls, isLoading: callsLoading } = useOpenCalls(status == 'authenticated', responsible)
   // const { data: technicalAnalysis } = useUserTechnicalAnalysis({
   //   enabled: !!session,
   //   userId: responsible,
   //   status: null,
   // })
-
+  console.log('SESSION', session)
   if (status != 'authenticated') return <LoadingPage />
   return (
     <div className="flex h-full flex-col md:flex-row">
@@ -62,26 +65,48 @@ function EstatisticaPrincipal() {
         <div className="flex grow flex-col py-2">
           <div className="flex w-full flex-col items-end justify-end gap-2 lg:flex-row">
             {session?.user.permissoes.resultados?.visualizarComercial ? (
-              <div className="w-full lg:w-[300px]">
-                <DropdownSelect
-                  categoryName="Usuários"
-                  selectedItemLabel="Todos"
-                  height="49px"
-                  value={responsible}
-                  options={opportunityCreators?.map((resp) => ({ id: resp._id || '', label: resp.nome || '', value: resp._id || '' })) || null}
-                  onChange={(selected) => {
-                    setResponsible(selected.value)
-                  }}
-                  onReset={() => {
-                    if (session?.user.permissoes.resultados.visualizarComercial) {
-                      setResponsible(null)
-                    } else {
-                      setResponsible(session.user.id)
-                    }
-                  }}
-                  width="100%"
-                />
-              </div>
+              <>
+                <div className="w-full lg:w-[300px]">
+                  <DropdownSelect
+                    categoryName="Usuários"
+                    selectedItemLabel="Todos"
+                    height="49px"
+                    value={responsible}
+                    options={opportunityCreators?.map((resp) => ({ id: resp._id || '', label: resp.nome || '', value: resp._id || '' })) || null}
+                    onChange={(selected) => {
+                      setResponsible(selected.value)
+                    }}
+                    onReset={() => {
+                      if (session?.user.permissoes.resultados.visualizarComercial) {
+                        setResponsible(null)
+                      } else {
+                        setResponsible(session.user.id)
+                      }
+                    }}
+                    width="100%"
+                  />
+                </div>
+                <div className="w-full lg:w-[300px]">
+                  <DropdownSelect
+                    categoryName="Parceiros"
+                    selectedItemLabel="Todos"
+                    height="49px"
+                    value={partner}
+                    options={partners?.map((resp) => ({ id: resp._id || '', label: resp.nome || '', value: resp._id || '' })) || null}
+                    onChange={(selected) => {
+                      setPartner(selected.value)
+                    }}
+                    onReset={() => {
+                      if (session?.user.permissoes.resultados.visualizarComercial) {
+                        setPartner(null)
+                      } else {
+                        setPartner(session.user.id)
+                      }
+                    }}
+                    width="100%"
+                  />
+                </div>
+              </>
             ) : null}
 
             <div className="flex w-full flex-col lg:w-fit">

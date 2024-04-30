@@ -25,17 +25,20 @@ import LoadingComponent from '../../utils/LoadingComponent'
 import ErrorComponent from '../../utils/ErrorComponent'
 import PermissionsPannel from '../../Users/PermissionsPannel'
 import { Session } from 'next-auth'
+import { usePartnersSimplified } from '@/utils/queries/partners'
+import SelectWithImages from '@/components/Inputs/SelectWithImages'
 type EditUserProps = {
   users?: TUserDTO[]
   closeModal: () => void
   userId: string
-  partnerId?: string | null
+  partnerId: string
   session: Session
 }
 
 function EditUser({ closeModal, users, userId, partnerId, session }: EditUserProps) {
   const queryClient = useQueryClient()
   const { data: user, isLoading, isError, isSuccess } = useUserById({ id: userId })
+  const { data: partners } = usePartnersSimplified()
   const [image, setImage] = useState<File | null>()
   const [userInfo, setUserInfo] = useState<TUserDTO>({
     _id: 'id-holder',
@@ -249,6 +252,17 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                         width="100%"
                       />
                     </div>
+                  </div>
+                  <div className="flex w-full items-center">
+                    <SelectWithImages
+                      label="PARCEIRO"
+                      value={userInfo.idParceiro}
+                      handleChange={(value) => setUserInfo((prev) => ({ ...prev, idParceiro: value }))}
+                      options={partners?.map((p) => ({ id: p._id, label: p.nome, value: p._id, url: p.logo_url || undefined })) || []}
+                      selectedItemLabel="NÃO DEFINIDO"
+                      onReset={() => setUserInfo((prev) => ({ ...prev, idParceiro: partners ? partners[0]._id : '' }))}
+                      width="100%"
+                    />
                   </div>
                   <div className="flex w-full flex-col gap-1">
                     <label className="font-sans font-bold  text-[#353432]">GRUPO DE PERMISSÃO</label>

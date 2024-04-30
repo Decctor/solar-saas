@@ -20,18 +20,20 @@ import PermissionsPannel from '../../Users/PermissionsPannel'
 import { BsCheckLg } from 'react-icons/bs'
 import { VscChromeClose } from 'react-icons/vsc'
 import { Session } from 'next-auth'
-import { usePartners } from '@/utils/queries/partners'
+import { usePartners, usePartnersSimplified } from '@/utils/queries/partners'
+import SelectWithImages from '@/components/Inputs/SelectWithImages'
 
 type NewUserModalProps = {
   users?: TUserDTO[]
   closeModal: () => void
   userId: string
-  partnerId?: string | null
+  partnerId: string
   session: Session
 }
 
 function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUserModalProps) {
   const queryClient = useQueryClient()
+  const { data: partners } = usePartnersSimplified()
   const [image, setImage] = useState<File | null>()
   const [userInfo, setUserInfo] = useState<TUser>({
     nome: '',
@@ -267,6 +269,17 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
                     width="100%"
                   />
                 </div>
+              </div>
+              <div className="flex w-full items-center">
+                <SelectWithImages
+                  label="PARCEIRO"
+                  value={userInfo.idParceiro}
+                  handleChange={(value) => setUserInfo((prev) => ({ ...prev, idParceiro: value }))}
+                  options={partners?.map((p) => ({ id: p._id, label: p.nome, value: p._id, url: p.logo_url || undefined })) || []}
+                  selectedItemLabel="NÃO DEFINIDO"
+                  onReset={() => setUserInfo((prev) => ({ ...prev, idParceiro: partners ? partners[0]._id : '' }))}
+                  width="100%"
+                />
               </div>
               <div className="flex w-full flex-col gap-1">
                 <label className="font-sans font-bold  text-[#353432]">GRUPO DE PERMISSÃO</label>

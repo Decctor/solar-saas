@@ -1,13 +1,13 @@
 import { TProduct, TProductWithPricingMethod } from '@/utils/schemas/products.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type GetProductsParams = {
   collection: Collection<TProduct>
-  partnerId: string
+  query: Filter<TProduct>
 }
-export async function getProducts({ collection, partnerId }: GetProductsParams) {
+export async function getProducts({ collection, query }: GetProductsParams) {
   try {
-    const products = await collection.find({ idParceiro: partnerId }).toArray()
+    const products = await collection.find({ ...query }).toArray()
 
     return products
   } catch (error) {
@@ -17,12 +17,12 @@ export async function getProducts({ collection, partnerId }: GetProductsParams) 
 
 type GetProductByIdParams = {
   collection: Collection<TProduct>
-  partnerId: string
   id: string
+  query: Filter<TProduct>
 }
-export async function getProductById({ collection, partnerId, id }: GetProductByIdParams) {
+export async function getProductById({ collection, id, query }: GetProductByIdParams) {
   try {
-    const product = await collection.findOne({ _id: new ObjectId(id), idParceiro: partnerId })
+    const product = await collection.findOne({ _id: new ObjectId(id), ...query })
     return product
   } catch (error) {
     throw error
@@ -31,13 +31,13 @@ export async function getProductById({ collection, partnerId, id }: GetProductBy
 
 type GetProductsWithPricingMethodParams = {
   collection: Collection<TProduct>
-  partnerId: string
+  query: Filter<TProduct>
 }
-export async function getProductsWithPricingMethod({ collection, partnerId }: GetProductsWithPricingMethodParams) {
+export async function getProductsWithPricingMethod({ collection, query }: GetProductsWithPricingMethodParams) {
   const pipeline = [
     {
       $match: {
-        idParceiro: partnerId,
+        ...query,
       },
     },
     {

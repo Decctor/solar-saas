@@ -35,7 +35,7 @@ export function renderDateDiffText(dueDate?: string) {
   const diffDays = dayjs(dueDate).diff(undefined, 'days')
   var number
   var param
-  console.log('HORAS', diffHours)
+
   if (diffHours > 24) {
     number = Math.abs(diffDays)
     param = number > 1 ? 'DIAS' : 'DIA'

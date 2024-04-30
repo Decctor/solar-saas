@@ -77,6 +77,9 @@ type GetResponse = {
 const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'visualizar', true)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TOpportunity> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
+
   const userScope = session.user.permissoes.oportunidades.escopo
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -92,14 +95,11 @@ const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
   if (id) {
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
 
-    const opportunity = await getOpportunityById({ collection: opportunitiesCollection, id: id, partnerId: partnerId })
+    const opportunity = await getOpportunityById({ collection: opportunitiesCollection, id: id, query: partnerQuery })
     if (!opportunity) throw new createHttpError.BadRequest('Nenhum projeto encontrado.')
 
     return res.status(200).json({ data: opportunity })
   }
-
-  // In the other case, we gotta structure the funnel-status query
-  var queryParam: MatchKeysAndValues<TOpportunity> = {}
 
   if (typeof responsible != 'string') throw new createHttpError.BadRequest('Responsável inválido')
   if (typeof funnel != 'string' || funnel == 'null') throw new createHttpError.BadRequest('Funil inválido')
@@ -118,7 +118,7 @@ const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
   // Defining, if provided, won/lost query parameters
   const queryStatus: Filter<TOpportunity> = status != 'undefined' ? statusOption : { 'perda.data': null, 'ganho.data': null }
 
-  const query = { ...queryResponsible, ...queryInsertion, ...queryStatus }
+  const query = { ...partnerQuery, ...queryResponsible, ...queryInsertion, ...queryStatus }
   // if (responsible != 'null') queryParam = { 'responsaveis.id': responsible, 'perda.data': null }
   // else queryParam = { 'perda.data': null }
   // // Defining, if provided, period query parameters for date of insertion
@@ -129,11 +129,15 @@ const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
   // if (status == 'PERDIDOS') queryParam = { ...queryParam, 'perda.data': { $ne: null } }
   // if (status == 'GANHOS') queryParam = { ...queryParam, 'ganho.idProjeto': { $ne: null } }
 
-  const opportunities = await getOpportunitiesByQuery({ collection: opportunitiesCollection, query: query, partnerId: partnerId || '' })
+  const opportunities = await getOpportunitiesByQuery({ collection: opportunitiesCollection, query: query })
   // Looking for the funnel references
-  const funnelReferences = await getFunnelReferences({ collection: funnelReferencesCollection, funnelId: funnel, partnerId: partnerId || '' })
+  const funnelReferences = await getFunnelReferences({
+    collection: funnelReferencesCollection,
+    funnelId: funnel,
+    query: partnerQuery as Filter<TFunnelReference>,
+  })
   // Looking for open activities
-  const activities = await getOpenActivities({ collection: opportunityActivitiesCollection, partnerId: partnerId || '' })
+  const activities = await getOpenActivities({ collection: opportunityActivitiesCollection, query: partnerQuery as Filter<TActivity> })
 
   // Formatting projects with the respective funnel reference
   const opportunitiesWithFunnelAndActivities: (WithId<TOpportunitySimplifiedWithProposalAndActivitiesAndFunnels> | null)[] = opportunities.map(
@@ -174,6 +178,9 @@ type PutResponse = {
 const editOpportunity: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'editar', true)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TOpportunity> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
+
   const userId = session.user.id
   const userScope = session.user.permissoes.oportunidades.escopo
 
@@ -184,7 +191,7 @@ const editOpportunity: NextApiHandler<PutResponse> = async (req, res) => {
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
-  const opportunity = await getOpportunityById({ collection: opportunitiesCollection, id: id, partnerId: partnerId })
+  const opportunity = await getOpportunityById({ collection: opportunitiesCollection, id: id, query: partnerQuery })
   if (!opportunity) throw new createHttpError.NotFound('Oportunidade não encontrada.')
 
   // Validating if user either: has global opportunity scope, its one of the opportunity responsibles or has one of the opportunity responsibles within his scope

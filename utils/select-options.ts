@@ -225,9 +225,9 @@ export const UserGroups: TUserGroup[] = [
       },
       parceiros: {
         escopo: null,
-        visualizar: true,
-        editar: true,
-        criar: true,
+        visualizar: false,
+        editar: false,
+        criar: false,
       },
       precos: {
         visualizar: true,
@@ -305,9 +305,9 @@ export const UserGroups: TUserGroup[] = [
       },
       parceiros: {
         escopo: null,
-        visualizar: true,
-        editar: true,
-        criar: true,
+        visualizar: false,
+        editar: false,
+        criar: false,
       },
       precos: {
         visualizar: false,
@@ -385,9 +385,9 @@ export const UserGroups: TUserGroup[] = [
       },
       parceiros: {
         escopo: null,
-        visualizar: true,
-        editar: true,
-        criar: true,
+        visualizar: false,
+        editar: false,
+        criar: false,
       },
       precos: {
         visualizar: false,

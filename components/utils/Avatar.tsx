@@ -6,8 +6,9 @@ type AvatarProps = {
   height: number
   fallback: string
   radiusPercentage?: string
+  backgroundColor?: string
 }
-function Avatar({ url, width, height, fallback, radiusPercentage = '100%' }: AvatarProps) {
+function Avatar({ url, width, height, fallback, radiusPercentage = '100%', backgroundColor = 'transparent' }: AvatarProps) {
   if (!url)
     return (
       <div className="flex items-center justify-center rounded-full bg-gray-700" style={{ width: width, height: height }}>
@@ -17,7 +18,10 @@ function Avatar({ url, width, height, fallback, radiusPercentage = '100%' }: Ava
       </div>
     )
   return (
-    <div style={{ width: width, height: height }} className="relative flex items-center justify-center">
+    <div
+      style={{ width: width, height: height, borderRadius: radiusPercentage, backgroundColor: backgroundColor }}
+      className="relative flex items-center justify-center"
+    >
       <Image src={url} alt="Avatar" fill={true} style={{ borderRadius: radiusPercentage }} />
     </div>
   )

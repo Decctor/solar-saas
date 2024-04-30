@@ -1,14 +1,14 @@
 import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
-import { Collection } from 'mongodb'
+import { Collection, Filter } from 'mongodb'
 
 type GetFunnelReferencesParams = {
   collection: Collection<TFunnelReference>
   funnelId: string
-  partnerId: string
+  query: Filter<TFunnelReference>
 }
-export async function getFunnelReferences({ collection, funnelId, partnerId }: GetFunnelReferencesParams) {
+export async function getFunnelReferences({ collection, funnelId, query }: GetFunnelReferencesParams) {
   try {
-    const references = await collection.find({ idFunil: funnelId, idParceiro: partnerId }).toArray()
+    const references = await collection.find({ idFunil: funnelId, ...query }).toArray()
     return references
   } catch (error) {
     throw error

@@ -97,11 +97,6 @@ function PartnersControlPannel() {
                       {partner.nome}
                     </h1>
                   </div>
-                  <div className="b gap- flex items-center gap-2">
-                    <BsCheck2All color={!!partner.onboarding.dataConclusao ? 'rgb(34,197,94)' : 'rgb(239,68,68)'} />
-
-                    <p className="text-xs font-medium text-gray-500">{!!partner.onboarding.dataConclusao ? 'ONBOARDING CONCLUÍDO' : 'ONBOARDING PENDENTE'}</p>
-                  </div>
                   <div className="flex w-full grow flex-col">
                     <div className="flex w-full items-center gap-2">
                       <div className="flex items-center gap-2">

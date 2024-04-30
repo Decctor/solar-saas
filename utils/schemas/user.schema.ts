@@ -290,7 +290,7 @@ const GeneralUserSchema = z.object({
   email: z.string().email(),
   senha: z.string(),
   avatar_url: z.string().optional().nullable(),
-  idParceiro: z.string().optional().nullable(),
+  idParceiro: z.string(),
   idGrupo: z.string(),
   permissoes: PermissionsSchema,
   comissoes: z.object({
@@ -318,7 +318,7 @@ export const InsertUserSchema = z.object({
     .string({ required_error: 'Senha do usuário não informada.', invalid_type_error: 'Tipo não válido para senha do usuário.' })
     .min(5, 'É necessário que a senha do usuário tenha ao menos 5 caracteres.'),
   avatar_url: z.string({ invalid_type_error: 'Tipo não válido para URL do avatar do usuário.' }).optional().nullable(),
-  idParceiro: z.string({ invalid_type_error: 'Tipo não válido para ID do parceiro do usuário.' }).optional().nullable(),
+  idParceiro: z.string({ invalid_type_error: 'Tipo não válido para ID do parceiro do usuário.' }),
   idGrupo: z.string({ required_error: 'Grupo do usuário não informado.', invalid_type_error: 'Tipo não válido para o grupo do usuário.' }),
   permissoes: PermissionsSchema,
   comissoes: z.object({
@@ -408,7 +408,6 @@ export type TUserDTOSimplified = Pick<TUserDTO, '_id' | 'nome' | 'email' | 'tele
 
 export type TSessionUser = Pick<TUser, 'administrador' | 'nome' | 'telefone' | 'email' | 'nome' | 'avatar_url' | 'idParceiro' | 'idGrupo' | 'permissoes'> & {
   id: string
-  modulos: TPartner['modulos']
   parceiro: {
     nome: TPartner['nome']
     logo_url: TPartner['logo_url']

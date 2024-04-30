@@ -1,5 +1,5 @@
 import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type CreateFunnelReferenceParams = {
   collection: Collection<TFunnelReference>
@@ -20,15 +20,12 @@ type UpdateFunnelReferenceParams = {
   collection: Collection<TFunnelReference>
   funnelReferenceId: string
   newStageId: string | number
-  partnerId: string
+  query: Filter<TFunnelReference>
 }
 
-export async function updateFunnelReference({ collection, funnelReferenceId, newStageId, partnerId }: UpdateFunnelReferenceParams) {
+export async function updateFunnelReference({ collection, funnelReferenceId, newStageId, query }: UpdateFunnelReferenceParams) {
   try {
-    const updateResponse = await collection.updateOne(
-      { _id: new ObjectId(funnelReferenceId), idParceiro: partnerId },
-      { $set: { idEstagioFunil: newStageId } }
-    )
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(funnelReferenceId), ...query }, { $set: { idEstagioFunil: newStageId } })
     return updateResponse
   } catch (error) {
     throw error

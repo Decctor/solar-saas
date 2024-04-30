@@ -1,6 +1,7 @@
 import Funnels from '@/components/Configuration/Funnels'
 import Integrations from '@/components/Configuration/Integrations'
 import Partner from '@/components/Configuration/Partner'
+import Partners from '@/components/Configuration/Partners'
 import PaymentMethods from '@/components/Configuration/PaymentMethods'
 import PricingMethods from '@/components/Configuration/PricingMethods'
 import Profile from '@/components/Configuration/Profile'
@@ -13,7 +14,7 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-type Modes = 'profile' | 'partner' | 'users' | 'funnels' | 'pricing-methods' | 'payment-methods' | 'integrations' | 'project-types'
+type Modes = 'profile' | 'partner' | 'users' | 'funnels' | 'pricing-methods' | 'payment-methods' | 'integrations' | 'project-types' | 'partners'
 function ConfigurationMain() {
   const router = useRouter()
   const { initialMode } = router.query
@@ -23,6 +24,7 @@ function ConfigurationMain() {
     if (initialMode && typeof initialMode == 'string') setMode(initialMode as Modes)
   }, [initialMode])
   if (status != 'authenticated') return <LoadingPage />
+  console.log(session)
   return (
     <div className="flex h-full flex-col font-Inter md:flex-row">
       <Sidebar session={session} />
@@ -101,6 +103,16 @@ function ConfigurationMain() {
                 Métodos de pagamento
               </button>
             ) : null}
+            {session.user.permissoes.parceiros.visualizar ? (
+              <button
+                onClick={() => setMode('partners')}
+                className={`${
+                  mode == 'partners' ? 'bg-gray-100' : ''
+                } w-full rounded-md px-4 py-2 text-center text-xs font-semibold text-gray-600 duration-300 ease-in-out hover:bg-gray-100 lg:text-start lg:text-base`}
+              >
+                Parceiros
+              </button>
+            ) : null}
             {session.user.permissoes.configuracoes.parceiro ? (
               <button
                 onClick={() => setMode('integrations')}
@@ -119,6 +131,7 @@ function ConfigurationMain() {
             {mode == 'funnels' ? <Funnels session={session} /> : null}
             {mode == 'pricing-methods' ? <PricingMethods session={session} /> : null}
             {mode == 'payment-methods' ? <PaymentMethods session={session} /> : null}
+            {mode == 'partners' ? <Partners session={session} /> : null}
             {mode == 'integrations' ? <Integrations session={session} /> : null}
             {mode == 'project-types' ? <ProjectTypes session={session} /> : null}
           </div>

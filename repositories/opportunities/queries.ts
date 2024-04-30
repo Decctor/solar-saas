@@ -11,9 +11,9 @@ import { Collection, Filter, MatchKeysAndValues, ObjectId, WithId } from 'mongod
 type GetOpportunityById = {
   collection: Collection<TOpportunity>
   id: string
-  partnerId?: string | null
+  query: Filter<TOpportunity>
 }
-export async function getOpportunityById({ collection, id, partnerId }: GetOpportunityById) {
+export async function getOpportunityById({ collection, id, query }: GetOpportunityById) {
   try {
     // const opportunity = await collection.findOne({ _id: new ObjectId(id), idParceiro: partnerId || '' })
     const opportunityArr = await collection
@@ -21,7 +21,7 @@ export async function getOpportunityById({ collection, id, partnerId }: GetOppor
         {
           $match: {
             _id: new ObjectId(id),
-            idParceiro: partnerId,
+            ...query,
           },
         },
         {
@@ -49,19 +49,18 @@ export async function getOpportunityById({ collection, id, partnerId }: GetOppor
 
 type GetOpportunityByQueryParams = {
   collection: Collection<TOpportunity>
-  partnerId: string
   query: Filter<TOpportunity>
 }
 
 type TOpportunityByQueryResult = TOpportunitySimplified & { proposta: WithId<TProposal>[] }
-export async function getOpportunitiesByQuery({ collection, partnerId, query }: GetOpportunityByQueryParams) {
+export async function getOpportunitiesByQuery({ collection, query }: GetOpportunityByQueryParams) {
   try {
     const addFields = { idPropostaAtivaObjectId: { $toObjectId: '$idPropostaAtiva' } }
     const lookup = { from: 'proposals', localField: 'idPropostaAtivaObjectId', foreignField: '_id', as: 'proposta' }
     const projection = SimplifiedOpportunityWithProposalProjection
     // const opportunities = await collection.find({ ...query, idParceiro: partnerId || '' }).toArray()
     const opportunities = (await collection
-      .aggregate([{ $match: { ...query, idParceiro: partnerId } }, { $addFields: addFields }, { $lookup: lookup }, { $project: projection }])
+      .aggregate([{ $match: { ...query } }, { $addFields: addFields }, { $lookup: lookup }, { $project: projection }])
       .toArray()) as WithId<TOpportunityByQueryResult>[]
 
     return opportunities

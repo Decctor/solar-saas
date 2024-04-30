@@ -1,5 +1,5 @@
 import { TUser, TUserEntity, simplifiedProjection } from '@/utils/schemas/user.schema'
-import { Collection, ObjectId, WithId } from 'mongodb'
+import { Collection, Filter, ObjectId, WithId } from 'mongodb'
 import { Session } from 'next-auth'
 
 type GetAllUsers = {
@@ -15,11 +15,11 @@ export async function getAllUsers({ collection }: GetAllUsers) {
 }
 type GetPartnerUsers = {
   collection: Collection<TUserEntity>
-  partnerId?: string | null
+  query: Filter<TUser>
 }
-export async function getPartnerUsers({ collection, partnerId }: GetPartnerUsers) {
+export async function getPartnerUsers({ collection, query }: GetPartnerUsers) {
   try {
-    const users = await collection.find({ idParceiro: partnerId }, { projection: { senha: 0 } }).toArray()
+    const users = await collection.find({ ...query }, { projection: { senha: 0 } }).toArray()
     return users
   } catch (error) {
     throw error
@@ -28,14 +28,11 @@ export async function getPartnerUsers({ collection, partnerId }: GetPartnerUsers
 type GetUserById = {
   collection: Collection<TUserEntity>
   id: string
-  userIsAdmin: boolean
-  userPartnerId?: string | null
+  query: Filter<TUser>
 }
-export async function getUserById({ collection, id, userIsAdmin, userPartnerId }: GetUserById) {
+export async function getUserById({ collection, id, query }: GetUserById) {
   try {
-    var user
-    if (userIsAdmin) user = await collection.findOne({ _id: new ObjectId(id) }, { projection: { senha: 0 } })
-    else user = await collection.findOne({ _id: new ObjectId(id), idParceiro: userPartnerId }, { projection: { senha: 0 } })
+    const user = await collection.findOne({ _id: new ObjectId(id), ...query }, { projection: { senha: 0 } })
     return user
   } catch (error) {
     throw error
@@ -43,11 +40,14 @@ export async function getUserById({ collection, id, userIsAdmin, userPartnerId }
 }
 type GetOpportunityCreators = {
   collection: Collection<TUser>
-  partnerId?: string | null
+  query: Filter<TUser>
 }
-export async function getOpportunityCreators({ collection, partnerId }: GetOpportunityCreators) {
+export async function getOpportunityCreators({ collection, query }: GetOpportunityCreators) {
   try {
-    const creators = await collection.find({ 'permissoes.oportunidades.criar': true, idParceiro: partnerId }).project(simplifiedProjection).toArray()
+    const creators = await collection
+      .find({ 'permissoes.oportunidades.criar': true, ...query })
+      .project(simplifiedProjection)
+      .toArray()
     return creators as WithId<TUser>[]
   } catch (error) {
     throw error
@@ -55,13 +55,13 @@ export async function getOpportunityCreators({ collection, partnerId }: GetOppor
 }
 type GetTechnicalAnalystsParams = {
   collection: Collection<TUser>
-  partnerId?: string | null
+  query: Filter<TUser>
 }
 
-export async function getTechnicalAnalysts({ collection, partnerId }: GetTechnicalAnalystsParams) {
+export async function getTechnicalAnalysts({ collection, query }: GetTechnicalAnalystsParams) {
   try {
     const analysts = await collection
-      .find({ 'permissoes.analisesTecnicas.editar': true, idParceiro: partnerId })
+      .find({ 'permissoes.analisesTecnicas.editar': true, ...query })
       .project(simplifiedProjection)
       .toArray()
     return analysts as WithId<TUser>[]

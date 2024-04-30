@@ -28,6 +28,7 @@ type ModalNewKitProps = {
 function ModalNewKit({ session, kitId, closeModal }: ModalNewKitProps) {
   const queryClient = useQueryClient()
   const { data: pricingMethods } = usePricingMethods()
+
   const { data: kit, isLoading, isSuccess, isError } = useKitById({ id: kitId })
   const [infoHolder, setInfoHolder] = useState<TKitDTO>({
     _id: kitId,

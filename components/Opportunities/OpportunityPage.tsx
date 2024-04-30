@@ -34,7 +34,6 @@ type OpportunityPageProps = {
   opportunityId: string
 }
 function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
-  const { crm: userHasCRMAccess, projetos: userHasProjectsAccess } = session.user.modulos
   const [blockMode, setBlockMode] = useState<TOpportunityBlockMode>('PROPOSES')
   const {
     data: opportunity,
@@ -157,7 +156,7 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
               />
               <OpportunityFiles opportunityId={opportunity._id} clientId={opportunity.idCliente} session={session} />
               <OpportunityTechnicalAnalysisBlock session={session} opportunity={opportunity} />
-              {userHasProjectsAccess ? <OpportunityHomologations opportunity={opportunity} session={session} /> : null}
+              <OpportunityHomologations opportunity={opportunity} session={session} />
               <OpportunityHistory
                 opportunityName={opportunity.nome}
                 opportunityId={opportunity._id}
