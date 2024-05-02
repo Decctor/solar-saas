@@ -34,7 +34,6 @@ type NewProposalPageprops = {
 function NewProposalPage({ session, opportunityId }: NewProposalPageprops) {
   const partnerId = session.user.idParceiro
 
-  const { data: partner } = usePartnerOwnInfo({ id: partnerId || '' })
   const {
     data: opportunity,
     status,
@@ -85,7 +84,7 @@ function NewProposalPage({ session, opportunityId }: NewProposalPageprops) {
 
   if (opportunityLoading) return <LoadingPage />
   if (opportunityError) return <ErrorComponent msg="Erro ao carregar informações sobre a oportunidade." />
-  if (opportunitySuccess && partner)
+  if (opportunitySuccess)
     return (
       <div className="flex h-full flex-col md:flex-row">
         <Sidebar session={session} />
@@ -101,16 +100,40 @@ function NewProposalPage({ session, opportunityId }: NewProposalPageprops) {
             </div>
           </div>
           {saleCategory == 'KIT' ? (
-            <ProposalWithKits opportunity={opportunity} partner={partner} session={session} infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+            <ProposalWithKits
+              opportunity={opportunity}
+              partner={opportunity.parceiro}
+              session={session}
+              infoHolder={infoHolder}
+              setInfoHolder={setInfoHolder}
+            />
           ) : null}
           {saleCategory == 'PLANO' ? (
-            <ProposalWithPlans opportunity={opportunity} partner={partner} session={session} infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+            <ProposalWithPlans
+              opportunity={opportunity}
+              partner={opportunity.parceiro}
+              session={session}
+              infoHolder={infoHolder}
+              setInfoHolder={setInfoHolder}
+            />
           ) : null}
           {saleCategory == 'PRODUTOS' ? (
-            <ProposalWithProducts opportunity={opportunity} partner={partner} session={session} infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+            <ProposalWithProducts
+              opportunity={opportunity}
+              partner={opportunity.parceiro}
+              session={session}
+              infoHolder={infoHolder}
+              setInfoHolder={setInfoHolder}
+            />
           ) : null}
           {saleCategory == 'SERVIÇOS' ? (
-            <ProposalWithServices opportunity={opportunity} partner={partner} session={session} infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+            <ProposalWithServices
+              opportunity={opportunity}
+              partner={opportunity.parceiro}
+              session={session}
+              infoHolder={infoHolder}
+              setInfoHolder={setInfoHolder}
+            />
           ) : null}
           {/* <div className="m-6 flex h-fit flex-col rounded-md border border-gray-200 bg-[#fff] p-2 shadow-lg">
             <div className="grid min-h-[50px] w-full grid-cols-1 grid-rows-5 items-center gap-6 border-b border-gray-200 pb-4 lg:grid-cols-5 lg:grid-rows-1 lg:gap-1">

@@ -1,10 +1,10 @@
 import { insertHomologation, updateHomologation } from '@/repositories/homologations/mutations'
 import { getHomologationById, getHomologationByOpportunityId, getPartnerHomologations } from '@/repositories/homologations/queries'
 import connectToDatabase from '@/services/mongodb/main-db-connection'
-import { apiHandler, validateAuthenticationWithSession, validateModuleAccess } from '@/utils/api'
+import { apiHandler, validateAuthenticationWithSession, validateAuthorization, validateModuleAccess } from '@/utils/api'
 import { InsertHomologationSchema, THomologation } from '@/utils/schemas/homologation.schema'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
 type GetResponse = {
@@ -12,8 +12,10 @@ type GetResponse = {
 }
 
 const getHomologations: NextApiHandler<GetResponse> = async (req, res) => {
-  const session = await validateModuleAccess({ req, res, module: 'projetos' })
+  const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<THomologation> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
 
   const { id, opportunityId } = req.query
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -21,7 +23,7 @@ const getHomologations: NextApiHandler<GetResponse> = async (req, res) => {
 
   if (id) {
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID de homologação inválido.')
-    const homologation = await getHomologationById({ collection: collection, id: id, partnerId: partnerId || '' })
+    const homologation = await getHomologationById({ collection: collection, id: id, query: partnerQuery })
     if (!homologation) throw new createHttpError.NotFound('Homologação não encontrada.')
 
     return res.status(200).json({ data: homologation })
@@ -29,12 +31,12 @@ const getHomologations: NextApiHandler<GetResponse> = async (req, res) => {
 
   if (opportunityId) {
     if (typeof opportunityId != 'string' || !ObjectId.isValid(opportunityId)) throw new createHttpError.BadRequest('ID de oportunidade inválido.')
-    const homologations = await getHomologationByOpportunityId({ collection: collection, opportunityId: opportunityId, partnerId: partnerId || '' })
+    const homologations = await getHomologationByOpportunityId({ collection: collection, opportunityId: opportunityId, query: partnerQuery })
 
     return res.status(200).json({ data: homologations })
   }
 
-  const homologations = await getPartnerHomologations({ collection: collection, partnerId: partnerId || '' })
+  const homologations = await getPartnerHomologations({ collection: collection, query: partnerQuery })
   return res.status(200).json({ data: homologations })
 }
 
@@ -44,7 +46,7 @@ type PostResponse = {
 }
 
 const createHomologation: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateModuleAccess({ req, res, module: 'projetos' })
+  const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
 
   const homologation = InsertHomologationSchema.parse(req.body)
@@ -65,8 +67,10 @@ type PutResponse = {
 }
 
 const editHomologation: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateModuleAccess({ req, res, module: 'projetos' })
+  const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<THomologation> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
 
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
@@ -76,7 +80,7 @@ const editHomologation: NextApiHandler<PutResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<THomologation> = db.collection('homologations')
 
-  const updateResponse = await updateHomologation({ id: id, collection: collection, changes: changes, partnerId: partnerId || '' })
+  const updateResponse = await updateHomologation({ id: id, collection: collection, changes: changes, query: partnerQuery })
 
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar homologação.')
   if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Homologação não encontrada.')

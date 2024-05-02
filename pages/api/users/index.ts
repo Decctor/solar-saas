@@ -34,7 +34,7 @@ const createUser: NextApiHandler<PostResponse> = async (req, res) => {
     throw new createHttpError.BadRequest('Oops, já existe um usuário com esse email.')
   }
   // Passed validations, now, creating user refencing requester partner ID
-  let insertResponse = await collection.insertOne({ ...user, idParceiro: partnerId, senha: hashedPassword })
+  let insertResponse = await collection.insertOne({ ...user, senha: hashedPassword })
   const insertedIdAsString = insertResponse.insertedId.toString()
   // Dealing with updates for self scope only
   var updates = { $set: {} }
@@ -43,6 +43,12 @@ const createUser: NextApiHandler<PostResponse> = async (req, res) => {
   }
   if (user.permissoes.oportunidades.escopo && user.permissoes.oportunidades.escopo.length == 0) {
     updates.$set = { ...updates.$set, 'permissoes.oportunidades.escopo': [insertedIdAsString] }
+  }
+  if (user.permissoes.analisesTecnicas.escopo && user.permissoes.analisesTecnicas.escopo.length == 0) {
+    updates.$set = { ...updates.$set, 'permissoes.analisesTecnicas.escopo': [insertedIdAsString] }
+  }
+  if (user.permissoes.parceiros.escopo && user.permissoes.parceiros.escopo.length == 0) {
+    updates.$set = { ...updates.$set, 'permissoes.parceiros.escopo': [insertedIdAsString] }
   }
   if (user.permissoes.clientes.escopo && user.permissoes.clientes.escopo.length == 0) {
     updates.$set = { ...updates.$set, 'permissoes.clientes.escopo': [insertedIdAsString] }

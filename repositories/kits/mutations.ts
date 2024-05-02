@@ -1,5 +1,5 @@
 import { TKit } from '@/utils/schemas/kits.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type InsertKitParams = {
   collection: Collection<TKit>
@@ -19,11 +19,11 @@ type UpdateKitParams = {
   id: string
   collection: Collection<TKit>
   changes: TKit
-  partnerId: string
+  query: Filter<TKit>
 }
-export async function updateKit({ id, collection, changes, partnerId }: UpdateKitParams) {
+export async function updateKit({ id, collection, changes, query }: UpdateKitParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), idParceiro: partnerId }, { $set: { ...changes } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), ...query }, { $set: { ...changes } })
     return updateResponse
   } catch (error) {
     throw error

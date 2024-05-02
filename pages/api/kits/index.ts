@@ -70,6 +70,8 @@ type PutResponse = {
 const editKit: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'editar', true)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TKit> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
 
   const { id } = req.query
   const changes = InsertNewKitSchema.parse(req.body)
@@ -78,7 +80,7 @@ const editKit: NextApiHandler<PutResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
 
-  const updateResponse = await updateKit({ id: id, collection: kitsCollection, changes: changes, partnerId: partnerId || '' })
+  const updateResponse = await updateKit({ id: id, collection: kitsCollection, changes: changes, query: partnerQuery })
 
   if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Kit não encontrado.')
 

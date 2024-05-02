@@ -3,6 +3,7 @@ import {
   TOpportunity,
   TOpportunityDTO,
   TOpportunityDTOWithClient,
+  TOpportunityDTOWithClientAndPartner,
   TOpportunitySimplified,
 } from '@/utils/schemas/opportunity.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
@@ -16,6 +17,10 @@ type GetOpportunityById = {
 export async function getOpportunityById({ collection, id, query }: GetOpportunityById) {
   try {
     // const opportunity = await collection.findOne({ _id: new ObjectId(id), idParceiro: partnerId || '' })
+
+    const addFields = { clientAsObjectId: { $toObjectId: '$idCliente' }, partnerAsObjectId: { $toObjectId: '$idParceiro' } }
+    const clientLookup = { from: 'clients', localField: 'clientAsObjectId', foreignField: '_id', as: 'cliente' }
+    const partnerLookup = { from: 'partners', localField: 'partnerAsObjectId', foreignField: '_id', as: 'parceiro' }
     const opportunityArr = await collection
       .aggregate([
         {
@@ -25,23 +30,19 @@ export async function getOpportunityById({ collection, id, query }: GetOpportuni
           },
         },
         {
-          $addFields: {
-            clientAsObjectId: { $toObjectId: '$idCliente' },
-          },
+          $addFields: addFields,
         },
         {
-          $lookup: {
-            from: 'clients',
-            localField: 'clientAsObjectId',
-            foreignField: '_id',
-            as: 'cliente',
-          },
+          $lookup: clientLookup,
+        },
+        {
+          $lookup: partnerLookup,
         },
       ])
       .toArray()
-    const opportunity = opportunityArr.map((op) => ({ ...op, cliente: op.cliente[0] }))
+    const opportunity = opportunityArr.map((op) => ({ ...op, cliente: op.cliente[0], parceiro: op.parceiro[0] }))
 
-    return opportunity[0] as TOpportunityDTOWithClient
+    return opportunity[0] as TOpportunityDTOWithClientAndPartner
   } catch (error) {
     throw error
   }

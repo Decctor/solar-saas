@@ -1,5 +1,5 @@
 import { THomologation } from '@/utils/schemas/homologation.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type InsertHomologationParams = {
   collection: Collection<THomologation>
@@ -8,7 +8,7 @@ type InsertHomologationParams = {
 }
 export async function insertHomologation({ collection, info, partnerId }: InsertHomologationParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId, dataInsercao: new Date().toISOString() })
+    const insertResponse = await collection.insertOne({ ...info, dataInsercao: new Date().toISOString() })
 
     return insertResponse
   } catch (error) {
@@ -19,11 +19,11 @@ type UpdateHomologationParams = {
   id: string
   collection: Collection<THomologation>
   changes: Partial<THomologation>
-  partnerId: string
+  query: Filter<THomologation>
 }
-export async function updateHomologation({ id, collection, changes, partnerId }: UpdateHomologationParams) {
+export async function updateHomologation({ id, collection, changes, query }: UpdateHomologationParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), idParceiro: partnerId }, { $set: { ...changes } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), ...query }, { $set: { ...changes } })
 
     return updateResponse
   } catch (error) {

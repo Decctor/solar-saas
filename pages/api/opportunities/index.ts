@@ -13,6 +13,7 @@ import {
   InsertOpportunitySchema,
   TOpportunity,
   TOpportunityDTOWithClient,
+  TOpportunityDTOWithClientAndPartner,
   TOpportunitySimplifiedWithProposalAndActivitiesAndFunnels,
 } from '@/utils/schemas/opportunity.schema'
 import dayjs from 'dayjs'
@@ -71,14 +72,14 @@ const statusOptionsQueries = {
 }
 
 type GetResponse = {
-  data: TOpportunitySimplifiedWithProposalAndActivitiesAndFunnels[] | TOpportunityDTOWithClient
+  data: TOpportunitySimplifiedWithProposalAndActivitiesAndFunnels[] | TOpportunityDTOWithClientAndPartner
 }
 
 const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'visualizar', true)
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TOpportunity> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
+  const partnerQuery: Filter<TOpportunity> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
 
   const userScope = session.user.permissoes.oportunidades.escopo
 
