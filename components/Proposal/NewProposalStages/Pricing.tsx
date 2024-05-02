@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import { AiFillEdit } from 'react-icons/ai'
 
-import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
 import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import PricingTable from '../Blocks/PricingTable'
 import { Session } from 'next-auth'
@@ -12,7 +12,7 @@ import EditFinalPrice from '../Blocks/EditFinalPrice'
 type PricingProps = {
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
-  opportunity: TOpportunityDTOWithClient
+  opportunity: TOpportunityDTOWithClientAndPartner
   moveToNextStage: () => void
   moveToPreviousStage: () => void
   session: Session

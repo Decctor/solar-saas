@@ -4,7 +4,7 @@ import TextInput from '@/components/Inputs/TextInput'
 import { renderProposalPremisseField } from '@/premisses'
 import { orientations, ProjectTypes, structureTypes } from '@/utils/constants'
 import { useDistanceData } from '@/utils/queries/utils'
-import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
 import { TProjectTypeDTO } from '@/utils/schemas/project-types.schema'
 import { TProposal, TProposalPremisses } from '@/utils/schemas/proposal.schema'
 import { useQuery } from '@tanstack/react-query'
@@ -12,19 +12,20 @@ import axios, { AxiosError } from 'axios'
 import React, { SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 type GeneralSizingProps = {
-  opportunity: TOpportunityDTOWithClient
+  opportunity: TOpportunityDTOWithClientAndPartner
   projectTypes: TProjectTypeDTO[]
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
   moveToNextStage: () => void
 }
 function GeneralSizing({ opportunity, projectTypes, infoHolder, setInfoHolder, moveToNextStage }: GeneralSizingProps) {
-  const { data: distance } = useDistanceData({
-    originCity: 'ITUIUTABA',
-    originUF: 'MG',
-    destinationCity: opportunity.localizacao.cidade,
-    destinationUF: opportunity.localizacao.uf,
-  })
+  // Using the vinculated opportunity partner location reference as the origin city and uf
+  const originCity = opportunity.parceiro?.localizacao.cidade || 'ITUIUTABA'
+  const originUF = opportunity.parceiro?.localizacao.uf || 'MG'
+  // Using the opportunity city and uf
+  const destinationCity = opportunity.localizacao.cidade
+  const destinationUF = opportunity.localizacao.uf
+  const { data: distance } = useDistanceData({ originCity: originCity, originUF: originUF, destinationCity: destinationCity, destinationUF: destinationUF })
 
   function validateFields() {
     // if (!infoHolder.premissas.consumoEnergiaMensal || infoHolder.premissas.consumoEnergiaMensal <= 0) return toast.error('Preencha um consumo válido.')

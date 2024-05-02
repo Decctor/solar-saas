@@ -3,7 +3,7 @@ import ErrorComponent from '@/components/utils/ErrorComponent'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import { combineUniqueProducts, combineUniqueServices } from '@/lib/methods/array-manipulation'
 import { useSignaturePlanWithPricingMethod } from '@/utils/queries/signature-plans'
-import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { TSignaturePlanDTO, TSignaturePlanDTOWithPricingMethod } from '@/utils/schemas/signature-plans.schema'
 import { Session } from 'next-auth'
@@ -12,7 +12,7 @@ import toast from 'react-hot-toast'
 import { ImSad } from 'react-icons/im'
 
 type PlansSelectionProps = {
-  opportunity: TOpportunityDTOWithClient
+  opportunity: TOpportunityDTOWithClientAndPartner
   signaturePlans?: TSignaturePlanDTOWithPricingMethod[]
   plansLoading: boolean
   plansError: boolean

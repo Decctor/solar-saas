@@ -22,7 +22,7 @@ import { combineUniqueProducts, combineUniqueServices } from '@/lib/methods/arra
 import { getInverterQty, getModulesPeakPotByProducts } from '@/lib/methods/extracting'
 import { renderCategoryIcon } from '@/lib/methods/rendering'
 
-import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { TKitDTOWithPricingMethod } from '@/utils/schemas/kits.schema'
 
@@ -64,7 +64,7 @@ function getIdealPowerInterval({ consumption, city, uf, orientation }: GetIdealP
 }
 
 type KitsSelectionProps = {
-  opportunity: TOpportunityDTOWithClient
+  opportunity: TOpportunityDTOWithClientAndPartner
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
   moveToNextStage: () => void

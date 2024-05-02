@@ -13,7 +13,7 @@ import Products from '../Blocks/Products'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { createProposal, createProposalPersonalized } from '@/utils/mutations/proposals'
 import { TProposal } from '@/utils/schemas/proposal.schema'
-import { TOpportunity, TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TOpportunity, TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
 import { formatToMoney } from '@/utils/methods'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import Link from 'next/link'
@@ -58,7 +58,7 @@ type ProposalProps = {
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
   projectTypes: TProjectTypeDTO[]
-  opportunity: TOpportunityDTOWithClient
+  opportunity: TOpportunityDTOWithClientAndPartner
   moveToNextStage: () => void
   moveToPreviousStage: () => void
   session: Session
