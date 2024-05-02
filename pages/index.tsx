@@ -4,7 +4,7 @@ import dayjs from 'dayjs'
 import { useSession } from 'next-auth/react'
 
 import { VscDiffAdded } from 'react-icons/vsc'
-import { BsCheckSquare, BsFileEarmarkText, BsPatchCheck, BsPeopleFill, BsTicketPerforated } from 'react-icons/bs'
+import { BsCheckSquare, BsCode, BsFileEarmarkText, BsFillMegaphoneFill, BsPatchCheck, BsPeopleFill, BsTicketPerforated } from 'react-icons/bs'
 import { AiOutlineCloseCircle, AiOutlineTeam } from 'react-icons/ai'
 import { GiBugleCall } from 'react-icons/gi'
 import { MdOutlineAttachMoney, MdSell } from 'react-icons/md'
@@ -23,6 +23,8 @@ import PendingActivityCard from '@/components/ProjectEvents/PendingActivityCard'
 
 import { useOpportunityCreators } from '@/utils/queries/users'
 import { usePartnersSimplified } from '@/utils/queries/partners'
+import PendingWinsBlock from '@/components/Stats/MainDashboard/PendingWinsBlock'
+import WinsBlock from '@/components/Stats/MainDashboard/WinsBlock'
 
 const currentDate = new Date()
 const firstDayOfMonth = getFirstDayOfMonth(currentDate.getFullYear(), currentDate.getMonth()).toISOString()
@@ -39,12 +41,7 @@ function EstatisticaPrincipal() {
   const { data: opportunityCreators } = useOpportunityCreators()
   const { data: partners } = usePartnersSimplified()
   const { data, isLoading, isSuccess, isError, error } = useStats(true, period.after, period.before, responsible, partner)
-  // const { data: openCalls, isLoading: callsLoading } = useOpenCalls(status == 'authenticated', responsible)
-  // const { data: technicalAnalysis } = useUserTechnicalAnalysis({
-  //   enabled: !!session,
-  //   userId: responsible,
-  //   status: null,
-  // })
+
   console.log('SESSION', session)
   if (status != 'authenticated') return <LoadingPage />
   return (
@@ -207,14 +204,13 @@ function EstatisticaPrincipal() {
             </div>
           </div>
           <div className="mt-4 flex w-full flex-col items-center justify-around gap-2 lg:flex-row">
-            <div className="flex h-[450px]  w-full flex-col  items-center justify-center rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:w-[40%]">
+            {/* <div className="flex h-[450px]  w-full flex-col  items-center justify-center rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:w-[40%]">
               <div className="flex min-h-[45px] w-full flex-col">
                 <div className="flex items-center justify-between">
                   <h1 className="text-sm font-medium uppercase tracking-tight">ATIVIDADES PENDENTES</h1>
                   <BsCheckSquare />
                 </div>
               </div>
-              {/* <p className="text-sm text-gray-500">{data?.propostasAssinadas.length} no período de escolha</p> */}
               <div className="flex w-full grow flex-col justify-start gap-2 overflow-y-auto overscroll-y-auto py-2 pr-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
                 {data?.atividades ? (
                   data?.atividades.length > 0 ? (
@@ -228,44 +224,12 @@ function EstatisticaPrincipal() {
                   )
                 ) : null}
               </div>
+            </div> */}
+            <div className="w-full lg:w-[40%]">
+              <PendingWinsBlock data={data?.ganhosPendentes || []} session={session} />
             </div>
-            {/* <PendingSignaturesBlock data={data} session={session} /> */}
-            <div className="flex h-[650px] w-full flex-col rounded-xl  border border-gray-200 bg-[#fff] p-6 shadow-sm lg:h-[450px] lg:w-[60%]">
-              <div className="flex min-h-[42px] w-full flex-col">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-sm font-medium uppercase tracking-tight">Projetos ganhos</h1>
-                  <MdSell />
-                </div>
-                <p className="text-sm text-gray-500">{data?.propostasAssinadas.length || 0} no período de escolha</p>
-              </div>
-              <div className="flex grow flex-col justify-start gap-2 overflow-y-auto overscroll-y-auto py-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
-                {data?.propostasAssinadas.map((proposal, index: number) => (
-                  <div key={index} className="flex w-full flex-col items-center justify-between border-b  border-gray-200 p-2 md:flex-row md:border-b-0">
-                    <div className="flex w-full items-start gap-4 md:grow">
-                      <div className="flex h-[30px] min-h-[30px] w-[30px] min-w-[30px] items-center justify-center rounded-full border border-black">
-                        <MdOutlineAttachMoney />
-                      </div>
-                      <div className="flex grow flex-col items-start">
-                        <h1 className="w-full text-start text-sm font-medium leading-none tracking-tight">
-                          {formatLongString(proposal?.nome.toUpperCase() || '', 30)}
-                        </h1>
-                        <div className="mt-1 flex w-full items-center justify-start gap-2">
-                          {proposal.responsaveis.map((resp) => (
-                            <div className="flex items-center gap-2">
-                              <Avatar fallback={'R'} url={resp?.avatar_url || undefined} height={20} width={20} />
-
-                              <p className="text-xs text-gray-500">{resp.nome}</p>
-                            </div>
-                          ))}
-                        </div>
-                      </div>
-                    </div>
-                    <div className="flex min-w-[100px] items-center gap-1">
-                      <p className="font-medium">{proposal?.valor ? formatToMoney(proposal.valor) : 'N/A'}</p>
-                    </div>
-                  </div>
-                ))}
-              </div>
+            <div className="w-full lg:w-[60%]">
+              <WinsBlock data={data?.ganhos || []} session={session} />
             </div>
           </div>
         </div>

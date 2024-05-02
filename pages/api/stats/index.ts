@@ -1,118 +1,18 @@
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 import { ISession } from '@/utils/models'
-import { TActivity } from '@/utils/schemas/activities.schema'
+import { TActivity, TActivityDTO } from '@/utils/schemas/activities.schema'
 import { TOpportunityHistory } from '@/utils/schemas/opportunity-history.schema'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TGeneralStats } from '@/utils/schemas/stats.schema'
 import { TUser } from '@/utils/schemas/user.schema'
 import dayjs from 'dayjs'
 import createHttpError from 'http-errors'
-import { Collection, Filter } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
-type GetOpportunititiesResult = {
-  _id: string
-  nome: string
-  tipo: string
-  responsaveis: {
-    id: string
-    nome: string
-    papel: string
-    avatar_url?: string | null
-  }[]
-  idPropostaAtiva?: string | null
-  identificador: string
-  proposta?: {
-    _id: string
-    nome: string
-    valor: number
-  }[]
-  perda: {
-    idMotivo?: string | null
-    descricaoMotivo?: string | null
-    data?: string | null
-  }
-  ganho: {
-    idProposta?: string | null
-    idProjeto?: string | null
-    data?: string | null
-  }
-  dataInsercao: string
-}
-
-type GetOpportunititiesParams = {
-  collection: Collection<TOpportunity>
-  query: Filter<TOpportunity>
-}
-async function getOpportunitities({ collection, query }: GetOpportunititiesParams) {
-  try {
-    // In case user has global scope and its querying for overall stats
-
-    const pipeline = [
-      {
-        $match: {
-          ...query,
-        },
-      },
-      {
-        $addFields: {
-          proposalObjectID: {
-            $toObjectId: '$idPropostaAtiva',
-          },
-        },
-      },
-      {
-        $lookup: {
-          from: 'proposals',
-          localField: 'proposalObjectID',
-          foreignField: '_id',
-          as: 'proposta',
-        },
-      },
-      {
-        $project: {
-          nome: 1,
-          tipoProjeto: 1,
-          responsaveis: 1,
-          idPropostaAtiva: 1,
-          identificador: 1,
-          'proposta._id': 1,
-          'proposta.nome': 1,
-          'proposta.valor': 1,
-          perda: 1,
-          ganho: 1,
-          dataInsercao: 1,
-        },
-      },
-      {
-        $sort: {
-          dataInsercao: 1,
-        },
-      },
-    ]
-
-    const projects = await collection.aggregate(pipeline).toArray()
-    return projects as GetOpportunititiesResult[]
-  } catch (error) {
-    throw error
-  }
-}
-type GetActivitiesParams = {
-  collection: Collection<TActivity>
-  query: Filter<TActivity>
-}
-async function getActivities({ collection, query }: GetActivitiesParams) {
-  try {
-    const activities = await collection.find({ dataConclusao: null, ...query }, { sort: { dataVencimento: 1 } }).toArray()
-    return activities
-  } catch (error) {
-    throw error
-  }
-}
-type GetResponse = {
-  data: unknown
-}
-
+type GetResponse = { data: TGeneralStats }
 const getStats: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'visualizar', true)
   const partnerId = session.user.idParceiro
@@ -120,7 +20,7 @@ const getStats: NextApiHandler<GetResponse> = async (req, res) => {
   const opportunityVisibilityScope = session.user.permissoes.oportunidades.escopo
 
   const { after, before, responsible, partner } = req.query
-  console.log(req.query)
+
   if (typeof after != 'string' || typeof before != 'string') throw new createHttpError.BadRequest('Parâmetros de período inválidos.')
 
   // Validating existence of responsible in query and its type
@@ -150,27 +50,19 @@ const getStats: NextApiHandler<GetResponse> = async (req, res) => {
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
-
   const activitiesCollection: Collection<TActivity> = db.collection('activities')
 
-  const opportunities = await getOpportunitities({
-    collection: opportunitiesCollection,
-    query: query,
-  })
+  const condensedInfo = await getSimplifiedInfo({ opportunitiesCollection, query, afterDate, beforeDate, afterWithMarginDate, beforeWithMarginDate })
+  const wonOpportunities = await getWonOpportunities({ opportunitiesCollection, query, afterDate, beforeDate })
+  const pendingWins = await getPendingWins({ opportunitiesCollection, query })
   const activities = await getActivities({ collection: activitiesCollection, query: query as Filter<TActivity> })
-  // prettier-ignore
-  const signedProposals = getSignedProposals({opportunities,afterDate,beforeDate});
 
-  const condensedInfo = getCondensedInfo({ opportunities, afterDate, beforeDate, afterWithMarginDate, beforeWithMarginDate })
-
-  const pendingSignatures = getPendingSignatures({ opportunities })
-  // const graphData = getGraphData({ proposals: signedProposals })
   res.status(200).json({
     data: {
       simplificado: condensedInfo,
-      propostasAssinadas: signedProposals,
+      ganhos: wonOpportunities,
+      ganhosPendentes: pendingWins,
       atividades: activities,
-      assinaturasPendentes: pendingSignatures,
     },
   })
 }
@@ -178,137 +70,240 @@ const getStats: NextApiHandler<GetResponse> = async (req, res) => {
 export default apiHandler({
   GET: getStats,
 })
-
-type GetSignedProposalsParams = {
-  opportunities: GetOpportunititiesResult[]
-  afterDate: Date
-  beforeDate: Date
+// SIMPLIFIED
+type TOpportunitySimplifiedResult = {
+  idMarketing: TOpportunity['idMarketing']
+  responsaveis: TOpportunity['responsaveis']
+  ganho: TOpportunity['ganho']
+  perda: TOpportunity['perda']
+  proposta: { valor: number }[]
+  dataInsercao: TOpportunity['dataInsercao']
 }
-function getSignedProposals({ opportunities, afterDate, beforeDate }: GetSignedProposalsParams) {
-  // Filtering for projects with contract signed within the period
-  const filteredProposals = opportunities.filter((opportunity) => {
-    // checking if it is a won opportunity
-    const winDate = opportunity.ganho.data ? new Date(opportunity.ganho.data) : null
-    if (!winDate) return false
-
-    // checking if the win happened within the provided period
-    const wonWithinThePeriod = winDate >= afterDate && winDate <= beforeDate
-    if (wonWithinThePeriod) return true
-    return false
-  })
-
-  const formattedProposals = filteredProposals
-    .map((opportunity) => {
-      const proposal = opportunity.proposta ? opportunity.proposta[0] : null
-      if (!proposal) return null
-      const winDate = opportunity.ganho.data
-      const responsibles = opportunity.responsaveis
-      return {
-        ...proposal,
-        responsaveis: responsibles,
-        dataAssinatura: winDate,
-      }
-    })
-    .filter((o) => o != null)
-  const sortedProposals = formattedProposals.sort((a: any, b: any) => new Date(b.dataAssinatura).getTime() - new Date(a.dataAssinatura).getTime())
-  return sortedProposals
-}
-type GetCondensedInfoParams = {
-  opportunities: GetOpportunititiesResult[]
+type GetSimplifiedInfoParams = {
+  opportunitiesCollection: Collection<TOpportunity>
+  query: Filter<TOpportunity>
   afterDate: Date
-  beforeDate: Date
   afterWithMarginDate: Date
+  beforeDate: Date
   beforeWithMarginDate: Date
 }
-function getCondensedInfo({ opportunities, afterDate, beforeDate, afterWithMarginDate, beforeWithMarginDate }: GetCondensedInfoParams) {
-  const condensedInfo = opportunities.reduce(
-    (acc, current) => {
-      // Insertion related checkings
-      const insertDate = new Date(current.dataInsercao)
-      const wasInsertedWithinCurrentPeriod = insertDate >= afterDate && insertDate <= beforeDate
-      const wasInsertedWithinPreviousPeriod = insertDate >= afterWithMarginDate && insertDate < beforeWithMarginDate
-
-      // Signing related checkings
-      const signatureDate = current.ganho?.data ? new Date(current.ganho?.data) : null
-      const hasContractSigned = !!signatureDate
-      const wasSignedWithinCurrentPeriod = hasContractSigned && signatureDate >= afterDate && signatureDate <= beforeDate
-      const wasSignedWithinPreviousPeriod = hasContractSigned && signatureDate >= afterWithMarginDate && signatureDate < beforeWithMarginDate
-      const signedProposal = !!current.ganho?.idProposta && !!current.proposta ? current.proposta[0] : null
-      const proposalValue = !!signedProposal && signedProposal.valor ? signedProposal.valor : 0
-
-      // Lost related checkings
-      const lostDate = !!current.perda.data ? new Date(current.perda.data) : null
-      const isLostProject = !!lostDate
-      const wasLostWithinCurrentPeriod = isLostProject && lostDate >= afterDate && lostDate <= beforeDate
-      const wasLostWithinPreviousPeriod = isLostProject && lostDate >= afterWithMarginDate && lostDate <= beforeWithMarginDate
-
-      // Increasing ATUAL qtys based on checkings
-      if (wasInsertedWithinCurrentPeriod) acc['ATUAL'].projetosCriados += 1
-      if (wasSignedWithinCurrentPeriod) acc['ATUAL'].projetosGanhos += 1
-      if (wasLostWithinCurrentPeriod) acc['ATUAL'].projetosPerdidos += 1
-      if (wasSignedWithinCurrentPeriod) acc['ATUAL'].totalVendido += proposalValue
-
-      // Increasing ANTERIOR qtys based on checkings
-      if (wasInsertedWithinPreviousPeriod) acc['ANTERIOR'].projetosCriados += 1
-      if (wasSignedWithinPreviousPeriod) acc['ANTERIOR'].projetosGanhos += 1
-      if (wasLostWithinPreviousPeriod) acc['ANTERIOR'].projetosPerdidos += 1
-      if (wasSignedWithinPreviousPeriod) acc['ANTERIOR'].totalVendido += proposalValue
-
-      return acc
-    },
-    {
-      ANTERIOR: {
-        projetosCriados: 0,
-        projetosGanhos: 0,
-        projetosPerdidos: 0,
-        totalVendido: 0,
-      },
-      ATUAL: {
-        projetosCriados: 0,
-        projetosGanhos: 0,
-        projetosPerdidos: 0,
-        totalVendido: 0,
-      },
+async function getSimplifiedInfo({
+  opportunitiesCollection,
+  query,
+  afterDate,
+  afterWithMarginDate,
+  beforeDate,
+  beforeWithMarginDate,
+}: GetSimplifiedInfoParams) {
+  try {
+    const afterDateStr = afterDate.toISOString()
+    const afterWithMarginDateStr = afterWithMarginDate.toISOString()
+    const beforeDateStr = beforeDate.toISOString()
+    const match: Filter<TOpportunity> = {
+      ...query,
+      $or: [
+        { $and: [{ dataInsercao: { $gte: afterWithMarginDateStr } }, { dataInsercao: { $lte: beforeDateStr } }] },
+        { $and: [{ 'perda.data': { $gte: afterWithMarginDateStr } }, { 'perda.data': { $lte: beforeDateStr } }] },
+        { $and: [{ 'ganho.data': { $gte: afterWithMarginDateStr } }, { 'ganho.data': { $lte: beforeDateStr } }] },
+      ],
     }
-  )
-  return condensedInfo
+    const addFields = { wonProposeObjectId: { $toObjectId: '$ganho.idProposta' } }
+    const lookup = { from: 'proposals', localField: 'wonProposeObjectId', foreignField: '_id', as: 'proposta' }
+    const projection = {
+      nome: 1,
+      idMarketing: 1,
+      responsaveis: 1,
+      ganho: 1,
+      perda: 1,
+      'proposta.valor': 1,
+      dataInsercao: 1,
+    }
+    const result = (await opportunitiesCollection
+      .aggregate([{ $match: match }, { $addFields: addFields }, { $lookup: lookup }, { $project: projection }])
+      .toArray()) as TOpportunitySimplifiedResult[]
+    const opportunities = result.map((r) => ({
+      idMarketing: r.idMarketing,
+      responsaveis: r.responsaveis,
+      ganho: r.ganho,
+      valorProposta: r.proposta[0] ? r.proposta[0].valor : 0,
+      dataPerda: r.perda.data,
+      motivoPerda: r.perda.descricaoMotivo,
+      dataInsercao: r.dataInsercao,
+    }))
+
+    const condensedInfo = opportunities.reduce(
+      (acc, current) => {
+        // Insertion related checkings
+        const insertDate = new Date(current.dataInsercao)
+        const wasInsertedWithinCurrentPeriod = insertDate >= afterDate && insertDate <= beforeDate
+        const wasInsertedWithinPreviousPeriod = insertDate >= afterWithMarginDate && insertDate < beforeWithMarginDate
+
+        // Signing related checkings
+        const signatureDate = current.ganho?.data ? new Date(current.ganho?.data) : null
+        const hasContractSigned = !!signatureDate
+        const wasSignedWithinCurrentPeriod = hasContractSigned && signatureDate >= afterDate && signatureDate <= beforeDate
+        const wasSignedWithinPreviousPeriod = hasContractSigned && signatureDate >= afterWithMarginDate && signatureDate <= beforeWithMarginDate
+
+        const proposalValue = current.valorProposta
+        // Lost related checkings
+        const lostDate = !!current.dataPerda ? new Date(current.dataPerda) : null
+        const isLostProject = !!lostDate
+        const wasLostWithinCurrentPeriod = isLostProject && lostDate >= afterDate && lostDate <= beforeDate
+        const wasLostWithinPreviousPeriod = isLostProject && lostDate >= afterWithMarginDate && lostDate <= beforeWithMarginDate
+
+        // Increasing ATUAL qtys based on checkings
+        if (wasInsertedWithinCurrentPeriod) acc['ATUAL'].projetosCriados += 1
+        if (wasSignedWithinCurrentPeriod) acc['ATUAL'].projetosGanhos += 1
+        if (wasLostWithinCurrentPeriod) acc['ATUAL'].projetosPerdidos += 1
+        if (wasSignedWithinCurrentPeriod) acc['ATUAL'].totalVendido += proposalValue
+
+        // Increasing ANTERIOR qtys based on checkings
+        if (wasInsertedWithinPreviousPeriod) acc['ANTERIOR'].projetosCriados += 1
+        if (wasSignedWithinPreviousPeriod) acc['ANTERIOR'].projetosGanhos += 1
+        if (wasLostWithinPreviousPeriod) acc['ANTERIOR'].projetosPerdidos += 1
+        if (wasSignedWithinPreviousPeriod) acc['ANTERIOR'].totalVendido += proposalValue
+
+        return acc
+      },
+      {
+        ANTERIOR: {
+          projetosCriados: 0,
+          projetosGanhos: 0,
+          projetosPerdidos: 0,
+          totalVendido: 0,
+        },
+        ATUAL: {
+          projetosCriados: 0,
+          projetosGanhos: 0,
+          projetosPerdidos: 0,
+          totalVendido: 0,
+        },
+      }
+    )
+    return condensedInfo
+  } catch (error) {
+    throw error
+  }
 }
-type GetPendingSignatures = {
-  opportunities: GetOpportunititiesResult[]
+// WON OPPORTUNITIES
+type TSignedProposalResult = {
+  _id: ObjectId
+  nome: TOpportunity['nome']
+  idMarketing: TOpportunity['idMarketing']
+  responsaveis: TOpportunity['responsaveis']
+  ganho: TOpportunity['ganho']
+  proposta: { _id: string; nome: TProposal['nome']; valor: TProposal['valor']; potenciaPico: TProposal['potenciaPico'] }[]
+  dataInsercao: TOpportunity['dataInsercao']
 }
-function getPendingSignatures({ opportunities }: GetPendingSignatures) {
-  const filteredOpportunities = opportunities.filter((opportunity) => {
-    // Validating if a project was requested
-    const hasProjectRequested = !!opportunity.ganho.idProjeto
+type GetWonOpportunitiesParams = {
+  opportunitiesCollection: Collection<TOpportunity>
+  query: Filter<TOpportunity>
+  afterDate: Date
+  beforeDate: Date
+}
+async function getWonOpportunities({ opportunitiesCollection, query, afterDate, beforeDate }: GetWonOpportunitiesParams) {
+  const afterDateStr = afterDate.toISOString()
+  const beforeDateStr = beforeDate.toISOString()
+  const match: Filter<TOpportunity> = {
+    ...query,
+    $and: [{ 'ganho.data': { $gte: afterDateStr } }, { 'ganho.data': { $lte: beforeDateStr } }],
+  }
+  const addFields = { wonProposeObjectId: { $toObjectId: '$ganho.idProposta' } }
+  const lookup = { from: 'proposals', localField: 'wonProposeObjectId', foreignField: '_id', as: 'proposta' }
+  const projection = {
+    nome: 1,
+    idMarketing: 1,
+    responsaveis: 1,
+    ganho: 1,
+    'proposta._id': 1,
+    'proposta.nome': 1,
+    'proposta.valor': 1,
+    'proposta.potenciaPico': 1,
+    dataInsercao: 1,
+  }
+  const result = (await opportunitiesCollection
+    .aggregate([{ $match: match }, { $addFields: addFields }, { $lookup: lookup }, { $project: projection }])
+    .toArray()) as TSignedProposalResult[]
 
-    // Validating if opportunity was won
-    const winDate = !!opportunity.ganho.data
-
-    // Lost related checkings
-    const wasLost = !!opportunity.perda.data
-
-    // Validating pendency in signature, which is project requested, pending signature date and not lost
-    if (hasProjectRequested && !winDate && !wasLost) return true
-    else return false
-  })
-  const formattedOpportunities = filteredOpportunities.map((opportunity) => {
-    const id = opportunity._id
-    const name = opportunity.nome
-    const identifier = opportunity.identificador
-
-    const responsibles = opportunity.responsaveis
-
-    const proposal = !!opportunity.proposta ? opportunity.proposta[0] : null
-    const proposalValue = proposal ? proposal.valor : 0
-
+  const signedProposals = result.map((r) => {
+    const proposal = r.proposta[0]
+      ? { _id: r.proposta[0]._id, nome: r.proposta[0].nome, valor: r.proposta[0].valor, potenciaPico: r.proposta[0].potenciaPico }
+      : null
     return {
-      _id: id,
-      nome: name,
-      identificador: identifier,
-      valorProposta: proposalValue,
-      responsaveis: responsibles,
+      _id: r._id.toString(),
+      nome: r.nome,
+      responsaveis: r.responsaveis,
+      idMarketing: r.idMarketing,
+      proposta: proposal,
+      dataGanho: r.ganho.data as string,
+      dataInsercao: r.dataInsercao,
     }
   })
+  return signedProposals
+}
+// PENDING WINS
+type TPendingWinResult = {
+  _id: ObjectId
+  nome: TOpportunity['nome']
+  idMarketing: TOpportunity['idMarketing']
+  responsaveis: TOpportunity['responsaveis']
+  ganho: TOpportunity['ganho']
+  proposta: { _id: string; nome: TProposal['nome']; valor: TProposal['valor']; potenciaPico: TProposal['potenciaPico'] }[]
+  dataInsercao: TOpportunity['dataInsercao']
+}
+type GetPendingWinsParams = {
+  opportunitiesCollection: Collection<TOpportunity>
+  query: Filter<TOpportunity>
+}
+async function getPendingWins({ opportunitiesCollection, query }: GetPendingWinsParams) {
+  const match: Filter<TOpportunity> = {
+    ...query,
+    'ganho.data': null,
+    'perda.data': null,
+    'ganho.dataSolicitacao': { $ne: null },
+  }
+  const addFields = { wonProposeObjectId: { $toObjectId: '$ganho.idProposta' } }
+  const lookup = { from: 'proposals', localField: 'wonProposeObjectId', foreignField: '_id', as: 'proposta' }
+  const projection = {
+    nome: 1,
+    idMarketing: 1,
+    responsaveis: 1,
+    ganho: 1,
+    'proposta._id': 1,
+    'proposta.nome': 1,
+    'proposta.valor': 1,
+    'proposta.potenciaPico': 1,
+    dataInsercao: 1,
+  }
+  const result = (await opportunitiesCollection
+    .aggregate([{ $match: match }, { $addFields: addFields }, { $lookup: lookup }, { $project: projection }])
+    .toArray()) as TPendingWinResult[]
+  const pendingWins = result.map((r) => {
+    const proposal = r.proposta[0]
+      ? { _id: r.proposta[0]._id, nome: r.proposta[0].nome, valor: r.proposta[0].valor, potenciaPico: r.proposta[0].potenciaPico }
+      : null
+    return {
+      _id: r._id.toString(),
+      nome: r.nome,
+      idMarketing: r.idMarketing,
+      responsaveis: r.responsaveis,
+      proposta: proposal,
+      dataSolicitacao: r.ganho.dataSolicitacao as string,
+    }
+  })
+  return pendingWins
+}
+// ACTIVITIES
 
-  return formattedOpportunities
+type GetActivitiesParams = {
+  collection: Collection<TActivity>
+  query: Filter<TActivity>
+}
+async function getActivities({ collection, query }: GetActivitiesParams) {
+  try {
+    const activities = await collection.find({ dataConclusao: null, ...query }, { sort: { dataVencimento: 1 } }).toArray()
+    return activities.map((activity) => ({ ...activity, _id: activity._id.toString() }))
+  } catch (error) {
+    throw error
+  }
 }

@@ -12,7 +12,7 @@ import { Sidebar } from '../Sidebar'
 import { GiPositionMarker } from 'react-icons/gi'
 import { FaCity } from 'react-icons/fa'
 import { HiIdentification } from 'react-icons/hi'
-import { BsFillCalendarCheckFill, BsTelephoneFill } from 'react-icons/bs'
+import { BsFillCalendarCheckFill, BsFillMegaphoneFill, BsTelephoneFill } from 'react-icons/bs'
 import { MdEmail } from 'react-icons/md'
 import { AiFillEdit, AiOutlineUser } from 'react-icons/ai'
 
@@ -63,12 +63,12 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
               <div className="mb-2 flex w-full flex-col items-center gap-0 lg:mb-0 lg:w-fit lg:flex-row lg:gap-2">
                 <h1 className="flex text-center font-Raleway text-2xl font-bold text-[#fead41] lg:text-start">{opportunity.identificador}</h1>
                 <h1 className="flex text-center font-Raleway text-2xl font-bold text-blue-900 lg:text-start">{opportunity.nome}</h1>
-                {/* {opportunity.idOportunidade ? (
+                {opportunity.idMarketing ? (
                   <div className="flex items-center gap-1 rounded border border-[#3e53b2] p-1 text-[#3e53b2]">
                     <BsFillMegaphoneFill />
                     <p className="text-sm font-bold italic leading-none tracking-tight">VINDO DE MARKETING</p>
                   </div>
-                ) : null} */}
+                ) : null}
               </div>
               <p className="w-full text-start text-xs italic text-gray-500">{opportunity.descricao}</p>
               <div className="mt-1 flex w-full flex-row flex-wrap items-start gap-3">

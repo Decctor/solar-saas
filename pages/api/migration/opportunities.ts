@@ -110,7 +110,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
         data: project.dataPerda,
       },
       ganho: {
-        idProposta: project.contrato?.idProposta,
+        idProposta: project.contrato?.idProposta || project.solicitacaoContrato?.idProposta,
         idProjeto: project.contrato?.id || '',
         data: project.contrato?.dataAssinatura,
         idSolicitacao: project.solicitacaoContrato?.id,

@@ -42,14 +42,13 @@ function FunnelListItem({ item, session, index }: FunnelListItemProps) {
   function getTagColor(activitiesByStatus: TOpportunityDTOWithFunnelReferenceAndActivitiesByStatus['statusAtividades']) {
     const overDue = activitiesByStatus['EM ATRASO']
     const comingDue = activitiesByStatus['EM VENCIMENTO']
-    console.log('OIE', item.idOportunidade, activitiesByStatus, overDue, comingDue)
     if (overDue > 0) return 'bg-red-500'
     if (comingDue > 0) return 'bg-orange-500'
     else return 'bg-green-500'
   }
   function getBarColor(requested: boolean, signed: boolean, lost: boolean) {
-    if (requested) return 'bg-green-500'
     if (signed) return 'bg-green-500'
+    if (requested) return 'bg-orange-400'
     if (lost) return 'bg-red-500'
     return 'bg-blue-400'
   }

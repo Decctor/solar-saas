@@ -7,7 +7,7 @@ import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getPeakPotBy
 
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { getOeMPrices } from '@/utils/pricing/oem/methods'
-import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
 import { TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
 import { CustomersAcquisitionChannels, StructureTypes } from '@/utils/select-options'
 

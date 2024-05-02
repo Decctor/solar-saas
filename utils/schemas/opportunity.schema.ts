@@ -64,7 +64,7 @@ export const GeneralOpportunitySchema = z.object({
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime().optional().nullable(),
     idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
-    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de solicitação de contrato.' }).optional().nullable(),
   }),
   instalacao: z.object({
     concessionaria: z.string().optional().nullable(),
@@ -155,7 +155,7 @@ export const InsertOpportunitySchema = z.object({
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
     idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
-    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de solicitação de contrato.' }).optional().nullable(),
   }),
   instalacao: z.object({
     concessionaria: z.string().optional().nullable(),
@@ -261,7 +261,7 @@ export const UpdateOpportunitySchema = z.object({
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
     idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
-    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de solicitação de contrato.' }).optional().nullable(),
   }),
   instalacao: z.object({
     concessionaria: z.string().optional().nullable(),
@@ -368,7 +368,7 @@ export const OpportunityWithClientSchema = z.object({
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
     idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
-    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de solicitação de contrato.' }).optional().nullable(),
   }),
   instalacao: z.object({
     concessionaria: z.string().optional().nullable(),

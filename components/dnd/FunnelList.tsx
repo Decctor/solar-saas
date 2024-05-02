@@ -60,17 +60,17 @@ function FunnelList({ stageName, session, items, id }: IFunnelListProps) {
           <div className="flex h-[100px] w-full flex-col rounded bg-[#15599a] px-2 lg:h-[60px]">
             <h1 className="w-full rounded p-1 text-center font-medium text-white">{stageName}</h1>
             <div className="mt-1 flex w-full flex-col items-center justify-between px-2 pb-2 lg:flex-row">
-              <div className="flex w-full items-center justify-center gap-1 text-xs text-white lg:w-1/3 lg:justify-start">
+              <div className="flex w-full items-center justify-center gap-1 text-[0.65rem] text-white lg:w-1/3 lg:justify-start lg:text-[0.7rem]">
                 <p>R$</p>
                 <p>{getListCumulativeProposalValues()}</p>
               </div>
-              <div className="flex w-full items-center justify-center gap-1 text-xs text-white lg:w-1/3">
+              <div className="flex w-full items-center justify-center gap-1 text-[0.65rem] text-white lg:w-1/3 lg:text-[0.7rem]">
                 <p>
                   <ImPower />
                 </p>
                 <p>{getListCumulativeProposalPeakPower()} kWp</p>
               </div>
-              <div className="flex w-full items-center justify-center gap-1 text-xs text-white lg:w-1/3 lg:justify-end">
+              <div className="flex w-full items-center justify-center gap-1 text-[0.65rem] text-white lg:w-1/3 lg:justify-end lg:text-[0.7rem]">
                 <p>
                   <MdDashboard />
                 </p>

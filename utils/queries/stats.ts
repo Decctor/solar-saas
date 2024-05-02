@@ -4,6 +4,7 @@ import { extractErrorMessage, useResponsibles } from '../methods'
 import { TOpportunityHistoryDTO } from '../schemas/opportunity-history.schema'
 import { TSalesStats } from '@/pages/api/stats/sales'
 import { TActivity, TActivityDTO } from '../schemas/activities.schema'
+import { TGeneralStats } from '../schemas/stats.schema'
 
 export type TStats = {
   simplificado: {
@@ -49,7 +50,7 @@ export type TStats = {
 async function fetchStats(after: string, before: string, responsible: string | null, partner: string | null) {
   try {
     const { data } = await axios.get(`/api/stats?after=${after}&before=${before}&responsible=${responsible}&partner=${partner}`)
-    return data.data as TStats
+    return data.data as TGeneralStats
   } catch (error) {
     throw error
   }

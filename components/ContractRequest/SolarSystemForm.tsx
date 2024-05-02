@@ -19,7 +19,7 @@ import { UploadResult, getDownloadURL, getMetadata, ref, uploadBytes } from 'fir
 
 import { fileTypes } from '@/utils/constants'
 import axios from 'axios'
-import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
 import { TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
 import { storage } from '@/services/firebase/storage-config'
 import { createContractRequest } from '@/utils/mutations/contract-request'

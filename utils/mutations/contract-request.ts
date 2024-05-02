@@ -1,6 +1,6 @@
 import axios from 'axios'
 import { IContractRequest } from '../models'
-import { TContractRequest } from '../schemas/contract-request.schema'
+import { TContractRequest } from '../schemas/integrations/app-ampere/contract-request.schema'
 export async function createContractRequest({ info, returnId = false }: { info: TContractRequest; returnId?: boolean }) {
   try {
     const { data } = await axios.post('/api/integration/app-ampere/contract-requests', info)

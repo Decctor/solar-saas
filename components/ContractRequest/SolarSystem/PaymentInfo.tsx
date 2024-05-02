@@ -4,7 +4,7 @@ import TextInput from '@/components/Inputs/TextInput'
 
 import { formatToCPForCNPJ, formatToPhone } from '@/utils/methods'
 import { IContractRequest } from '@/utils/models'
-import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
 type PaymentInfoProps = {

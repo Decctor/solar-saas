@@ -23,7 +23,7 @@ import { BsFillClipboardCheckFill } from 'react-icons/bs'
 import { TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
 import { TClientDTO } from '@/utils/schemas/client.schema'
 import { storage } from '@/services/firebase/storage-config'
-import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
 import { createContractRequest } from '@/utils/mutations/contract-request'
 
 type HomologationFormProps = {

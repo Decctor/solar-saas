@@ -1,5 +1,5 @@
 import { OeMPricing, getOeMPrices } from '@/utils/pricing/oem/methods'
-import { TContractRequest } from '@/utils/schemas/contract-request.schema'
+import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
 import { TProposalDTO } from '@/utils/schemas/proposal.schema'
 import React, { useState } from 'react'
 import { AiFillCloseCircle } from 'react-icons/ai'
