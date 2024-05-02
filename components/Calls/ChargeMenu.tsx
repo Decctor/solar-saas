@@ -5,10 +5,11 @@ import { toast } from 'react-hot-toast'
 import { Charge, IPPSCall } from '@/utils/models'
 import { GiBatteryPack } from 'react-icons/gi'
 import { MdDelete } from 'react-icons/md'
+import { TPPSCall } from '@/utils/schemas/integrations/app-ampere/pps-calls.schema'
 type ChargeMenuProps = {
   addCharge: (charge: Charge) => void
   removeCharge: (index: number) => void
-  charges: IPPSCall['premissas']['cargas']
+  charges: TPPSCall['premissas']['cargas']
 }
 function ChargeMenu({ addCharge, removeCharge, charges }: ChargeMenuProps) {
   const [chargeHolder, setChargeHolder] = useState({
@@ -91,8 +92,7 @@ function ChargeMenu({ addCharge, removeCharge, charges }: ChargeMenuProps) {
               <GiBatteryPack color="rgb(6,182,212)" size={'20px'} />
               <p className="text-sm text-gray-500">
                 <strong className="text-cyan-500">{charge.qtde}</strong> x <strong className="text-cyan-500">{charge.descricao}</strong> de{' '}
-                <strong className="text-cyan-500">{charge.potencia}W</strong> por{' '}
-                <strong className="text-cyan-500">{charge.horasFuncionamento} horas</strong>
+                <strong className="text-cyan-500">{charge.potencia}W</strong> por <strong className="text-cyan-500">{charge.horasFuncionamento} horas</strong>
               </p>
             </div>
 

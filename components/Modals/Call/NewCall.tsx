@@ -8,23 +8,23 @@ import TextInput from '@/components/Inputs/TextInput'
 import Avatar from '@/components/utils/Avatar'
 import { getErrorMessage } from '@/lib/methods/errors'
 import { storage } from '@/services/firebase/storage-config'
-import { fileTypes, ppsCallTypes, structureTypes } from '@/utils/constants'
+import { fileTypes, structureTypes } from '@/utils/constants'
 import { stateCities } from '@/utils/estados_cidades'
 import { formatToCPForCNPJ, formatToPhone } from '@/utils/methods'
-import { Charge, IKit, IPPSCall, IProject, IProposalInfo } from '@/utils/models'
+import { Charge, IKit, IPPSCall } from '@/utils/models'
 import { createPPSCall } from '@/utils/mutations/pps-calls'
+import { TPPSCall } from '@/utils/schemas/integrations/app-ampere/pps-calls.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { PPSCallTypes } from '@/utils/select-options'
 import dayjs from 'dayjs'
 import { UploadResult, getDownloadURL, ref, uploadBytes } from 'firebase/storage'
+import { Session } from 'next-auth'
 import { useSession } from 'next-auth/react'
 import React, { useState } from 'react'
 import { toast } from 'react-hot-toast'
 import { BsCalendarFill } from 'react-icons/bs'
 import { VscChromeClose } from 'react-icons/vsc'
 
-type NewCallProps = {
-  project?: IProject
-  closeModal: () => void
-}
 const filesIdentifier = {
   comprovanteEndereco: 'COMPROVANTE DE ENDEREÇO',
   comprovanteRenda: 'COMPROVANTE DE RENDA',
@@ -34,20 +34,26 @@ const filesIdentifier = {
   declaracaoFaturamento: 'DECLARAÇÃO DE FATURAMENTO',
 }
 
-function NewCall({ project, closeModal }: NewCallProps) {
-  const { data: session } = useSession()
-  const [infoHolder, setInfoHolder] = useState<IPPSCall>({
+type NewCallProps = {
+  opportunity?: TOpportunityDTOWithClient
+  session: Session
+  closeModal: () => void
+}
+function NewCall({ opportunity, session, closeModal }: NewCallProps) {
+  const [infoHolder, setInfoHolder] = useState<TPPSCall>({
+    status: 'PENDENTE',
+    anotacoes: '',
     tipoSolicitacao: null,
     requerente: {
       idCRM: session?.user?.id || '',
       nomeCRM: session?.user.nome || '',
       apelido: '',
-      avatar_url: session?.user.image || '',
+      avatar_url: session?.user.avatar_url || '',
     },
     projeto: {
-      id: project?._id,
-      nome: project?.nome,
-      codigo: project?.identificador,
+      id: opportunity?._id,
+      nome: opportunity?.nome,
+      codigo: opportunity?.identificador,
     },
     premissas: {
       geracao: null,
@@ -57,22 +63,23 @@ function NewCall({ project, closeModal }: NewCallProps) {
       valorFinanciamento: null,
     },
     cliente: {
-      nome: project?.cliente?.nome,
-      tipo: project?.tipoTitular,
-      telefone: project?.cliente?.telefonePrimario,
-      cep: project?.cliente?.cep,
-      uf: project?.cliente?.uf,
-      cidade: project?.cliente?.cidade,
-      bairro: project?.cliente?.bairro,
-      endereco: project?.cliente?.endereco,
-      numeroOuIdentificador: project?.cliente?.numeroOuIdentificador,
-      cpfCnpj: project?.cliente?.cpfCnpj || '',
-      dataNascimento: project?.cliente?.dataNascimento,
-      email: project?.cliente?.email,
+      nome: opportunity?.cliente?.nome || '',
+      tipo: opportunity?.instalacao.tipoTitular == 'PESSOA JURÍDICA' ? 'CNPJ' : 'CPF',
+      telefone: opportunity?.cliente?.telefonePrimario || '',
+      cep: opportunity?.cliente?.cep,
+      uf: opportunity?.cliente?.uf || '',
+      cidade: opportunity?.cliente?.cidade || '',
+      bairro: opportunity?.cliente?.bairro,
+      endereco: opportunity?.cliente?.endereco,
+      numeroOuIdentificador: opportunity?.cliente?.numeroOuIdentificador,
+      cpfCnpj: opportunity?.cliente?.cpfCnpj || '',
+      dataNascimento: opportunity?.cliente?.dataNascimento,
+      email: opportunity?.cliente?.email || '',
       renda: null,
       profissao: null,
     },
     observacoes: '',
+    dataInsercao: new Date().toISOString(),
   })
   const [files, setFiles] = useState<{ [key: string]: File | null }>({})
   // Charges
@@ -216,17 +223,19 @@ function NewCall({ project, closeModal }: NewCallProps) {
   }
   function resetState() {
     setInfoHolder({
+      status: 'PENDENTE',
+      anotacoes: '',
       tipoSolicitacao: null,
       requerente: {
         idCRM: session?.user?.id || '',
         nomeCRM: session?.user.nome || '',
         apelido: '',
-        avatar_url: session?.user.image || '',
+        avatar_url: session?.user.avatar_url || '',
       },
       projeto: {
-        id: project?._id,
-        nome: project?.nome,
-        codigo: project?.identificador,
+        id: opportunity?._id,
+        nome: opportunity?.nome,
+        codigo: opportunity?.identificador,
       },
       premissas: {
         geracao: null,
@@ -236,25 +245,25 @@ function NewCall({ project, closeModal }: NewCallProps) {
         valorFinanciamento: null,
       },
       cliente: {
-        nome: project?.cliente?.nome,
-        tipo: project?.tipoTitular,
-        telefone: project?.cliente?.telefonePrimario,
-        cep: project?.cliente?.cep,
-        uf: project?.cliente?.uf,
-        cidade: project?.cliente?.cidade,
-        bairro: project?.cliente?.bairro,
-        endereco: project?.cliente?.endereco,
-        numeroOuIdentificador: project?.cliente?.numeroOuIdentificador,
-        cpfCnpj: project?.cliente?.cpfCnpj,
-        dataNascimento: project?.cliente?.dataNascimento,
-        email: project?.cliente?.email,
+        nome: opportunity?.cliente?.nome || '',
+        tipo: opportunity?.instalacao.tipoTitular == 'PESSOA JURÍDICA' ? 'CNPJ' : 'CPF',
+        telefone: opportunity?.cliente?.telefonePrimario || '',
+        cep: opportunity?.cliente?.cep,
+        uf: opportunity?.cliente?.uf || '',
+        cidade: opportunity?.cliente?.cidade || '',
+        bairro: opportunity?.cliente?.bairro,
+        endereco: opportunity?.cliente?.endereco,
+        numeroOuIdentificador: opportunity?.cliente?.numeroOuIdentificador,
+        cpfCnpj: opportunity?.cliente?.cpfCnpj || '',
+        dataNascimento: opportunity?.cliente?.dataNascimento,
+        email: opportunity?.cliente?.email || '',
         renda: null,
         profissao: null,
       },
       observacoes: '',
+      dataInsercao: new Date().toISOString(),
     })
   }
-  console.log(infoHolder)
   return (
     <div id="newCost" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="fixed left-[50%] top-[50%] z-[100] h-[90%] w-[60%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px]">
@@ -272,7 +281,7 @@ function NewCall({ project, closeModal }: NewCallProps) {
           <div className="flex grow flex-col overflow-y-auto overscroll-y-auto py-4 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
             <div className="mt-4 flex items-center justify-center gap-4">
               <div className="flex items-center gap-2">
-                <Avatar fallback={'U'} height={25} width={25} url={session?.user.image} />
+                <Avatar fallback={'U'} height={25} width={25} url={session?.user.avatar_url || undefined} />
 
                 <p className="text-xs font-medium text-gray-500">{session?.user.nome}</p>
               </div>
@@ -286,7 +295,7 @@ function NewCall({ project, closeModal }: NewCallProps) {
               label="TIPO DE SOLICITAÇÃO"
               showLabel={false}
               value={infoHolder.tipoSolicitacao}
-              options={ppsCallTypes.map((type, index) => ({ id: index + 1, label: type.label, value: type.value }))}
+              options={PPSCallTypes.map((type, index) => ({ id: index + 1, label: type.label, value: type.value }))}
               handleChange={(value) => setInfoHolder((prev) => ({ ...prev, tipoSolicitacao: value }))}
               selectedItemLabel="NÃO DEFINIDO"
               onReset={() => setInfoHolder((prev) => ({ ...prev, tipoSolicitacao: null }))}
@@ -365,7 +374,7 @@ function NewCall({ project, closeModal }: NewCallProps) {
                     setInfoHolder((prev) => ({ ...prev, cliente: { ...prev.cliente, uf: value } }))
                   }}
                   onReset={() => {
-                    setInfoHolder((prev) => ({ ...prev, cliente: { ...prev.cliente, uf: null } }))
+                    setInfoHolder((prev) => ({ ...prev, cliente: { ...prev.cliente, uf: '' } }))
                   }}
                   width="100%"
                 />
@@ -374,10 +383,14 @@ function NewCall({ project, closeModal }: NewCallProps) {
                 <DropdownSelect
                   selectedItemLabel="CIDADE"
                   categoryName="CIDADE"
-                  value={infoHolder.cliente.cidade && infoHolder.cliente.uf ? stateCities[infoHolder.cliente.uf].indexOf(infoHolder.cliente.cidade) : null}
+                  value={
+                    infoHolder.cliente.cidade && infoHolder.cliente.uf
+                      ? stateCities[infoHolder.cliente.uf as keyof typeof stateCities].indexOf(infoHolder.cliente.cidade)
+                      : null
+                  }
                   options={
                     infoHolder.cliente.uf
-                      ? stateCities[infoHolder.cliente.uf].map((city, index) => {
+                      ? stateCities[infoHolder.cliente.uf as keyof typeof stateCities].map((city, index) => {
                           return {
                             id: index,
                             value: city,
@@ -390,7 +403,7 @@ function NewCall({ project, closeModal }: NewCallProps) {
                     setInfoHolder((prev) => ({ ...prev, cliente: { ...prev.cliente, cidade: selectedItem.value } }))
                   }}
                   onReset={() => {
-                    setInfoHolder((prev) => ({ ...prev, cliente: { ...prev.cliente, cidade: null } }))
+                    setInfoHolder((prev) => ({ ...prev, cliente: { ...prev.cliente, cidade: '' } }))
                   }}
                   width="100%"
                 />
@@ -508,7 +521,7 @@ function NewCall({ project, closeModal }: NewCallProps) {
                   <NumberInput
                     label="VALOR DO FINANCIAMENTO"
                     placeholder="Preencha o valor do financiamento..."
-                    value={infoHolder.premissas?.valorFinanciamento}
+                    value={infoHolder.premissas?.valorFinanciamento || null}
                     handleChange={(value) => setInfoHolder((prev) => ({ ...prev, premissas: { ...prev.premissas, valorFinanciamento: value } }))}
                     width="100%"
                   />

@@ -26,6 +26,7 @@ import OpportunityTechnicalAnalysisBlock from './OpportunityTechnicalAnalysisBlo
 import OpportunityHomologations from './OpportunityHomologations'
 import OpportunityWonFlag from './OpportunityWonFlag'
 import OpportunityContractRequestedFlag from './OpportunityContractRequestedFlag'
+import OpportunityPPSCallsBlock from './OpportunityPPSCallsBlock'
 
 export type TOpportunityBlockMode = 'PROPOSES' | 'FILES' | 'TECHNICAL ANALYSIS'
 
@@ -155,6 +156,7 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
                 opportunityWonProposalId={opportunity.ganho.idProposta}
               />
               <OpportunityFiles opportunityId={opportunity._id} clientId={opportunity.idCliente} session={session} />
+              <OpportunityPPSCallsBlock opportunity={opportunity} session={session} />
               <OpportunityTechnicalAnalysisBlock session={session} opportunity={opportunity} />
               <OpportunityHomologations opportunity={opportunity} session={session} />
               <OpportunityHistory

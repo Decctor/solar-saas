@@ -526,7 +526,32 @@ export const AllSellers = [
   },
 ]
 export const SellersInApp = AllSellers.map((s) => s.value)
-
+export const PPSCallTypes = [
+  {
+    label: 'PROPOSTA COMERCIAL (ON GRID)',
+    value: 'PROPOSTA COMERCIAL (ON GRID)',
+  },
+  {
+    label: 'PROPOSTA COMERCIAL (OFF GRID)',
+    value: 'PROPOSTA COMERCIAL (OFF GRID)',
+  },
+  {
+    label: 'ANÁLISE DE CRÉDITO',
+    value: 'ANÁLISE DE CRÉDITO',
+  },
+  {
+    label: 'DUVIDAS E AUXILIOS TÉCNICOS',
+    value: 'DUVIDAS E AUXILIOS TÉCNICOS',
+  },
+  {
+    label: 'OUTROS',
+    value: 'OUTROS',
+  },
+  {
+    label: 'NÃO DEFINIDO',
+    value: 'NÃO DEFINIDO',
+  },
+]
 type TPremissesFieldOptions = { id: number; value: keyof TProposalPremisses; label: string }
 export const PremissesFieldOptions: TPremissesFieldOptions[] = [
   { id: 1, value: 'uf', label: 'ESTADO' },

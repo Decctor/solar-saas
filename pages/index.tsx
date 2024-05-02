@@ -25,6 +25,7 @@ import { useOpportunityCreators } from '@/utils/queries/users'
 import { usePartnersSimplified } from '@/utils/queries/partners'
 import PendingWinsBlock from '@/components/Stats/MainDashboard/PendingWinsBlock'
 import WinsBlock from '@/components/Stats/MainDashboard/WinsBlock'
+import PPSOpenCallsBlock from '@/components/Stats/MainDashboard/PPSOpenCallsBlock'
 
 const currentDate = new Date()
 const firstDayOfMonth = getFirstDayOfMonth(currentDate.getFullYear(), currentDate.getMonth()).toISOString()
@@ -230,6 +231,11 @@ function EstatisticaPrincipal() {
             </div>
             <div className="w-full lg:w-[60%]">
               <WinsBlock data={data?.ganhos || []} session={session} />
+            </div>
+          </div>
+          <div className="mt-4 flex w-full flex-col items-center gap-2 lg:flex-row">
+            <div className="w-full lg:w-[40%]">
+              <PPSOpenCallsBlock session={session} />
             </div>
           </div>
         </div>

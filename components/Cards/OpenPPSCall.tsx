@@ -1,49 +1,69 @@
-import { IPPSCall } from '@/utils/models'
 import React from 'react'
 import Avatar from '../utils/Avatar'
-import { BsCalendarFill } from 'react-icons/bs'
+import { BsCalendarCheck, BsCalendarFill, BsCalendarPlus } from 'react-icons/bs'
 import dayjs from 'dayjs'
 import { useSession } from 'next-auth/react'
+import { TPPSCallDTO } from '@/utils/schemas/integrations/app-ampere/pps-calls.schema'
+import { Session } from 'next-auth'
+import { formatDateAsLocale } from '@/lib/methods/formatting'
 
-function getBarColor(status?: string | null) {
+function getBarColor(status?: TPPSCallDTO['status'] | null) {
   if (status == 'EM ANDAMENTO') return 'bg-blue-500'
   if (status == 'REALIZADO') return 'bg-green-500'
   if (status == 'PENDENTE') return 'bg-red-400'
+  if (status == 'AGUARDANDO VENDEDOR') return 'bg-orange-400'
   return 'bg-red-400'
 }
-type OpenPPSCallProps = {
-  call: IPPSCall
+function getStatusTag(status?: TPPSCallDTO['status'] | null) {
+  if (status == 'EM ANDAMENTO')
+    return <h1 className={`rounded-full bg-blue-500 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>EM ANDAMENTO</h1>
+  if (status == 'REALIZADO')
+    return <h1 className={`rounded-full bg-green-500 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>REALIZADO</h1>
+  if (status == 'PENDENTE') return <h1 className={`rounded-full bg-red-400 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>PENDENTE</h1>
+
+  if (status == 'AGUARDANDO VENDEDOR')
+    return <h1 className={`rounded-full bg-orange-400 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>AG. VENDENDOR</h1>
+  return <h1 className={`rounded-full bg-red-400 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>PENDENTE</h1>
 }
-function OpenPPSCall({ call }: OpenPPSCallProps) {
-  const { data: session } = useSession()
+type PPSCallCardProps = {
+  session: Session
+  call: TPPSCallDTO
+}
+function PPSCallCard({ call, session }: PPSCallCardProps) {
   return (
-    <div className="flex w-full  gap-2 rounded-md border border-gray-300 shadow-sm">
+    <div className="flex w-full gap-2 rounded-md border border-gray-300 shadow-sm">
       <div className={`h-full w-[7px] ${getBarColor(call.status)} rounded-bl-md rounded-tl-md`}></div>
       <div className="flex w-full grow flex-col gap-1 p-3">
         <div className="flex w-full grow flex-col">
-          <h1 className="w-full text-start text-xs font-bold leading-none tracking-tight ">{call.tipoSolicitacao}</h1>
-          {call.requerente.avatar_url && session?.user.visibilidade == 'GERAL' ? (
-            <div className="mt-1 flex w-full items-center justify-start gap-2">
+          <div className="flex w-full items-center justify-between gap-2">
+            <h1 className="w-full text-start text-xs font-bold leading-none tracking-tight ">{call.tipoSolicitacao}</h1>
+            {getStatusTag(call.status)}
+          </div>
+          {call.requerente.avatar_url && !session?.user.permissoes.oportunidades.escopo ? (
+            <div className="flex w-full items-center justify-start gap-2">
               <Avatar fallback={'R'} url={call.requerente?.avatar_url} height={20} width={20} />
 
               <p className="text-[0.6rem] font-medium text-gray-500">{call.requerente && call.requerente.apelido}</p>
             </div>
           ) : (
-            <p className="mt-1 w-full text-start text-xs text-gray-500">{call.requerente ? call.requerente.nomeCRM : 'Requerente não definido'}</p>
+            <p className="w-full text-start text-xs text-gray-500">{call.requerente ? call.requerente.nomeCRM : 'Requerente não definido'}</p>
           )}
         </div>
-        <div className="flex w-full items-center justify-between">
-          <div className={`flex items-center gap-2 ${call.dataEfetivacao ? 'text-green-500' : 'text-gray-500'}`}>
-            <BsCalendarFill />
-            <p className="text-[0.6rem] font-medium">
-              {dayjs(call.dataEfetivacao ? call.dataEfetivacao : call.dataInsercao).format('DD/MM/YYYY HH:mm')}
-            </p>
+        <div className="mt-2 flex w-full items-center justify-between">
+          <div className={`flex items-center gap-2`}>
+            <div className="ites-center flex gap-1">
+              <BsCalendarPlus />
+              <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(call.dataInsercao, true)}</p>
+            </div>
+            {call.dataEfetivacao ? (
+              <div className="ites-center flex gap-1">
+                <BsCalendarCheck color="rgb(34,197,94)" />
+                <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(call.dataEfetivacao)}</p>
+              </div>
+            ) : null}
           </div>
-          <p className="tracking-tig mt-1 text-[0.6rem] font-medium uppercase leading-none text-gray-500">
-            <strong className="text-[#fead41]">{call.projeto?.codigo}</strong> {call.projeto?.nome}
-          </p>
-          <div className="flex items-center justify-center gap-2">
-            <p className="text-sm font-medium text-gray-500">Volts</p>
+          <div className="flex items-center justify-center gap-1">
+            <p className="text-xs font-medium text-gray-500">VOLTS</p>
           </div>
         </div>
       </div>
@@ -51,4 +71,4 @@ function OpenPPSCall({ call }: OpenPPSCallProps) {
   )
 }
 
-export default OpenPPSCall
+export default PPSCallCard
