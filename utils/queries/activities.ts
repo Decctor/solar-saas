@@ -52,3 +52,23 @@ export function useActivitiesByTechnicalAnalysisId({ technicalAnalysisId }: { te
     queryFn: async () => await fetchActivitiesByTechnicalAnalysisId({ technicalAnalysisId }),
   })
 }
+
+async function fetchActivities({ responsibleId, openOnly, dueOnly }: { responsibleId?: string | null; openOnly?: boolean; dueOnly?: boolean }) {
+  try {
+    var url = '/api/activities?'
+    if (openOnly) url = url + `openOnly=${openOnly}&`
+    if (dueOnly) url = url + `dueOnly=${dueOnly}&`
+    if (responsibleId) url = url + `responsibleId=${responsibleId}&`
+    const { data } = await axios.get(url)
+    return data.data as TActivityDTO[]
+  } catch (error) {
+    throw error
+  }
+}
+
+export function useActivities({ responsibleId, openOnly, dueOnly }: { responsibleId?: string | null; openOnly?: boolean; dueOnly?: boolean }) {
+  return useQuery({
+    queryKey: ['activities', responsibleId, openOnly, dueOnly],
+    queryFn: async () => await fetchActivities({ responsibleId, openOnly, dueOnly }),
+  })
+}

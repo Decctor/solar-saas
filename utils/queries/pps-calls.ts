@@ -62,8 +62,8 @@ export function usePPSCallById({ id }: { id: string }) {
 async function fetchPPSCalls({ applicantId, openOnly }: { applicantId: string | null; openOnly: boolean }) {
   try {
     var url = `/api/integration/app-ampere/pps-calls?`
-    if (openOnly) url = url + `openOnly=${openOnly}`
-    if (applicantId) url = url + `&applicantId=${applicantId}`
+    if (openOnly) url = url + `openOnly=${openOnly}&`
+    if (applicantId) url = url + `applicantId=${applicantId}`
     const { data } = await axios.get(url)
     return data.data as TPPSCallDTO[]
   } catch (error) {

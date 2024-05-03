@@ -1,14 +1,13 @@
 import { TActivity } from '@/utils/schemas/activities.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type InsertActivityParams = {
   collection: Collection<TActivity>
   info: TActivity
-  partnerId: string
 }
-export async function insertActivity({ collection, info, partnerId }: InsertActivityParams) {
+export async function insertActivity({ collection, info }: InsertActivityParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId, dataInsercao: new Date().toISOString() })
+    const insertResponse = await collection.insertOne({ ...info, dataInsercao: new Date().toISOString() })
     return insertResponse
   } catch (error) {
     throw error
@@ -19,11 +18,11 @@ type UpdateActivityParams = {
   activityId: string
   collection: Collection<TActivity>
   changes: Partial<TActivity>
-  partnerId: string
+  query: Filter<TActivity>
 }
-export async function updateActivity({ activityId, collection, changes, partnerId }: UpdateActivityParams) {
+export async function updateActivity({ activityId, collection, changes, query }: UpdateActivityParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(activityId), idParceiro: partnerId }, { $set: { ...changes } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(activityId), ...query }, { $set: { ...changes } })
 
     return updateResponse
   } catch (error) {

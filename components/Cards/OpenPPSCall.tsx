@@ -16,14 +16,14 @@ function getBarColor(status?: TPPSCallDTO['status'] | null) {
 }
 function getStatusTag(status?: TPPSCallDTO['status'] | null) {
   if (status == 'EM ANDAMENTO')
-    return <h1 className={`rounded-full bg-blue-500 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>EM ANDAMENTO</h1>
+    return <h1 className={`min-w-fit rounded-full bg-blue-500 px-2 py-1 text-center text-[0.55rem] font-bold text-white`}>EM ANDAMENTO</h1>
   if (status == 'REALIZADO')
-    return <h1 className={`rounded-full bg-green-500 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>REALIZADO</h1>
-  if (status == 'PENDENTE') return <h1 className={`rounded-full bg-red-400 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>PENDENTE</h1>
+    return <h1 className={`min-w-fit rounded-full bg-green-500 px-2 py-1 text-center text-[0.55rem] font-bold text-white`}>REALIZADO</h1>
+  if (status == 'PENDENTE') return <h1 className={`min-w-fit rounded-full bg-red-400 px-2 py-1 text-center text-[0.55rem] font-bold text-white`}>PENDENTE</h1>
 
   if (status == 'AGUARDANDO VENDEDOR')
-    return <h1 className={`rounded-full bg-orange-400 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>AG. VENDENDOR</h1>
-  return <h1 className={`rounded-full bg-red-400 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>PENDENTE</h1>
+    return <h1 className={`min-w-fit rounded-full bg-orange-400 px-2 py-1 text-center text-[0.55rem] font-bold text-white`}>AG. VENDENDOR</h1>
+  return <h1 className={`min-w-fit rounded-full bg-red-400 px-2 py-1 text-center text-[0.55rem] font-bold text-white`}>PENDENTE</h1>
 }
 type PPSCallCardProps = {
   session: Session
@@ -36,7 +36,7 @@ function PPSCallCard({ call, session }: PPSCallCardProps) {
       <div className="flex w-full grow flex-col gap-1 p-3">
         <div className="flex w-full grow flex-col">
           <div className="flex w-full items-center justify-between gap-2">
-            <h1 className="w-full text-start text-xs font-bold leading-none tracking-tight ">{call.tipoSolicitacao}</h1>
+            <h1 className="text-start text-xs font-bold leading-none tracking-tight ">{call.tipoSolicitacao}</h1>
             {getStatusTag(call.status)}
           </div>
           {call.requerente.avatar_url && !session?.user.permissoes.oportunidades.escopo ? (

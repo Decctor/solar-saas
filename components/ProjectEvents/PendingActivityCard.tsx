@@ -13,7 +13,6 @@ import { formatNameAsInitials } from '@/lib/methods/formatting'
 import { BsCode } from 'react-icons/bs'
 type PendingActivityCardProps = {
   activity: TActivityDTO
-  visibility: Session['user']['permissoes']['oportunidades']['escopo']
 }
 function getBarColor(dueDate?: string) {
   if (!dueDate) return 'bg-green-500'
@@ -24,7 +23,7 @@ function getBarColor(dueDate?: string) {
   return 'bg-red-500'
 }
 
-function PendingActivityCard({ activity, visibility }: PendingActivityCardProps) {
+function PendingActivityCard({ activity }: PendingActivityCardProps) {
   const info = activity as TActivityDTO
   return (
     <div className="flex  w-full max-w-full  gap-2 rounded-md border border-gray-300 shadow-sm">

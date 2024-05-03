@@ -19,6 +19,7 @@ function PPSOpenCallsBlock({ session }: PPSOpenCallsBlockProps) {
           <h1 className="text-sm font-medium uppercase tracking-tight">Chamados</h1>
           <GiBugleCall />
         </div>
+        <p className="text-sm text-gray-500">{calls?.length || 0} em aberto</p>
       </div>
       <div className="flex grow flex-col justify-start gap-2 overflow-y-auto overscroll-y-auto py-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
         {calls?.map((call, index: number) => (
