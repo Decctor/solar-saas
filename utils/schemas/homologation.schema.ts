@@ -167,6 +167,19 @@ const HomologationVistorySchema = z.object({
     .nullable(),
 })
 
+const HomologationApplicantSchema = z.object({
+  id: z.string({ invalid_type_error: 'Tipo não válido para o ID do requerente.' }).optional().nullable(),
+  nome: z.string({ invalid_type_error: 'Tipo não válido para o nome do requerente.' }).optional().nullable(),
+  apelido: z.string({
+    required_error: 'Apelido do requerente não informado.',
+    invalid_type_error: 'Tipo não válido para o apelido do requerente.',
+  }),
+  avatar_url: z.string({ invalid_type_error: 'Tipo não válido para o avatar do requerente.' }).optional().nullable(),
+  contato: z.string({
+    required_error: 'Contato do requerente não informado.',
+    invalid_type_error: 'Tipo não válido para o contato do requerente.',
+  }),
+})
 const GeneralHomologationSchema = z.object({
   idParceiro: z.string({
     required_error: 'ID de referência do parceiro não informado.',
@@ -179,6 +192,7 @@ const GeneralHomologationSchema = z.object({
     })
     .optional()
     .nullable(),
+  requerente: HomologationApplicantSchema,
   status: HomologationAccessStatusSchema,
   potencia: z
     .number({ required_error: 'Potência de homologação não informada.', invalid_type_error: 'Tipo não válido para a potência de homologação.' })
@@ -220,6 +234,7 @@ export const InsertHomologationSchema = z.object({
     })
     .optional()
     .nullable(),
+  requerente: HomologationApplicantSchema,
   status: HomologationAccessStatusSchema,
   potencia: z
     .number({ required_error: 'Potência de homologação não informada.', invalid_type_error: 'Tipo não válido para a potência de homologação.' })

@@ -1,3 +1,4 @@
+import ApplicantBlock from '@/components/Homologations/ApplicantBlock'
 import AttachFiles from '@/components/Homologations/AttachFiles'
 import EquipmentsComposition from '@/components/Homologations/EquipmentsComposition'
 import HolderInformation from '@/components/Homologations/HolderInformation'
@@ -41,6 +42,13 @@ function NewHomologation({ opportunity, session, closeModal }: NewHomologationPr
     idParceiro: session.user.idParceiro || '',
     distribuidora: '',
     idProposta: opportunity.idPropostaAtiva,
+    requerente: {
+      id: session.user.id,
+      nome: session.user.nome,
+      apelido: session.user.nome,
+      contato: session.user.telefone || '',
+      avatar_url: session.user.avatar_url,
+    },
     oportunidade: {
       id: opportunity._id,
       nome: opportunity.nome,
@@ -207,6 +215,7 @@ function NewHomologation({ opportunity, session, closeModal }: NewHomologationPr
                     <p className="text-sm font-bold tracking-tight">{infoHolder.oportunidade.nome}</p>
                   </div>
                 </div>
+                <ApplicantBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <HolderInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <InstallationInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <LocationInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />

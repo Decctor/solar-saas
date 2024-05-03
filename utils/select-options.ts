@@ -669,6 +669,12 @@ export const UserGroups: TUserGroup[] = [
         editar: true,
         criar: true,
       },
+      homologacoes: {
+        escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
       clientes: {
         escopo: null,
         visualizar: true,
@@ -745,6 +751,12 @@ export const UserGroups: TUserGroup[] = [
         criar: true,
       },
       analisesTecnicas: {
+        escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      homologacoes: {
         escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
         visualizar: true,
         editar: true,
@@ -830,6 +842,12 @@ export const UserGroups: TUserGroup[] = [
         editar: true,
         criar: true,
       },
+      homologacoes: {
+        escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
+        visualizar: false,
+        editar: false,
+        criar: false,
+      },
       clientes: {
         escopo: null,
         visualizar: true,
@@ -909,6 +927,12 @@ export const UserGroups: TUserGroup[] = [
         visualizar: true,
         editar: true,
         criar: true,
+      },
+      homologacoes: {
+        escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
+        visualizar: false,
+        editar: false,
+        criar: false,
       },
       clientes: {
         escopo: null,

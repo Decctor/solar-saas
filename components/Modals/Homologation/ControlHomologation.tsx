@@ -30,6 +30,7 @@ import UpdatesInformation from '@/components/Homologations/UpdatesInformation'
 import ActivitiesInformation from '@/components/Homologations/ActivitiesInformation'
 import HomologationFiles from '@/components/Homologations/Files'
 import StatusInformation from '@/components/Homologations/StatusInformation'
+import ApplicantBlock from '@/components/Homologations/ApplicantBlock'
 
 type ControlHomologationProps = {
   homologationId: string
@@ -47,6 +48,13 @@ function ControlHomologation({ homologationId, session, closeModal }: ControlHom
     oportunidade: {
       id: '',
       nome: '',
+    },
+    requerente: {
+      id: session.user.id,
+      nome: session.user.nome,
+      apelido: session.user.nome,
+      contato: session.user.telefone || '',
+      avatar_url: session.user.avatar_url,
     },
     titular: {
       nome: '',
@@ -190,6 +198,7 @@ function ControlHomologation({ homologationId, session, closeModal }: ControlHom
                 <ActivitiesInformation session={session} homologation={homologation} opportunity={homologation.oportunidade} />
                 <UpdatesInformation session={session} infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <StatusInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<THomologation>>} />
+                <ApplicantBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<THomologation>>} />
                 <HolderInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<THomologation>>} />
                 <HomologationFiles session={session} homologationId={homologationId} />
                 <InstallationInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<THomologation>>} />

@@ -472,6 +472,66 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
           }))
         }
       />
+      {/**HOMOLOGAÇÕES*/}
+      <div className="flex w-full items-center justify-between">
+        <h1 className="w-full text-start text-sm text-gray-500">HOMOLOGAÇÕES</h1>
+        <ScopeSelection
+          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
+          referenceId={referenceId}
+          selected={userInfo.permissoes.homologacoes.escopo}
+          handleScopeSelection={(selected) =>
+            setUserInfo((prev) => ({
+              ...prev,
+              permissoes: { ...prev.permissoes, homologacoes: { ...prev.permissoes.homologacoes, escopo: selected } },
+            }))
+          }
+        />
+      </div>
+      <CheckboxInput
+        labelFalse="APTO A VISUALIZAR HOMOLOGAÇÕES"
+        labelTrue="APTO A VISUALIZAR HOMOLOGAÇÕES"
+        checked={userInfo.permissoes.homologacoes.visualizar}
+        justify="justify-start"
+        handleChange={(value) =>
+          setUserInfo((prev) => ({
+            ...prev,
+            permissoes: {
+              ...prev.permissoes,
+              homologacoes: { ...prev.permissoes.homologacoes, visualizar: value },
+            },
+          }))
+        }
+      />
+      <CheckboxInput
+        labelFalse="APTO A CRIAR HOMOLOGAÇÕES"
+        labelTrue="APTO A CRIAR HOMOLOGAÇÕES"
+        checked={userInfo.permissoes.homologacoes.criar}
+        justify="justify-start"
+        handleChange={(value) =>
+          setUserInfo((prev) => ({
+            ...prev,
+            permissoes: {
+              ...prev.permissoes,
+              homologacoes: { ...prev.permissoes.homologacoes, criar: value },
+            },
+          }))
+        }
+      />
+      <CheckboxInput
+        labelFalse="APTO A EDITAR HOMOLOGAÇÕES"
+        labelTrue="APTO A EDITAR HOMOLOGAÇÕES"
+        checked={userInfo.permissoes.homologacoes.editar}
+        justify="justify-start"
+        handleChange={(value) =>
+          setUserInfo((prev) => ({
+            ...prev,
+            permissoes: {
+              ...prev.permissoes,
+              homologacoes: { ...prev.permissoes.homologacoes, editar: value },
+            },
+          }))
+        }
+      />
       {/**PARCEIROS */}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">PARCEIROS</h1>

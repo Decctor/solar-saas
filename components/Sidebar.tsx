@@ -21,7 +21,6 @@ type SidebarProps = {
   session: Session
 }
 export const Sidebar = ({ session }: SidebarProps) => {
-  const { crm: userHasCRMAccess, projetos: userHasProjectsAccess } = session?.user.modulos || {}
   const [sidebarExtended, setSidebarExtended] = useState(false)
   const { pathname, push } = useRouter()
   if (pathname.includes('/auth/signin')) return null
@@ -115,12 +114,14 @@ export const Sidebar = ({ session }: SidebarProps) => {
             url={'/configuracoes'}
             icon={<IoMdSettings style={{ fontSize: '15px', color: '#264653' }} />}
           />
-          <div className={`mt-2 flex cursor-pointer items-center justify-center rounded p-2  duration-300 ease-in  hover:bg-blue-100`}>
+          <div
+            onClick={() => {
+              signOut({ redirect: false })
+              push('/auth/signin')
+            }}
+            className={`mt-2 flex cursor-pointer items-center justify-center rounded p-2  duration-300 ease-in  hover:bg-blue-100`}
+          >
             <MdLogout
-              onClick={() => {
-                signOut({ redirect: false })
-                push('/auth/signin')
-              }}
               style={{
                 fontSize: '15px',
                 color: '#264653',

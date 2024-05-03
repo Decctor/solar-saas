@@ -10,19 +10,25 @@ import Avatar from '../utils/Avatar'
 
 type HomologationCardProps = {
   homologation: THomologationDTO
-  openModal: (id: string) => void
+  handleClick: (id: string) => void
+  userHasEditPermission: boolean
 }
-function HomologationCard({ homologation, openModal }: HomologationCardProps) {
+function HomologationCard({ homologation, handleClick, userHasEditPermission }: HomologationCardProps) {
   return (
-    <div className="flex w-full flex-col items-center rounded-md border border-gray-200 p-3 lg:w-[450px]">
+    <div className="flex w-full flex-col items-center rounded-md border border-gray-500 bg-[#fff] p-4 lg:w-[450px]">
       <div className="flex w-full items-start justify-between">
         <div className="flex grow flex-col">
-          <h1
-            onClick={() => openModal(homologation._id)}
-            className="cursor-pointer text-center text-sm font-black leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500 lg:text-start"
-          >
-            {homologation.titular.nome}
-          </h1>
+          {userHasEditPermission ? (
+            <h1
+              onClick={() => handleClick(homologation._id)}
+              className="cursor-pointer text-sm font-black leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500"
+            >
+              {homologation.titular.nome}
+            </h1>
+          ) : (
+            <h1 className="text-sm font-black leading-none tracking-tight">{homologation.titular.nome}</h1>
+          )}
+
           <div className="flex items-center gap-1">
             <BsCode />
             <p className="text-xs font-medium tracking-tight text-gray-500">INSTALAÇÃO Nº {homologation.instalacao.numeroInstalacao}</p>
@@ -45,9 +51,14 @@ function HomologationCard({ homologation, openModal }: HomologationCardProps) {
         </div>
       </div>
       <div className="mt-2 flex w-full items-center justify-start gap-2">
-        <Avatar url={homologation.autor.avatar_url || undefined} fallback={formatNameAsInitials(homologation.autor.nome || 'U')} width={20} height={20} />
+        <Avatar
+          url={homologation.requerente.avatar_url || undefined}
+          fallback={formatNameAsInitials(homologation.requerente.nome || 'U')}
+          width={20}
+          height={20}
+        />
         <p className="text-[0.65rem] font-medium leading-none tracking-tight text-gray-500 lg:text-xs">
-          REQUERIDO POR <strong className="text-cyan-500">{homologation.autor.nome?.toUpperCase() || 'NÃO DEFINIDO'}</strong>
+          REQUERIDO POR <strong className="text-cyan-500">{homologation.requerente.nome?.toUpperCase() || 'NÃO DEFINIDO'}</strong>
         </p>
       </div>
       <div className="flex w-full items-center justify-between gap-2">

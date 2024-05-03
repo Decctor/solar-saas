@@ -38,21 +38,27 @@ function getStatusTag(status: string) {
 
 type TechnicalAnalysisCardProps = {
   analysis: TTechnicalAnalysisDTO
-  handleOpenModal: (id: string) => void
+  handleClick: (id: string) => void
+  userHasEditPermission: boolean
 }
-function TechnicalAnalysisCard({ analysis, handleOpenModal }: TechnicalAnalysisCardProps) {
+function TechnicalAnalysisCard({ analysis, handleClick, userHasEditPermission }: TechnicalAnalysisCardProps) {
   return (
-    <div key={analysis._id} className="flex min-h-[180px] w-full gap-2 rounded-md border border-gray-300 shadow-sm lg:w-[500px]">
+    <div key={analysis._id} className="flex min-h-[180px] w-full gap-2 rounded-md border border-gray-500 bg-[#fff] shadow-sm lg:w-[500px]">
       <div className={`h-full w-[7px] ${getBarColor(analysis.status)} rounded-bl-md rounded-tl-md`}></div>
-      <div className="flex w-full grow flex-col p-3">
+      <div className="flex w-full grow flex-col p-4">
         <div className="flex w-full grow flex-col">
           <div className="flex w-full items-center justify-between gap-2">
-            <h1
-              onClick={() => handleOpenModal(analysis._id)}
-              className="grow cursor-pointer text-center text-sm font-black leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500 lg:text-start"
-            >
-              {analysis.nome || 'NÃO DEFINIDO'}
-            </h1>
+            {userHasEditPermission ? (
+              <h1
+                onClick={() => handleClick(analysis._id)}
+                className="grow cursor-pointer text-center text-sm font-black leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500 lg:text-start"
+              >
+                {analysis.nome || 'NÃO DEFINIDO'}
+              </h1>
+            ) : (
+              <h1 className="text-sm font-black leading-none tracking-tight">{analysis.nome}</h1>
+            )}
+
             {getStatusTag(analysis.status)}
           </div>
           <div className="flex w-full items-center gap-2">

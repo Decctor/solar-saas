@@ -12,7 +12,8 @@ type GetResponse = {
 }
 
 const getHomologations: NextApiHandler<GetResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthorization(req, res, 'homologacoes', 'visualizar', true)
+  const homologationScope = session.user.permissoes.homologacoes.escopo
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
   const partnerQuery: Filter<THomologation> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
@@ -35,8 +36,10 @@ const getHomologations: NextApiHandler<GetResponse> = async (req, res) => {
 
     return res.status(200).json({ data: homologations })
   }
-
-  const homologations = await getPartnerHomologations({ collection: collection, query: partnerQuery })
+  // Ajusting the query for the user's scope visualization
+  const applicantQuery: Filter<THomologation> = homologationScope ? { 'requerente.id': { $in: [...homologationScope] } } : {}
+  const query = { ...partnerQuery, ...applicantQuery }
+  const homologations = await getPartnerHomologations({ collection: collection, query: query })
   return res.status(200).json({ data: homologations })
 }
 
@@ -46,7 +49,7 @@ type PostResponse = {
 }
 
 const createHomologation: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthorization(req, res, 'homologacoes', 'criar', true)
   const partnerId = session.user.idParceiro
 
   const homologation = InsertHomologationSchema.parse(req.body)
@@ -67,7 +70,7 @@ type PutResponse = {
 }
 
 const editHomologation: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthorization(req, res, 'homologacoes', 'editar', true)
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
   const partnerQuery: Filter<THomologation> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}

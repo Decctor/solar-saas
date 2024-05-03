@@ -19,7 +19,7 @@ import { AiFillEdit, AiOutlineUser } from 'react-icons/ai'
 import { useRepresentatives, useResponsibles } from '@/utils/methods'
 import { useOpportunityById } from '@/utils/queries/opportunities'
 import OpportunityLossBlock from './OpportunityLossBlock'
-import { formatDateAsLocale } from '@/lib/methods/formatting'
+import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
 import { Session } from 'next-auth'
 import { usePartnerOwnInfo } from '@/utils/queries/partners'
 import OpportunityTechnicalAnalysisBlock from './OpportunityTechnicalAnalysisBlock'
@@ -75,7 +75,7 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
               <div className="mt-1 flex w-full flex-row flex-wrap items-start gap-3">
                 {opportunity.responsaveis.map((resp) => (
                   <div className="flex items-center gap-1">
-                    <Avatar width={20} height={20} url={resp.avatar_url || undefined} fallback={resp.nome} />
+                    <Avatar width={20} height={20} url={resp.avatar_url || undefined} fallback={formatNameAsInitials(resp.nome)} />
                     <p className="text-sm font-medium leading-none tracking-tight text-gray-500">{resp.nome}</p>{' '}
                     <p className="ml-1 rounded-md border border-cyan-400 p-1 text-xxs font-bold text-cyan-400">{resp.papel}</p>
                   </div>

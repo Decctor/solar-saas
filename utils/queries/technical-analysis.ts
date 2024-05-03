@@ -67,7 +67,7 @@ async function fetchTechnicalAnalysis() {
   }
 }
 
-type UseTechnicalAnalysisFilters = {
+export type UseTechnicalAnalysisFilters = {
   search: string
   analyst: string | null
   requester: string[]
@@ -112,12 +112,7 @@ export function useTechnicalAnalysis() {
     var modeledData = data
     return modeledData.filter(
       (analysis) =>
-        matchSearch(analysis) &&
-        matchAnalyst(analysis) &&
-        matchRequester(analysis) &&
-        matchType(analysis) &&
-        matchStatus(analysis) &&
-        matchComplexity(analysis)
+        matchSearch(analysis) && matchAnalyst(analysis) && matchRequester(analysis) && matchType(analysis) && matchStatus(analysis) && matchComplexity(analysis)
     )
   }
   return {

@@ -344,6 +344,12 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
                         editar: value.value.analisesTecnicas.editar,
                         criar: value.value.analisesTecnicas.criar,
                       },
+                      homologacoes: {
+                        escopo: [], // refere-se ao escopo de atuação
+                        visualizar: value.value.homologacoes.visualizar,
+                        editar: value.value.homologacoes.editar,
+                        criar: value.value.homologacoes.criar,
+                      },
                       clientes: {
                         escopo: [],
                         visualizar: value.value.clientes.visualizar,

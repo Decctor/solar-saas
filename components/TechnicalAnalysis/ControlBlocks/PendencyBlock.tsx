@@ -14,7 +14,7 @@ import Avatar from '@/components/utils/Avatar'
 import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
 import toast from 'react-hot-toast'
 import { Session } from 'next-auth'
-import { TOpportunityActivity } from '@/utils/schemas/opportunity-history.schema'
+
 import { createOpportunityHistory } from '@/utils/mutations/opportunity-history'
 import { TNotification } from '@/utils/schemas/notification.schema'
 import { createNotification } from '@/utils/mutations/notifications'

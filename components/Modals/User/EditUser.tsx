@@ -327,6 +327,12 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                             editar: value.value.analisesTecnicas.editar,
                             criar: value.value.analisesTecnicas.criar,
                           },
+                          homologacoes: {
+                            escopo: [userId], // refere-se ao escopo de atuação
+                            visualizar: value.value.homologacoes.visualizar,
+                            editar: value.value.homologacoes.editar,
+                            criar: value.value.homologacoes.criar,
+                          },
                           clientes: {
                             escopo: [userId],
                             visualizar: value.value.clientes.visualizar,

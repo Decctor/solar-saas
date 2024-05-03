@@ -97,7 +97,9 @@ function Kits() {
               )}
               <div className="flex flex-col gap-1">
                 <h1 className="text-xl font-black leading-none tracking-tight md:text-2xl">BANCO DE KITS</h1>
-                <p className="text-sm leading-none tracking-tight text-gray-500">{kits?.length || '...'} kits cadastrados</p>
+                <p className="text-sm leading-none tracking-tight text-gray-500">
+                  {kits?.length ? (kits.length > 0 ? `${kits.length} kits cadastrados` : `${kits.length} kit cadastrado`) : '...'}
+                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">

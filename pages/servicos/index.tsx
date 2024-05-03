@@ -43,7 +43,9 @@ function ServicesPage() {
               )}
               <div className="flex flex-col gap-1">
                 <h1 className="text-xl font-black leading-none tracking-tight md:text-2xl">BANCO DE SERVIÇOS</h1>
-                <p className="text-sm leading-none tracking-tight text-gray-500">{services?.length || '...'} serviços cadastrados</p>
+                <p className="text-sm leading-none tracking-tight text-gray-500">
+                  {services?.length ? (services.length > 0 ? `${services.length} serviços cadastrados` : `${services.length} serviço cadastrado`) : '...'}
+                </p>
               </div>
             </div>
             {session?.user.permissoes.servicos.criar ? (

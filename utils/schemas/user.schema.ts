@@ -172,6 +172,33 @@ const PermissionsSchema = z.object({
       invalid_type_error: 'Tipo não válido para permissão de criação de análises técnicas.',
     }),
   }),
+  homologacoes: z.object({
+    escopo: z
+      .array(
+        z.string({
+          required_error: 'Item do escopo de visualização de homologações não informado.',
+          invalid_type_error: 'Tipo não válido para item do escopo de visualização de homologações.',
+        }),
+        {
+          required_error: 'Escopo de visualização de homologações não fornecido.',
+          invalid_type_error: 'Tipo não válido para escopo de visualização de homologações.',
+        }
+      )
+      .optional()
+      .nullable(), // refere-se ao escopo de atuação
+    visualizar: z.boolean({
+      required_error: 'Permissão de visualização de homologações não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de visualização de homologações.',
+    }),
+    editar: z.boolean({
+      required_error: 'Permissão de edição de homologações não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de edição de homologações.',
+    }),
+    criar: z.boolean({
+      required_error: 'Permissão de criação de homologações não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de criação de homologações.',
+    }),
+  }),
   clientes: z.object({
     escopo: z
       .array(

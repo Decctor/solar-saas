@@ -42,7 +42,9 @@ function ProductsPage() {
               )}
               <div className="flex flex-col gap-1">
                 <h1 className="text-xl font-black leading-none tracking-tight md:text-2xl">BANCO DE PRODUTOS</h1>
-                <p className="text-sm leading-none tracking-tight text-gray-500">{products?.length || '...'} produtos cadastrados</p>
+                <p className="text-sm leading-none tracking-tight text-gray-500">
+                  {products?.length ? (products.length > 0 ? `${products.length} produtos cadastrados` : `${products.length} produto cadastrado`) : '...'}
+                </p>
               </div>
             </div>
 

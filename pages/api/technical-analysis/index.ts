@@ -4,7 +4,7 @@ import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { GeneralTechnicalAnalysisSchema, TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
 type GetResponse = {
@@ -13,7 +13,11 @@ type GetResponse = {
 
 const getPartnerTechnicalAnalysis: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
+  const analysisScope = session.user.permissoes.analisesTecnicas.escopo
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TTechnicalAnalysis> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+
   const { id, opportunityId } = req.query
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -35,7 +39,10 @@ const getPartnerTechnicalAnalysis: NextApiHandler<GetResponse> = async (req, res
     })
     return res.status(200).json({ data: opportunityAnalysis })
   }
-  const allAnalysis = await getTechnicalAnalysis({ collection: collection, partnerId: partnerId || '' })
+  // Ajusting the query for the user's scope visualization
+  const applicantQuery: Filter<TTechnicalAnalysis> = analysisScope ? { 'requerente.id': { $in: [...analysisScope] } } : {}
+  const query = { ...partnerQuery, ...applicantQuery }
+  const allAnalysis = await getTechnicalAnalysis({ collection: collection, query: query })
 
   return res.status(200).json({ data: allAnalysis })
 }

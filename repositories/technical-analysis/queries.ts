@@ -1,13 +1,13 @@
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type GetTechnicalAnalysisParams = {
   collection: Collection<TTechnicalAnalysis>
-  partnerId: string
+  query: Filter<TTechnicalAnalysis>
 }
-export async function getTechnicalAnalysis({ collection, partnerId }: GetTechnicalAnalysisParams) {
+export async function getTechnicalAnalysis({ collection, query }: GetTechnicalAnalysisParams) {
   try {
-    const allAnalysis = await collection.find({ idParceiro: partnerId }, { sort: { _id: -1 } }).toArray()
+    const allAnalysis = await collection.find({ ...query }, { sort: { _id: -1 } }).toArray()
     return allAnalysis
   } catch (error) {
     throw error
