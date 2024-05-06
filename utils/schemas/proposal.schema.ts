@@ -87,7 +87,14 @@ const PremissesSchema = z.object({
   numInversores: z.number({ invalid_type_error: 'Tipo inválido para a premissa de nº de inversores.' }).optional().nullable(),
   eficienciaGeracao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de eficiência de geração.' }).optional().nullable(),
   grupoInstalacao: ElectricalInstallationGroupsSchema.optional().nullable(),
-  valorReferencia: z.number({ invalid_type_error: 'Tipo inválido para a premissa de valor genérico de referência.' }).optional().nullable(),
+  valorReferencia: z.number({ invalid_type_error: 'Tipo inválido para a premissa de valor de referência.' }).optional().nullable(),
+  custosInstalacao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de custo estimado de instalação.' }).optional().nullable(),
+  custosPadraoEnergia: z.number({ invalid_type_error: 'Tipo inválido para a premissa de custo estimado de adequação de padrão.' }).optional().nullable(),
+  custosEstruturaInstalacao: z
+    .number({ invalid_type_error: 'Tipo inválido para a premissa de custo estimado de estrutura de instalação.' })
+    .optional()
+    .nullable(),
+  custosOutros: z.number({ invalid_type_error: 'Tipo inválido para a premissa de outros custos de estimado.' }).optional().nullable(),
 })
 export type TProposalPremisses = z.infer<typeof PremissesSchema>
 

@@ -3,8 +3,11 @@ import { useSession } from 'next-auth/react'
 
 import OpportunityDetails from './OpportunityDetails'
 import OpportunityHistory from './OpportunityHistory'
-import OpportunityProposals from './OpportunityProposalsList'
+import OpportunityProposals from './OpportunityProposals'
 import OpportunityFiles from './OpportunityFiles'
+import OpportunityPPSCalls from './OpportunityPPSCalls'
+import OpportunityTechnicalAnalysis from './OpportunityTechnicalAnalysis'
+import OpportunityHomologations from './OpportunityHomologations'
 import LoadingComponent from '../utils/LoadingComponent'
 import Avatar from '../utils/Avatar'
 import { Sidebar } from '../Sidebar'
@@ -21,12 +24,8 @@ import { useOpportunityById } from '@/utils/queries/opportunities'
 import OpportunityLossBlock from './OpportunityLossBlock'
 import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
 import { Session } from 'next-auth'
-import { usePartnerOwnInfo } from '@/utils/queries/partners'
-import OpportunityTechnicalAnalysisBlock from './OpportunityTechnicalAnalysisBlock'
-import OpportunityHomologations from './OpportunityHomologations'
 import OpportunityWonFlag from './OpportunityWonFlag'
 import OpportunityContractRequestedFlag from './OpportunityContractRequestedFlag'
-import OpportunityPPSCallsBlock from './OpportunityPPSCallsBlock'
 
 export type TOpportunityBlockMode = 'PROPOSES' | 'FILES' | 'TECHNICAL ANALYSIS'
 
@@ -156,8 +155,8 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
                 opportunityWonProposalId={opportunity.ganho.idProposta}
               />
               <OpportunityFiles opportunityId={opportunity._id} clientId={opportunity.idCliente} session={session} />
-              <OpportunityPPSCallsBlock opportunity={opportunity} session={session} />
-              <OpportunityTechnicalAnalysisBlock session={session} opportunity={opportunity} />
+              <OpportunityPPSCalls opportunity={opportunity} session={session} />
+              <OpportunityTechnicalAnalysis session={session} opportunity={opportunity} />
               <OpportunityHomologations opportunity={opportunity} session={session} />
               <OpportunityHistory
                 opportunityName={opportunity.nome}

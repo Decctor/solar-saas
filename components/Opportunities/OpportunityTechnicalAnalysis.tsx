@@ -7,14 +7,14 @@ import { TOpportunityDTO, TOpportunityDTOWithClient } from '@/utils/schemas/oppo
 import { useOpportunityTechnicalAnalysis } from '@/utils/queries/technical-analysis'
 import LoadingComponent from '../utils/LoadingComponent'
 import ErrorComponent from '../utils/ErrorComponent'
-import TechAnalysisItem from '../Cards/TechAnalysisItem'
+import TechAnalysisItem from '../Cards/OpportunityTechnicalAnalysisItem'
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from 'react-icons/io'
 
-type OpportunityTechnicalAnalysisBlockProps = {
+type OpportunityTechnicalAnalysisProps = {
   session: Session
   opportunity: TOpportunityDTOWithClient
 }
-function OpportunityTechnicalAnalysisBlock({ session, opportunity }: OpportunityTechnicalAnalysisBlockProps) {
+function OpportunityTechnicalAnalysis({ session, opportunity }: OpportunityTechnicalAnalysisProps) {
   const [blockIsOpen, setBlockIsOpen] = useState<boolean>(false)
 
   const [newTechnicalAnalysisBlockIsOpen, setNewTechnicalAnalysisBlockIsOpen] = useState<boolean>(false)
@@ -71,4 +71,4 @@ function OpportunityTechnicalAnalysisBlock({ session, opportunity }: Opportunity
   )
 }
 
-export default OpportunityTechnicalAnalysisBlock
+export default OpportunityTechnicalAnalysis

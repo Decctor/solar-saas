@@ -1,13 +1,11 @@
 import React, { useState } from 'react'
 import { MdAdd } from 'react-icons/md'
-import { TOpportunityBlockMode } from './OpportunityPage'
-import NewTechnicalAnalysis from '../Modals/TechnicalAnalysis/NewTechnicalAnalysis'
 import { Session } from 'next-auth'
-import { TOpportunityDTO, TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
-import { useOpportunityTechnicalAnalysis } from '@/utils/queries/technical-analysis'
+import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+
 import LoadingComponent from '../utils/LoadingComponent'
 import ErrorComponent from '../utils/ErrorComponent'
-import TechAnalysisItem from '../Cards/TechAnalysisItem'
+
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from 'react-icons/io'
 import { usePPSCallsByOpportunityId } from '@/utils/queries/pps-calls'
 import OpenPPSCall from '../Cards/OpenPPSCall'

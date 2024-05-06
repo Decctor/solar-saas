@@ -47,6 +47,10 @@ export type TPricingVariableData = {
   potenciaPico: number
   distancia: number
   valorReferencia: number
+  custosInstalacao: number
+  custosPadraoEnergia: number
+  custosEstruturaInstalacao: number
+  custosOutros: number
   total?: number
   totalFaturavelFinal?: number
   totalNaoFaturavelFinal?: number
@@ -79,8 +83,6 @@ export function handlePricingCalculation({ methodology, kit, variableData, condi
     totalFaturavelCustos: 0,
     totalNaoFaturavelCustos: 0,
   }
-  console.log('VARIÁVEIS', variableData)
-  console.log('CONDIÇÃO', conditionData)
   let pricingItems: TPricingItem[] = []
   let iteration = 0
   while (iteration < 100) {

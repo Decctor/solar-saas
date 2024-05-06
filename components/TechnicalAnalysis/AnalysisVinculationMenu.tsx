@@ -5,7 +5,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import React from 'react'
 import LoadingComponent from '../utils/LoadingComponent'
 import ErrorComponent from '../utils/ErrorComponent'
-import TechAnalysisItem from '../Cards/TechAnalysisItem'
+import TechAnalysisItem from '../Cards/OpportunityTechnicalAnalysisItem'
 import TechnicalAnalysisVinculationCard from '../Cards/TechnicalAnalysisVinculationCard'
 import { Optional } from '@/utils/models'
 

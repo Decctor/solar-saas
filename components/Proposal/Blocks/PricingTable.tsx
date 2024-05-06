@@ -8,6 +8,7 @@ import EditPriceItem from './EditPriceItem'
 import { TbPercentage } from 'react-icons/tb'
 import { formatDecimalPlaces } from '@/lib/methods/formatting'
 import { MdSignalCellularAlt } from 'react-icons/md'
+import CheckboxInput from '@/components/Inputs/CheckboxInput'
 
 type TEditPriceModal = {
   isOpen: boolean
@@ -24,10 +25,21 @@ function PricingTable({ pricing, setPricing, userHasPricingViewPermission, userH
     isOpen: false,
     priceItemIndex: null,
   })
+  const [showOnlyNonZero, setShowOnlyNonZero] = useState<boolean>(true)
   // In case user has pricing view permission
   if (userHasPricingViewPermission)
     return (
       <>
+        <div className="my-2 flex w-full items-center justify-end">
+          <div className="w-fit">
+            <CheckboxInput
+              checked={showOnlyNonZero}
+              handleChange={(value) => setShowOnlyNonZero(value)}
+              labelTrue="MOSTRAR SOMENTE PREÇOS NÃO NULOS"
+              labelFalse="MOSTRAR SOMENTE PREÇOS NÃO NULOS"
+            />
+          </div>
+        </div>
         {/**WEB STYLES */}
         <div className="hidden w-full grow flex-col gap-1 lg:flex">
           <div className="flex w-full items-center rounded bg-cyan-500">
@@ -47,6 +59,7 @@ function PricingTable({ pricing, setPricing, userHasPricingViewPermission, userH
           {pricing.map((priceItem, index) => {
             const { descricao, custoCalculado, custoFinal, margemLucro, valorCalculado, valorFinal } = priceItem
             const profitMarginPercentage = margemLucro / 100
+            if (showOnlyNonZero && valorFinal == 0) return null
             return (
               <div className={`flex w-full items-center rounded ${Math.abs(valorFinal - valorCalculado) > 1 ? 'bg-orange-200' : ''}`} key={index}>
                 <div className="flex w-6/12 items-center justify-center p-1">

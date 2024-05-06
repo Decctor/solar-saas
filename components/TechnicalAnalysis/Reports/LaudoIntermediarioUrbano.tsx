@@ -431,11 +431,11 @@ function LaudoIntermediarioUrbano({ analysis }: LaudoIntermediarioUrbanoProps) {
           </div>
           <div className="grid grid-cols-6 border-b border-black">
             <div className="col-span-4 border-r border-black bg-[#15599a] py-1 text-center text-xs font-bold italic text-white">GERAÇÃO PROPOSTA COMERCIAL</div>
-            <div className="col-span-2 border-r border-black py-1 text-center text-xs font-bold">{getProposedGen()} kWh</div>
+            <div className="col-span-2 border-r border-black py-1 text-center text-xs font-bold">{formatDecimalPlaces(getProposedGen())} kWh</div>
           </div>
           <div className="grid grid-cols-6 border-b border-black">
             <div className="col-span-4 border-r border-black bg-[#fead61] py-1 text-center text-xs font-bold italic text-white">GERAÇÃO PREVISTA TOTAL</div>
-            <div className="col-span-2 border-r border-black py-1 text-center text-xs font-bold">{getCorrectedGen()} kWh</div>
+            <div className="col-span-2 border-r border-black py-1 text-center text-xs font-bold">{formatDecimalPlaces(getCorrectedGen())} kWh</div>
           </div>
           <div className="grid grid-cols-6 border-b border-black">
             <div className="col-span-4 border-r border-black bg-[#15599a] py-1 text-center text-xs font-bold italic text-white">

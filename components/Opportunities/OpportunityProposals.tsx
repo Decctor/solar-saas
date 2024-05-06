@@ -11,7 +11,7 @@ import { Session } from 'next-auth'
 import ErrorComponent from '../utils/ErrorComponent'
 import { TOpportunityBlockMode } from './OpportunityPage'
 
-type ProposalListBlockProps = {
+type OpportunityProposalsProps = {
   city?: string | null
   uf?: string | null
   session: Session
@@ -22,7 +22,7 @@ type ProposalListBlockProps = {
   opportunityIsWon: boolean
   opportunityWonProposalId?: string | null
 }
-function ProposalListBlock({
+function OpportunityProposals({
   city,
   uf,
   opportunityId,
@@ -32,7 +32,7 @@ function ProposalListBlock({
   opportunityIsWon,
   opportunityWonProposalId,
   setBlockMode,
-}: ProposalListBlockProps) {
+}: OpportunityProposalsProps) {
   const router = useRouter()
   const {
     data: opportunityProposals,
@@ -185,4 +185,4 @@ function ProposalListBlock({
   // )
 }
 
-export default ProposalListBlock
+export default OpportunityProposals

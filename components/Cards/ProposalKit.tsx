@@ -44,6 +44,10 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
     potenciaPico: getModulesPeakPotByProducts(kit.produtos),
     distancia: proposal.premissas.distancia || 0,
     valorReferencia: proposal.premissas.valorReferencia || 0,
+    custosInstalacao: proposal.premissas.custosInstalacao || 0,
+    custosPadraoEnergia: proposal.premissas.custosPadraoEnergia || 0,
+    custosEstruturaInstalacao: proposal.premissas.custosEstruturaInstalacao || 0,
+    custosOutros: proposal.premissas.custosOutros || 0,
   }
   const pricing = handlePricingCalculation({
     methodology: kit.metodologia,

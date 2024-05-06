@@ -25,6 +25,8 @@ function ProposalProduct({ product, proposal, opportunity, handleClick, userHasP
     uf: opportunity.localizacao.uf,
     cidade: opportunity.localizacao.cidade,
     topologia: proposal.premissas.topologia || 'INVERSOR',
+    grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
+    tipoEstrutura: proposal.premissas.tipoEstrutura || 'Fibrocimento',
   }
 
   const variableData: TPricingVariableData = {
@@ -36,6 +38,11 @@ function ProposalProduct({ product, proposal, opportunity, handleClick, userHasP
     numInversores: product.categoria == 'INVERSOR' ? 1 : 0,
     potenciaPico: product.potencia || 0,
     distancia: proposal.premissas.distancia || 0,
+    valorReferencia: proposal.premissas.valorReferencia || 0,
+    custosInstalacao: proposal.premissas.custosInstalacao || 0,
+    custosPadraoEnergia: proposal.premissas.custosPadraoEnergia || 0,
+    custosEstruturaInstalacao: proposal.premissas.custosEstruturaInstalacao || 0,
+    custosOutros: proposal.premissas.custosOutros || 0,
   }
   const pricing = handlePricingCalculation({
     methodology: product.metodologia,

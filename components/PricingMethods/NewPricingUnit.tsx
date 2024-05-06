@@ -148,17 +148,48 @@ function NewPricingUnit({ pricingHolder, setPricingHolder, resultHolder, setResu
           ADD
         </button>
       </div>
-      <h1 className="my-2 w-full text-start text-sm font-black text-[#FF9B50]">VARIÁVEIS</h1>
+      <h1 className="mt-2 w-full text-start text-sm font-black text-[#FF9B50]">VARIÁVEIS</h1>
+      <h1 className="mt-2 w-full text-start text-xs font-black text-blue-500">GERAIS</h1>
       <div className="my-2 flex flex-wrap items-center gap-2">
-        {variablesAlias.map((va, index) => (
-          <button
-            key={index}
-            onClick={() => addToUnitPricingItems(`[${va.value}]`)}
-            className="grow rounded border border-gray-700 p-1 text-xs font-medium text-gray-700 duration-300 ease-in-out hover:bg-gray-700 hover:text-white"
-          >
-            {va.label}
-          </button>
-        ))}
+        {variablesAlias
+          .filter((v) => v.type == 'general')
+          .map((va, index) => (
+            <button
+              key={index}
+              onClick={() => addToUnitPricingItems(`[${va.value}]`)}
+              className="grow rounded border border-gray-700 p-1 text-xs font-medium text-gray-700 duration-300 ease-in-out hover:bg-gray-700 hover:text-white"
+            >
+              {va.label}
+            </button>
+          ))}
+      </div>
+      <h1 className="mt-2 w-full text-start text-xs font-black text-blue-500">ACUMULATIVAS</h1>
+      <div className="my-2 flex flex-wrap items-center gap-2">
+        {variablesAlias
+          .filter((v) => v.type == 'cumulative')
+          .map((va, index) => (
+            <button
+              key={index}
+              onClick={() => addToUnitPricingItems(`[${va.value}]`)}
+              className="grow rounded border border-gray-700 p-1 text-xs font-medium text-gray-700 duration-300 ease-in-out hover:bg-gray-700 hover:text-white"
+            >
+              {va.label}
+            </button>
+          ))}
+      </div>
+      <h1 className="mt-2 w-full text-start text-xs font-black text-blue-500">ESTIMADO EM ANÁLISE TÉCNICA</h1>
+      <div className="my-2 flex flex-wrap items-center gap-2">
+        {variablesAlias
+          .filter((v) => v.type == 'technical-analysis')
+          .map((va, index) => (
+            <button
+              key={index}
+              onClick={() => addToUnitPricingItems(`[${va.value}]`)}
+              className="grow rounded border border-gray-700 p-1 text-xs font-medium text-gray-700 duration-300 ease-in-out hover:bg-gray-700 hover:text-white"
+            >
+              {va.label}
+            </button>
+          ))}
       </div>
       <h1 className="my-2 w-full text-start text-sm font-black text-[#FF9B50]">OPERAÇÕES</h1>
       <div className="flex w-full flex-wrap items-center justify-around gap-2">

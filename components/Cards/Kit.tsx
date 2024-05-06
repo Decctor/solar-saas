@@ -22,11 +22,6 @@ function renderCategoryIcon(category: TProductItem['categoria']) {
   if (!CategoryInfo) return <BsCart />
   return renderIcon(CategoryInfo.icon)
 }
-function getBarColor({ active, expiryDate }: { active: boolean; expiryDate?: string | null }) {
-  if (!active) return 'bg-gray-500'
-  if (expiryDate && dayjs(expiryDate).isBefore(new Date())) return 'bg-red-500'
-  return 'bg-blue-500'
-}
 function getStatusTag({ active, expiryDate }: { active: boolean; expiryDate?: string | null }) {
   if (!active) return <h1 className="rounded-full bg-gray-600 px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">INATIVO</h1>
   if (expiryDate && dayjs(expiryDate).isBefore(new Date()))

@@ -16,7 +16,7 @@ import NewOpportunityActivityMenu from '../Activities/NewOpportunityActivityMenu
 import NewOpportunityNoteMenu from '../OpportunityHistories/NewNoteMenu'
 import { TActivityDTO } from '@/utils/schemas/activities.schema'
 import OpportunityActivity from '../Cards/OpportunityActivity'
-import OpportunityHistory from '../Cards/OpportunityHistory'
+import OpportunityHistoryCard from '../Cards/OpportunityHistory'
 type GetInitialState = {
   type?: 'ATIVIDADE' | 'ANOTAÇÃO'
   project: {
@@ -27,13 +27,13 @@ type GetInitialState = {
   session: Session
 }
 
-type ProjectHistoryBlockProps = {
+type OpportunityHistoryProps = {
   opportunityName: string
   opportunityId: string
   opportunityIdentifier: string
   session: Session
 }
-function ProjectHistoryBlock({ session, opportunityName, opportunityId, opportunityIdentifier }: ProjectHistoryBlockProps) {
+function OpportunityHistory({ session, opportunityName, opportunityId, opportunityIdentifier }: OpportunityHistoryProps) {
   const queryClient = useQueryClient()
 
   const { data: historyAndActivities, isLoading, isError, isSuccess } = useOpportunityHistoryAndActivities({ opportunityId: opportunityId })
@@ -102,7 +102,7 @@ function ProjectHistoryBlock({ session, opportunityName, opportunityId, opportun
                 history.map((history) => {
                   if (!!(history as TActivityDTO).dataConclusao)
                     return <OpportunityActivity key={history._id} activity={history as TActivityDTO} opportunityId={opportunityId} />
-                  return <OpportunityHistory key={history._id} history={history as TOpportunityHistoryDTO} />
+                  return <OpportunityHistoryCard key={history._id} history={history as TOpportunityHistoryDTO} />
                   return <></>
                 })
               ) : (
@@ -118,4 +118,4 @@ function ProjectHistoryBlock({ session, opportunityName, opportunityId, opportun
   )
 }
 
-export default ProjectHistoryBlock
+export default OpportunityHistory

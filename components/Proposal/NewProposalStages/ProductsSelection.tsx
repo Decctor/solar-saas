@@ -80,6 +80,10 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       plan: 0,
       numInversores: inverterQty,
       valorReferencia: infoHolder.premissas.valorReferencia || 0,
+      custosInstalacao: infoHolder.premissas.custosInstalacao || 0,
+      custosPadraoEnergia: infoHolder.premissas.custosPadraoEnergia || 0,
+      custosEstruturaInstalacao: infoHolder.premissas.custosEstruturaInstalacao || 0,
+      custosOutros: infoHolder.premissas.custosOutros || 0,
     }
     const pricing = handlePricingCalculation({
       methodology: methodology,
@@ -184,6 +188,10 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       plan: 0,
       numInversores: inverterQty,
       valorReferencia: infoHolder.premissas.valorReferencia || 0,
+      custosInstalacao: infoHolder.premissas.custosInstalacao || 0,
+      custosPadraoEnergia: infoHolder.premissas.custosPadraoEnergia || 0,
+      custosEstruturaInstalacao: infoHolder.premissas.custosEstruturaInstalacao || 0,
+      custosOutros: infoHolder.premissas.custosOutros || 0,
     }
     const pricing = handlePricingCalculation({
       methodology: methodology,
