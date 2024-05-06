@@ -5,7 +5,7 @@ import { MdAdd } from 'react-icons/md'
 
 import { useRouter } from 'next/router'
 import { toast } from 'react-hot-toast'
-import ProposalItem from '../Cards/ProposalItem'
+import ProposalItem from '../Cards/OpportunityProposal'
 import { useOpportunityProposals } from '@/utils/queries/proposals'
 import { Session } from 'next-auth'
 import ErrorComponent from '../utils/ErrorComponent'

@@ -30,12 +30,12 @@ export async function getTechnicalAnalysisById({ collection, partnerId, analysis
 
 type GetTechnicalAnalysisByOpportunityIdParams = {
   collection: Collection<TTechnicalAnalysis>
-  partnerId: string
+  query: Filter<TTechnicalAnalysis>
   opportunityId: string
 }
-export async function getTechnicalAnalysisByOpportunityId({ collection, partnerId, opportunityId }: GetTechnicalAnalysisByOpportunityIdParams) {
+export async function getTechnicalAnalysisByOpportunityId({ collection, query, opportunityId }: GetTechnicalAnalysisByOpportunityIdParams) {
   try {
-    const analysis = await collection.find({ 'oportunidade.id': opportunityId, idParceiro: partnerId }, { sort: { _id: -1 } }).toArray()
+    const analysis = await collection.find({ 'oportunidade.id': opportunityId, ...query }, { sort: { _id: -1 } }).toArray()
     return analysis
   } catch (error) {
     throw error

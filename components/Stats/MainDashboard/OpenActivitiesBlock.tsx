@@ -1,3 +1,4 @@
+import ActivityCard from '@/components/Cards/ActivityCard'
 import PendingActivityCard from '@/components/ProjectEvents/PendingActivityCard'
 import { useActivities, useActivitiesByOpportunityId } from '@/utils/queries/activities'
 import { Session } from 'next-auth'
@@ -22,7 +23,7 @@ function OpenActivitiesBlock({ session }: OpenActivitiesBlockProps) {
       <div className="flex grow flex-col justify-start gap-2 overflow-y-auto overscroll-y-auto py-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
         {activities ? (
           activities.length > 0 ? (
-            activities.map((activity, index: number) => <PendingActivityCard key={activity._id} activity={activity} />)
+            activities.map((activity, index: number) => <ActivityCard key={activity._id} activity={activity} />)
           ) : (
             <div className="flex grow items-center justify-center">
               <p className="text-center text-sm italic text-gray-500">Sem atividades em aberto.</p>

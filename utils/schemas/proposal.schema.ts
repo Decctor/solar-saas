@@ -118,6 +118,7 @@ export const GeneralProposalSchema = z.object({
   idCliente: z.string(),
   idMetodologiaPrecificacao: z.string(),
   idModeloAnvil: z.string().optional().nullable(),
+  idAnaliseTecnica: z.string().optional().nullable(),
   valor: z.number(),
   premissas: PremissesSchema,
   oportunidade: z.object({
@@ -160,6 +161,13 @@ export const InsertProposalSchema = z.object({
     .string({
       required_error: 'ID de referência do modelo de proposta não informado.',
       invalid_type_error: 'Tipo não válido para o ID de referência do modelo de proposta.',
+    })
+    .optional()
+    .nullable(),
+  idAnaliseTecnica: z
+    .string({
+      required_error: 'ID de referência da análise técnica não informado.',
+      invalid_type_error: 'Tipo não válido para o ID de referência da análise técnica.',
     })
     .optional()
     .nullable(),
@@ -278,6 +286,7 @@ const ProposalEntitySchema = z.object({
   idCliente: z.string(),
   idMetodologiaPrecificacao: z.string(),
   idModeloAnvil: z.string().optional().nullable(),
+  idAnaliseTecnica: z.string().optional().nullable(),
   valor: z.number(),
   premissas: PremissesSchema,
   oportunidade: z.object({

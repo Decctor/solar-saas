@@ -8,7 +8,7 @@ import ErrorComponent from '../utils/ErrorComponent'
 
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from 'react-icons/io'
 import { usePPSCallsByOpportunityId } from '@/utils/queries/pps-calls'
-import OpenPPSCall from '../Cards/OpenPPSCall'
+import OpenPPSCall from '../Cards/OpportunityPPSCall'
 import NewCall from '../Modals/Call/NewCall'
 
 type OpportunityTechnicalAnalysisBlockProps = {

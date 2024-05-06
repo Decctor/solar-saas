@@ -18,7 +18,9 @@ const getPartnerTechnicalAnalysis: NextApiHandler<GetResponse> = async (req, res
   const parterScope = session.user.permissoes.parceiros.escopo
   const partnerQuery: Filter<TTechnicalAnalysis> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
 
-  const { id, opportunityId } = req.query
+  const { id, opportunityId, concludedOnly } = req.query
+
+  const concludedQuery: Filter<TTechnicalAnalysis> = concludedOnly == 'true' ? { dataEfetivacao: { $ne: null } } : {}
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TTechnicalAnalysis> = db.collection('technical-analysis')
@@ -34,7 +36,7 @@ const getPartnerTechnicalAnalysis: NextApiHandler<GetResponse> = async (req, res
 
     const opportunityAnalysis = await getTechnicalAnalysisByOpportunityId({
       collection: collection,
-      partnerId: partnerId || '',
+      query: concludedQuery,
       opportunityId: opportunityId,
     })
     return res.status(200).json({ data: opportunityAnalysis })

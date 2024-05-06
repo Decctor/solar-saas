@@ -42,19 +42,19 @@ export function useUserTechnicalAnalysis({ enabled, userId, status }: UseUserTec
   }
 }
 
-async function fetchTechnicalAnalysisByOpportunityId({ opportunityId }: { opportunityId: string }) {
+async function fetchTechnicalAnalysisByOpportunityId({ opportunityId, concludedOnly }: { opportunityId: string; concludedOnly: boolean }) {
   try {
-    const { data } = await axios.get(`/api/technical-analysis?opportunityId=${opportunityId}`)
+    const { data } = await axios.get(`/api/technical-analysis?opportunityId=${opportunityId}&concludedOnly=${concludedOnly}`)
     return data.data as TTechnicalAnalysisDTO[]
   } catch (error) {
     throw error
   }
 }
 
-export function useOpportunityTechnicalAnalysis({ opportunityId }: { opportunityId: string }) {
+export function useOpportunityTechnicalAnalysis({ opportunityId, concludedOnly }: { opportunityId: string; concludedOnly: boolean }) {
   return useQuery({
     queryKey: ['opportunity-technical-analysis', opportunityId],
-    queryFn: async () => await fetchTechnicalAnalysisByOpportunityId({ opportunityId }),
+    queryFn: async () => await fetchTechnicalAnalysisByOpportunityId({ opportunityId, concludedOnly }),
   })
 }
 

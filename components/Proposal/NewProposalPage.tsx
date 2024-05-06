@@ -13,6 +13,7 @@ import ProposalWithKits from './ProposalsCreationByCategory/ProposeWithKits'
 import ProposalWithPlans from './ProposalsCreationByCategory/ProposeWithPlans'
 import ProposalWithProducts from './ProposalsCreationByCategory/ProposeWithProducts'
 import ProposalWithServices from './ProposalsCreationByCategory/ProposeWithServices'
+import { useOpportunityTechnicalAnalysis } from '@/utils/queries/technical-analysis'
 type NewProposalPageprops = {
   session: Session
   opportunityId: string

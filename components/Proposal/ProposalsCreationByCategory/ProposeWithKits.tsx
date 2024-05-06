@@ -56,6 +56,7 @@ function ProposalWithKits({ opportunity, infoHolder, setInfoHolder, session, par
           opportunity={opportunity}
           projectTypes={projectTypes || []}
           moveToNextStage={() => setStage((prev) => prev + 1)}
+          session={session}
         />
       ) : null}
       {stage == 2 ? (

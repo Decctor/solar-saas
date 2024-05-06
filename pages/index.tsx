@@ -206,27 +206,6 @@ function EstatisticaPrincipal() {
             </div>
           </div>
           <div className="mt-4 flex w-full flex-col items-center justify-around gap-2 lg:flex-row">
-            {/* <div className="flex h-[450px]  w-full flex-col  items-center justify-center rounded-xl border border-gray-200 bg-[#fff] p-6 shadow-sm lg:w-[40%]">
-              <div className="flex min-h-[45px] w-full flex-col">
-                <div className="flex items-center justify-between">
-                  <h1 className="text-sm font-medium uppercase tracking-tight">ATIVIDADES PENDENTES</h1>
-                  <BsCheckSquare />
-                </div>
-              </div>
-              <div className="flex w-full grow flex-col justify-start gap-2 overflow-y-auto overscroll-y-auto py-2 pr-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
-                {data?.atividades ? (
-                  data?.atividades.length > 0 ? (
-                    data?.atividades.map((activity, index: number) => (
-                      <PendingActivityCard activity={activity} visibility={session.user.permissoes.oportunidades.escopo} key={index} />
-                    ))
-                  ) : (
-                    <div className="flex grow items-center justify-center">
-                      <p className="text-center text-sm italic text-gray-500">Sem tarefas pendentes...</p>
-                    </div>
-                  )
-                ) : null}
-              </div>
-            </div> */}
             <div className="w-full lg:w-[40%]">
               <PendingWinsBlock data={data?.ganhosPendentes || []} session={session} />
             </div>

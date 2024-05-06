@@ -7,7 +7,7 @@ import { TOpportunityDTO, TOpportunityDTOWithClient } from '@/utils/schemas/oppo
 import { useOpportunityTechnicalAnalysis } from '@/utils/queries/technical-analysis'
 import LoadingComponent from '../utils/LoadingComponent'
 import ErrorComponent from '../utils/ErrorComponent'
-import TechAnalysisItem from '../Cards/OpportunityTechnicalAnalysisItem'
+import OpportunityTechnicalAnalysisItem from '../Cards/OpportunityTechnicalAnalysisItem'
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from 'react-icons/io'
 
 type OpportunityTechnicalAnalysisProps = {
@@ -18,7 +18,7 @@ function OpportunityTechnicalAnalysis({ session, opportunity }: OpportunityTechn
   const [blockIsOpen, setBlockIsOpen] = useState<boolean>(false)
 
   const [newTechnicalAnalysisBlockIsOpen, setNewTechnicalAnalysisBlockIsOpen] = useState<boolean>(false)
-  const { data: analysis, isLoading, isError, isSuccess } = useOpportunityTechnicalAnalysis({ opportunityId: opportunity._id })
+  const { data: analysis, isLoading, isError, isSuccess } = useOpportunityTechnicalAnalysis({ opportunityId: opportunity._id, concludedOnly: false })
 
   return (
     <div className="flex max-h-[250px] w-full flex-col rounded-md border border-gray-200 bg-[#fff] p-3 shadow-lg">
@@ -54,7 +54,7 @@ function OpportunityTechnicalAnalysis({ session, opportunity }: OpportunityTechn
           {isError ? <ErrorComponent msg="Erro ao buscar análises técnicas da oportunidade." /> : null}
           {isSuccess ? (
             analysis.length > 0 ? (
-              analysis.map((analysis) => <TechAnalysisItem key={analysis._id} analysis={analysis} />)
+              analysis.map((analysis) => <OpportunityTechnicalAnalysisItem key={analysis._id} analysis={analysis} />)
             ) : (
               <p className="flex w-full grow items-center justify-center py-2 text-center font-medium italic tracking-tight text-gray-500">
                 Sem análises técnicas vinculadas a essa oportunidade.

@@ -1,4 +1,5 @@
-import PPSCallCard from '@/components/Cards/OpenPPSCall'
+import PPSCallCard from '@/components/Cards/OpportunityPPSCall'
+import PPSCall from '@/components/Cards/PPSCall'
 import { usePPSCalls } from '@/utils/queries/pps-calls'
 import { Session } from 'next-auth'
 import React from 'react'
@@ -23,7 +24,7 @@ function PPSOpenCallsBlock({ session }: PPSOpenCallsBlockProps) {
       </div>
       <div className="flex grow flex-col justify-start gap-2 overflow-y-auto overscroll-y-auto py-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
         {calls?.map((call, index: number) => (
-          <PPSCallCard key={call._id} call={call} session={session} />
+          <PPSCall key={call._id} call={call} />
         ))}
       </div>
     </div>

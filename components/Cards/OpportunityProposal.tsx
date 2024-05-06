@@ -1,14 +1,15 @@
 import React from 'react'
 import dayjs from 'dayjs'
 
-import { BsCalendarFill } from 'react-icons/bs'
+import { BsCalendarFill, BsCalendarPlus } from 'react-icons/bs'
 import { ImPower, ImPriceTag } from 'react-icons/im'
 
 import { formatToMoney } from '@/utils/methods'
 import Link from 'next/link'
 import { MdAttachMoney } from 'react-icons/md'
 import { TProposalDTO } from '@/utils/schemas/proposal.schema'
-import { formatDecimalPlaces } from '@/lib/methods/formatting'
+import { formatDateAsLocale, formatDecimalPlaces } from '@/lib/methods/formatting'
+import Avatar from '../utils/Avatar'
 
 type GetColorArgs = {
   proposalId: string
@@ -39,14 +40,20 @@ function getStatusColor({
   return <h1 className="w-fit self-center rounded border border-gray-500 p-1 text-center text-[0.6rem] font-black text-gray-500">GERADA</h1>
 }
 
-type ProposalItemProps = {
+type OpportunityProposalProps = {
   info: TProposalDTO
   opportunityHasContractRequested: boolean
   opportunityActiveProposalId?: string | null
   opportunityIsWon: boolean
   opportunityWonProposalId?: string | null
 }
-function ProposalItem({ info, opportunityHasContractRequested, opportunityActiveProposalId, opportunityIsWon, opportunityWonProposalId }: ProposalItemProps) {
+function OpportunityProposal({
+  info,
+  opportunityHasContractRequested,
+  opportunityActiveProposalId,
+  opportunityIsWon,
+  opportunityWonProposalId,
+}: OpportunityProposalProps) {
   return (
     <div className="flex w-full items-center rounded-md border border-gray-200">
       <div
@@ -60,7 +67,7 @@ function ProposalItem({ info, opportunityHasContractRequested, opportunityActive
       ></div>
       <div className="flex grow flex-col p-3">
         <div className="flex w-full flex-col items-start justify-between gap-1 lg:flex-row">
-          <div className="flex flex-col items-center lg:items-start">
+          <div className="flex grow flex-col items-center lg:items-start">
             <Link href={`/comercial/proposta/${info._id}`}>
               <h1 className="w-full text-center text-sm font-bold leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500 lg:text-start">
                 {info.nome}
@@ -68,23 +75,17 @@ function ProposalItem({ info, opportunityHasContractRequested, opportunityActive
             </Link>
             <p className="mt-1 w-full text-center text-[0.6rem] font-medium text-gray-500 lg:text-start">#{info._id}</p>
           </div>
-
-          {getStatusColor({
-            proposalId: info._id,
-            opportunityIsWon,
-            opportunityHasContractRequested,
-            opportunityActiveProposalId: opportunityActiveProposalId,
-            opportunityWonProposalId: opportunityWonProposalId,
-          })}
-        </div>
-
-        <div className="mt-1 flex w-full flex-col items-center justify-between gap-1 lg:flex-row">
-          <div className="flex items-center gap-2">
-            <div className={`flex items-center gap-2 text-gray-500`}>
-              <BsCalendarFill />
-              <p className="text-xs font-medium">{dayjs(info.dataInsercao).format('DD/MM/YYYY HH:mm')}</p>
-            </div>
+          <div className="w-full min-w-fit lg:w-fit">
+            {getStatusColor({
+              proposalId: info._id,
+              opportunityIsWon,
+              opportunityHasContractRequested,
+              opportunityActiveProposalId: opportunityActiveProposalId,
+              opportunityWonProposalId: opportunityWonProposalId,
+            })}
           </div>
+        </div>
+        <div className="mt-1 flex w-full flex-col items-center justify-between gap-1 lg:flex-row">
           <div className="flex flex-col items-center gap-1 lg:flex-row lg:gap-4">
             <div className="flex items-center gap-1 text-gray-500">
               <ImPower style={{ fontSize: '20px' }} />
@@ -101,10 +102,20 @@ function ProposalItem({ info, opportunityHasContractRequested, opportunityActive
               </p>
             </div>
           </div>
+          <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-1`}>
+              <BsCalendarPlus />
+              <p className="text-[0.6rem] font-medium">{formatDateAsLocale(info.dataInsercao, true)}</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <Avatar fallback={'R'} url={info.autor.avatar_url || undefined} height={20} width={20} />
+              <p className="text-[0.6rem] font-medium">{info.autor.nome}</p>
+            </div>
+          </div>
         </div>
       </div>
     </div>
   )
 }
 
-export default ProposalItem
+export default OpportunityProposal

@@ -51,6 +51,7 @@ function ProposalWithPlans({ opportunity, infoHolder, setInfoHolder, session, pa
           setInfoHolder={setInfoHolder}
           opportunity={opportunity}
           projectTypes={projectTypes || []}
+          session={session}
           moveToNextStage={() => setStage((prev) => prev + 1)}
         />
       ) : null}
