@@ -249,6 +249,10 @@ export const projectActivityTypes = {
     icon: TbReportSearch as React.ComponentType,
   },
 }
+
+export const STANDARD_PROFIT_MARGIN = 0.12
+export const STANDARD_TAX = 0.175
+
 export const firebaseServiceAccount = {
   type: 'service_account',
   project_id: 'sistemaampere',

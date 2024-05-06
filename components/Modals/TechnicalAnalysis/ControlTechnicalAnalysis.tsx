@@ -27,7 +27,7 @@ import { editTechnicalAnalysis } from '@/utils/mutations/technical-analysis'
 import { useTechnicalAnalysisById } from '@/utils/queries/technical-analysis'
 import { useTechnicalAnalysts } from '@/utils/queries/users'
 import { TTechnicalAnalysisDTO } from '@/utils/schemas/technical-analysis.schema'
-import { TechnicalAnalysisComplexity, TechnicalAnalysisSolicitationTypes, TechnicalAnalysisStatus } from '@/utils/select-options'
+import { TechnicalAnalysisComplexity, TechnicalAnalysisReportTypes, TechnicalAnalysisSolicitationTypes, TechnicalAnalysisStatus } from '@/utils/select-options'
 import { useQueryClient } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import Link from 'next/link'
@@ -398,18 +398,18 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
                   <AdditionalCostsBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
                   <DrawBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} updateAnalysis={(change) => {}} />
                   <ConclusionBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />{' '}
-                  {/* <div className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-gray-800 p-2">
+                  <div className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-gray-800 p-2">
                     <h1 className="font-bold text-white">TIPOS DE LAUDO</h1>
-                  </div> */}
-                  {/* <div className="flex w-full flex-wrap items-center justify-center gap-2 px-4">
-                    {technicalAnalysisReportTypes.map((type) => (
-                      <Link key={type.id} href={`/projetos/laudo/pdf/${analysisId}?tipo=${type.value}`}>
-                        <a className="w-fit rounded border border-black px-2 py-1 text-center font-bold shadow-sm hover:bg-black hover:text-white">
+                  </div>
+                  <div className="flex w-full flex-wrap items-center justify-center gap-2 px-4">
+                    {TechnicalAnalysisReportTypes.map((type) => (
+                      <Link key={type.id} href={`/operacional/analises-tecnicas/laudo/${analysisId}?type=${type.value}`}>
+                        <p className="w-fit rounded border border-black px-2 py-1 text-center font-bold shadow-sm hover:bg-black hover:text-white">
                           {type.value}
-                        </a>
+                        </p>
                       </Link>
                     ))}
-                  </div> */}
+                  </div>
                 </div>
                 <div className="mt-2 flex w-full items-center justify-end">
                   <button

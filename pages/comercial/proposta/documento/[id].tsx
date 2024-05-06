@@ -75,7 +75,7 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
         error: 'PARCEIRO NÃO ENCONTRADO',
       },
     }
-  const opportunity = await getOpportunityById({ collection: opportunitiesCollection, id: opportunityId, partnerId: partnerId })
+  const opportunity = await getOpportunityById({ collection: opportunitiesCollection, id: opportunityId, query: {} })
   if (!opportunity)
     return {
       props: {

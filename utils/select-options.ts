@@ -839,14 +839,14 @@ export const UserGroups: TUserGroup[] = [
       analisesTecnicas: {
         escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
         visualizar: true,
-        editar: true,
+        editar: false,
         criar: true,
       },
       homologacoes: {
         escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
-        visualizar: false,
+        visualizar: true,
         editar: false,
-        criar: false,
+        criar: true,
       },
       clientes: {
         escopo: null,
@@ -925,7 +925,7 @@ export const UserGroups: TUserGroup[] = [
       analisesTecnicas: {
         escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
         visualizar: true,
-        editar: true,
+        editar: false,
         criar: true,
       },
       homologacoes: {
@@ -1191,6 +1191,43 @@ export const ComercialSegments = [
   { id: 2, label: 'COMERCIAL', value: 'COMERCIAL' },
   { id: 3, label: 'INDUSTRIAL', value: 'INDUSTRIAL' },
   { id: 4, label: 'RURAL', value: 'RURAL' },
+]
+export const TechnicalAnalysisReportTypes = [
+  {
+    id: 1,
+    label: 'LAUDO TÉCNICO(URBANO)',
+    value: 'LAUDO TÉCNICO(URBANO)',
+  },
+  {
+    id: 2,
+    label: 'LAUDO SIMPLES(URBANO)',
+    value: 'LAUDO SIMPLES(URBANO)',
+  },
+  {
+    id: 3,
+    label: 'LAUDO INTERMEDIÁRIO(URBANO)',
+    value: 'LAUDO INTERMEDIÁRIO(URBANO)',
+  },
+  {
+    id: 4,
+    label: 'LAUDO TÉCNICO(RURAL)',
+    value: 'LAUDO TÉCNICO(RURAL)',
+  },
+  {
+    id: 5,
+    label: 'LAUDO SIMPLES(RURAL)',
+    value: 'LAUDO SIMPLES(RURAL)',
+  },
+  {
+    id: 6,
+    label: 'FORMULÁRIO(URBANO)',
+    value: 'FORMULÁRIO(URBANO)',
+  },
+  {
+    id: 7,
+    label: 'FORMULÁRIO(RURAL)',
+    value: 'FORMULÁRIO(RURAL)',
+  },
 ]
 export const HomologationControlStatus = [
   { id: 1, label: 'PENDENTE', value: 'PENDENTE' },

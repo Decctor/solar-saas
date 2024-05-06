@@ -53,12 +53,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
         filter: { _id: new ObjectId(user._id) },
         update: {
           $set: {
-            'permissoes.homologacoes': {
-              escopo: [user._id.toString()],
-              visualizar: true,
-              editar: false,
-              criar: true,
-            },
+            'permissoes.analisesTecnicas.editar': false,
           },
         },
       },

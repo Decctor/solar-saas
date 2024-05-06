@@ -3,7 +3,7 @@ import { getOpportunityCreators, getTechnicalAnalysts } from '@/repositories/use
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { TUser, TUserEntity } from '@/utils/schemas/user.schema'
-import { Collection, WithId } from 'mongodb'
+import { Collection, Filter, WithId } from 'mongodb'
 import { NextApiHandler } from 'next'
 import { z } from 'zod'
 import technicalAnalysis from '../technical-analysis'
@@ -20,9 +20,13 @@ const PersonalizedQueryTypes = [
   'price-editors',
   'technical-analysts',
 ] as const
+
 const getUsersPersonalized: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery: Filter<TUser> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+
   const type = z
     .enum(PersonalizedQueryTypes, { invalid_type_error: 'Tipo inválido para tipo de usuários.', required_error: 'Tipo de usuários não definido.' })
     .parse(req.query.type)
@@ -31,11 +35,11 @@ const getUsersPersonalized: NextApiHandler<GetResponse> = async (req, res) => {
   const usersCollection: Collection<TUser> = db.collection('users')
 
   if (type == 'opportunity-creators') {
-    const creators = await getOpportunityCreators({ collection: usersCollection, partnerId: partnerId })
+    const creators = await getOpportunityCreators({ collection: usersCollection, query: partnerQuery })
     return res.status(200).json({ data: creators })
   }
   if (type == 'technical-analysts') {
-    const analysts = await getTechnicalAnalysts({ collection: usersCollection, partnerId: partnerId || '' })
+    const analysts = await getTechnicalAnalysts({ collection: usersCollection, query: partnerQuery })
     return res.status(200).json({ data: analysts })
   }
   return res.status(200).json({ data: [] })
