@@ -185,7 +185,131 @@ export function handlePricingCalculation({ methodology, kit, variableData, condi
   // Using iteration method while calculating pricing items to allow for cumulative values, such as totals
   return pricingItems
 }
-
+type HandlePartialPricingReCalculationParams = {
+  methodology: TPricingMethodDTO
+  variableData: TPricingVariableData
+  conditionData: TPricingConditionData
+  pricingItems: TPricingItem[]
+  calculableItemsIndexes: number[]
+}
+export function handlePartialPricingReCalculation({
+  methodology,
+  variableData,
+  conditionData,
+  pricingItems,
+  calculableItemsIndexes,
+}: HandlePartialPricingReCalculationParams): TPricingItem[] {
+  var variables = {
+    ...variableData,
+    total: 0,
+    totalFaturavelFinal: 0,
+    totalNaoFaturavelFinal: 0,
+    totalFaturavelCustos: 0,
+    totalNaoFaturavelCustos: 0,
+  }
+  let newPricingItems: TPricingItem[] = [...pricingItems]
+  let iteration = 0
+  while (iteration < 100) {
+    const individualCosts = methodology.itens
+    newPricingItems = individualCosts.map((cost, index) => {
+      if (!calculableItemsIndexes.includes(index)) return pricingItems[index]
+      const costName = cost.nome
+      // Ordering possible results so that general result formulas are find last
+      const orderedPossibleResults = cost.resultados.sort((a, b) => (a.condicao.aplicavel === b.condicao.aplicavel ? 0 : a.condicao.aplicavel ? -1 : 1))
+      const activeResult = orderedPossibleResults.find((r) => {
+        const conditional = r.condicao.aplicavel
+        // If there's no condition, then it is a general formula, so returning true
+        if (!conditional) return true
+        // If there's a condition, extracting the conditionns comparators and the condition data to compare
+        const conditionVariable = r.condicao.variavel
+        const conditionValue = r.condicao.igual
+        const condition = conditionData[conditionVariable as keyof typeof conditionData]
+        // If condition is matched, then returning true
+        if (condition == conditionValue) return true
+        // If not, false
+        return false
+      })
+      // Theorically impossible
+      if (!activeResult)
+        return {
+          descricao: '',
+          custoCalculado: 0,
+          custoFinal: 0,
+          faturavel: false,
+          margemLucro: 0,
+          valorCalculado: 0,
+          valorFinal: 0,
+        }
+      try {
+        // Now, getting the pricing item based on the specified result
+        const faturable = activeResult.faturavel
+        const profitMargin = activeResult.margemLucro
+        // Using the formulaArr and the variableData to populate the result's formula
+        const formulaArr = activeResult.formulaArr
+        const populatedFormula = formulaArr
+          .map((i) => {
+            // Extracting the variable, which is determined by outer brackets
+            const isVariable = i.includes('[') && i.includes(']')
+            // If there is not variable, then returning the original value
+            if (!isVariable) return i
+            // Else, exchanging the variable key by the variable value itself and returning it
+            const strToReplace = i.replace('[', '').replace(']', '')
+            const variableValue = variables[strToReplace as keyof typeof variables] || 0
+            // const fixedValue = strToReplace.replace(strToReplace, variableValue.toString())
+            return variableValue
+          })
+          .join('')
+        // Evaluating the formula as a string now
+        const evaluatedCostValue = eval(populatedFormula)
+        // Creating and returning the pricing item
+        const pricingItem = {
+          descricao: costName,
+          custoCalculado: evaluatedCostValue,
+          custoFinal: evaluatedCostValue,
+          faturavel: faturable,
+          margemLucro: profitMargin,
+          valorCalculado: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
+          valorFinal: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
+        }
+        return pricingItem
+      } catch (error) {
+        console.log('ERROR', error)
+        return {
+          descricao: '',
+          custoCalculado: 0,
+          custoFinal: 0,
+          faturavel: false,
+          margemLucro: 0,
+          valorCalculado: 0,
+          valorFinal: 0,
+        }
+      }
+    })
+    const newTotal = newPricingItems.reduce((acc, current) => acc + current.valorFinal, 0)
+    const newFaturableFinalTotal = newPricingItems.filter((c) => !!c.faturavel).reduce((acc, current) => acc + current.valorFinal, 0)
+    const newNonFaturableFinalTotal = newPricingItems.filter((c) => !c.faturavel).reduce((acc, current) => acc + current.valorFinal, 0)
+    const newFaturableCostTotal = newPricingItems.filter((c) => !!c.faturavel).reduce((acc, current) => acc + current.custoFinal, 0)
+    const newNonFaturableCostTotal = newPricingItems.filter((c) => !c.faturavel).reduce((acc, current) => acc + current.custoFinal, 0)
+    if (Math.abs(newTotal - variables.total) < 0.001) {
+      // Convergence reached, updating cumulative variables and exiting the loop
+      variables.totalFaturavelCustos = newFaturableCostTotal
+      variables.totalNaoFaturavelCustos = newNonFaturableCostTotal
+      variables.totalFaturavelFinal = newFaturableFinalTotal
+      variables.totalNaoFaturavelFinal = newNonFaturableFinalTotal
+      variables.total = newTotal
+      break
+    }
+    // Updating cumulative variables and exiting the loop
+    variables.totalFaturavelCustos = newFaturableCostTotal
+    variables.totalNaoFaturavelCustos = newNonFaturableCostTotal
+    variables.totalFaturavelFinal = newFaturableFinalTotal
+    variables.totalNaoFaturavelFinal = newNonFaturableFinalTotal
+    variables.total = newTotal
+    iteration++
+  }
+  // Using iteration method while calculating pricing items to allow for cumulative values, such as totals
+  return newPricingItems
+}
 export function getPricingTotal({ pricing }: { pricing: TPricingItem[] }) {
   const total = pricing.reduce((acc, current) => {
     const finalSaleValue = current.valorFinal

@@ -1,14 +1,16 @@
-import { formatToMoney } from '@/utils/methods'
-import { TPricingItem } from '@/utils/schemas/proposal.schema'
+import { formatToMoney, getModulesQty } from '@/utils/methods'
+import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import React, { useState } from 'react'
 import { AiFillEdit } from 'react-icons/ai'
 
-import { getPricingTotals } from '@/utils/pricing/methods'
+import { getPricingTotals, handlePartialPricingReCalculation, TPricingConditionData, TPricingVariableData } from '@/utils/pricing/methods'
 import EditPriceItem from './EditPriceItem'
 import { TbPercentage } from 'react-icons/tb'
 import { formatDecimalPlaces } from '@/lib/methods/formatting'
 import { MdSignalCellularAlt } from 'react-icons/md'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
+import { TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { getInverterQty } from '@/lib/methods/extracting'
 
 type TEditPriceModal = {
   isOpen: boolean
@@ -17,20 +19,51 @@ type TEditPriceModal = {
 type PricingTableProps = {
   pricing: TPricingItem[]
   setPricing: React.Dispatch<React.SetStateAction<TPricingItem[]>>
+  proposal: TProposal
+  opportunity: TOpportunityDTOWithClientAndPartner
   userHasPricingViewPermission: boolean
   userHasPricingEditPermission: boolean
 }
-function PricingTable({ pricing, setPricing, userHasPricingViewPermission, userHasPricingEditPermission }: PricingTableProps) {
+function PricingTable({ pricing, setPricing, proposal, opportunity, userHasPricingViewPermission, userHasPricingEditPermission }: PricingTableProps) {
   const [editPriceModal, setEditPriceModal] = useState<TEditPriceModal>({
     isOpen: false,
     priceItemIndex: null,
   })
   const [showOnlyNonZero, setShowOnlyNonZero] = useState<boolean>(true)
+
+  function handleRecalculateCumulatives(pricing: TPricingItem[]) {
+    const moduleQty = getModulesQty(proposal.produtos)
+    const inverterQty = getInverterQty(proposal.produtos)
+    const kitPrice = proposal.kits.reduce((acc, current) => acc + current.valor, 0)
+    const conditionData: TPricingConditionData = {
+      uf: opportunity.localizacao.uf,
+      cidade: opportunity.localizacao.cidade,
+      topologia: proposal.premissas.topologia || 'INVERSOR',
+      grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
+    }
+    const variableData: TPricingVariableData = {
+      kit: kitPrice,
+      numModulos: moduleQty,
+      product: 0,
+      service: 0,
+      potenciaPico: proposal.potenciaPico || 0,
+      distancia: proposal.premissas.distancia || 0,
+      plan: 0,
+      numInversores: inverterQty,
+      valorReferencia: proposal.premissas.valorReferencia || 0,
+      custosInstalacao: proposal.premissas.custosInstalacao || 0,
+      custosPadraoEnergia: proposal.premissas.custosPadraoEnergia || 0,
+      custosEstruturaInstalacao: proposal.premissas.custosEstruturaInstalacao || 0,
+      custosOutros: proposal.premissas.custosOutros || 0,
+    }
+    const newPricing = handlePartialPricingReCalculation({ variableData, conditionData, methodology })
+  }
   // In case user has pricing view permission
   if (userHasPricingViewPermission)
     return (
       <>
         <div className="my-2 flex w-full items-center justify-end">
+          <button className="rounded-xl bg-cyan-800 px-2 py-1 text-[0.6rem] font-bold text-white">RECALCULAR ACUMULÁVEIS</button>
           <div className="w-fit">
             <CheckboxInput
               checked={showOnlyNonZero}
