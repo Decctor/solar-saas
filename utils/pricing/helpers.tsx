@@ -21,7 +21,7 @@ export const variablesAlias: TVariablesAlias[] = [
   { label: 'TOTAL DE CUSTOS FATURÁVEIS', value: 'totalFaturavelCustos', type: 'cumulative' },
   { label: 'TOTAL DE CUSTOS NÃO FATURÁVEIS', value: 'totalNaoFaturavelCustos', type: 'cumulative' },
 ]
-
+export const cumulativeVariablesValues = variablesAlias.filter((v) => v.type == 'cumulative').map((v) => v.value) as string[]
 type TConditionsAlias = { label: string; value: keyof TPricingConditionData }
 export const conditionsAlias: TConditionsAlias[] = [
   { label: 'ESTADO', value: 'uf' },

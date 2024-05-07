@@ -104,7 +104,7 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
   })
   return (
     <div id="edit-proposal" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
-      <div className="fixed left-[50%] top-[50%] z-[100] h-fit max-h-[100%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:w-[90%]">
+      <div className="fixed left-[50%] top-[50%] z-[100] h-[90%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:w-[90%]">
         <div className="flex h-full flex-col">
           <div className="flex flex-col items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg lg:flex-row">
             <h3 className="text-xl font-bold text-[#353432] dark:text-white ">EDITAR PROPOSTA</h3>
@@ -125,6 +125,8 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
               width="100%"
             />
             <PricingTable
+              opportunity={info.oportunidadeDados}
+              proposal={info}
               pricing={pricing}
               setPricing={setPricing}
               userHasPricingEditPermission={userHasPricingEditPermission}
@@ -140,26 +142,26 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
                 ) : null}
               </div>
             </div>
-          </div>
-          <div className="flex w-full items-center justify-end gap-2 p-2">
-            {info.idModeloAnvil ? (
-              <div className="w-fit">
-                <CheckboxInput
-                  labelFalse="GERAR NOVO DOCUMENTO"
-                  labelTrue="GERAR NOVO DOCUMENTO"
-                  checked={regenerateFile}
-                  handleChange={(value) => setRegenerateFile(value)}
-                />
-              </div>
-            ) : null}
-            <button
-              disabled={isPending}
-              // @ts-ignore
-              onClick={() => handleUpdate({ previousName: info.nome, previousPricing: info.precificacao, newName: proposalName, newPricing: pricing })}
-              className="h-9 whitespace-nowrap rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-blue-600 enabled:hover:text-white"
-            >
-              ATUALIZAR PROPOSTA
-            </button>
+            <div className="flex w-full items-center justify-end gap-2 p-2">
+              {info.idModeloAnvil ? (
+                <div className="w-fit">
+                  <CheckboxInput
+                    labelFalse="GERAR NOVO DOCUMENTO"
+                    labelTrue="GERAR NOVO DOCUMENTO"
+                    checked={regenerateFile}
+                    handleChange={(value) => setRegenerateFile(value)}
+                  />
+                </div>
+              ) : null}
+              <button
+                disabled={isPending}
+                // @ts-ignore
+                onClick={() => handleUpdate({ previousName: info.nome, previousPricing: info.precificacao, newName: proposalName, newPricing: pricing })}
+                className="h-9 whitespace-nowrap rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-blue-600 enabled:hover:text-white"
+              >
+                ATUALIZAR PROPOSTA
+              </button>
+            </div>
           </div>
         </div>
       </div>

@@ -9,8 +9,12 @@ import { TbPercentage } from 'react-icons/tb'
 import { formatDecimalPlaces } from '@/lib/methods/formatting'
 import { MdSignalCellularAlt } from 'react-icons/md'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
-import { TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { TOpportunity, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
 import { getInverterQty } from '@/lib/methods/extracting'
+import { TPricingMethodDTO } from '@/utils/schemas/pricing-method.schema'
+import { usePricingMethodById } from '@/utils/queries/pricing-methods'
+import { cumulativeVariablesValues } from '@/utils/pricing/helpers'
+import toast from 'react-hot-toast'
 
 type TEditPriceModal = {
   isOpen: boolean
@@ -20,27 +24,18 @@ type PricingTableProps = {
   pricing: TPricingItem[]
   setPricing: React.Dispatch<React.SetStateAction<TPricingItem[]>>
   proposal: TProposal
-  opportunity: TOpportunityDTOWithClientAndPartner
+  opportunity: TOpportunity
   userHasPricingViewPermission: boolean
   userHasPricingEditPermission: boolean
 }
 function PricingTable({ pricing, setPricing, proposal, opportunity, userHasPricingViewPermission, userHasPricingEditPermission }: PricingTableProps) {
-  const [editPriceModal, setEditPriceModal] = useState<TEditPriceModal>({
-    isOpen: false,
-    priceItemIndex: null,
-  })
+  const [editPriceModal, setEditPriceModal] = useState<TEditPriceModal>({ isOpen: false, priceItemIndex: null })
   const [showOnlyNonZero, setShowOnlyNonZero] = useState<boolean>(true)
 
-  function handleRecalculateCumulatives(pricing: TPricingItem[]) {
+  function handleRecalculateCumulatives({ pricing, keepFinalValues }: { pricing: TPricingItem[]; keepFinalValues: boolean }) {
     const moduleQty = getModulesQty(proposal.produtos)
     const inverterQty = getInverterQty(proposal.produtos)
     const kitPrice = proposal.kits.reduce((acc, current) => acc + current.valor, 0)
-    const conditionData: TPricingConditionData = {
-      uf: opportunity.localizacao.uf,
-      cidade: opportunity.localizacao.cidade,
-      topologia: proposal.premissas.topologia || 'INVERSOR',
-      grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
-    }
     const variableData: TPricingVariableData = {
       kit: kitPrice,
       numModulos: moduleQty,
@@ -56,14 +51,44 @@ function PricingTable({ pricing, setPricing, proposal, opportunity, userHasPrici
       custosEstruturaInstalacao: proposal.premissas.custosEstruturaInstalacao || 0,
       custosOutros: proposal.premissas.custosOutros || 0,
     }
-    const newPricing = handlePartialPricingReCalculation({ variableData, conditionData, methodology })
+    const calculableItemsIndexes = pricing
+      .map((item, index) => {
+        if (!item.formulaArr) return null
+        const includesCumulativeVariable = item.formulaArr.some((f) => {
+          const variable = f.replace('[', '').replace(']', '')
+          return cumulativeVariablesValues.includes(variable)
+        })
+        if (!includesCumulativeVariable) return null
+        return index
+      })
+      .filter((p) => p != null)
+    if (calculableItemsIndexes.length == 0) return toast.error('Oops, não foi possível encontrar itens recalculávies na precificação.')
+    // console.log(calculableItemsIndexes)
+    const newPricing = handlePartialPricingReCalculation({ variableData, calculableItemsIndexes, pricingItems: pricing, keepFinalValues })
+    const newTotal = getPricingTotals(newPricing)
+    console.log(newPricing, newTotal)
+    setPricing(newPricing)
+    return toast.success('Preços atualizados.')
   }
   // In case user has pricing view permission
   if (userHasPricingViewPermission)
     return (
       <>
-        <div className="my-2 flex w-full items-center justify-end">
-          <button className="rounded-xl bg-cyan-800 px-2 py-1 text-[0.6rem] font-bold text-white">RECALCULAR ACUMULÁVEIS</button>
+        <div className="my-2 flex w-full flex-col-reverse items-center justify-end gap-4 lg:flex-row">
+          <button
+            onClick={() => handleRecalculateCumulatives({ pricing, keepFinalValues: false })}
+            className="flex flex-col items-center rounded bg-cyan-600 px-4 py-1"
+          >
+            <h1 className="text-[0.55rem] font-bold text-white">RECALCULAR ACUMULÁVEIS</h1>
+            <p className="text-[0.45rem] font-light text-white">GERAL</p>
+          </button>
+          <button
+            onClick={() => handleRecalculateCumulatives({ pricing, keepFinalValues: true })}
+            className="flex flex-col items-center rounded bg-cyan-800 px-4 py-1"
+          >
+            <h1 className="text-[0.55rem] font-bold text-white">RECALCULAR ACUMULÁVEIS</h1>
+            <p className="text-[0.45rem] font-light text-white">SOMENTE CUSTOS</p>
+          </button>
           <div className="w-fit">
             <CheckboxInput
               checked={showOnlyNonZero}
@@ -90,13 +115,23 @@ function PricingTable({ pricing, setPricing, proposal, opportunity, userHasPrici
             </div>
           </div>
           {pricing.map((priceItem, index) => {
-            const { descricao, custoCalculado, custoFinal, margemLucro, valorCalculado, valorFinal } = priceItem
+            const { descricao, custoCalculado, faturavel, custoFinal, margemLucro, valorCalculado, valorFinal } = priceItem
             const profitMarginPercentage = margemLucro / 100
             if (showOnlyNonZero && valorFinal == 0) return null
             return (
               <div className={`flex w-full items-center rounded ${Math.abs(valorFinal - valorCalculado) > 1 ? 'bg-orange-200' : ''}`} key={index}>
-                <div className="flex w-6/12 items-center justify-center p-1">
+                <div className="flex w-6/12 flex-col items-center justify-center p-1">
                   <h1 className="text-gray-500">{descricao}</h1>
+                  <div className="flex w-full items-center justify-center gap-2">
+                    <div className="flex items-center gap-1">
+                      <TbPercentage color="rgb(34,197,94)" />
+                      <p className="text-[0.55rem] tracking-tight text-gray-500">MARGEM DE {formatDecimalPlaces(margemLucro)}%</p>
+                    </div>
+                    <div className="flex items-center gap-1">
+                      <MdSignalCellularAlt color={'#fead41'} />
+                      <p className="text-[0.55rem] tracking-tight text-gray-500">{faturavel ? 'FATURÁVEL' : 'NÃO FATURÁVEL'}</p>
+                    </div>
+                  </div>
                 </div>
                 <div className="flex w-2/12 items-center justify-center p-1">
                   <h1 className="text-gray-500">{formatToMoney(custoFinal)}</h1>

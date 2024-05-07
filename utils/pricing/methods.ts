@@ -112,6 +112,7 @@ export function handlePricingCalculation({ methodology, kit, variableData, condi
           custoFinal: 0,
           faturavel: false,
           margemLucro: 0,
+          formulaArr: null,
           valorCalculado: 0,
           valorFinal: 0,
         }
@@ -137,12 +138,13 @@ export function handlePricingCalculation({ methodology, kit, variableData, condi
         // Evaluating the formula as a string now
         const evaluatedCostValue = eval(populatedFormula)
         // Creating and returning the pricing item
-        const pricingItem = {
+        const pricingItem: TPricingItem = {
           descricao: costName,
           custoCalculado: evaluatedCostValue,
           custoFinal: evaluatedCostValue,
           faturavel: faturable,
           margemLucro: profitMargin,
+          formulaArr: formulaArr,
           valorCalculado: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
           valorFinal: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
         }
@@ -154,6 +156,7 @@ export function handlePricingCalculation({ methodology, kit, variableData, condi
           custoCalculado: 0,
           custoFinal: 0,
           faturavel: false,
+          formulaArr: null,
           margemLucro: 0,
           valorCalculado: 0,
           valorFinal: 0,
@@ -186,19 +189,18 @@ export function handlePricingCalculation({ methodology, kit, variableData, condi
   return pricingItems
 }
 type HandlePartialPricingReCalculationParams = {
-  methodology: TPricingMethodDTO
   variableData: TPricingVariableData
-  conditionData: TPricingConditionData
   pricingItems: TPricingItem[]
   calculableItemsIndexes: number[]
+  keepFinalValues: boolean
 }
+
 export function handlePartialPricingReCalculation({
-  methodology,
   variableData,
-  conditionData,
   pricingItems,
   calculableItemsIndexes,
-}: HandlePartialPricingReCalculationParams): TPricingItem[] {
+  keepFinalValues,
+}: HandlePartialPricingReCalculationParams) {
   var variables = {
     ...variableData,
     total: 0,
@@ -210,42 +212,15 @@ export function handlePartialPricingReCalculation({
   let newPricingItems: TPricingItem[] = [...pricingItems]
   let iteration = 0
   while (iteration < 100) {
-    const individualCosts = methodology.itens
-    newPricingItems = individualCosts.map((cost, index) => {
+    newPricingItems = newPricingItems.map((item, index) => {
       if (!calculableItemsIndexes.includes(index)) return pricingItems[index]
-      const costName = cost.nome
-      // Ordering possible results so that general result formulas are find last
-      const orderedPossibleResults = cost.resultados.sort((a, b) => (a.condicao.aplicavel === b.condicao.aplicavel ? 0 : a.condicao.aplicavel ? -1 : 1))
-      const activeResult = orderedPossibleResults.find((r) => {
-        const conditional = r.condicao.aplicavel
-        // If there's no condition, then it is a general formula, so returning true
-        if (!conditional) return true
-        // If there's a condition, extracting the conditionns comparators and the condition data to compare
-        const conditionVariable = r.condicao.variavel
-        const conditionValue = r.condicao.igual
-        const condition = conditionData[conditionVariable as keyof typeof conditionData]
-        // If condition is matched, then returning true
-        if (condition == conditionValue) return true
-        // If not, false
-        return false
-      })
-      // Theorically impossible
-      if (!activeResult)
-        return {
-          descricao: '',
-          custoCalculado: 0,
-          custoFinal: 0,
-          faturavel: false,
-          margemLucro: 0,
-          valorCalculado: 0,
-          valorFinal: 0,
-        }
       try {
         // Now, getting the pricing item based on the specified result
-        const faturable = activeResult.faturavel
-        const profitMargin = activeResult.margemLucro
+        const faturable = item.faturavel
+        const profitMargin = item.margemLucro
         // Using the formulaArr and the variableData to populate the result's formula
-        const formulaArr = activeResult.formulaArr
+        const formulaArr = item.formulaArr
+        if (!formulaArr) return item
         const populatedFormula = formulaArr
           .map((i) => {
             // Extracting the variable, which is determined by outer brackets
@@ -261,28 +236,35 @@ export function handlePartialPricingReCalculation({
           .join('')
         // Evaluating the formula as a string now
         const evaluatedCostValue = eval(populatedFormula)
-        // Creating and returning the pricing item
-        const pricingItem = {
-          descricao: costName,
+        // If there is no need to maintain the final values, returning the new pricing item
+        if (!keepFinalValues) {
+          const pricingItem: TPricingItem = {
+            descricao: item.descricao,
+            custoCalculado: evaluatedCostValue,
+            custoFinal: evaluatedCostValue,
+            faturavel: faturable,
+            formulaArr: formulaArr,
+            margemLucro: profitMargin,
+            valorCalculado: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
+            valorFinal: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
+          }
+          return pricingItem
+        }
+        // If it is necessary to maintain the final values, calculating the new margin and returning the new pricing item
+        const newProfitMargin = getProfitMargin(evaluatedCostValue, item.valorFinal)
+        const pricingItem: TPricingItem = {
+          descricao: item.descricao,
           custoCalculado: evaluatedCostValue,
           custoFinal: evaluatedCostValue,
           faturavel: faturable,
-          margemLucro: profitMargin,
+          formulaArr: formulaArr,
+          margemLucro: newProfitMargin,
           valorCalculado: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
-          valorFinal: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
+          valorFinal: item.valorFinal,
         }
         return pricingItem
       } catch (error) {
-        console.log('ERROR', error)
-        return {
-          descricao: '',
-          custoCalculado: 0,
-          custoFinal: 0,
-          faturavel: false,
-          margemLucro: 0,
-          valorCalculado: 0,
-          valorFinal: 0,
-        }
+        return item
       }
     })
     const newTotal = newPricingItems.reduce((acc, current) => acc + current.valorFinal, 0)
@@ -307,7 +289,6 @@ export function handlePartialPricingReCalculation({
     variables.total = newTotal
     iteration++
   }
-  // Using iteration method while calculating pricing items to allow for cumulative values, such as totals
   return newPricingItems
 }
 export function getPricingTotal({ pricing }: { pricing: TPricingItem[] }) {

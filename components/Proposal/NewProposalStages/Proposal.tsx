@@ -68,7 +68,7 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
   const ProposalTemplateOptions = projectTypes.find((t) => t._id == opportunity.tipo.id)?.modelosProposta || null
   const queryClient = useQueryClient()
 
-  const [saveAsActive, setSaveAsActive] = useState<boolean>(false)
+  const [saveAsActive, setSaveAsActive] = useState<boolean>(true)
 
   async function handleCreation({
     proposal,

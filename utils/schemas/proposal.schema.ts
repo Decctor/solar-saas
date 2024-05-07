@@ -38,6 +38,10 @@ const PricingItemSchema = z.object({
     required_error: 'Aplicação de faturamento da unidade de preço não informada.',
     invalid_type_error: 'Tipo não válido para aplicação de faturamento da unidade de preço.',
   }),
+  formulaArr: z
+    .array(z.string({ required_error: 'Item da fórmula não informada.', invalid_type_error: 'Tipo não válido para item da fórmula.' }))
+    .optional()
+    .nullable(),
   margemLucro: z.number({
     required_error: 'Margem de lucro da unidade de preço não informada.',
     invalid_type_error: 'Tipo não válido para a margem de lucro da unidade de preço.',

@@ -33,6 +33,7 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
     // Moving to next stage
     moveToNextStage()
   }
+  console.log(pricing)
   return (
     <>
       <div className="flex w-full flex-col gap-4 py-4">
@@ -43,6 +44,8 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
         setPricing={setPricing}
         userHasPricingEditPermission={userHasPricingEditPermission}
         userHasPricingViewPermission={userHasPricingViewPermission}
+        opportunity={opportunity}
+        proposal={infoHolder}
       />
       {/* {session?.user.permissoes.precos.editar ? (
         <button
