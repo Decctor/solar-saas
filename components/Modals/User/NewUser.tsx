@@ -23,6 +23,112 @@ import { Session } from 'next-auth'
 import { usePartners, usePartnersSimplified } from '@/utils/queries/partners'
 import SelectWithImages from '@/components/Inputs/SelectWithImages'
 
+function getInitialPermissions(session: Session) {
+  const permissions: TUser['permissoes'] = {
+    usuarios: {
+      visualizar: session.user.permissoes.usuarios.visualizar ? UserGroups[0].permissoes.usuarios.visualizar : session.user.permissoes.usuarios.visualizar,
+      criar: session.user.permissoes.usuarios.criar ? UserGroups[0].permissoes.usuarios.criar : session.user.permissoes.usuarios.criar,
+      editar: session.user.permissoes.usuarios.editar ? UserGroups[0].permissoes.usuarios.editar : session.user.permissoes.usuarios.editar,
+    },
+    comissoes: {
+      visualizar: session.user.permissoes.comissoes.visualizar ? UserGroups[0].permissoes.comissoes.visualizar : session.user.permissoes.comissoes.visualizar,
+      editar: session.user.permissoes.comissoes.editar ? UserGroups[0].permissoes.comissoes.editar : session.user.permissoes.comissoes.editar,
+    },
+    kits: {
+      visualizar: session.user.permissoes.kits.visualizar ? UserGroups[0].permissoes.kits.visualizar : session.user.permissoes.kits.visualizar,
+      editar: session.user.permissoes.kits.editar ? UserGroups[0].permissoes.kits.editar : session.user.permissoes.kits.editar,
+      criar: session.user.permissoes.kits.criar ? UserGroups[0].permissoes.kits.criar : session.user.permissoes.kits.criar,
+    },
+    produtos: {
+      visualizar: session.user.permissoes.produtos.visualizar ? UserGroups[0].permissoes.produtos.visualizar : session.user.permissoes.produtos.visualizar,
+      editar: session.user.permissoes.produtos.editar ? UserGroups[0].permissoes.produtos.editar : session.user.permissoes.produtos.editar,
+      criar: session.user.permissoes.produtos.criar ? UserGroups[0].permissoes.produtos.criar : session.user.permissoes.produtos.visualizar,
+    },
+    servicos: {
+      visualizar: session.user.permissoes.servicos.visualizar ? UserGroups[0].permissoes.servicos.visualizar : session.user.permissoes.servicos.visualizar,
+      editar: session.user.permissoes.servicos.editar ? UserGroups[0].permissoes.servicos.editar : session.user.permissoes.servicos.editar,
+      criar: session.user.permissoes.servicos.criar ? UserGroups[0].permissoes.servicos.criar : session.user.permissoes.servicos.criar,
+    },
+    planos: {
+      visualizar: session.user.permissoes.planos.visualizar ? UserGroups[0].permissoes.planos.visualizar : session.user.permissoes.planos.visualizar,
+      editar: session.user.permissoes.planos.editar ? UserGroups[0].permissoes.planos.editar : session.user.permissoes.planos.editar,
+      criar: session.user.permissoes.planos.criar ? UserGroups[0].permissoes.planos.criar : session.user.permissoes.planos.criar,
+    },
+    propostas: {
+      escopo: [],
+      visualizar: session.user.permissoes.propostas.visualizar ? UserGroups[0].permissoes.propostas.visualizar : session.user.permissoes.propostas.visualizar,
+      editar: session.user.permissoes.propostas.editar ? UserGroups[0].permissoes.propostas.editar : session.user.permissoes.propostas.editar,
+      criar: session.user.permissoes.propostas.criar ? UserGroups[0].permissoes.propostas.criar : session.user.permissoes.propostas.criar,
+    },
+    oportunidades: {
+      escopo: [], // refere-se ao escopo de atuação
+      visualizar: session.user.permissoes.oportunidades.visualizar
+        ? UserGroups[0].permissoes.oportunidades.visualizar
+        : session.user.permissoes.oportunidades.visualizar,
+      editar: session.user.permissoes.oportunidades.editar ? UserGroups[0].permissoes.oportunidades.editar : session.user.permissoes.oportunidades.editar,
+      criar: session.user.permissoes.oportunidades.criar ? UserGroups[0].permissoes.oportunidades.criar : session.user.permissoes.oportunidades.criar,
+    },
+    analisesTecnicas: {
+      escopo: [], // refere-se ao escopo de atuação
+      visualizar: session.user.permissoes.analisesTecnicas.visualizar
+        ? UserGroups[0].permissoes.analisesTecnicas.visualizar
+        : session.user.permissoes.analisesTecnicas.visualizar,
+      editar: session.user.permissoes.analisesTecnicas.editar
+        ? UserGroups[0].permissoes.analisesTecnicas.editar
+        : session.user.permissoes.analisesTecnicas.editar,
+      criar: session.user.permissoes.analisesTecnicas.criar ? UserGroups[0].permissoes.analisesTecnicas.criar : session.user.permissoes.analisesTecnicas.criar,
+    },
+    homologacoes: {
+      escopo: [], // refere-se ao escopo de atuação
+      visualizar: session.user.permissoes.homologacoes.visualizar
+        ? UserGroups[0].permissoes.homologacoes.visualizar
+        : session.user.permissoes.homologacoes.visualizar,
+      editar: session.user.permissoes.homologacoes.editar ? UserGroups[0].permissoes.homologacoes.editar : session.user.permissoes.homologacoes.editar,
+      criar: session.user.permissoes.homologacoes.criar ? UserGroups[0].permissoes.homologacoes.criar : session.user.permissoes.homologacoes.criar,
+    },
+    clientes: {
+      escopo: [],
+      visualizar: session.user.permissoes.clientes.visualizar ? UserGroups[0].permissoes.clientes.visualizar : session.user.permissoes.clientes.visualizar,
+      editar: session.user.permissoes.clientes.editar ? UserGroups[0].permissoes.clientes.editar : session.user.permissoes.clientes.editar,
+      criar: session.user.permissoes.clientes.criar ? UserGroups[0].permissoes.clientes.criar : session.user.permissoes.clientes.criar,
+    },
+    parceiros: {
+      escopo: session.user.idParceiro ? [session.user.idParceiro] : null,
+      visualizar: session.user.permissoes.parceiros.visualizar ? UserGroups[0].permissoes.parceiros.visualizar : session.user.permissoes.parceiros.visualizar,
+      editar: session.user.permissoes.parceiros.editar ? UserGroups[0].permissoes.parceiros.editar : session.user.permissoes.parceiros.editar,
+      criar: session.user.permissoes.parceiros.criar ? UserGroups[0].permissoes.parceiros.criar : session.user.permissoes.parceiros.criar,
+    },
+    precos: {
+      visualizar: session.user.permissoes.precos.visualizar ? UserGroups[0].permissoes.precos.visualizar : session.user.permissoes.precos.visualizar,
+      editar: session.user.permissoes.precos.editar ? UserGroups[0].permissoes.precos.editar : session.user.permissoes.precos.editar,
+    },
+    resultados: {
+      escopo: [], // refere-se ao escopo de atuação
+      visualizarComercial: session.user.permissoes.resultados.visualizarComercial
+        ? UserGroups[0].permissoes.resultados.visualizarComercial
+        : session.user.permissoes.resultados.visualizarComercial,
+      visualizarOperacional: session.user.permissoes.resultados.visualizarOperacional
+        ? UserGroups[0].permissoes.resultados.visualizarOperacional
+        : session.user.permissoes.resultados.visualizarOperacional,
+    },
+    configuracoes: {
+      funis: session.user.permissoes.configuracoes.funis ? UserGroups[0].permissoes.configuracoes.funis : session.user.permissoes.configuracoes.funis,
+      parceiro: session.user.permissoes.configuracoes.parceiro
+        ? UserGroups[0].permissoes.configuracoes.parceiro
+        : session.user.permissoes.configuracoes.parceiro,
+      precificacao: session.user.permissoes.configuracoes.precificacao
+        ? UserGroups[0].permissoes.configuracoes.precificacao
+        : session.user.permissoes.configuracoes.precificacao,
+      metodosPagamento: session.user.permissoes.configuracoes.metodosPagamento
+        ? UserGroups[0].permissoes.configuracoes.metodosPagamento
+        : session.user.permissoes.configuracoes.metodosPagamento,
+      tiposProjeto: session.user.permissoes.configuracoes.tiposProjeto
+        ? UserGroups[0].permissoes.configuracoes.tiposProjeto
+        : session.user.permissoes.configuracoes.tiposProjeto,
+    },
+  }
+  return permissions
+}
 type NewUserModalProps = {
   users?: TUserDTO[]
   closeModal: () => void
@@ -30,7 +136,6 @@ type NewUserModalProps = {
   partnerId: string
   session: Session
 }
-
 function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUserModalProps) {
   const queryClient = useQueryClient()
   const { data: partners } = usePartnersSimplified()
@@ -43,8 +148,8 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
     senha: '',
     avatar_url: null,
     idParceiro: partnerId,
-    idGrupo: '',
-    permissoes: UserGroups[0].permissoes,
+    idGrupo: UserGroups[0].id,
+    permissoes: getInitialPermissions(session),
     comissoes: {
       comSDR: null,
       semSDR: null,
@@ -61,8 +166,8 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
       senha: '',
       avatar_url: null,
       idParceiro: partnerId,
-      idGrupo: '',
-      permissoes: UserGroups[0].permissoes,
+      idGrupo: UserGroups[0].id,
+      permissoes: getInitialPermissions(session),
       comissoes: {
         comSDR: null,
         semSDR: null,
@@ -298,85 +403,113 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
                   onChange={(value) => {
                     const permissions: TUser['permissoes'] = {
                       usuarios: {
-                        visualizar: value.value.usuarios.visualizar,
-                        criar: value.value.usuarios.criar,
-                        editar: value.value.usuarios.editar,
+                        visualizar: session.user.permissoes.usuarios.visualizar ? value.value.usuarios.visualizar : session.user.permissoes.usuarios.visualizar,
+                        criar: session.user.permissoes.usuarios.criar ? value.value.usuarios.criar : session.user.permissoes.usuarios.criar,
+                        editar: session.user.permissoes.usuarios.editar ? value.value.usuarios.editar : session.user.permissoes.usuarios.editar,
                       },
                       comissoes: {
-                        visualizar: value.value.comissoes.visualizar,
-                        editar: value.value.comissoes.editar,
+                        visualizar: session.user.permissoes.comissoes.visualizar
+                          ? value.value.comissoes.visualizar
+                          : session.user.permissoes.comissoes.visualizar,
+                        editar: session.user.permissoes.comissoes.editar ? value.value.comissoes.editar : session.user.permissoes.comissoes.editar,
                       },
                       kits: {
-                        visualizar: value.value.kits.visualizar,
-                        editar: value.value.kits.editar,
-                        criar: value.value.kits.criar,
+                        visualizar: session.user.permissoes.kits.visualizar ? value.value.kits.visualizar : session.user.permissoes.kits.visualizar,
+                        editar: session.user.permissoes.kits.editar ? value.value.kits.editar : session.user.permissoes.kits.editar,
+                        criar: session.user.permissoes.kits.criar ? value.value.kits.criar : session.user.permissoes.kits.criar,
                       },
                       produtos: {
-                        visualizar: value.value.produtos.visualizar,
-                        editar: value.value.produtos.editar,
-                        criar: value.value.produtos.criar,
+                        visualizar: session.user.permissoes.produtos.visualizar ? value.value.produtos.visualizar : session.user.permissoes.produtos.visualizar,
+                        editar: session.user.permissoes.produtos.editar ? value.value.produtos.editar : session.user.permissoes.produtos.editar,
+                        criar: session.user.permissoes.produtos.criar ? value.value.produtos.criar : session.user.permissoes.produtos.visualizar,
                       },
                       servicos: {
-                        visualizar: value.value.servicos.visualizar,
-                        editar: value.value.servicos.editar,
-                        criar: value.value.servicos.criar,
+                        visualizar: session.user.permissoes.servicos.visualizar ? value.value.servicos.visualizar : session.user.permissoes.servicos.visualizar,
+                        editar: session.user.permissoes.servicos.editar ? value.value.servicos.editar : session.user.permissoes.servicos.editar,
+                        criar: session.user.permissoes.servicos.criar ? value.value.servicos.criar : session.user.permissoes.servicos.criar,
                       },
                       planos: {
-                        visualizar: value.value.planos.visualizar,
-                        editar: value.value.planos.editar,
-                        criar: value.value.planos.criar,
+                        visualizar: session.user.permissoes.planos.visualizar ? value.value.planos.visualizar : session.user.permissoes.planos.visualizar,
+                        editar: session.user.permissoes.planos.editar ? value.value.planos.editar : session.user.permissoes.planos.editar,
+                        criar: session.user.permissoes.planos.criar ? value.value.planos.criar : session.user.permissoes.planos.criar,
                       },
                       propostas: {
                         escopo: [],
-                        visualizar: value.value.propostas.visualizar,
-                        editar: value.value.propostas.editar,
-                        criar: value.value.propostas.criar,
+                        visualizar: session.user.permissoes.propostas.visualizar
+                          ? value.value.propostas.visualizar
+                          : session.user.permissoes.propostas.visualizar,
+                        editar: session.user.permissoes.propostas.editar ? value.value.propostas.editar : session.user.permissoes.propostas.editar,
+                        criar: session.user.permissoes.propostas.criar ? value.value.propostas.criar : session.user.permissoes.propostas.criar,
                       },
                       oportunidades: {
                         escopo: [], // refere-se ao escopo de atuação
-                        visualizar: value.value.oportunidades.visualizar,
-                        editar: value.value.oportunidades.editar,
-                        criar: value.value.oportunidades.criar,
+                        visualizar: session.user.permissoes.oportunidades.visualizar
+                          ? value.value.oportunidades.visualizar
+                          : session.user.permissoes.oportunidades.visualizar,
+                        editar: session.user.permissoes.oportunidades.editar ? value.value.oportunidades.editar : session.user.permissoes.oportunidades.editar,
+                        criar: session.user.permissoes.oportunidades.criar ? value.value.oportunidades.criar : session.user.permissoes.oportunidades.criar,
                       },
                       analisesTecnicas: {
                         escopo: [], // refere-se ao escopo de atuação
-                        visualizar: value.value.analisesTecnicas.visualizar,
-                        editar: value.value.analisesTecnicas.editar,
-                        criar: value.value.analisesTecnicas.criar,
+                        visualizar: session.user.permissoes.analisesTecnicas.visualizar
+                          ? value.value.analisesTecnicas.visualizar
+                          : session.user.permissoes.analisesTecnicas.visualizar,
+                        editar: session.user.permissoes.analisesTecnicas.editar
+                          ? value.value.analisesTecnicas.editar
+                          : session.user.permissoes.analisesTecnicas.editar,
+                        criar: session.user.permissoes.analisesTecnicas.criar
+                          ? value.value.analisesTecnicas.criar
+                          : session.user.permissoes.analisesTecnicas.criar,
                       },
                       homologacoes: {
                         escopo: [], // refere-se ao escopo de atuação
-                        visualizar: value.value.homologacoes.visualizar,
-                        editar: value.value.homologacoes.editar,
-                        criar: value.value.homologacoes.criar,
+                        visualizar: session.user.permissoes.homologacoes.visualizar
+                          ? value.value.homologacoes.visualizar
+                          : session.user.permissoes.homologacoes.visualizar,
+                        editar: session.user.permissoes.homologacoes.editar ? value.value.homologacoes.editar : session.user.permissoes.homologacoes.editar,
+                        criar: session.user.permissoes.homologacoes.criar ? value.value.homologacoes.criar : session.user.permissoes.homologacoes.criar,
                       },
                       clientes: {
                         escopo: [],
-                        visualizar: value.value.clientes.visualizar,
-                        editar: value.value.clientes.editar,
-                        criar: value.value.clientes.criar,
+                        visualizar: session.user.permissoes.clientes.visualizar ? value.value.clientes.visualizar : session.user.permissoes.clientes.visualizar,
+                        editar: session.user.permissoes.clientes.editar ? value.value.clientes.editar : session.user.permissoes.clientes.editar,
+                        criar: session.user.permissoes.clientes.criar ? value.value.clientes.criar : session.user.permissoes.clientes.criar,
                       },
                       parceiros: {
-                        escopo: [],
-                        visualizar: value.value.parceiros.visualizar,
-                        editar: value.value.parceiros.editar,
-                        criar: value.value.parceiros.criar,
+                        escopo: session.user.idParceiro ? [session.user.idParceiro] : null,
+                        visualizar: session.user.permissoes.parceiros.visualizar
+                          ? value.value.parceiros.visualizar
+                          : session.user.permissoes.parceiros.visualizar,
+                        editar: session.user.permissoes.parceiros.editar ? value.value.parceiros.editar : session.user.permissoes.parceiros.editar,
+                        criar: session.user.permissoes.parceiros.criar ? value.value.parceiros.criar : session.user.permissoes.parceiros.criar,
                       },
                       precos: {
-                        visualizar: value.value.precos.visualizar,
-                        editar: value.value.precos.editar,
+                        visualizar: session.user.permissoes.precos.visualizar ? value.value.precos.visualizar : session.user.permissoes.precos.visualizar,
+                        editar: session.user.permissoes.precos.editar ? value.value.precos.editar : session.user.permissoes.precos.editar,
                       },
                       resultados: {
                         escopo: [], // refere-se ao escopo de atuação
-                        visualizarComercial: false,
-                        visualizarOperacional: false,
+                        visualizarComercial: session.user.permissoes.resultados.visualizarComercial
+                          ? value.value.resultados.visualizarComercial
+                          : session.user.permissoes.resultados.visualizarComercial,
+                        visualizarOperacional: session.user.permissoes.resultados.visualizarOperacional
+                          ? value.value.resultados.visualizarOperacional
+                          : session.user.permissoes.resultados.visualizarOperacional,
                       },
                       configuracoes: {
-                        funis: false,
-                        parceiro: false,
-                        precificacao: false,
-                        metodosPagamento: false,
-                        tiposProjeto: false,
+                        funis: session.user.permissoes.configuracoes.funis ? value.value.configuracoes.funis : session.user.permissoes.configuracoes.funis,
+                        parceiro: session.user.permissoes.configuracoes.parceiro
+                          ? value.value.configuracoes.parceiro
+                          : session.user.permissoes.configuracoes.parceiro,
+                        precificacao: session.user.permissoes.configuracoes.precificacao
+                          ? value.value.configuracoes.precificacao
+                          : session.user.permissoes.configuracoes.precificacao,
+                        metodosPagamento: session.user.permissoes.configuracoes.metodosPagamento
+                          ? value.value.configuracoes.metodosPagamento
+                          : session.user.permissoes.configuracoes.metodosPagamento,
+                        tiposProjeto: session.user.permissoes.configuracoes.tiposProjeto
+                          ? value.value.configuracoes.tiposProjeto
+                          : session.user.permissoes.configuracoes.tiposProjeto,
                       },
                     }
                     setUserInfo((prev) => ({
