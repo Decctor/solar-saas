@@ -31,7 +31,7 @@ export type TResultsExportsItem = {
 type GetResponse = any
 
 const getExportationData: NextApiHandler<GetResponse> = async (req, res) => {
-  const PAGE_SIZE = 200
+  const PAGE_SIZE = 1000
   const { page } = req.query
 
   if (!page || isNaN(Number(page))) throw new createHttpError.BadRequest('Parâmetro de paginação inválido ou não informado.')
