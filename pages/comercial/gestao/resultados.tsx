@@ -66,7 +66,7 @@ function ComercialResults() {
   async function handleDataExport() {
     const loadingToastId = toast.loading('Carregando...')
     try {
-      const results = await fetchResultsExports({ after: period.after, before: period.before, responsibles: users })
+      const results = await fetchResultsExports({ after: period.after, before: period.before, responsibles: users, partners: partners })
       getExcelFromJSON(results, 'RELATORIO_VENDAS')
       toast.dismiss(loadingToastId)
       return toast.success('Exportação feita com sucesso !')

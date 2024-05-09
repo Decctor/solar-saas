@@ -972,7 +972,7 @@ export const UserGroups: TUserGroup[] = [
         tiposProjeto: false,
       },
       integracoes: {
-        receberLeads: false,
+        receberLeads: true,
       },
     },
   },

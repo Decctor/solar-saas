@@ -129,6 +129,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
         nome: project.responsavel.nome,
         avatar_url: project.responsavel.avatar_url,
       },
+
       dataInsercao: project.dataInsercao || new Date().toISOString(),
       // adicionar contrato e solicitação de contrato futuramente
     } as WithId<TOpportunity>

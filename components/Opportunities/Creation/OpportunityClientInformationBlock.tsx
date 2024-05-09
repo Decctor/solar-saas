@@ -168,7 +168,10 @@ function OpportunityClientInformationBlock({
             <SelectInput
               label="CANAL DE AQUISIÇÃO"
               value={client.canalAquisicao || ''}
-              handleChange={(value) => setClient((prev) => ({ ...prev, canalAquisicao: value }))}
+              handleChange={(value) => {
+                setClient((prev) => ({ ...prev, canalAquisicao: value, idMarketing: value == 'SMBOT' ? 'SMBOT' : prev.idMarketing }))
+                if (value == 'SMBOT') setOpportunity((prev) => ({ ...prev, idMarketing: 'SMBOT' }))
+              }}
               options={CustomersAcquisitionChannels}
               selectedItemLabel="NÃO DEFINIDO"
               onReset={() => setClient((prev) => ({ ...prev, canalAquisicao: CustomersAcquisitionChannels[0].value }))}

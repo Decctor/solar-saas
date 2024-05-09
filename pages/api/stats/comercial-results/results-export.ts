@@ -204,7 +204,7 @@ async function getOpportunities({ opportunitiesCollection, partnerQuery, respons
     const result = await opportunitiesCollection
       .aggregate([{ $match: match }, { $addFields: addFields }, { $lookup: proposeLookup }, { $lookup: clientLookup }, { $project: projection }])
       .toArray()
-    const projects = result.map((r) => ({
+    const opportunities = result.map((r) => ({
       nome: r.nome,
       identificador: r.identificador,
       tipo: r.tipo.titulo,
@@ -221,7 +221,7 @@ async function getOpportunities({ opportunitiesCollection, partnerQuery, respons
       motivoPerda: r.perda.descricaoMotivo,
       dataInsercao: r.dataInsercao,
     }))
-    return projects as TResultsExportsOpportunity[]
+    return opportunities as TResultsExportsOpportunity[]
   } catch (error) {
     throw error
   }

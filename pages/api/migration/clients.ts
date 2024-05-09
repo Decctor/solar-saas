@@ -7,6 +7,26 @@ import { Collection, ObjectId, WithId } from 'mongodb'
 import { NextApiHandler } from 'next'
 import { z } from 'zod'
 
+const aquisitionChannelsEquivalents = {
+  NETWORK: 'NETWORKING',
+  'INSIDE SALES': '(OUTBOUND) SDR',
+  'INDICAÇÃO DE AMIGO': 'INDICAÇÃO',
+  SITE: 'SITE',
+  'CALCULADORA SOLAR': 'CALCULADORA SOLAR',
+  'GOOGLE ADS': 'GOOGLE ADS',
+  'FACEBOOK ADS': 'FACEBOOK ADS',
+  'INSTAGRAM ADS': 'INSTAGRAM ADS',
+  SMBOT: 'SMBOT',
+  BLOG: 'BLOG',
+  YOUTUBE: 'YOUTUBE',
+  RÁDIO: 'RÁDIO',
+  EVENTO: 'EVENTO',
+  PASSIVO: 'PASSIVO',
+  'PORTA A PORTA': 'PORTA A PORTA',
+  'PROSPECÇÃO ATIVA': 'PROSPECÇÃO ATIVA',
+  'MARKETING (GERAL)': 'MARKETING (GERAL)',
+}
+
 const migrate: NextApiHandler<any> = async (req, res) => {
   const ampereDb = await connectToAmpereDatabase(process.env.MONGODB_CRM, 'main')
   const ampereClientsCollection: Collection<TAmpereClient> = ampereDb.collection('clients')
@@ -36,7 +56,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
       complemento: client.complemento,
       dataNascimento: client.dataNascimento,
       profissao: client.profissao,
-      canalAquisicao: client.canalVenda || 'PASSIVO',
+      canalAquisicao: aquisitionChannelsEquivalents[client.canalVenda as keyof typeof aquisitionChannelsEquivalents] || 'PASSIVO',
       idMarketing: client.idOportunidade,
       indicador: {
         contato: null,
