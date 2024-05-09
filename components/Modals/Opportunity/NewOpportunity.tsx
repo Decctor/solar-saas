@@ -2,39 +2,24 @@ import React, { useEffect, useState } from 'react'
 import { Session } from 'next-auth'
 import Link from 'next/link'
 import { toast } from 'react-hot-toast'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
+import { useQueryClient } from '@tanstack/react-query'
 
 import { VscChromeClose } from 'react-icons/vsc'
-import { AiFillPhone } from 'react-icons/ai'
-import { MdDelete, MdEmail } from 'react-icons/md'
-
-import Avatar from '../../utils/Avatar'
-import DropdownSelect from '../../Inputs/DropdownSelect'
-import TextInput from '../../Inputs/TextInput'
-
-import SelectInput from '../../Inputs/SelectInput'
-
-import { formatNameAsInitials } from '@/lib/methods/formatting'
-import { getUserAvatarUrl } from '@/lib/methods/extracting'
-import { getErrorMessage } from '@/lib/methods/errors'
-
 import { stateCities } from '../../../utils/estados_cidades'
 
 import { useSearchClients } from '@/utils/queries/clients'
-import { CustomersAcquisitionChannels, OpportunityResponsibilityRoles, OpportunityTypes } from '@/utils/select-options'
-import { formatToCEP, formatToCPForCNPJ, formatToPhone, getCEPInfo } from '@/utils/methods'
+import { CustomersAcquisitionChannels } from '@/utils/select-options'
+import { getCEPInfo } from '@/utils/methods'
 
 import { TUserDTOSimplified } from '@/utils/schemas/user.schema'
-import { InsertClientSchema, TClient, TSimilarClientSimplifiedDTO } from '@/utils/schemas/client.schema'
-import { InsertOpportunitySchema, TOpportunity } from '@/utils/schemas/opportunity.schema'
-import { TFunnelDTO, TFunnelEntity } from '@/utils/schemas/funnel.schema'
+import { TClient, TSimilarClientSimplifiedDTO } from '@/utils/schemas/client.schema'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import { TFunnelDTO } from '@/utils/schemas/funnel.schema'
 import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
-import SelectWithImages from '../../Inputs/SelectWithImages'
-import { createClient } from '@/utils/mutations/clients'
-import { createClientOpportunityAndFunnelReference, createOpportunity } from '@/utils/mutations/opportunities'
+
+import { createClientOpportunityAndFunnelReference } from '@/utils/mutations/opportunities'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
-import { createFunnelReference } from '@/utils/mutations/funnel-references'
-import axios from 'axios'
+
 import { useProjectTypes } from '@/utils/queries/project-types'
 import SimilarClients from '@/components/Opportunities/SimilarClients'
 import ResponsiblesInformationBlock from '@/components/Opportunities/Creation/ResponsiblesInformationBlock'
@@ -42,17 +27,6 @@ import GeneralInformationBlock from '@/components/Opportunities/Creation/General
 import FunnelReferenceInformationBlock from '@/components/Opportunities/Creation/FunnelReferenceInformationBlock'
 import OpportunityClientInformationBlock from '@/components/Opportunities/Creation/OpportunityClientInformationBlock'
 import AddressInformationBlock from '@/components/Opportunities/Creation/AddressInformationBlock'
-
-function getCurrentActiveFunnelOptions(funnelId: number | string, funnels: TFunnelDTO[]) {
-  let funnel = funnels.filter((funnel) => funnel._id.toString() == funnelId)[0]
-  return funnel.etapas.map((stage) => {
-    return {
-      id: stage.id,
-      label: stage.nome,
-      value: stage.id,
-    }
-  })
-}
 
 type NewOpportunityProps = {
   session: Session

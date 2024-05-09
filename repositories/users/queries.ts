@@ -69,3 +69,19 @@ export async function getTechnicalAnalysts({ collection, query }: GetTechnicalAn
     throw error
   }
 }
+
+type GetLeadReceiversParams = {
+  collection: Collection<TUser>
+  query: Filter<TUser>
+}
+export async function getLeadReceivers({ collection, query }: GetLeadReceiversParams) {
+  try {
+    const receivers = await collection
+      .find({ 'permissoes.integracoes.receberLeads': true, ...query })
+      .project(simplifiedProjection)
+      .toArray()
+    return receivers as WithId<TUser>[]
+  } catch (error) {
+    throw error
+  }
+}

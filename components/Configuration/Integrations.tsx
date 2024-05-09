@@ -2,11 +2,13 @@ import { Session } from 'next-auth'
 import React from 'react'
 import RDStationIntegrationBlock from '../Integrations/RDStationIntegrationBlock'
 import { NextPageContext } from 'next'
+import { useUsers } from '@/utils/queries/users'
 
 type IntegrationsProps = {
   session: Session
 }
 function Integrations({ session }: IntegrationsProps) {
+  const { data: users } = useUsers()
   return (
     <div className="flex h-full grow flex-col">
       <div className="flex w-full items-center justify-between border-b border-gray-200 pb-2">

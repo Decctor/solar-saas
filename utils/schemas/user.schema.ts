@@ -308,6 +308,12 @@ const PermissionsSchema = z.object({
       invalid_type_error: 'Tipo não válido para permissão de configuração de funis.',
     }),
   }),
+  integracoes: z.object({
+    receberLeads: z.boolean({
+      required_error: 'Permissão de recebimento de leads por integração não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de recebimento de leads por integração.',
+    }),
+  }),
 })
 
 const GeneralUserSchema = z.object({

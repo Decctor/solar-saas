@@ -14,6 +14,9 @@ import { NextPageContext } from 'next'
 import { formatDateAsLocale } from '@/lib/methods/formatting'
 import { MdContentCopy } from 'react-icons/md'
 import { copyToClipboard } from '@/lib/hooks'
+import { TUserDTO } from '@/utils/schemas/user.schema'
+import { useLeadReceivers } from '@/utils/queries/users'
+import LeadReceiversBlock from './Utils/LeadReceiversBlock'
 
 type RDStationIntegrationBlockProps = {
   session: Session
@@ -21,10 +24,8 @@ type RDStationIntegrationBlockProps = {
 function RDStationIntegrationBlock({ session }: RDStationIntegrationBlockProps) {
   const { data: integrationConfig, isLoading, isError, isSuccess } = useRDIntegrationConfig()
   const hasConfig = !!integrationConfig
-  const [configInformation, setConfigInformation] = useState<{ client_id: string; client_secret: string }>({
-    client_id: '',
-    client_secret: '',
-  })
+
+  const [configInformation, setConfigInformation] = useState<{ client_id: string; client_secret: string }>({ client_id: '', client_secret: '' })
   const [showToken, setShowToken] = useState<boolean>(false)
   async function handleConfiguration() {
     const { client_id, client_secret } = configInformation
@@ -72,20 +73,16 @@ function RDStationIntegrationBlock({ session }: RDStationIntegrationBlockProps) 
                   </button>
                 )}
               </div>
-
               {showToken ? (
                 <h1 className="mt-2 w-[80%] self-center break-words rounded-md border border-gray-300 bg-gray-100 p-2 text-center text-[0.6rem] font-bold text-gray-500">
                   {integrationConfig.access_token}
                 </h1>
               ) : null}
-
               <h1 className="mt-2 text-xs font-medium leading-none tracking-tight text-gray-500">WEBHOOK DE OPORTUNIDADES</h1>
               <div className="mt-2 flex w-full items-center justify-center gap-2">
                 <h1 className="text-center text-xs font-bold text-blue-800">{`https://erp-rose.vercel.app/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`}</h1>
                 <button
-                  onClick={() =>
-                    copyToClipboard(`https://erp-rose.vercel.app/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`)
-                  }
+                  onClick={() => copyToClipboard(`https://erp-rose.vercel.app/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`)}
                   className="text-blue-800"
                 >
                   <MdContentCopy />
@@ -94,12 +91,11 @@ function RDStationIntegrationBlock({ session }: RDStationIntegrationBlockProps) 
               <h1 className="mt-2 text-center text-xs font-medium leading-none tracking-tight text-gray-500">
                 Para configurar um Webhook para envio automático de oportunidades no RD Station, você pode utilizar o link acima.
               </h1>
+              <LeadReceiversBlock />
               <div className="flex w-full items-center justify-end">
                 <div className={`flex items-center gap-2`}>
                   <BsCalendarCheck />
-                  <p className="text-xs font-medium text-gray-500">
-                    Ultima atualização em: {formatDateAsLocale(integrationConfig.dataValidacaoToken, true)}
-                  </p>
+                  <p className="text-xs font-medium text-gray-500">Ultima atualização em: {formatDateAsLocale(integrationConfig.dataValidacaoToken, true)}</p>
                 </div>
               </div>
             </>
@@ -110,9 +106,7 @@ function RDStationIntegrationBlock({ session }: RDStationIntegrationBlockProps) 
               <div className="mt-2 flex w-full items-center justify-center gap-2">
                 <h1 className="text-center text-xs font-bold text-blue-800">{`https://erp-rose.vercel.app/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`}</h1>
                 <button
-                  onClick={() =>
-                    copyToClipboard(`https://erp-rose.vercel.app/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`)
-                  }
+                  onClick={() => copyToClipboard(`https://erp-rose.vercel.app/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`)}
                   className="text-blue-800"
                 >
                   <MdContentCopy />

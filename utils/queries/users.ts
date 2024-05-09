@@ -64,6 +64,20 @@ export function useTechnicalAnalysts() {
     queryFn: fetchTechnicalAnalysis,
   })
 }
+async function fetchLeadReceivers() {
+  try {
+    const { data } = await axios.get('/api/users/personalized?type=lead-receivers')
+    return data.data as TUserDTOSimplified[]
+  } catch (error) {
+    throw error
+  }
+}
+export function useLeadReceivers() {
+  return useQuery({
+    queryKey: ['lead-receivers'],
+    queryFn: fetchLeadReceivers,
+  })
+}
 async function fetchSalePromoters() {
   try {
     const { data } = await axios.get(`/api/management/sale-promoters`)

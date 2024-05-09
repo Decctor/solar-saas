@@ -399,6 +399,9 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                               ? value.value.configuracoes.tiposProjeto
                               : session.user.permissoes.configuracoes.tiposProjeto,
                           },
+                          integracoes: {
+                            receberLeads: value.value.integracoes.receberLeads,
+                          },
                         }
                         setUserInfo((prev) => ({
                           ...prev,

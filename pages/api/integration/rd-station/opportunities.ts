@@ -1,3 +1,4 @@
+import { getLeadReceivers } from '@/repositories/users/queries'
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { ErrorResponse, apiHandler, errorHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { stateCities } from '@/utils/estados_cidades'
@@ -132,11 +133,11 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
   const notificationsCollection: Collection<TNotification> = db.collection('notifications')
 
   // Getting users for linear distrubution of leads
-  const users = await usersCollection.find({ idParceiro: partnerId }, { sort: { _id: 1 } }).toArray()
+  const receivers = await getLeadReceivers({ collection: usersCollection, query: {} })
 
   await testCollection.insertOne(lead)
   // Getting the new receiver information
-  const newReceiver = await getNewReceiver({ collection: clientsCollection, users: users })
+  const newReceiver = await getNewReceiver({ collection: clientsCollection, users: receivers })
 
   // Formulating new client document and inserting on db
   const newClient: TClient = {
@@ -177,7 +178,11 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
   const newOpportunity: TOpportunity = {
     nome: newClient.nome,
     idParceiro: partnerId,
-    tipo: 'SISTEMA FOTOVOLTAICO',
+    tipo: {
+      id: '6615785ddcb7a6e66ede9785',
+      titulo: 'SISTEMA FOTOVOLTAICO',
+    },
+    categoriaVenda: 'KIT',
     descricao: '',
     identificador: identifier,
     responsaveis: responsibles,
@@ -209,6 +214,7 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
       tipoTitular: undefined,
       nomeTitular: undefined,
     },
+    idMarketing: lead.id,
     autor: newReceiver,
     dataInsercao: new Date().toISOString(),
     // adicionar contrato e solicitação de contrato futuramente
@@ -217,9 +223,10 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
   console.log('OPORTUNIDADE INSERIDA', opportunityInsertedId)
 
   // Notifying the opportunity receiver
-  const newNotification = {
+  const newNotification: TNotification = {
     remetente: { id: 'SISTEMA', nome: 'SISTEMA' },
-    destinatario: [newReceiver],
+    idParceiro: partnerId,
+    destinatarios: [newReceiver],
     oportunidade: {
       id: opportunityInsertedId.toString(),
       nome: newOpportunity.nome,

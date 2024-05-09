@@ -854,6 +854,23 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
           }
         />
       ) : null}
+      {/**INTEGRAÇÕES */}
+      <h1 className="w-full text-start text-sm text-gray-500">INTEGRAÇÕES</h1>
+      <CheckboxInput
+        labelFalse="APTO A RECEBER LEADS"
+        labelTrue="APTO A RECEBER LEADS"
+        checked={userInfo.permissoes.integracoes.receberLeads}
+        justify="justify-start"
+        handleChange={(value) =>
+          setUserInfo((prev) => ({
+            ...prev,
+            permissoes: {
+              ...prev.permissoes,
+              integracoes: { ...prev.permissoes.integracoes, receberLeads: value },
+            },
+          }))
+        }
+      />
     </>
   )
 }

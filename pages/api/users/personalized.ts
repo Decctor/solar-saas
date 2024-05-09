@@ -1,5 +1,5 @@
 import { getTechnicalAnalysis } from '@/repositories/technical-analysis/queries'
-import { getOpportunityCreators, getTechnicalAnalysts } from '@/repositories/users/queries'
+import { getLeadReceivers, getOpportunityCreators, getTechnicalAnalysts } from '@/repositories/users/queries'
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { TUser, TUserEntity } from '@/utils/schemas/user.schema'
@@ -19,6 +19,7 @@ const PersonalizedQueryTypes = [
   'proposal-creators',
   'price-editors',
   'technical-analysts',
+  'lead-receivers',
 ] as const
 
 const getUsersPersonalized: NextApiHandler<GetResponse> = async (req, res) => {
@@ -41,6 +42,10 @@ const getUsersPersonalized: NextApiHandler<GetResponse> = async (req, res) => {
   if (type == 'technical-analysts') {
     const analysts = await getTechnicalAnalysts({ collection: usersCollection, query: partnerQuery })
     return res.status(200).json({ data: analysts })
+  }
+  if (type == 'lead-receivers') {
+    const receivers = await getLeadReceivers({ collection: usersCollection, query: partnerQuery })
+    return res.status(200).json({ data: receivers })
   }
   return res.status(200).json({ data: [] })
 }

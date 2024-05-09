@@ -703,6 +703,9 @@ export const UserGroups: TUserGroup[] = [
         metodosPagamento: true,
         tiposProjeto: true,
       },
+      integracoes: {
+        receberLeads: false,
+      },
     },
   },
   {
@@ -790,6 +793,9 @@ export const UserGroups: TUserGroup[] = [
         metodosPagamento: true,
         tiposProjeto: false,
       },
+      integracoes: {
+        receberLeads: false,
+      },
     },
   },
   {
@@ -876,6 +882,9 @@ export const UserGroups: TUserGroup[] = [
         metodosPagamento: false,
         tiposProjeto: false,
       },
+      integracoes: {
+        receberLeads: false,
+      },
     },
   },
   {
@@ -961,6 +970,9 @@ export const UserGroups: TUserGroup[] = [
         funis: false,
         metodosPagamento: false,
         tiposProjeto: false,
+      },
+      integracoes: {
+        receberLeads: false,
       },
     },
   },

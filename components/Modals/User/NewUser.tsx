@@ -126,6 +126,9 @@ function getInitialPermissions(session: Session) {
         ? UserGroups[0].permissoes.configuracoes.tiposProjeto
         : session.user.permissoes.configuracoes.tiposProjeto,
     },
+    integracoes: {
+      receberLeads: UserGroups[0].permissoes.integracoes.receberLeads,
+    },
   }
   return permissions
 }
@@ -510,6 +513,9 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
                         tiposProjeto: session.user.permissoes.configuracoes.tiposProjeto
                           ? value.value.configuracoes.tiposProjeto
                           : session.user.permissoes.configuracoes.tiposProjeto,
+                      },
+                      integracoes: {
+                        receberLeads: value.value.integracoes.receberLeads,
                       },
                     }
                     setUserInfo((prev) => ({
