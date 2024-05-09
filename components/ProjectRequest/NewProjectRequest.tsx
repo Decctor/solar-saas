@@ -1,0 +1,106 @@
+import { TOpportunityDTO, TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TProject } from '@/utils/schemas/project.schema'
+import { TProposalDTO } from '@/utils/schemas/proposal.schema'
+import { Session } from 'next-auth'
+import React, { useState } from 'react'
+import { VscChromeClose } from 'react-icons/vsc'
+
+type NewProjectRequestProps = {
+  opportunity: TOpportunityDTOWithClient
+  proposal: TProposalDTO
+  closeModal: () => void
+  session: Session
+}
+function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewProjectRequestProps) {
+  const [stage, setStage] = useState<number>(1)
+  const [infoHolder, setInfoHolder] = useState<TProject>({
+    nome: '',
+    idParceiro: opportunity.idParceiro,
+    identificador: opportunity.identificador,
+    responsaveis: opportunity.responsaveis,
+    oportunidade: {
+      id: opportunity._id,
+      nome: opportunity.nome,
+    },
+    proposta: {
+      id: proposal._id,
+      nome: proposal.nome,
+    },
+    cliente: {
+      id: opportunity.idCliente,
+      nome: opportunity.cliente.nome,
+    },
+    contatos: {
+      email: opportunity.cliente.email || '',
+      telefonePrimario: opportunity.cliente.telefonePrimario,
+      telefoneSecundario: opportunity.cliente.telefoneSecundario,
+    },
+    localizacao: {
+      cep: opportunity.localizacao.cep || '',
+      uf: opportunity.localizacao.uf,
+      cidade: opportunity.localizacao.cidade,
+      bairro: opportunity.localizacao.bairro || '',
+      endereco: opportunity.localizacao.endereco || '',
+      numeroOuIdentificador: opportunity.localizacao.numeroOuIdentificador || '',
+      distancia: proposal.premissas.distancia,
+      complemento: opportunity.localizacao.complemento,
+      latitude: opportunity.localizacao.latitude,
+      longitude: opportunity.localizacao.longitude,
+    },
+    segmento: 'RESIDENCIAL',
+    contrato: {
+      status: 'SOLICITADO',
+      dataSolicitacao: new Date().toISOString(),
+      dataLiberacao: null,
+      dataAssinatura: null,
+      formaAssinatura: 'FÍSICA',
+    },
+    pagamento: {
+      pagador: {
+        nome: '',
+        telefone: '',
+        email: '',
+        cpfCnpj: '',
+      },
+      metodo: proposal.pagamento.metodos[0],
+      credito: {},
+      observacoes: '',
+    },
+    faturamento: {
+      observacoes: '',
+      dataEfetivacao: null,
+    },
+    liberacoes: {},
+    finalizacoes: {},
+    produtos: proposal.produtos,
+    servicos: proposal.servicos,
+    potenciaPico: proposal.potenciaPico || 0,
+    autor: {
+      id: session.user.id,
+      nome: session.user.nome,
+      avatar_url: session.user.avatar_url,
+    },
+    dataInsercao: new Date().toISOString(),
+  })
+  return (
+    <div id="ContractRequest" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
+      <div className="fixed left-[50%] top-[50%] z-[100] h-[80%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:w-[70%]">
+        <div className="flex h-full flex-col">
+          <div className="flex flex-col items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg lg:flex-row">
+            <h3 className="text-xl font-bold text-[#353432] dark:text-white ">SOLICITAÇÃO DE NOVO PROJETO</h3>
+            <button
+              onClick={closeModal}
+              type="button"
+              className="flex items-center justify-center rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
+            >
+              <VscChromeClose style={{ color: 'red' }} />
+            </button>
+          </div>
+          <div className="flex h-full flex-col gap-y-2 overflow-y-auto overscroll-y-auto p-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300"></div>
+        </div>
+      </div>
+    </div>
+  )
+}
+
+export default NewProjectRequest

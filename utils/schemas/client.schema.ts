@@ -17,6 +17,7 @@ const GeneralClientSchema = z.object({
   complemento: z.string().optional().nullable(),
   dataNascimento: z.string().datetime().optional().nullable(),
   profissao: z.string().optional().nullable(),
+  ondeTrabalha: z.string().optional().nullable(),
   estadoCivil: z.string().optional().nullable(),
   canalAquisicao: z.string(),
   dataInsercao: z.string(),
@@ -63,6 +64,7 @@ export const InsertClientSchema = z.object({
     .optional()
     .nullable(),
   profissao: z.string({ invalid_type_error: 'Tipo não válido para profissão do cliente.' }).optional().nullable(),
+  ondeTrabalha: z.string({ invalid_type_error: 'Tipo não válido para o lugar de trabalho do cliente.' }).optional().nullable(),
   estadoCivil: z.string({ invalid_type_error: 'Tipo não válido para estado civil do cliente.' }).optional().nullable(),
   canalAquisicao: z.string({ required_error: 'Canal de aquisição não informado.', invalid_type_error: 'Tipo não válido para canal de aquisição.' }),
   dataInsercao: z
@@ -114,6 +116,7 @@ export const UpdateClientSchema = z.object({
     .optional()
     .nullable(),
   profissao: z.string({ invalid_type_error: 'Tipo não válido para profissão do cliente.' }).optional().nullable(),
+  ondeTrabalha: z.string({ invalid_type_error: 'Tipo não válido para o lugar de trabalho do cliente.' }).optional().nullable(),
   estadoCivil: z.string({ invalid_type_error: 'Tipo não válido para estado civil do cliente.' }).optional().nullable(),
   canalAquisicao: z.string({ required_error: 'Canal de aquisição não informado.', invalid_type_error: 'Tipo não válido para canal de aquisição.' }),
   dataInsercao: z
@@ -165,6 +168,7 @@ export const ClientDTOSchema = z.object({
     .optional()
     .nullable(),
   profissao: z.string({ invalid_type_error: 'Tipo não válido para profissão do cliente.' }).optional().nullable(),
+  ondeTrabalha: z.string({ invalid_type_error: 'Tipo não válido para o lugar de trabalho do cliente.' }).optional().nullable(),
   estadoCivil: z.string({ invalid_type_error: 'Tipo não válido para estado civil do cliente.' }).optional().nullable(),
   canalAquisicao: z.string({ required_error: 'Canal de aquisição não informado.', invalid_type_error: 'Tipo não válido para canal de aquisição.' }),
   dataInsercao: z

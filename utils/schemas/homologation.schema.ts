@@ -98,6 +98,8 @@ const HomologationLocationSchema = z.object({
     .optional()
     .nullable(),
   complemento: z.string().optional().nullable(),
+  latitude: z.string({ invalid_type_error: 'Tipo não válido para latitude da localização da oportunidade.' }).optional().nullable(),
+  longitude: z.string({ invalid_type_error: 'Tipo não válido para longitude da localização da oportunidade.' }).optional().nullable(),
   // distancia: z.number().optional().nullable(),
 })
 const HomologationInstalationSchema = z.object({

@@ -52,6 +52,8 @@ export const GeneralOpportunitySchema = z.object({
     endereco: z.string().optional().nullable(),
     numeroOuIdentificador: z.string().optional().nullable(),
     complemento: z.string().optional().nullable(),
+    latitude: z.string().optional().nullable(),
+    longitude: z.string().optional().nullable(),
     // distancia: z.number().optional().nullable(),
   }),
   perda: z.object({
@@ -143,6 +145,8 @@ export const InsertOpportunitySchema = z.object({
     endereco: z.string().optional().nullable(),
     numeroOuIdentificador: z.string().optional().nullable(),
     complemento: z.string().optional().nullable(),
+    latitude: z.string({ invalid_type_error: 'Tipo não válido para latitude da localização da oportunidade.' }).optional().nullable(),
+    longitude: z.string({ invalid_type_error: 'Tipo não válido para longitude da localização da oportunidade.' }).optional().nullable(),
     // distancia: z.number().optional().nullable(),
   }),
   perda: z.object({
@@ -249,6 +253,8 @@ export const UpdateOpportunitySchema = z.object({
     endereco: z.string().optional().nullable(),
     numeroOuIdentificador: z.string().optional().nullable(),
     complemento: z.string().optional().nullable(),
+    latitude: z.string({ invalid_type_error: 'Tipo não válido para latitude da localização da oportunidade.' }).optional().nullable(),
+    longitude: z.string({ invalid_type_error: 'Tipo não válido para longitude da localização da oportunidade.' }).optional().nullable(),
     // distancia: z.number().optional().nullable(),
   }),
   perda: z.object({
@@ -356,6 +362,8 @@ export const OpportunityWithClientSchema = z.object({
     endereco: z.string().optional().nullable(),
     numeroOuIdentificador: z.string().optional().nullable(),
     complemento: z.string().optional().nullable(),
+    latitude: z.string({ invalid_type_error: 'Tipo não válido para latitude da localização da oportunidade.' }).optional().nullable(),
+    longitude: z.string({ invalid_type_error: 'Tipo não válido para longitude da localização da oportunidade.' }).optional().nullable(),
     // distancia: z.number().optional().nullable(),
   }),
   perda: z.object({

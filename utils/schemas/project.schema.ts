@@ -1,5 +1,6 @@
 import z from 'zod'
 import { InverterSchema, ModuleSchema, ProductItemSchema, ServiceItemSchema } from './kits.schema'
+import { AuthorSchema } from './user.schema'
 
 const PurchaseItemsSchema = z.object({
   descricao: z.string(),
@@ -12,6 +13,7 @@ const SupplySchema = z.object({
   status: z.union([z.literal('PENDENTE'), z.literal('EM AGUARDO'), z.literal('COMPRA REALIZADA'), z.literal('CONCLUÍDO')]),
   itens: z.array(PurchaseItemsSchema),
   fornecedor: z.string(),
+  dataLiberacao: z.string().datetime().optional().nullable(),
   dataPedido: z.string().datetime().optional().nullable(),
   dataPagamento: z.string().datetime().optional().nullable(),
   dataFaturamento: z.string().datetime().optional().nullable(),
@@ -52,14 +54,16 @@ const GeneralProjectSchema = z.object({
     email: z.string(),
   }),
   localizacao: z.object({
-    cep: z.string().optional().nullable(),
-    uf: z.string().optional().nullable(),
-    cidade: z.string().optional().nullable(),
+    cep: z.string(),
+    uf: z.string(),
+    cidade: z.string(),
     bairro: z.string(),
     endereco: z.string(),
     numeroOuIdentificador: z.string(),
     distancia: z.number().optional().nullable(),
     complemento: z.string().optional().nullable(),
+    latitude: z.string().optional().nullable(),
+    longitude: z.string().optional().nullable(),
   }),
   segmento: z.union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')]),
   contrato: z.object({
@@ -69,35 +73,74 @@ const GeneralProjectSchema = z.object({
     dataAssinatura: z.string().optional().nullable(),
     formaAssinatura: z.union([z.literal('FÍSICA'), z.literal('DIGITAL')]),
   }),
-  unidadeConsumidora: z.object({
-    concessionaria: z.string(),
-    numero: z.string(),
-    grupo: z.union([z.literal('URBANO'), z.literal('RURAL')]),
-    tipoLigacao: z.union([z.literal('EXISTENTE'), z.literal('NOVA')]),
-    tipoTitular: z.union([z.literal('PESSOA FÍSICA'), z.literal('PESSOA JURÍDICA')]),
-    nomeTitular: z.string(),
+  pagamento: z.object({
+    pagador: z.object({
+      nome: z.string(),
+      telefone: z.string(),
+      email: z.string(),
+      cpfCnpj: z.string(),
+    }),
+    metodo: z.object({
+      nome: z.string({
+        required_error: 'Nome do método de pagamento não informado.',
+        invalid_type_error: 'Tipo não válido para o nome do método de pagamento.',
+      }),
+      fracionamento: z.array(
+        z.object(
+          {
+            metodo: z.string({
+              required_error: 'Método do item de fracionamento não informado.',
+              invalid_type_error: 'Tipo não válido para o método do item de fracionamento.',
+            }),
+            parcelas: z
+              .number({
+                required_error: 'Número de parcelas do item de fracionamento não informado.',
+                invalid_type_error: 'Tipo não válido para o número de parcelas do item de fracionamento.',
+              })
+              .optional()
+              .nullable(),
+            porcentagem: z.number({
+              required_error: 'Porcentagem do item de fracionamento não informada.',
+              invalid_type_error: 'Tipo não válido para porcentagem do item de fracionamento.',
+            }),
+          },
+          {
+            required_error: 'Fracionamento do método de pagamento não informado.',
+            invalid_type_error: 'Tipo não válido para o fracionamento do método de pagamento.',
+          }
+        )
+      ),
+    }),
+    credito: z.object({
+      credor: z.string({ required_error: 'Nome do credor não informado.', invalid_type_error: 'Tipo não válido para o nome do credor.' }).optional().nullable(),
+      nomeResponsavel: z
+        .string({
+          required_error: 'Nome do gerente/responsável pelo crédito.',
+          invalid_type_error: 'Tipo não válido para o nome do gerente/responsável pelo crédito.',
+        })
+        .optional()
+        .nullable(),
+      telefoneResponsavel: z
+        .string({
+          required_error: 'Nome do gerente/responsável pelo crédito.',
+          invalid_type_error: 'Tipo não válido para o nome do gerente/responsável pelo crédito.',
+        })
+        .optional()
+        .nullable(),
+      observacoes: z.string({ invalid_type_error: 'Tipo não válido para as observações de aquisição de crédito.' }).optional().nullable(),
+    }),
+    observacoes: z.string({ invalid_type_error: 'Tipo não válido para as observações do pagamento.' }).optional().nullable(),
   }),
-  estruturaInstalacao: z.object({
-    alteracao: z.boolean(),
-    tipo: z.string(),
-    material: z.union([z.literal('MADEIRA'), z.literal('FERRO')]), // Define list
-    observacoes: z.string(),
-  }),
-  padraoEnergia: z.object({
-    alteracao: z.boolean(),
-    tipo: z.union([z.literal('CONTRA À REDE'), z.literal('À FAVOR DA REDE')]), //
-    tipoEntrada: z.union([z.literal('AÉREO'), z.literal('SUBTERRÂNEO')]), //
-    tipoSaida: z.union([z.literal('AÉREO'), z.literal('SUBTERRÂNEO')]), //
-    amperagem: z.string(), //
-    ligacao: z.union([z.literal('MONOFÁSICO'), z.literal('BIFÁSICO'), z.literal('TRIFÁSICO')]), //
-    novaAmperagem: z
-      .union([z.literal('MONOFÁSICO'), z.literal('BIFÁSICO'), z.literal('TRIFÁSICO')])
+  faturamento: z.object({
+    observacoes: z.string({
+      required_error: 'Observações sobre o faturamento não fornecidas.',
+      invalid_type_error: 'Tipo não válido para as observações de faturamento.',
+    }),
+    dataEfetivacao: z
+      .string({ invalid_type_error: 'Tipo não válido para a data de efetivação das pendências de faturamento.' })
+      .datetime({ message: 'Formato inválido para a data de efetivação das pendências de faturamento.' })
       .optional()
-      .nullable(), // x
-    novaLigacao: z.string().optional().nullable(), // x
-    codigoMedidor: z.string(),
-    modeloCaixaMedidor: z.string().optional().nullable(),
-    observacoes: z.string(),
+      .nullable(),
   }),
   liberacoes: z.object({
     comercial: z.string().datetime().optional().nullable(),
@@ -106,51 +149,18 @@ const GeneralProjectSchema = z.object({
     execucao: z.string().datetime().optional().nullable(),
     financeiro: z.string().datetime().optional().nullable(),
   }),
-  parecerAcesso: z.object({
-    status: z
-      .union([
-        z.literal('AGUARDANDO ASSINATURA'),
-        z.literal('AGUARDANDO ART'),
-        z.literal('AGUARDANDO CONCESSIONÁRIA'),
-        z.literal('SUSPENSO'),
-        z.literal('APROVADO'),
-        z.literal('APROVADO (NOTURNO)'),
-        z.literal('APROVADO (COM OBRAS)'),
-      ])
-      .optional()
-      .nullable(),
-    dataLiberacaoDocumentacao: z.string().datetime().optional().nullable(),
-    dataAssinaturaDocumentacao: z.string().datetime().optional().nullable(),
-    formaAssinaturaDocumentacao: z
-      .union([z.literal('FÍSICA'), z.literal('DIGITAL')])
-      .optional()
-      .nullable(),
-    dataSolicitacao: z.string().datetime().optional().nullable(),
-    dataAprovacao: z.string().datetime().optional().nullable(),
-    dataReprova: z.string().datetime().optional().nullable(),
+  finalizacoes: z.object({
+    comercial: z.string().datetime().optional().nullable(),
+    suprimentos: z.string().datetime().optional().nullable(),
+    projetos: z.string().datetime().optional().nullable(),
+    execucao: z.string().datetime().optional().nullable(),
+    financeiro: z.string().datetime().optional().nullable(),
   }),
-  execucao: z.object({
-    status: z
-      .union([z.literal('AGENDADA'), z.literal('EM ANDAMENTO'), z.literal('CONCLUÍDA')])
-      .optional()
-      .nullable(),
-
-    inicio: z.string().datetime().optional().nullable(),
-    fim: z.string().datetime().optional().nullable(),
-    observacoes: z.string(),
-  }),
-  vistoriaTecnica: z.object({
-    status: z
-      .union([z.literal('AGUARDANDO CONCESSIONÁRIA'), z.literal('REPROVADA'), z.literal('APROVADA')])
-      .optional()
-      .nullable(),
-    dataPedido: z.string().datetime().optional().nullable(),
-    dataAprovacao: z.string().datetime().optional().nullable(),
-    dataReprova: z.string().datetime().optional().nullable(),
-  }),
-  equipamentos: z.array(ProductItemSchema),
+  produtos: z.array(ProductItemSchema),
   servicos: z.array(ServiceItemSchema),
   potenciaPico: z.number(),
   nps: z.number().optional().nullable(),
+  autor: AuthorSchema,
+  dataInsercao: z.string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' }).datetime(),
 })
 export type TProject = z.infer<typeof GeneralProjectSchema>

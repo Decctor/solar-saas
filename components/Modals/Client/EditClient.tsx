@@ -49,7 +49,7 @@ function NewClient({ clientId, session, partnerId, closeModal }: NewClientModalP
     dataNascimento: null,
     profissao: null,
     estadoCivil: null,
-    canalAquisicao: null,
+    canalAquisicao: '',
     idMarketing: null,
     indicador: {
       nome: '',
@@ -204,7 +204,7 @@ function NewClient({ clientId, session, partnerId, closeModal }: NewClientModalP
                     onReset={() =>
                       setClientInfo((prev) => ({
                         ...prev,
-                        canalAquisicao: null,
+                        canalAquisicao: '',
                       }))
                     }
                     selectedItemLabel="NÃO DEFINIDO"

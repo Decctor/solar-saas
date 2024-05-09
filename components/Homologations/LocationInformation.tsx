@@ -149,6 +149,26 @@ function LocationInformation({ infoHolder, setInfoHolder }: LocationInformationP
           />
         </div>
       </div>
+      <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+        <div className="w-full lg:w-1/2">
+          <TextInput
+            label="LATITUDE"
+            value={infoHolder.localizacao.latitude || ''}
+            placeholder="Preencha aqui a latitude da instalação..."
+            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, latitude: value } }))}
+            width="100%"
+          />
+        </div>
+        <div className="w-full lg:w-1/2">
+          <TextInput
+            label="LONGITUDE"
+            value={infoHolder.localizacao.longitude || ''}
+            placeholder="Preencha aqui a longitude da instalação..."
+            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, longitude: value } }))}
+            width="100%"
+          />
+        </div>
+      </div>
     </div>
   )
 }
