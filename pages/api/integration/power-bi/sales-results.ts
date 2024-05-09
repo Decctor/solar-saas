@@ -10,7 +10,7 @@ import { Collection } from 'mongodb'
 import { NextApiHandler } from 'next'
 
 export type TResultsExportsItem = {
-  'NOME DO PROJETO': string
+  'NOME DA OPORTUNIDADE': string
   IDENTIFICADOR: string
   TIPO: string
   VENDEDOR: string
@@ -76,13 +76,14 @@ const getExportationData: NextApiHandler<GetResponse> = async (req, res) => {
     if (isOutboundSeller) classification = 'OUTBOUND VENDEDOR'
 
     return {
-      'NOME DO PROJETO': opportunity.nome,
+      'NOME DA OPORTUNIDADE': opportunity.nome,
       PARCEIRO: partner?.nome || 'NÃO DEFINIDO',
       IDENTIFICADOR: opportunity.identificador || '',
       TIPO: opportunity.tipo,
       TELEFONE: opportunity?.telefone,
       VENDEDOR: seller?.nome || 'NÃO DEFINIDO',
       SDR: sdr?.nome || 'NÃO DEFINIDO',
+      ENVIO: isTransfer ? 'SIM' : 'NÃO',
       'DATA DE GANHO': formatDateAsLocale(wonDate || undefined) || 'NÃO ASSINADO',
       'POTÊNCIA VENDIDA': proposePower,
       'VALOR VENDA': proposeValue,
