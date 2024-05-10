@@ -91,6 +91,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
       descricao: project.descricao || '',
       identificador: project.identificador,
       responsaveis: responsibles,
+      segmento: null,
       idCliente: project.clienteId,
       idMarketing: project.idOportunidade,
       idPropostaAtiva: project.contrato?.idProposta || project.propostaAtiva,

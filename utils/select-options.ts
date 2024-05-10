@@ -18,6 +18,7 @@ import { TUserDTO } from './schemas/user.schema'
 import { TProposalPremisses } from './schemas/proposal.schema'
 import { TSaleCategory } from './schemas/opportunity.schema'
 import { TSignaturePlanDTO } from './schemas/signature-plans.schema'
+import { TProject } from './schemas/project.schema'
 
 export const AllSellers = [
   {
@@ -598,6 +599,8 @@ export const PaymentMethods = [
   { id: 6, label: 'PARCELADO (CRÉDITO)', value: 'PARCELADO (CRÉDITO)', apportionment: true, modality: 'SIMPLES' },
   { id: 7, label: 'FINANCIAMENTO', value: 'FINANCIAMENTO', apportionment: true, modality: 'COMPOSTOS' },
 ]
+
+export const ProjectObservationTopics: TProject['observacoes'][number]['assunto'][] = ['SERVIÇOS', 'PRODUTOS', 'NEGOCIAÇÃO', 'EXECUÇÃO']
 
 export const OpportunityTypes = [
   { id: 1, label: 'SISTEMA FOTOVOLTAICO', value: 'SISTEMA FOTOVOLTAICO' },

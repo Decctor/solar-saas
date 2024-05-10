@@ -2,6 +2,7 @@ import SelectInput from '@/components/Inputs/SelectInput'
 import TextInput from '@/components/Inputs/TextInput'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import { TProjectTypeDTO } from '@/utils/schemas/project-types.schema'
+import { ComercialSegments } from '@/utils/select-options'
 import React from 'react'
 
 type GeneralInformationBlockProps = {
@@ -20,37 +21,61 @@ function GeneralInformationBlock({ opportunity, setOpportunity, projectTypes }: 
         handleChange={(value) => setOpportunity((prev) => ({ ...prev, nome: value }))}
         width="100%"
       />
-      <div className="flex w-full flex-col gap-1">
-        <SelectInput
-          label="TIPO DO PROJETO"
-          value={opportunity.tipo.id}
-          options={projectTypes?.map((type, index) => ({ id: index + 1, label: type.nome, value: type._id })) || []}
-          handleChange={(value) => {
-            const type = projectTypes?.find((t) => t._id == value)
-            const saleCategory = type?.categoriaVenda || 'KIT'
-            const typeTitle = type?.nome || 'SISTEMA FOTOVOLTAICO'
-            setOpportunity((prev) => ({
-              ...prev,
-              tipo: {
-                id: value,
-                titulo: typeTitle,
-              },
-              categoriaVenda: saleCategory as TOpportunity['categoriaVenda'],
-            }))
-          }}
-          selectedItemLabel="NÃO DEFINIDO"
-          onReset={() =>
-            setOpportunity((prev) => ({
-              ...prev,
-              tipo: {
-                id: '6615785ddcb7a6e66ede9785',
-                titulo: 'SISTEMA FOTOVOLTAICO',
-              },
-            }))
-          }
-          width="100%"
-        />
+      <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
+        <div className="w-full lg:w-1/2">
+          <SelectInput
+            label="TIPO DO PROJETO"
+            value={opportunity.tipo.id}
+            options={projectTypes?.map((type, index) => ({ id: index + 1, label: type.nome, value: type._id })) || []}
+            handleChange={(value) => {
+              const type = projectTypes?.find((t) => t._id == value)
+              const saleCategory = type?.categoriaVenda || 'KIT'
+              const typeTitle = type?.nome || 'SISTEMA FOTOVOLTAICO'
+              setOpportunity((prev) => ({
+                ...prev,
+                tipo: {
+                  id: value,
+                  titulo: typeTitle,
+                },
+                categoriaVenda: saleCategory as TOpportunity['categoriaVenda'],
+              }))
+            }}
+            selectedItemLabel="NÃO DEFINIDO"
+            onReset={() =>
+              setOpportunity((prev) => ({
+                ...prev,
+                tipo: {
+                  id: '6615785ddcb7a6e66ede9785',
+                  titulo: 'SISTEMA FOTOVOLTAICO',
+                },
+              }))
+            }
+            width="100%"
+          />
+        </div>
+        <div className="w-full lg:w-1/2">
+          <SelectInput
+            label="SEGMENTO"
+            value={opportunity.segmento}
+            options={ComercialSegments}
+            handleChange={(value) => {
+              setOpportunity((prev) => ({
+                ...prev,
+                segmento: value as TOpportunity['segmento'],
+              }))
+            }}
+            selectedItemLabel="NÃO DEFINIDO"
+            onReset={() =>
+              setOpportunity((prev) => ({
+                ...prev,
+                segmento: 'RESIDENCIAL',
+              }))
+            }
+            width="100%"
+          />
+        </div>
       </div>
+
       <div className="flex w-full flex-col gap-1">
         <p className="font-Raleway font-bold text-gray-800">DESCRIÇÃO</p>
         <textarea

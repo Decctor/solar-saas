@@ -43,21 +43,18 @@ function ProposalTechnicalAnalysis({
           {analysis.conclusao.observacoes || 'SEM OBSERVAÇÃO PARA A ANÁLISE'}
         </h1>
         <div className="flex w-full flex-wrap items-center justify-around gap-2">
-          <div className="flex items-center gap-1 ">
-            {analysis.conclusao.espaco ? <BsCheck2All color="rgb(34,197,94)" /> : <VscChromeClose color="rgb(239,68,68)" />}
-            <p className="text-xs font-medium tracking-tight text-gray-500">
+          <div className={`flex items-center gap-1 rounded p-1 ${analysis.conclusao.espaco ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
+            <p className="text-xs font-medium tracking-tight">
               {analysis.conclusao.espaco ? 'POSSUI ESPAÇO PARA INSTALAÇÃO' : 'NÃO POSSUI ESPAÇO PARA INSTALAÇÃO'}
             </p>
           </div>
-          <div className="flex items-center gap-1 ">
-            {!analysis.conclusao.inclinacao ? <BsCheck2All color="rgb(34,197,94)" /> : <VscChromeClose color="rgb(239,68,68)" />}
-            <p className="text-xs font-medium tracking-tight text-gray-500">
+          <div className={`flex items-center gap-1 rounded p-1 ${!analysis.conclusao.inclinacao ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
+            <p className="text-xs font-medium tracking-tight">
               {!analysis.conclusao.inclinacao ? 'NÃO NECESSÁRIO ESTRUTURA DE INCLINAÇÃO' : 'NECESSÁRIO ESTRUTURA DE INCLINAÇÃO'}
             </p>
           </div>
-          <div className="flex items-center gap-1 ">
-            {!analysis.conclusao.sombreamento ? <BsCheck2All color="rgb(34,197,94)" /> : <VscChromeClose color="rgb(239,68,68)" />}
-            <p className="text-xs font-medium tracking-tight text-gray-500">
+          <div className={`flex items-center gap-1 rounded p-1 ${!analysis.conclusao.sombreamento ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
+            <p className="text-xs font-medium tracking-tight">
               {!analysis.conclusao.sombreamento ? 'NÃO SOFRERÁ COM SOMBREAMENTO' : 'SOFRERÁ COM SOMBREAMENTO'}
             </p>
           </div>

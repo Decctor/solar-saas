@@ -4,6 +4,12 @@ import { TProposalDTO } from '@/utils/schemas/proposal.schema'
 import { Session } from 'next-auth'
 import React, { useState } from 'react'
 import { VscChromeClose } from 'react-icons/vsc'
+import ClientBlock from './RequestStages/ClientBlock'
+import GeneralInformationBlock from './RequestStages/GeneralInformationBlock'
+import HomologationBlock from './RequestStages/HomologationBlock'
+import TechnicalAnalysisBlock from './RequestStages/TechnicalAnalysisBlock'
+
+type Stages = 'general' | 'client' | 'homologation' | 'technical-analysis' | 'products-and-services'
 
 type NewProjectRequestProps = {
   opportunity: TOpportunityDTOWithClient
@@ -12,8 +18,9 @@ type NewProjectRequestProps = {
   session: Session
 }
 function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewProjectRequestProps) {
-  const [stage, setStage] = useState<number>(1)
+  const [stage, setStage] = useState<Stages>('general')
   const [infoHolder, setInfoHolder] = useState<TProject>({
+    indexador: 0,
     nome: '',
     idParceiro: opportunity.idParceiro,
     identificador: opportunity.identificador,
@@ -30,11 +37,16 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
       id: opportunity.idCliente,
       nome: opportunity.cliente.nome,
     },
+    observacoes: [],
     contatos: {
       email: opportunity.cliente.email || '',
+      nomePrimario: opportunity.nome,
       telefonePrimario: opportunity.cliente.telefonePrimario,
-      telefoneSecundario: opportunity.cliente.telefoneSecundario,
+      nomeSecundario: '',
+      telefoneSecundario: '',
+      observacoes: '',
     },
+    acessos: [],
     localizacao: {
       cep: opportunity.localizacao.cep || '',
       uf: opportunity.localizacao.uf,
@@ -47,7 +59,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
       latitude: opportunity.localizacao.latitude,
       longitude: opportunity.localizacao.longitude,
     },
-    segmento: 'RESIDENCIAL',
+    segmento: opportunity.segmento || 'RESIDENCIAL',
     contrato: {
       status: 'SOLICITADO',
       dataSolicitacao: new Date().toISOString(),
@@ -83,7 +95,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
     dataInsercao: new Date().toISOString(),
   })
   return (
-    <div id="ContractRequest" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
+    <div id="new-project-request" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="fixed left-[50%] top-[50%] z-[100] h-[80%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:w-[70%]">
         <div className="flex h-full flex-col">
           <div className="flex flex-col items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg lg:flex-row">
@@ -96,7 +108,37 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
               <VscChromeClose style={{ color: 'red' }} />
             </button>
           </div>
-          <div className="flex h-full flex-col gap-y-2 overflow-y-auto overscroll-y-auto p-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300"></div>
+          <div className="flex h-full flex-col gap-y-2 overflow-y-auto overscroll-y-auto p-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
+            {stage == 'general' ? (
+              <GeneralInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} session={session} moveToNextStage={() => setStage('client')} />
+            ) : null}
+            {stage == 'client' ? (
+              <ClientBlock
+                clientId={opportunity.idCliente}
+                infoHolder={infoHolder}
+                setInfoHolder={setInfoHolder}
+                session={session}
+                moveToNextStage={() => setStage('homologation')}
+              />
+            ) : null}
+
+            {stage == 'homologation' ? (
+              <HomologationBlock
+                infoHolder={infoHolder}
+                setInfoHolder={setInfoHolder}
+                session={session}
+                moveToNextStage={() => setStage('technical-analysis')}
+              />
+            ) : null}
+            {stage == 'technical-analysis' ? (
+              <TechnicalAnalysisBlock
+                infoHolder={infoHolder}
+                setInfoHolder={setInfoHolder}
+                session={session}
+                moveToNextStage={() => setStage('technical-analysis')}
+              />
+            ) : null}
+          </div>
         </div>
       </div>
     </div>

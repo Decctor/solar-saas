@@ -42,6 +42,10 @@ export const GeneralOpportunitySchema = z.object({
       telefone: z.string().optional().nullable(),
     })
   ),
+  segmento: z
+    .union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')])
+    .optional()
+    .nullable(),
   idCliente: z.string(),
   idPropostaAtiva: z.string().optional().nullable(),
   localizacao: z.object({
@@ -129,6 +133,13 @@ export const InsertOpportunitySchema = z.object({
       { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
     )
     .min(1, 'É necessário ao menos 1 responsável.'),
+  segmento: z
+    .union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')], {
+      required_error: 'Segmento da oportunidade não informado.',
+      invalid_type_error: 'Tipo não válido para o segmento da oportunidade.',
+    })
+    .optional()
+    .nullable(),
   idCliente: z.string({ required_error: 'Vínculo de cliente não informado.', invalid_type_error: 'Tipo não válido para vínculo de cliente.' }),
   idPropostaAtiva: z.string().optional().nullable(),
   localizacao: z.object({
@@ -237,6 +248,13 @@ export const UpdateOpportunitySchema = z.object({
       { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
     )
     .min(1, 'É necessário ao menos 1 responsável.'),
+  segmento: z
+    .union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')], {
+      required_error: 'Segmento da oportunidade não informado.',
+      invalid_type_error: 'Tipo não válido para o segmento da oportunidade.',
+    })
+    .optional()
+    .nullable(),
   idCliente: z.string({ required_error: 'Vínculo de cliente não informado.', invalid_type_error: 'Tipo não válido para vínculo de cliente.' }),
   idPropostaAtiva: z.string().optional().nullable(),
   localizacao: z.object({
@@ -345,6 +363,13 @@ export const OpportunityWithClientSchema = z.object({
       { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
     )
     .min(1, 'É necessário ao menos 1 responsável.'),
+  segmento: z
+    .union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')], {
+      required_error: 'Segmento da oportunidade não informado.',
+      invalid_type_error: 'Tipo não válido para o segmento da oportunidade.',
+    })
+    .optional()
+    .nullable(),
   idCliente: z.string({ required_error: 'Vínculo de cliente não informado.', invalid_type_error: 'Tipo não válido para vínculo de cliente.' }),
   cliente: ClientDTOSchema,
   idPropostaAtiva: z.string().optional().nullable(),

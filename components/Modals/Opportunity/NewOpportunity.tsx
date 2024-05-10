@@ -79,6 +79,7 @@ function NewOpportunity({ session, closeModal, opportunityCreators, funnels }: N
     descricao: '',
     identificador: '',
     responsaveis: [],
+    segmento: 'RESIDENCIAL',
     idCliente: '',
     localizacao: {
       cep: null,

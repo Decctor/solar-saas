@@ -32,6 +32,7 @@ import EditProposal from '../Modals/Proposal/EditProposal'
 import ProposalUpdateRecords from './ProposalUpdateRecords'
 import NewContractRequest from '../Modals/ContractRequest/NewContractRequest'
 import { handleDownload } from '@/lib/methods/download'
+import NewProjectRequest from '../ProjectRequest/NewProjectRequest'
 
 function getPricingMethodById({ methods, id }: { methods?: TPricingMethodDTO[]; id: string }) {
   if (!methods) return 'NÃO DEFINIDO'
@@ -47,7 +48,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
   const queryClient = useQueryClient()
   const [editProposalModalIsOpen, setEditProposalModalIsOpen] = useState<boolean>(false)
   const [newContractRequestIsOpen, setNewContractRequestIsOpen] = useState<boolean>(false)
-
+  const [testRequestIsOpen, setTestRequestIsOpen] = useState<boolean>(false)
   const { data: proposal, isLoading: proposalLoading, isError: proposalError, isSuccess: proposalSuccess } = useProposalById({ id: proposalId })
   const { data: pricingMethods } = usePricingMethods()
 
@@ -101,7 +102,13 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
                 </div>
               </div>
             </div>
-
+            <button
+              // @ts-ignore
+              onClick={() => setTestRequestIsOpen(true)}
+              className="rounded border border-cyan-600 px-4 py-2 text-sm font-bold text-cyan-600 duration-300 ease-in-out hover:bg-cyan-600 hover:text-white"
+            >
+              TESTAR GANHO
+            </button>
             <WinBlock
               opportunityId={proposal.oportunidade.id}
               proposalId={proposalId}
@@ -330,6 +337,14 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
             <ProposalUpdateRecords proposalId={proposalId} />
           </div>
         </div>
+        {testRequestIsOpen ? (
+          <NewProjectRequest
+            session={session}
+            opportunity={{ ...proposal.oportunidadeDados, cliente: proposal.clienteDados }}
+            proposal={proposal}
+            closeModal={() => setTestRequestIsOpen(false)}
+          />
+        ) : null}
         {editProposalModalIsOpen ? (
           <EditProposal
             session={session}

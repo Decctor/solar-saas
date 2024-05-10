@@ -4,10 +4,10 @@ import { TProductItem } from '@/utils/schemas/kits.schema'
 import React from 'react'
 import { BsCalendarPlus, BsCode } from 'react-icons/bs'
 import { ImPower } from 'react-icons/im'
-import Avatar from '../utils/Avatar'
 import { formatDateAsLocale, formatDecimalPlaces, formatNameAsInitials } from '@/lib/methods/formatting'
 import { FaSolarPanel } from 'react-icons/fa'
 import { FaBolt } from 'react-icons/fa6'
+import Avatar from '@/components/utils/Avatar'
 
 function getTagColor(status: string) {
   if (status == 'PENDENTE') return 'bg-gray-800'
@@ -32,10 +32,11 @@ function getStatusTag(status: string) {
     return <h1 className={`rounded-full bg-green-500 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>{status}</h1>
   return <h1 className={`rounded-full bg-gray-800 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs`}>{status}</h1>
 }
-type OpportunityHomologationCardProps = {
+type SelectableHomologationProps = {
   homologation: THomologationDTO
+  selectHomologation: (id: string) => void
 }
-function OpportunityHomologationCard({ homologation }: OpportunityHomologationCardProps) {
+function SelectableHomologation({ homologation, selectHomologation }: SelectableHomologationProps) {
   return (
     <div className="flex w-full items-center rounded-md border border-gray-200">
       <div className={`h-full w-[5px] rounded-bl-md rounded-tl-md ${getTagColor(homologation.status)}`}></div>
@@ -93,9 +94,17 @@ function OpportunityHomologationCard({ homologation }: OpportunityHomologationCa
             </div>
           </div>
         </div>
+        <div className="flex w-full items-center justify-end">
+          <button
+            onClick={() => selectHomologation(homologation._id)}
+            className="rounded-full bg-blue-600 px-2 py-1 text-[0.65rem] font-bold text-white duration-300 ease-in-out hover:bg-blue-700 lg:text-xs"
+          >
+            SELECIONAR
+          </button>
+        </div>
       </div>
     </div>
   )
 }
 
-export default OpportunityHomologationCard
+export default SelectableHomologation

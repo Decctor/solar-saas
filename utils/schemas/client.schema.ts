@@ -19,6 +19,7 @@ const GeneralClientSchema = z.object({
   profissao: z.string().optional().nullable(),
   ondeTrabalha: z.string().optional().nullable(),
   estadoCivil: z.string().optional().nullable(),
+  deficiencia: z.string().optional().nullable(),
   canalAquisicao: z.string(),
   dataInsercao: z.string(),
   idMarketing: z.string().optional().nullable(),
@@ -66,6 +67,7 @@ export const InsertClientSchema = z.object({
   profissao: z.string({ invalid_type_error: 'Tipo não válido para profissão do cliente.' }).optional().nullable(),
   ondeTrabalha: z.string({ invalid_type_error: 'Tipo não válido para o lugar de trabalho do cliente.' }).optional().nullable(),
   estadoCivil: z.string({ invalid_type_error: 'Tipo não válido para estado civil do cliente.' }).optional().nullable(),
+  deficiencia: z.string({ invalid_type_error: 'Tipo inválido para deficiência.' }).optional().nullable(),
   canalAquisicao: z.string({ required_error: 'Canal de aquisição não informado.', invalid_type_error: 'Tipo não válido para canal de aquisição.' }),
   dataInsercao: z
     .string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' })
@@ -118,6 +120,7 @@ export const UpdateClientSchema = z.object({
   profissao: z.string({ invalid_type_error: 'Tipo não válido para profissão do cliente.' }).optional().nullable(),
   ondeTrabalha: z.string({ invalid_type_error: 'Tipo não válido para o lugar de trabalho do cliente.' }).optional().nullable(),
   estadoCivil: z.string({ invalid_type_error: 'Tipo não válido para estado civil do cliente.' }).optional().nullable(),
+  deficiencia: z.string({ invalid_type_error: 'Tipo inválido para deficiência.' }).optional().nullable(),
   canalAquisicao: z.string({ required_error: 'Canal de aquisição não informado.', invalid_type_error: 'Tipo não válido para canal de aquisição.' }),
   dataInsercao: z
     .string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' })
@@ -170,6 +173,7 @@ export const ClientDTOSchema = z.object({
   profissao: z.string({ invalid_type_error: 'Tipo não válido para profissão do cliente.' }).optional().nullable(),
   ondeTrabalha: z.string({ invalid_type_error: 'Tipo não válido para o lugar de trabalho do cliente.' }).optional().nullable(),
   estadoCivil: z.string({ invalid_type_error: 'Tipo não válido para estado civil do cliente.' }).optional().nullable(),
+  deficiencia: z.string({ invalid_type_error: 'Tipo inválido para deficiência.' }).optional().nullable(),
   canalAquisicao: z.string({ required_error: 'Canal de aquisição não informado.', invalid_type_error: 'Tipo não válido para canal de aquisição.' }),
   dataInsercao: z
     .string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' })

@@ -71,7 +71,7 @@ function OpportunityTechnicalAnalysisItem({ analysis }: OpportunityTechnicalAnal
             <div className="w-full min-w-fit lg:w-fit">{getStatusColor(analysis.status)}</div>
           </div>
         </div>
-        <div className="flex w-full items-center justify-between gap-2">
+        <div className="mt-2 flex w-full items-center justify-between gap-2">
           {analysis.dataEfetivacao ? (
             <button
               className="rounded bg-cyan-500 px-2 py-1 text-center text-[0.6rem] font-bold text-white"
@@ -86,16 +86,16 @@ function OpportunityTechnicalAnalysisItem({ analysis }: OpportunityTechnicalAnal
             {analysis.dataEfetivacao ? (
               <div className={`flex items-center gap-1`}>
                 <BsCalendarCheck color="rgb(34,197,94)" />
-                <p className="text-[0.6rem] font-medium ">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
+                <p className="text-xs font-medium tracking-tight">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
               </div>
             ) : null}
             <div className={`flex items-center gap-1`}>
               <BsCalendarPlus />
-              <p className="text-[0.6rem] font-medium">{formatDateAsLocale(analysis.dataInsercao, true)}</p>
+              <p className="text-xs font-medium tracking-tight">{formatDateAsLocale(analysis.dataInsercao, true)}</p>
             </div>
             <div className="flex items-center gap-1">
               <Avatar fallback={'R'} url={analysis.requerente.avatar_url || undefined} height={20} width={20} />
-              <p className="text-[0.6rem] font-medium">{analysis.requerente.nome}</p>
+              <p className="text-xs font-medium tracking-tight">{analysis.requerente.nome}</p>
             </div>
           </div>
         </div>

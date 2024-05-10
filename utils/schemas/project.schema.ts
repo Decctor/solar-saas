@@ -24,7 +24,31 @@ const SupplySchema = z.object({
   localEntrega: z.string(),
   valorTotal: z.number(),
 })
+
+const ProjectObservationSchema = z.object({
+  assunto: z.enum(['SERVIÇOS', 'PRODUTOS', 'NEGOCIAÇÃO', 'EXECUÇÃO']),
+  descricao: z.string({ required_error: 'Descrição de observação não informada.', invalid_type_error: 'Tipo não válido para a descrição da observação.' }),
+  data: z
+    .string({ required_error: 'Data de inserção da observação não informada.', invalid_type_error: 'Tipo não válido para a data de inserção da observação.' })
+    .datetime({ message: 'Formato inválido para a data de inserção da observação.' }),
+  autor: AuthorSchema,
+})
+const ProjectAccessCredentials = z.object({
+  identificador: z.string({
+    required_error: 'Identificador da plataforma de acesso não informado.',
+    invalid_type_error: 'Tipo não válido para o identificador da plataforma de acesso.',
+  }),
+  login: z.string({ required_error: 'Login do acesso não informado.', invalid_type_error: 'Tipo não válido para o login de acesso.' }),
+  senha: z.string({ required_error: 'Senha do acesso não informada.', invalid_type_error: 'Tipo não válido para a senha de acesso.' }),
+  dataInsercao: z.string({
+    required_error: 'Data de adição das credenciais de acesso não informada.',
+    invalid_type_error: 'Tipo não válido para data de adição das credenciais.',
+  }),
+  autor: AuthorSchema,
+})
+
 const GeneralProjectSchema = z.object({
+  indexador: z.number({}),
   nome: z.string(),
   idParceiro: z.string(),
   identificador: z.string(),
@@ -48,11 +72,18 @@ const GeneralProjectSchema = z.object({
     id: z.string(),
     nome: z.string(),
   }),
+  idHomologacao: z.string({ invalid_type_error: 'Tipo inválido para o ID de referência da homologação ativa.' }).optional().nullable(),
+  idAnaliseTecnica: z.string({ invalid_type_error: 'Tipo inválido para o ID de referência da análise técnica ativa.' }).optional().nullable(),
+  observacoes: z.array(ProjectObservationSchema),
   contatos: z.object({
+    nomePrimario: z.string(),
     telefonePrimario: z.string(),
+    nomeSecundario: z.string(),
     telefoneSecundario: z.string().optional().nullable(),
     email: z.string(),
+    observacoes: z.string(),
   }),
+  acessos: z.array(ProjectAccessCredentials),
   localizacao: z.object({
     cep: z.string(),
     uf: z.string(),

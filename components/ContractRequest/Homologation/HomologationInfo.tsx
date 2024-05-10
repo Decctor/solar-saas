@@ -26,7 +26,6 @@ type HomologationInfoProps = {
   goToNextStage: () => void
 }
 function HomologationInfo({ requestInfo, setRequestInfo, session, opportunity, client, goToPreviousStage, goToNextStage }: HomologationInfoProps) {
-  const homologationId = requestInfo.idHomologacao as string
   const { data: homologation } = useHomologationById({ id: homologationId })
   const [infoHolder, setInfoHolder] = useState<THomologation>({
     status: 'PENDENTE',
@@ -39,6 +38,13 @@ function HomologationInfo({ requestInfo, setRequestInfo, session, opportunity, c
       nome: opportunity.instalacao.nomeTitular || '',
       identificador: client?.cpfCnpj || '',
       contato: client?.telefonePrimario || '',
+    },
+    requerente: {
+      id: session.user.id,
+      nome: session.user.nome,
+      apelido: session.user.nome,
+      contato: session.user.telefone || '',
+      avatar_url: session.user.avatar_url,
     },
     potencia: 0,
     distribuidora: '',

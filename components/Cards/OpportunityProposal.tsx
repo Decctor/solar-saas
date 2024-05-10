@@ -105,11 +105,11 @@ function OpportunityProposal({
           <div className="flex items-center gap-2">
             <div className={`flex items-center gap-1`}>
               <BsCalendarPlus />
-              <p className="text-[0.6rem] font-medium">{formatDateAsLocale(info.dataInsercao, true)}</p>
+              <p className="text-xs font-medium tracking-tight">{formatDateAsLocale(info.dataInsercao, true)}</p>
             </div>
             <div className="flex items-center gap-1">
               <Avatar fallback={'R'} url={info.autor.avatar_url || undefined} height={20} width={20} />
-              <p className="text-[0.6rem] font-medium">{info.autor.nome}</p>
+              <p className="text-xs font-medium tracking-tight">{info.autor.nome}</p>
             </div>
           </div>
         </div>
