@@ -36,6 +36,8 @@ const CreditorSchema = z.object({
     .datetime({ message: 'Formato inválido para data de inserção.' }),
 })
 
+export const GeneralUtilSchema = z.union([EquipmentSchema, CreditorSchema])
+
 export type TCreditor = z.infer<typeof CreditorSchema>
 export type TCreditorDTO = TCreditor & { _id: string }
 
