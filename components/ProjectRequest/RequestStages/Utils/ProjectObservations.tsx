@@ -49,8 +49,8 @@ function ProjectObservations({ infoHolder, setInfoHolder, session }: ProjectObse
     <div className="flex w-full flex-col gap-1">
       <h1 className="w-full rounded-md bg-blue-500 p-1 text-center text-sm font-bold text-white">OBSERVAÇÕES DO PROJETO</h1>
       <p className="my-1 w-full text-center text-sm font-light tracking-tighter text-gray-700">
-        Se houver alguma informação relevante em relação ao serviço a ser prestado, a detalhes dos produtos, da negociação, da execução do projeto, etc, escolha
-        o tópico aplicavél e preencha a observação e clique em ADICIONAR.
+        Se houver alguma informação relevante em relação ao serviços a serem prestado, a detalhes dos produtos, da negociação, da execução do projeto, etc,
+        escolha o tópico aplicavél e preencha a observação e clique em ADICIONAR.
       </p>
       <div className="my-1 flex w-full items-center justify-center gap-4 px-2">
         {ProjectObservationTopics.map((topic, index) => (

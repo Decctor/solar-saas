@@ -95,7 +95,7 @@ function SelectableHomologation({ homologation, selectHomologation }: Selectable
             </div>
           </div>
         </div>
-        <div className="flex w-full items-center justify-end">
+        <div className="mt-1 flex w-full items-center justify-end">
           <button
             onClick={() => selectHomologation(homologation._id)}
             className="rounded-full bg-blue-600 px-2 py-1 text-[0.65rem] font-bold text-white duration-300 ease-in-out hover:bg-blue-700 lg:text-xs"

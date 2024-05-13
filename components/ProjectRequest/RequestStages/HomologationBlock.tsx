@@ -63,7 +63,7 @@ function HomologationBlock({ infoHolder, setInfoHolder, moveToNextStage, moveToP
           }}
           className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105"
         >
-          Voltar
+          VOLTAR
         </button>
         {activeHomologation ? (
           <button

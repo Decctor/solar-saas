@@ -8,8 +8,10 @@ import ClientBlock from './RequestStages/ClientBlock'
 import GeneralInformationBlock from './RequestStages/GeneralInformationBlock'
 import HomologationBlock from './RequestStages/HomologationBlock'
 import TechnicalAnalysisBlock from './RequestStages/TechnicalAnalysisBlock'
+import SaleCompositionBlock from './RequestStages/SaleCompositionBlock'
+import PaymentInformationBlock from './RequestStages/PaymentInformationBlock'
 
-type Stages = 'general' | 'client' | 'homologation' | 'technical-analysis' | 'products-and-services'
+type Stages = 'general' | 'client' | 'homologation' | 'technical-analysis' | 'products-and-services' | 'payment'
 
 type NewProjectRequestProps = {
   opportunity: TOpportunityDTOWithClient
@@ -18,12 +20,18 @@ type NewProjectRequestProps = {
   session: Session
 }
 function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewProjectRequestProps) {
+  const sale: TProject['venda'] =
+    opportunity.categoriaVenda == 'KIT'
+      ? { tipo: 'ÚNICA' }
+      : { tipo: 'RECORRENTE', intervalo: proposal.planos[0].intervalo.tipo, espacamento: proposal.planos[0].intervalo.espacamento }
+
   const [stage, setStage] = useState<Stages>('general')
   const [infoHolder, setInfoHolder] = useState<TProject>({
     indexador: 0,
     nome: '',
     idParceiro: opportunity.idParceiro,
     identificador: opportunity.identificador,
+    venda: sale,
     responsaveis: opportunity.responsaveis,
     oportunidade: {
       id: opportunity._id,
@@ -86,6 +94,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
     finalizacoes: {},
     produtos: proposal.produtos,
     servicos: proposal.servicos,
+    valor: proposal.valor || 0,
     potenciaPico: proposal.potenciaPico || 0,
     autor: {
       id: session.user.id,
@@ -137,8 +146,27 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
                 infoHolder={infoHolder}
                 setInfoHolder={setInfoHolder}
                 session={session}
-                moveToNextStage={() => setStage('technical-analysis')}
+                moveToNextStage={() => setStage('products-and-services')}
                 moveToPreviousStage={() => setStage('homologation')}
+              />
+            ) : null}
+            {stage == 'products-and-services' ? (
+              <SaleCompositionBlock
+                infoHolder={infoHolder}
+                setInfoHolder={setInfoHolder}
+                session={session}
+                moveToNextStage={() => setStage('payment')}
+                moveToPreviousStage={() => setStage('technical-analysis')}
+              />
+            ) : null}
+            {stage == 'payment' ? (
+              <PaymentInformationBlock
+                infoHolder={infoHolder}
+                setInfoHolder={setInfoHolder}
+                session={session}
+                moveToNextStage={() => setStage('payment')}
+                moveToPreviousStage={() => setStage('products-and-services')}
+                client={opportunity.cliente}
               />
             ) : null}
           </div>

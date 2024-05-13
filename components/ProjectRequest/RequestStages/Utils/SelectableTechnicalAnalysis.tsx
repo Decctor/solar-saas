@@ -131,7 +131,7 @@ function SelectableTechnicalAnalysis({ analysis, userHasPricingViewPermission, s
             <p className="text-[0.65rem] font-medium text-gray-500">{analysis.requerente.nome}</p>
           </div>
         </div>
-        <div className="flex w-full items-center justify-end">
+        <div className="mt-1 flex w-full items-center justify-end">
           <button
             onClick={() => selectAnalysis(analysis._id)}
             className="rounded-full bg-blue-600 px-2 py-1 text-[0.65rem] font-bold text-white duration-300 ease-in-out hover:bg-blue-700 lg:text-xs"

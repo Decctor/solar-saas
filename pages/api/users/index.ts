@@ -100,20 +100,25 @@ const editUser: NextApiHandler<PutResponse> = async (req, res) => {
   if (!id || typeof id !== 'string') throw new createHttpError.BadRequest('ID do objeto de alteração não especificado.')
   if (!req.body.changes) throw new createHttpError.BadRequest('Mudanças não especificadas na requisição.')
 
-  const user = req.body.changes
+  var user = req.body.changes
 
+  if (user.senha && user.senha.trim().length > 0) {
+    let hashedPassword = hashSync(user.senha, 10)
+    user = { ...user, senha: hashedPassword }
+  }
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection('users')
-  let changes
-  if (req.body.changePassword && user.senha) {
-    let hashedPassword = hashSync(user.senha, 10)
-    changes = { ...user, senha: hashedPassword }
-  } else {
-    changes = { ...user }
-  }
+  // let changes
+  // if (req.body.changePassword && user.senha) {
+  //   let hashedPassword = hashSync(user.senha, 10)
+  //   changes = { ...user, senha: hashedPassword }
+  // } else {
+  //   changes = { ...user }
+  // }
   // @ts-ignore
-  delete changes._id
-  if (typeof id === 'string') await collection.updateOne({ _id: new ObjectId(id) }, { $set: { ...changes } })
+  delete user._id
+  console.log(user)
+  if (typeof id === 'string') await collection.updateOne({ _id: new ObjectId(id) }, { $set: { ...user } })
   res.status(201).json({ data: 'OK', message: 'Usuário alterado com sucesso.' })
 }
 

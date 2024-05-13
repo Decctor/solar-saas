@@ -1,6 +1,7 @@
 import z from 'zod'
 import { InverterSchema, ModuleSchema, ProductItemSchema, ServiceItemSchema } from './kits.schema'
 import { AuthorSchema } from './user.schema'
+import { PaymentMethodItemSchema } from './proposal.schema'
 
 const PurchaseItemsSchema = z.object({
   descricao: z.string(),
@@ -47,11 +48,20 @@ const ProjectAccessCredentials = z.object({
   autor: AuthorSchema,
 })
 
+const SaleSchema = z.union([
+  z.object({ tipo: z.literal('ÚNICA') }),
+  z.object({
+    tipo: z.literal('RECORRENTE'),
+    intervalo: z.union([z.literal('DIÁRIO'), z.literal('SEMANAL'), z.literal('MENSAL'), z.literal('SEMESTRAL'), z.literal('ANUAL')]),
+    espacamento: z.number().default(1),
+  }),
+])
 const GeneralProjectSchema = z.object({
   indexador: z.number({}),
   nome: z.string(),
   idParceiro: z.string(),
   identificador: z.string(),
+  venda: SaleSchema,
   responsaveis: z.array(
     z.object({
       id: z.string(),
@@ -96,6 +106,7 @@ const GeneralProjectSchema = z.object({
     latitude: z.string().optional().nullable(),
     longitude: z.string().optional().nullable(),
   }),
+
   segmento: z.union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')]),
   contrato: z.object({
     status: z.union([z.literal('SOLICITADO'), z.literal('AGUARDANDO ASSINATURA'), z.literal('ASSINADO'), z.literal('RESCISÃO')]),
@@ -111,37 +122,7 @@ const GeneralProjectSchema = z.object({
       email: z.string(),
       cpfCnpj: z.string(),
     }),
-    metodo: z.object({
-      nome: z.string({
-        required_error: 'Nome do método de pagamento não informado.',
-        invalid_type_error: 'Tipo não válido para o nome do método de pagamento.',
-      }),
-      fracionamento: z.array(
-        z.object(
-          {
-            metodo: z.string({
-              required_error: 'Método do item de fracionamento não informado.',
-              invalid_type_error: 'Tipo não válido para o método do item de fracionamento.',
-            }),
-            parcelas: z
-              .number({
-                required_error: 'Número de parcelas do item de fracionamento não informado.',
-                invalid_type_error: 'Tipo não válido para o número de parcelas do item de fracionamento.',
-              })
-              .optional()
-              .nullable(),
-            porcentagem: z.number({
-              required_error: 'Porcentagem do item de fracionamento não informada.',
-              invalid_type_error: 'Tipo não válido para porcentagem do item de fracionamento.',
-            }),
-          },
-          {
-            required_error: 'Fracionamento do método de pagamento não informado.',
-            invalid_type_error: 'Tipo não válido para o fracionamento do método de pagamento.',
-          }
-        )
-      ),
-    }),
+    metodo: PaymentMethodItemSchema,
     credito: z.object({
       credor: z.string({ required_error: 'Nome do credor não informado.', invalid_type_error: 'Tipo não válido para o nome do credor.' }).optional().nullable(),
       nomeResponsavel: z
@@ -190,6 +171,7 @@ const GeneralProjectSchema = z.object({
   produtos: z.array(ProductItemSchema),
   servicos: z.array(ServiceItemSchema),
   potenciaPico: z.number(),
+  valor: z.number(),
   nps: z.number().optional().nullable(),
   autor: AuthorSchema,
   dataInsercao: z.string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' }).datetime(),

@@ -57,7 +57,7 @@ const PricingItemSchema = z.object({
 })
 export type TPricingItem = z.infer<typeof PricingItemSchema>
 
-const PaymentMethodItemSchema = z.object({
+export const PaymentMethodItemSchema = z.object({
   id: z.string({
     required_error: 'ID do método de pagamento não informado.',
     invalid_type_error: 'Tipo não válido para o ID do método de pagamento.',

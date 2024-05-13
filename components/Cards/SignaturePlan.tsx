@@ -3,7 +3,7 @@ import { formatToMoney } from '@/utils/methods'
 import { TSignaturePlanDTO } from '@/utils/schemas/signature-plans.schema'
 import React from 'react'
 import { BsBookmarksFill, BsCalendarPlus, BsCart, BsCheckCircleFill } from 'react-icons/bs'
-import { MdAttachMoney, MdOutlineMiscellaneousServices, MdRepeat, MdReplay } from 'react-icons/md'
+import { MdAttachMoney, MdOutlineMiscellaneousServices, MdOutlineTimer, MdRepeat, MdReplay } from 'react-icons/md'
 import Avatar from '../utils/Avatar'
 import { TProductItem } from '@/utils/schemas/kits.schema'
 import { ProductItemCategories } from '@/utils/select-options'
@@ -61,6 +61,10 @@ function SignaturePlanCard({ plan, handleOpenModal, userHasEditPermission, userH
             <div className="flex items-center gap-1">
               <MdRepeat />
               <p className="text-[0.65rem] font-bold lg:text-xs">{plan.intervalo.tipo}</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <MdOutlineTimer />
+              <p className="text-[0.65rem] font-bold lg:text-xs">{plan.intervalo.espacamento}</p>
             </div>
           </div>
           <div className="flex w-full grow flex-col">

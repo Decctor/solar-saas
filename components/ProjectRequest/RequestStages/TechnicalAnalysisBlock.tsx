@@ -24,7 +24,9 @@ function TechnicalAnalysisBlock({ infoHolder, setInfoHolder, moveToNextStage, mo
 
   const activeAnalysis = infoHolder.idAnaliseTecnica ? analysis?.find((h) => h._id == infoHolder.idAnaliseTecnica) : null
   const selectableAnalysis = analysis?.filter((h) => h._id != infoHolder.idAnaliseTecnica)
-  function validateAndProceed() {}
+  function validateAndProceed() {
+    moveToNextStage()
+  }
   return (
     <div className="flex w-full grow flex-col gap-2">
       <h1 className="w-full rounded bg-gray-800 p-1 text-center font-bold text-white">INFORMAÇÕES DA ANÁLISE TÉCNICA</h1>
@@ -53,7 +55,7 @@ function TechnicalAnalysisBlock({ infoHolder, setInfoHolder, moveToNextStage, mo
                   />
                 ))
               ) : (
-                <p className="w-full text-center text-sm font-medium tracking-tight text-gray-500">Nenhuma homologação encontrada.</p>
+                <p className="w-full text-center text-sm font-medium tracking-tight text-gray-500">Nenhuma análise técnica encontrada.</p>
               )
             ) : null}
           </>
@@ -66,7 +68,7 @@ function TechnicalAnalysisBlock({ infoHolder, setInfoHolder, moveToNextStage, mo
           }}
           className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105"
         >
-          Voltar
+          VOLTAR
         </button>
         {activeAnalysis ? (
           <button
