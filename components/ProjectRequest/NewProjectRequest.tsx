@@ -119,6 +119,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
                 setInfoHolder={setInfoHolder}
                 session={session}
                 moveToNextStage={() => setStage('homologation')}
+                moveToPreviousStage={() => setStage('general')}
               />
             ) : null}
 
@@ -128,6 +129,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
                 setInfoHolder={setInfoHolder}
                 session={session}
                 moveToNextStage={() => setStage('technical-analysis')}
+                moveToPreviousStage={() => setStage('client')}
               />
             ) : null}
             {stage == 'technical-analysis' ? (
@@ -136,6 +138,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
                 setInfoHolder={setInfoHolder}
                 session={session}
                 moveToNextStage={() => setStage('technical-analysis')}
+                moveToPreviousStage={() => setStage('homologation')}
               />
             ) : null}
           </div>

@@ -131,7 +131,7 @@ function Kit({ kit, handleClick, userHasEditPermission, userHasPricingViewPermis
             {kit.dataValidade ? (
               <div className={`flex items-center gap-2 text-gray-500`}>
                 <BsCalendarEvent />
-                <p className="text-[0.6rem] font-medium">
+                <p className="text-[0.65rem] font-medium text-gray-500">
                   Valido até: <strong className="text-orange-500">{formatDateAsLocale(kit.dataValidade)}</strong>{' '}
                 </p>
               </div>
@@ -140,11 +140,11 @@ function Kit({ kit, handleClick, userHasEditPermission, userHasPricingViewPermis
           <div className="flex items-center gap-2">
             <div className={`flex items-center gap-1`}>
               <BsCalendarPlus />
-              <p className="text-[0.6rem] font-medium">{formatDateAsLocale(kit.dataInsercao)}</p>
+              <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(kit.dataInsercao)}</p>
             </div>
             <div className="flex items-center gap-1">
               <Avatar fallback={'R'} url={kit.autor.avatar_url || undefined} height={20} width={20} />
-              <p className="text-[0.6rem] font-medium">{kit.autor.nome}</p>
+              <p className="text-[0.65rem] font-medium text-gray-500">{kit.autor.nome}</p>
             </div>
           </div>
         </div>

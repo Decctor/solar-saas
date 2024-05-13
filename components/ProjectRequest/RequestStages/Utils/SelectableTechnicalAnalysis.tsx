@@ -59,38 +59,50 @@ function SelectableTechnicalAnalysis({ analysis, userHasPricingViewPermission, s
       <div className={`h-full w-[5px] rounded-bl-md rounded-tl-md ${getTagColor(analysis.status)}`}></div>
       <div className="flex grow flex-col p-3">
         <div className="flex w-full grow flex-col gap-1">
-          <div className="flex w-full flex-col items-start justify-between gap-1 lg:flex-row">
+          <div className="flex w-full flex-col items-center justify-between gap-1 lg:flex-row lg:items-start">
             <div className="flex grow flex-col items-center lg:items-start">
               <h1 className="w-full text-center text-sm font-bold leading-none tracking-tight duration-300 lg:text-start">
                 {analysis.tipoSolicitacao || 'NÃO DEFINIDO'}
               </h1>
               <p className="mt-1 w-full text-center text-[0.6rem] font-medium text-gray-500 lg:text-start">#{analysis._id}</p>
             </div>
-            <div className="w-full min-w-fit lg:w-fit">{getStatusColor(analysis.status)}</div>
+            <div className="flex w-full min-w-fit items-center justify-center lg:w-fit">{getStatusColor(analysis.status)}</div>
           </div>
         </div>
         <h1 className="my-2 mb-0 text-[0.65rem] font-bold leading-none tracking-tight text-gray-500 lg:text-xs">CONCLUSÃO</h1>
         <h1 className="w-full rounded-md bg-gray-100 p-2 py-1 text-center text-xs font-medium text-gray-500">
           {analysis.conclusao.observacoes || 'SEM OBSERVAÇÃO PARA A ANÁLISE'}
         </h1>
-        <div className="flex w-full flex-wrap items-center justify-around gap-2">
-          <div className={`flex items-center gap-1 rounded p-1 ${analysis.conclusao.espaco ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
-            <p className="text-xs font-medium tracking-tight">
+        <div className="mt-2 flex w-full flex-wrap items-center justify-around gap-2">
+          <div
+            className={`flex w-full items-center justify-center gap-1 rounded p-1 lg:w-fit ${
+              analysis.conclusao.espaco ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'
+            }`}
+          >
+            <p className="text-center text-xs font-medium tracking-tight">
               {analysis.conclusao.espaco ? 'POSSUI ESPAÇO PARA INSTALAÇÃO' : 'NÃO POSSUI ESPAÇO PARA INSTALAÇÃO'}
             </p>
           </div>
-          <div className={`flex items-center gap-1 rounded p-1 ${!analysis.conclusao.inclinacao ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
-            <p className="text-xs font-medium tracking-tight">
+          <div
+            className={`flex w-full items-center justify-center gap-1 rounded p-1 lg:w-fit ${
+              !analysis.conclusao.inclinacao ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'
+            }`}
+          >
+            <p className="text-center text-xs font-medium tracking-tight">
               {!analysis.conclusao.inclinacao ? 'NÃO NECESSÁRIO ESTRUTURA DE INCLINAÇÃO' : 'NECESSÁRIO ESTRUTURA DE INCLINAÇÃO'}
             </p>
           </div>
-          <div className={`flex items-center gap-1 rounded p-1 ${!analysis.conclusao.sombreamento ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
-            <p className="text-xs font-medium tracking-tight">
+          <div
+            className={`flex w-full items-center justify-center gap-1 rounded p-1 lg:w-fit ${
+              !analysis.conclusao.sombreamento ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'
+            }`}
+          >
+            <p className="text-center text-xs font-medium tracking-tight">
               {!analysis.conclusao.sombreamento ? 'NÃO SOFRERÁ COM SOMBREAMENTO' : 'SOFRERÁ COM SOMBREAMENTO'}
             </p>
           </div>
         </div>
-        <h1 className="my-2 mb-0 text-[0.65rem] font-bold leading-none tracking-tight text-gray-500 lg:text-xs">CUSTOS ADICIONAIS</h1>
+        <h1 className="my-2 text-[0.65rem] font-bold leading-none tracking-tight text-gray-500 lg:text-xs">CUSTOS ADICIONAIS</h1>
         <div className="flex w-full flex-wrap items-center justify-around gap-2">
           {analysis.custos.map((cost, index) => (
             <div key={index} className="flex items-center gap-2 rounded border border-gray-500 p-2">
@@ -103,20 +115,20 @@ function SelectableTechnicalAnalysis({ analysis, userHasPricingViewPermission, s
             </div>
           ))}
         </div>
-        <div className="mt-2 flex w-full items-center justify-end gap-2">
+        <div className="mt-2 flex w-full flex-col items-center justify-end gap-2 lg:flex-row">
           {analysis.dataEfetivacao ? (
             <div className={`flex items-center gap-1`}>
               <BsCalendarCheck color="rgb(34,197,94)" />
-              <p className="text-xs font-medium tracking-tight">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
+              <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
             </div>
           ) : null}
           <div className={`flex items-center gap-1`}>
             <BsCalendarPlus />
-            <p className="text-xs font-medium tracking-tight">{formatDateAsLocale(analysis.dataInsercao, true)}</p>
+            <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataInsercao, true)}</p>
           </div>
           <div className="flex items-center gap-1">
             <Avatar fallback={formatNameAsInitials(analysis.requerente.nome || 'R')} url={analysis.requerente.avatar_url || undefined} height={20} width={20} />
-            <p className="text-xs font-medium tracking-tight">{analysis.requerente.nome}</p>
+            <p className="text-[0.65rem] font-medium text-gray-500">{analysis.requerente.nome}</p>
           </div>
         </div>
         <div className="flex w-full items-center justify-end">

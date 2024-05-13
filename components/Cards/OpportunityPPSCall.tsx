@@ -56,17 +56,17 @@ function PPSCallCard({ call, session }: PPSCallCardProps) {
           <div className={`flex items-center gap-2`}>
             <div className="ites-center flex gap-1">
               <BsCalendarPlus />
-              <p className={`text-xs font-medium tracking-tight`}>{formatDateAsLocale(call.dataInsercao, true)}</p>
+              <p className={`text-[0.65rem] font-medium text-gray-500`}>{formatDateAsLocale(call.dataInsercao, true)}</p>
             </div>
             {call.dataEfetivacao ? (
               <div className="ites-center flex gap-1">
                 <BsCalendarCheck color="rgb(34,197,94)" />
-                <p className={`text-xs font-medium tracking-tight`}>{formatDateAsLocale(call.dataEfetivacao, true)}</p>
+                <p className={`text-[0.65rem] font-medium text-gray-500`}>{formatDateAsLocale(call.dataEfetivacao, true)}</p>
               </div>
             ) : null}
           </div>
           <div className="flex items-center justify-center gap-1">
-            <p className="text-xs font-medium tracking-tight">VOLTS</p>
+            <p className="text-[0.65rem] font-medium text-gray-500">VOLTS</p>
           </div>
         </div>
       </div>

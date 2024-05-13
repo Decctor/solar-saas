@@ -78,12 +78,12 @@ function SignaturePlanCard({ plan, handleOpenModal, userHasEditPermission, userH
             <div className={`flex items-center gap-2`}>
               <div className="ites-center flex gap-1">
                 <BsCalendarPlus />
-                <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(plan.dataInsercao)}</p>
+                <p className={`text-[0.65rem] font-medium text-gray-500`}>{formatDateAsLocale(plan.dataInsercao)}</p>
               </div>
             </div>
             <div className="flex items-center justify-center gap-1">
               <Avatar fallback={'U'} height={20} width={20} url={plan.autor?.avatar_url || undefined} />
-              <p className="text-xs font-medium text-gray-500">{plan.autor?.nome}</p>
+              <p className="text-[0.65rem] font-medium text-gray-500">{plan.autor?.nome}</p>
             </div>
           </div>
         </div>

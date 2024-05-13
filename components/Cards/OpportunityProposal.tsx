@@ -34,7 +34,7 @@ function getStatusColor({
   if (opportunityIsWon && opportunityWonProposalId == proposalId)
     return <h1 className="w-fit self-center rounded border border-green-500 p-1 text-center text-[0.6rem] font-black text-green-500">GANHA</h1>
   if (opportunityHasContractRequested && opportunityWonProposalId == proposalId)
-    return <h1 className="w-fit self-center rounded border border-orange-500 p-1 text-center text-[0.6rem] font-black text-orange-500">CONTRATO SOLICITADO</h1>
+    return <h1 className="rounded-full bg-orange-500 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs">CONTRATO SOLICITADO</h1>
   if (opportunityActiveProposalId == proposalId)
     return <h1 className="w-fit self-center rounded border border-blue-500 p-1 text-center text-[0.6rem] font-black text-blue-500">ATIVA</h1>
   return <h1 className="w-fit self-center rounded border border-gray-500 p-1 text-center text-[0.6rem] font-black text-gray-500">GERADA</h1>
@@ -105,11 +105,11 @@ function OpportunityProposal({
           <div className="flex items-center gap-2">
             <div className={`flex items-center gap-1`}>
               <BsCalendarPlus />
-              <p className="text-xs font-medium tracking-tight">{formatDateAsLocale(info.dataInsercao, true)}</p>
+              <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(info.dataInsercao, true)}</p>
             </div>
             <div className="flex items-center gap-1">
               <Avatar fallback={'R'} url={info.autor.avatar_url || undefined} height={20} width={20} />
-              <p className="text-xs font-medium tracking-tight">{info.autor.nome}</p>
+              <p className="text-[0.65rem] font-medium text-gray-500">{info.autor.nome}</p>
             </div>
           </div>
         </div>

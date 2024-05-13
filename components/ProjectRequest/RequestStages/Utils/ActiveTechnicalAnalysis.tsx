@@ -1,13 +1,9 @@
-import { IKit, ModuleType } from '@/utils/models'
-import dayjs from 'dayjs'
-import React, { useState } from 'react'
-import { BsCalendarCheck, BsCalendarFill, BsCalendarPlus, BsCheck2All, BsFillCalendarCheckFill } from 'react-icons/bs'
+import React from 'react'
+import { BsCalendarCheck, BsCalendarPlus } from 'react-icons/bs'
 
 import { TTechnicalAnalysisDTO } from '@/utils/schemas/technical-analysis.schema'
 
 import { formatDateAsLocale, formatNameAsInitials, formatToMoney } from '@/lib/methods/formatting'
-import { VscChromeClose } from 'react-icons/vsc'
-import Link from 'next/link'
 import Avatar from '@/components/utils/Avatar'
 
 function getTagColor(status: string) {
@@ -72,19 +68,31 @@ function ActiveTechnicalAnalysis({ analysis, userHasPricingViewPermission }: Act
         <h1 className="w-full rounded-md bg-gray-100 p-2 py-1 text-center text-xs font-medium text-gray-500">
           {analysis.conclusao.observacoes || 'SEM OBSERVAÇÃO PARA A ANÁLISE'}
         </h1>
-        <div className="flex w-full flex-wrap items-center justify-around gap-2">
-          <div className={`flex items-center gap-1 rounded p-1 ${analysis.conclusao.espaco ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
-            <p className="text-xs font-medium tracking-tight">
+        <div className="mt-2 flex w-full flex-wrap items-center justify-around gap-2">
+          <div
+            className={`flex w-full items-center justify-center gap-1 rounded p-1 lg:w-fit ${
+              analysis.conclusao.espaco ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'
+            }`}
+          >
+            <p className="text-center text-xs font-medium tracking-tight">
               {analysis.conclusao.espaco ? 'POSSUI ESPAÇO PARA INSTALAÇÃO' : 'NÃO POSSUI ESPAÇO PARA INSTALAÇÃO'}
             </p>
           </div>
-          <div className={`flex items-center gap-1 rounded p-1 ${!analysis.conclusao.inclinacao ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
-            <p className="text-xs font-medium tracking-tight">
+          <div
+            className={`flex w-full items-center justify-center gap-1 rounded p-1 lg:w-fit ${
+              !analysis.conclusao.inclinacao ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'
+            }`}
+          >
+            <p className="text-center text-xs font-medium tracking-tight">
               {!analysis.conclusao.inclinacao ? 'NÃO NECESSÁRIO ESTRUTURA DE INCLINAÇÃO' : 'NECESSÁRIO ESTRUTURA DE INCLINAÇÃO'}
             </p>
           </div>
-          <div className={`flex items-center gap-1 rounded p-1 ${!analysis.conclusao.sombreamento ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'}`}>
-            <p className="text-xs font-medium tracking-tight">
+          <div
+            className={`flex w-full items-center justify-center gap-1 rounded p-1 lg:w-fit ${
+              !analysis.conclusao.sombreamento ? 'bg-green-50 text-green-500' : 'bg-red-50 text-red-500'
+            }`}
+          >
+            <p className="text-center text-xs font-medium tracking-tight">
               {!analysis.conclusao.sombreamento ? 'NÃO SOFRERÁ COM SOMBREAMENTO' : 'SOFRERÁ COM SOMBREAMENTO'}
             </p>
           </div>
@@ -102,20 +110,20 @@ function ActiveTechnicalAnalysis({ analysis, userHasPricingViewPermission }: Act
             </div>
           ))}
         </div>
-        <div className="mt-2 flex w-full items-center justify-end gap-2">
+        <div className="mt-2 flex w-full flex-col items-center justify-end gap-2 lg:flex-row">
           {analysis.dataEfetivacao ? (
             <div className={`flex items-center gap-1`}>
               <BsCalendarCheck color="rgb(34,197,94)" />
-              <p className="text-xs font-medium tracking-tight">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
+              <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
             </div>
           ) : null}
           <div className={`flex items-center gap-1`}>
             <BsCalendarPlus />
-            <p className="text-xs font-medium tracking-tight">{formatDateAsLocale(analysis.dataInsercao, true)}</p>
+            <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataInsercao, true)}</p>
           </div>
           <div className="flex items-center gap-1">
             <Avatar fallback={formatNameAsInitials(analysis.requerente.nome || 'R')} url={analysis.requerente.avatar_url || undefined} height={20} width={20} />
-            <p className="text-xs font-medium tracking-tight">{analysis.requerente.nome}</p>
+            <p className="text-[0.65rem] font-medium text-gray-500">{analysis.requerente.nome}</p>
           </div>
         </div>
       </div>

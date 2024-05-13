@@ -15,9 +15,10 @@ type TechnicalAnalysisBlockProps = {
   infoHolder: TProject
   setInfoHolder: React.Dispatch<React.SetStateAction<TProject>>
   moveToNextStage: () => void
+  moveToPreviousStage: () => void
   session: Session
 }
-function TechnicalAnalysisBlock({ infoHolder, setInfoHolder, moveToNextStage, session }: TechnicalAnalysisBlockProps) {
+function TechnicalAnalysisBlock({ infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, session }: TechnicalAnalysisBlockProps) {
   const opportunityId = infoHolder.oportunidade.id
   const { data: analysis, isLoading, isError, isSuccess } = useOpportunityTechnicalAnalysis({ opportunityId, concludedOnly: true })
 
@@ -58,7 +59,15 @@ function TechnicalAnalysisBlock({ infoHolder, setInfoHolder, moveToNextStage, se
           </>
         ) : null}
       </div>
-      <div className="flex w-full items-center justify-end">
+      <div className="flex w-full items-center justify-between">
+        <button
+          onClick={() => {
+            moveToPreviousStage()
+          }}
+          className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105"
+        >
+          Voltar
+        </button>
         {activeAnalysis ? (
           <button
             onClick={() => validateAndProceed()}

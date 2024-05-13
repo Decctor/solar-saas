@@ -21,10 +21,11 @@ type ClientBlockProps = {
   infoHolder: TProject
   setInfoHolder: React.Dispatch<React.SetStateAction<TProject>>
   moveToNextStage: () => void
+  moveToPreviousStage: () => void
   clientId: string
   session: Session
 }
-function ClientBlock({ infoHolder, setInfoHolder, moveToNextStage, clientId, session }: ClientBlockProps) {
+function ClientBlock({ infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, clientId, session }: ClientBlockProps) {
   const queryClient = useQueryClient()
   const { data: client, isSuccess, isError, isLoading } = useClientById({ id: clientId })
   const [clientInfo, setClientInfo] = useState<TClientDTO>({
@@ -392,7 +393,15 @@ function ClientBlock({ infoHolder, setInfoHolder, moveToNextStage, clientId, ses
           />
         </div>
       </div>
-      <div className="flex w-full items-center justify-end">
+      <div className="flex w-full items-center justify-between">
+        <button
+          onClick={() => {
+            moveToPreviousStage()
+          }}
+          className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105"
+        >
+          Voltar
+        </button>
         <button
           onClick={() => validateAndProceed()}
           className="rounded bg-black px-4 py-1 text-sm font-medium text-white duration-300 ease-in-out hover:bg-gray-700"

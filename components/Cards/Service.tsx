@@ -58,12 +58,12 @@ function Service({ service, handleClick, userHasEditPermission, userHasPricingVi
           <div className={`flex items-center gap-2`}>
             <div className="ites-center flex gap-1">
               <BsCalendarPlus />
-              <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(service.dataInsercao, true)}</p>
+              <p className={`text-[0.65rem] font-medium text-gray-500`}>{formatDateAsLocale(service.dataInsercao, true)}</p>
             </div>
           </div>
           <div className="flex items-center justify-center gap-1">
             <Avatar fallback={'U'} height={20} width={20} url={service.autor?.avatar_url || undefined} />
-            <p className="text-xs font-medium text-gray-500">{service.autor?.nome}</p>
+            <p className="text-[0.65rem] font-medium text-gray-500">{service.autor?.nome}</p>
           </div>
         </div>
       </div>

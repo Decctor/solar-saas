@@ -10,11 +10,11 @@ import ActiveHomologation from './Utils/ActiveHomologation'
 type HomologationBlockProps = {
   infoHolder: TProject
   setInfoHolder: React.Dispatch<React.SetStateAction<TProject>>
-
   moveToNextStage: () => void
+  moveToPreviousStage: () => void
   session: Session
 }
-function HomologationBlock({ infoHolder, setInfoHolder, moveToNextStage, session }: HomologationBlockProps) {
+function HomologationBlock({ infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, session }: HomologationBlockProps) {
   const opportunityId = infoHolder.oportunidade.id
   const { data: homologations, isLoading, isError, isSuccess } = useOpportunityHomologations({ opportunityId })
 
@@ -56,7 +56,15 @@ function HomologationBlock({ infoHolder, setInfoHolder, moveToNextStage, session
           </>
         ) : null}
       </div>
-      <div className="flex w-full items-center justify-end">
+      <div className="flex w-full items-center justify-between">
+        <button
+          onClick={() => {
+            moveToPreviousStage()
+          }}
+          className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105"
+        >
+          Voltar
+        </button>
         {activeHomologation ? (
           <button
             onClick={() => validateAndProceed()}
