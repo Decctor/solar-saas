@@ -27,6 +27,7 @@ function ProposalProduct({ product, proposal, opportunity, handleClick, userHasP
     topologia: proposal.premissas.topologia || 'INVERSOR',
     grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
     tipoEstrutura: proposal.premissas.tipoEstrutura || 'Fibrocimento',
+    idParceiro: opportunity.idParceiro,
   }
 
   const variableData: TPricingVariableData = {

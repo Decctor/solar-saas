@@ -9,7 +9,9 @@ import { VscChromeClose } from 'react-icons/vsc'
 import { MdContentCopy, MdDelete } from 'react-icons/md'
 import { TPricingMethod, TPricingMethodItemResultItem } from '@/utils/schemas/pricing-method.schema'
 import { StructureTypes } from '@/utils/select-options'
-import { conditionsAlias, formatCondition, formatFormulaItem, variablesAlias } from '@/utils/pricing/helpers'
+import { conditionsAlias, formatCondition, formatConditionValue, formatFormulaItem, getConditionOptions, variablesAlias } from '@/utils/pricing/helpers'
+import { usePartnersSimplified } from '@/utils/queries/partners'
+import { TPricingConditionData } from '@/utils/pricing/methods'
 
 const options = {
   uf: Object.keys(stateCities),
@@ -42,6 +44,7 @@ function EditPricingUnit({
   setMethodology,
   closeMenu,
 }: EditPricingUnitProps) {
+  const { data: partners } = usePartnersSimplified()
   function addResultFormula() {
     if (resultHolder.condicao.aplicavel) {
       if (!resultHolder.condicao.variavel) return toast.error('Selecione uma variável para condição.')
@@ -173,16 +176,47 @@ function EditPricingUnit({
         </button>
       </div>
       <h1 className="my-2 w-full text-start text-sm font-black text-[#FF9B50]">VARIÁVEIS</h1>
+      <h1 className="mt-2 w-full text-start text-xs font-black text-blue-500">GERAIS</h1>
       <div className="my-2 flex flex-wrap items-center gap-2">
-        {variablesAlias.map((va, index) => (
-          <button
-            key={index}
-            onClick={() => addToUnitPricingItems(`[${va.value}]`)}
-            className="grow rounded border border-gray-700 p-1 text-xs font-medium text-gray-700 duration-300 ease-in-out hover:bg-gray-700 hover:text-white"
-          >
-            {va.label}
-          </button>
-        ))}
+        {variablesAlias
+          .filter((v) => v.type == 'general')
+          .map((va, index) => (
+            <button
+              key={index}
+              onClick={() => addToUnitPricingItems(`[${va.value}]`)}
+              className="grow rounded border border-gray-700 p-1 text-xs font-medium text-gray-700 duration-300 ease-in-out hover:bg-gray-700 hover:text-white"
+            >
+              {va.label}
+            </button>
+          ))}
+      </div>
+      <h1 className="mt-2 w-full text-start text-xs font-black text-blue-500">ACUMULATIVAS</h1>
+      <div className="my-2 flex flex-wrap items-center gap-2">
+        {variablesAlias
+          .filter((v) => v.type == 'cumulative')
+          .map((va, index) => (
+            <button
+              key={index}
+              onClick={() => addToUnitPricingItems(`[${va.value}]`)}
+              className="grow rounded border border-gray-700 p-1 text-xs font-medium text-gray-700 duration-300 ease-in-out hover:bg-gray-700 hover:text-white"
+            >
+              {va.label}
+            </button>
+          ))}
+      </div>
+      <h1 className="mt-2 w-full text-start text-xs font-black text-blue-500">ESTIMADO EM ANÁLISE TÉCNICA</h1>
+      <div className="my-2 flex flex-wrap items-center gap-2">
+        {variablesAlias
+          .filter((v) => v.type == 'technical-analysis')
+          .map((va, index) => (
+            <button
+              key={index}
+              onClick={() => addToUnitPricingItems(`[${va.value}]`)}
+              className="grow rounded border border-gray-700 p-1 text-xs font-medium text-gray-700 duration-300 ease-in-out hover:bg-gray-700 hover:text-white"
+            >
+              {va.label}
+            </button>
+          ))}
       </div>
       <h1 className="my-2 w-full text-start text-sm font-black text-[#FF9B50]">OPERAÇÕES</h1>
       <div className="flex w-full flex-wrap items-center justify-around gap-2">
@@ -242,7 +276,7 @@ function EditPricingUnit({
           <SelectInput
             label="IGUAL A:"
             value={resultHolder.condicao.igual}
-            options={options[resultHolder.condicao.variavel as keyof typeof options]?.map((op, index) => ({ id: index + 1, label: op, value: op })) || []}
+            options={getConditionOptions({ variable: resultHolder.condicao.variavel as keyof TPricingConditionData, additional: { partners: partners || [] } })}
             handleChange={(value) => setResultHolder((prev) => ({ ...prev, condicao: { ...prev.condicao, igual: value } }))}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() => setResultHolder((prev) => ({ ...prev, condicao: { ...prev.condicao, igual: null } }))}
@@ -264,7 +298,15 @@ function EditPricingUnit({
           <div key={index} className="mb-1 flex w-full flex-col items-center gap-2 rounded-md border border-[#A0E9FF] p-1 md:flex-row">
             <div className="flex flex-col">
               <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
-                {!result.condicao.aplicavel ? 'FÓRMULA GERAL:' : `SE ${formatCondition(result.condicao.variavel || '')} FOR IGUAL A ${result.condicao.igual}:`}
+                {!result.condicao.aplicavel
+                  ? 'FÓRMULA GERAL:'
+                  : `SE ${formatCondition(result.condicao.variavel || '')} FOR IGUAL A ${formatConditionValue({
+                      conditionVariable: result.condicao.variavel as keyof TPricingConditionData,
+                      conditionValue: result.condicao.igual || '',
+                      additional: {
+                        partners: partners || [],
+                      },
+                    })}:`}
               </h1>
               <div className="flex items-center gap-2 font-Inter">
                 <div className="flex items-center gap-1">

@@ -33,6 +33,7 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
     topologia: kit.topologia,
     grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
     tipoEstrutura: proposal.premissas.tipoEstrutura || 'Fibrocimento',
+    idParceiro: opportunity.idParceiro,
   }
   const variableData: TPricingVariableData = {
     kit: kit.preco,

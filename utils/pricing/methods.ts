@@ -36,6 +36,7 @@ export type TPricingConditionData = {
   topologia: 'MICRO-INVERSOR' | 'INVERSOR' // automatic based on kits's topology (in premisses as well)
   tipoEstrutura?: string // in premisses
   grupoInstalacao: TElectricalInstallationGroups
+  idParceiro: string
 }
 export type TPricingVariableData = {
   kit: number // automatic

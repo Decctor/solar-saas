@@ -143,6 +143,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       topologia: topology,
       tipoEstrutura: infoHolder.premissas.tipoEstrutura || undefined,
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
+      idParceiro: opportunity.idParceiro,
     }
     const variableData: TPricingVariableData = {
       kit: price,
@@ -280,6 +281,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       cidade: opportunity.localizacao.cidade,
       topologia: topology,
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
+      idParceiro: opportunity.idParceiro,
     }
     const variableData: TPricingVariableData = {
       kit: price,

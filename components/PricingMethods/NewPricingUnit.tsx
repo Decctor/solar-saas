@@ -9,7 +9,9 @@ import { VscChromeClose } from 'react-icons/vsc'
 import { MdContentCopy, MdDelete } from 'react-icons/md'
 import { TPricingMethod, TPricingMethodItemResultItem } from '@/utils/schemas/pricing-method.schema'
 import { ElectricalInstallationGroups, StructureTypes } from '@/utils/select-options'
-import { conditionsAlias, formatCondition, formatFormulaItem, variablesAlias } from '@/utils/pricing/helpers'
+import { conditionsAlias, formatCondition, formatConditionValue, formatFormulaItem, getConditionOptions, variablesAlias } from '@/utils/pricing/helpers'
+import { usePartnersSimplified } from '@/utils/queries/partners'
+import { TPricingConditionData } from '@/utils/pricing/methods'
 
 const options = {
   uf: Object.keys(stateCities),
@@ -33,6 +35,7 @@ type NewPricingUnitProps = {
 }
 
 function NewPricingUnit({ pricingHolder, setPricingHolder, resultHolder, setResultHolder, methodology, setMethodology, closeMenu }: NewPricingUnitProps) {
+  const { data: partners } = usePartnersSimplified()
   function addResultFormula() {
     if (resultHolder.condicao.aplicavel) {
       if (!resultHolder.condicao.variavel) return toast.error('Selecione uma variável para condição.')
@@ -272,7 +275,8 @@ function NewPricingUnit({ pricingHolder, setPricingHolder, resultHolder, setResu
           <SelectInput
             label="IGUAL A:"
             value={resultHolder.condicao.igual}
-            options={options[resultHolder.condicao.variavel as keyof typeof options]?.map((op, index) => ({ id: index + 1, label: op, value: op })) || []}
+            // options={options[resultHolder.condicao.variavel as keyof typeof options]?.map((op, index) => ({ id: index + 1, label: op, value: op })) || []}
+            options={getConditionOptions({ variable: resultHolder.condicao.variavel as keyof TPricingConditionData, additional: { partners: partners || [] } })}
             handleChange={(value) => setResultHolder((prev) => ({ ...prev, condicao: { ...prev.condicao, igual: value } }))}
             selectedItemLabel="NÃO DEFINIDO"
             onReset={() => setResultHolder((prev) => ({ ...prev, condicao: { ...prev.condicao, igual: null } }))}
@@ -294,7 +298,15 @@ function NewPricingUnit({ pricingHolder, setPricingHolder, resultHolder, setResu
           <div key={index} className="mb-1 flex w-full flex-col items-center gap-2 rounded-md border border-[#A0E9FF] p-1 md:flex-row">
             <div className="flex flex-col">
               <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
-                {!result.condicao.aplicavel ? 'FÓRMULA GERAL:' : `SE ${formatCondition(result.condicao.variavel || '')} FOR IGUAL A ${result.condicao.igual}:`}
+                {!result.condicao.aplicavel
+                  ? 'FÓRMULA GERAL:'
+                  : `SE ${formatCondition(result.condicao.variavel || '')} FOR IGUAL A ${formatConditionValue({
+                      conditionVariable: result.condicao.variavel as keyof TPricingConditionData,
+                      conditionValue: result.condicao.igual || '',
+                      additional: {
+                        partners: partners || [],
+                      },
+                    })}:`}
               </h1>
               <div className="flex items-center gap-2 font-Inter">
                 <div className="flex items-center gap-1">

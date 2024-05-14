@@ -69,6 +69,7 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       topologia: topology || 'INVERSOR',
       tipoEstrutura: infoHolder.premissas.tipoEstrutura || undefined,
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
+      idParceiro: opportunity.idParceiro,
     }
     const variableData: TPricingVariableData = {
       kit: 0,
@@ -177,6 +178,7 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       topologia: topology || 'INVERSOR',
       tipoEstrutura: infoHolder.premissas.tipoEstrutura || undefined,
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
+      idParceiro: opportunity.idParceiro,
     }
     const variableData: TPricingVariableData = {
       kit: 0,

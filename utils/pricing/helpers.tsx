@@ -1,3 +1,6 @@
+import { stateCities } from '../estados_cidades'
+import { TPartnerSimplifiedDTO } from '../schemas/partner.schema'
+import { ElectricalInstallationGroups, StructureTypes } from '../select-options'
 import { TPricingConditionData, TPricingVariableData } from './methods'
 
 type TVariablesAlias = { label: string; value: keyof TPricingVariableData; type: 'general' | 'technical-analysis' | 'cumulative' }
@@ -29,6 +32,7 @@ export const conditionsAlias: TConditionsAlias[] = [
   { label: 'TOPOLOGIA', value: 'topologia' },
   { label: 'TIPO DE ESTRUTURA', value: 'tipoEstrutura' },
   { label: 'GRUPO DA INSTALAÇÃO', value: 'grupoInstalacao' },
+  { label: 'PARCEIRO', value: 'idParceiro' },
 ]
 
 export function formatFormulaItem(value: string) {
@@ -43,4 +47,67 @@ export function formatCondition(value: string) {
   const condition = conditionsAlias.find((c) => c.value == value)
   if (!condition) return 'NÃO DEFINIDO'
   return condition.label
+}
+
+type FormatConditionValueParams = {
+  conditionVariable: keyof TPricingConditionData
+  conditionValue: string
+  additional: {
+    partners: TPartnerSimplifiedDTO[]
+  }
+}
+export function formatConditionValue({ conditionVariable, conditionValue, additional }: FormatConditionValueParams) {
+  if (conditionVariable == 'uf') {
+    const ufLabel = Object.keys(stateCities)
+      .map((k, index) => ({ id: index + 1, label: k, value: k }))
+      .find((k) => k.value == conditionValue)?.label
+    return ufLabel || 'NÃO DEFINIDO'
+  }
+  if (conditionVariable == 'cidade') {
+    const cityLabel = Object.entries(stateCities)
+      .map(([uf, cities]) => cities)
+      .flat(1)
+      .map((c, index) => ({ id: index + 1, label: c, value: c }))
+      .find((c) => c.value == conditionValue)?.label
+    return cityLabel || 'NÃO DEFINIDO'
+  }
+
+  if (conditionVariable == 'topologia') {
+    const topologyLabel = ['INVERSOR', 'MICRO-INVERSOR']
+      .map((t, index) => ({ id: index + 1, label: t, value: t }))
+      .find((t) => t.value == conditionValue)?.label
+    return topologyLabel || 'NÃO DEFINIDO'
+  }
+  if (conditionVariable == 'tipoEstrutura') {
+    const structureTypeLabel = StructureTypes.find((s) => s.value == conditionValue)?.label
+    return structureTypeLabel || 'NÃO DEFINIDO'
+  }
+  if (conditionVariable == 'grupoInstalacao') {
+    const installationGroupLabel = ElectricalInstallationGroups.find((g) => g.value == conditionValue)?.label
+    return installationGroupLabel || 'NÃO DEFINIDO'
+  }
+  if (conditionVariable == 'idParceiro') {
+    const partnerLabel = additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id })).find((p) => p.value == conditionValue)?.label
+    return partnerLabel
+  }
+}
+type GetConditionOptions = {
+  variable: keyof TPricingConditionData
+  additional: {
+    partners: TPartnerSimplifiedDTO[]
+  }
+}
+export function getConditionOptions({ variable, additional }: GetConditionOptions) {
+  if (variable == 'uf') return Object.keys(stateCities).map((k, index) => ({ id: index + 1, label: k, value: k }))
+  if (variable == 'cidade')
+    return Object.entries(stateCities)
+      .map(([uf, cities]) => cities)
+      .flat(1)
+      .map((c, index) => ({ id: index + 1, label: c, value: c }))
+
+  if (variable == 'topologia') return ['INVERSOR', 'MICRO-INVERSOR'].map((t, index) => ({ id: index + 1, label: t, value: t }))
+  if (variable == 'tipoEstrutura') return StructureTypes
+  if (variable == 'grupoInstalacao') return ElectricalInstallationGroups
+  if (variable == 'idParceiro') return additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id }))
+  return []
 }

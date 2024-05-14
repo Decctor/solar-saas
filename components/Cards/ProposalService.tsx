@@ -25,6 +25,7 @@ function ProposalService({ index, selectedIds, service, proposal, opportunity, h
     cidade: opportunity.localizacao.cidade,
     topologia: proposal.premissas.topologia || 'INVERSOR',
     grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
+    idParceiro: opportunity.idParceiro,
   }
   const variableData: TPricingVariableData = {
     kit: 0,
