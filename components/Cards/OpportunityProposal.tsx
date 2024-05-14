@@ -34,7 +34,7 @@ function getStatusColor({
   if (opportunityIsWon && opportunityWonProposalId == proposalId)
     return <h1 className="w-fit self-center rounded border border-green-500 p-1 text-center text-[0.6rem] font-black text-green-500">GANHA</h1>
   if (opportunityHasContractRequested && opportunityWonProposalId == proposalId)
-    return <h1 className="rounded-full bg-orange-500 px-2 py-1 text-center text-[0.65rem] font-bold text-white lg:text-xs">CONTRATO SOLICITADO</h1>
+    return <h1 className="w-fit self-center rounded border border-orange-500 p-1 text-center text-[0.6rem] font-black text-orange-500">CONTRATO SOLICITADO</h1>
   if (opportunityActiveProposalId == proposalId)
     return <h1 className="w-fit self-center rounded border border-blue-500 p-1 text-center text-[0.6rem] font-black text-blue-500">ATIVA</h1>
   return <h1 className="w-fit self-center rounded border border-gray-500 p-1 text-center text-[0.6rem] font-black text-gray-500">GERADA</h1>
