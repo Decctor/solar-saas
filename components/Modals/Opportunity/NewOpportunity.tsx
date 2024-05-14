@@ -212,7 +212,7 @@ function NewOpportunity({ session, closeModal, opportunityCreators, funnels }: N
           <div className="flex h-full flex-col gap-y-2 overflow-y-auto overscroll-y-auto border-b border-gray-200 py-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 lg:flex-row">
             <div className="flex w-full flex-col gap-2 px-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300 lg:h-full lg:max-h-full lg:w-[60%] lg:overflow-y-auto">
               <ResponsiblesInformationBlock opportunity={newOpportunity} setOpportunity={setNewOpportunity} opportunityCreators={opportunityCreators} />
-              <GeneralInformationBlock opportunity={newOpportunity} setOpportunity={setNewOpportunity} projectTypes={projectTypes} />
+              <GeneralInformationBlock opportunity={newOpportunity} setOpportunity={setNewOpportunity} projectTypes={projectTypes} session={session} />
               <FunnelReferenceInformationBlock funnelReference={newFunnelReference} setFunnelReference={setNewFunnelReference} funnels={funnels || []} />
               <OpportunityClientInformationBlock
                 opportunity={newOpportunity}

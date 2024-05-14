@@ -18,6 +18,8 @@ import { updateClient } from '@/utils/mutations/clients'
 import OpportunityResponsiblesBlock from './OpportunityResponsiblesBlock'
 import { stateCities } from '@/utils/estados_cidades'
 import { ElectricalInstallationGroups } from '@/utils/select-options'
+import SelectWithImages from '../Inputs/SelectWithImages'
+import { usePartnersSimplified } from '@/utils/queries/partners'
 type DetailsBlockType = {
   info: TOpportunityDTOWithClient
   session: Session
@@ -26,6 +28,7 @@ type DetailsBlockType = {
 
 function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
   const queryClient = useQueryClient()
+  const partnersScope = session.user.permissoes.parceiros.escopo
   const [infoHolder, setInfoHolder] = useState<TOpportunityDTOWithClient>({ ...info })
   const [newFunnelHolder, setNewFunnelHolder] = useState<{
     id: number | null
@@ -34,8 +37,8 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
     id: null,
     etapaId: null,
   })
-  const { data: responsibles } = useResponsibles()
-
+  const { data: partners } = usePartnersSimplified()
+  const vinculationPartners = partners ? (partnersScope ? partners?.filter((p) => partnersScope.includes(p._id)) : partners) : []
   const { mutate: handleUpdateOpportunity } = useMutationWithFeedback({
     mutationKey: ['update-opportunity', opportunityId],
     mutationFn: updateOpportunity,
@@ -52,7 +55,6 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
   useEffect(() => {
     setInfoHolder(info)
   }, [info])
-  console.log(info.responsaveis, infoHolder.responsaveis)
   return (
     <div className="flex w-full flex-col gap-6 lg:flex-row">
       <div className="flex w-full flex-col rounded-md border border-gray-200 bg-[#fff] p-3 shadow-lg">
@@ -88,6 +90,44 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                 style={{
                   fontSize: '18px',
                   color: infoHolder?.nome != info.nome ? 'rgb(34,197,94)' : 'rgb(156,163,175)',
+                }}
+              />
+            </button>
+          </div>
+          <div className="flex w-full gap-2">
+            <div className="grow">
+              <SelectWithImages
+                label="VÍNCULO DE PARCEIRO"
+                value={infoHolder.idParceiro || null}
+                options={vinculationPartners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
+                selectedItemLabel="TODOS"
+                handleChange={(value) =>
+                  setInfoHolder((prev) => ({
+                    ...prev,
+                    idParceiro: value,
+                  }))
+                }
+                onReset={() =>
+                  setInfoHolder((prev) => ({
+                    ...prev,
+                    idParceiro: session.user.idParceiro,
+                  }))
+                }
+                width="100%"
+              />
+            </div>
+            <button
+              disabled={infoHolder?.idParceiro == info.idParceiro}
+              onClick={() =>
+                // @ts-ignore
+                handleUpdateOpportunity({ id: opportunityId, changes: { idParceiro: infoHolder.idParceiro } })
+              }
+              className="flex items-end justify-center pb-4 text-green-200"
+            >
+              <AiOutlineCheck
+                style={{
+                  fontSize: '18px',
+                  color: infoHolder?.idParceiro != info.idParceiro ? 'rgb(34,197,94)' : 'rgb(156,163,175)',
                 }}
               />
             </button>
@@ -254,8 +294,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
               <AiOutlineCheck
                 style={{
                   fontSize: '18px',
-                  color:
-                    infoHolder?.localizacao.numeroOuIdentificador != info.localizacao.numeroOuIdentificador ? 'rgb(34,197,94)' : 'rgb(156,163,175)',
+                  color: infoHolder?.localizacao.numeroOuIdentificador != info.localizacao.numeroOuIdentificador ? 'rgb(34,197,94)' : 'rgb(156,163,175)',
                 }}
               />
             </button>

@@ -17,21 +17,21 @@ const typeEquivalents = {
   },
   'OPERAÇÃO E MANUTENÇÃO': {
     tipo: {
-      id: '661586b9774ffe3a569a9f5c',
+      id: '661ec7e5e03128a48f94b4de',
       titulo: 'OPERAÇÃO E MANUTENÇÃO',
     },
     categoriaVenda: 'PLANO',
   },
   'MONTAGEM E DESMONTAGEM': {
     tipo: {
-      id: '6615879a07e7ffc27a40f2d5',
+      id: '661ec86de03128a48f94b4df',
       titulo: 'SERVIÇOS AVULSOS',
     },
     categoriaVenda: 'SERVIÇOS',
   },
   MONITORAMENTO: {
     tipo: {
-      id: '6615879a07e7ffc27a40f2d5',
+      id: '661ec8dae03128a48f94b4e0',
       titulo: 'SERVIÇOS AVULSOS',
     },
     categoriaVenda: 'SERVIÇOS',

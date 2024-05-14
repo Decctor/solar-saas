@@ -1,16 +1,24 @@
 import SelectInput from '@/components/Inputs/SelectInput'
+import SelectWithImages from '@/components/Inputs/SelectWithImages'
 import TextInput from '@/components/Inputs/TextInput'
+import { usePartnersSimplified } from '@/utils/queries/partners'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import { TProjectTypeDTO } from '@/utils/schemas/project-types.schema'
+import { TUser } from '@/utils/schemas/user.schema'
 import { ComercialSegments } from '@/utils/select-options'
+import { Session } from 'next-auth'
 import React from 'react'
 
 type GeneralInformationBlockProps = {
   opportunity: TOpportunity
   setOpportunity: React.Dispatch<React.SetStateAction<TOpportunity>>
   projectTypes?: TProjectTypeDTO[]
+  session: Session
 }
-function GeneralInformationBlock({ opportunity, setOpportunity, projectTypes }: GeneralInformationBlockProps) {
+function GeneralInformationBlock({ opportunity, setOpportunity, projectTypes, session }: GeneralInformationBlockProps) {
+  const partnersScope = session.user.permissoes.parceiros.escopo
+  const { data: partners } = usePartnersSimplified()
+  const vinculationPartners = partners ? (partnersScope ? partners?.filter((p) => partnersScope.includes(p._id)) : partners) : []
   return (
     <div className="flex w-full flex-col gap-2">
       <h1 className="w-full rounded bg-gray-800 p-1 text-center font-bold text-white">INFORMAÇÕES DO PROJETO</h1>
@@ -19,6 +27,25 @@ function GeneralInformationBlock({ opportunity, setOpportunity, projectTypes }: 
         value={opportunity.nome}
         placeholder="Preencha aqui o nome a ser dado ao projeto..."
         handleChange={(value) => setOpportunity((prev) => ({ ...prev, nome: value }))}
+        width="100%"
+      />
+      <SelectWithImages
+        label="VÍNCULO DE PARCEIRO"
+        value={opportunity.idParceiro || null}
+        options={vinculationPartners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
+        selectedItemLabel="TODOS"
+        handleChange={(value) =>
+          setOpportunity((prev) => ({
+            ...prev,
+            idParceiro: value,
+          }))
+        }
+        onReset={() =>
+          setOpportunity((prev) => ({
+            ...prev,
+            idParceiro: session.user.idParceiro,
+          }))
+        }
         width="100%"
       />
       <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
