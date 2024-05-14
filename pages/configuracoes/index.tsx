@@ -3,6 +3,7 @@ import Integrations from '@/components/Configuration/Integrations'
 import Partner from '@/components/Configuration/Partner'
 import Partners from '@/components/Configuration/Partners'
 import PaymentMethods from '@/components/Configuration/PaymentMethods'
+import Personalization from '@/components/Configuration/Personalization'
 import PricingMethods from '@/components/Configuration/PricingMethods'
 import Profile from '@/components/Configuration/Profile'
 import ProjectTypes from '@/components/Configuration/ProjectTypes'
@@ -14,7 +15,18 @@ import { useSession } from 'next-auth/react'
 import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
 
-type Modes = 'profile' | 'partner' | 'users' | 'funnels' | 'pricing-methods' | 'payment-methods' | 'integrations' | 'project-types' | 'partners'
+type Modes =
+  | 'profile'
+  | 'partner'
+  | 'users'
+  | 'funnels'
+  | 'pricing-methods'
+  | 'payment-methods'
+  | 'integrations'
+  | 'project-types'
+  | 'partners'
+  | 'personalization'
+
 function ConfigurationMain() {
   const router = useRouter()
   const { initialMode } = router.query
@@ -123,6 +135,16 @@ function ConfigurationMain() {
                 Integrações
               </button>
             ) : null}
+            {session.user.permissoes.configuracoes.parceiro ? (
+              <button
+                onClick={() => setMode('personalization')}
+                className={`${
+                  mode == 'personalization' ? 'bg-gray-100' : ''
+                } w-full rounded-md px-4 py-2 text-center text-xs font-semibold text-gray-600 duration-300 ease-in-out hover:bg-gray-100 lg:text-start lg:text-base`}
+              >
+                Personalizações
+              </button>
+            ) : null}
           </div>
           <div className="flex h-full w-full flex-col gap-1 px-2 py-2 lg:w-4/5">
             {mode == 'profile' ? <Profile session={session} /> : null}
@@ -134,6 +156,7 @@ function ConfigurationMain() {
             {mode == 'partners' ? <Partners session={session} /> : null}
             {mode == 'integrations' ? <Integrations session={session} /> : null}
             {mode == 'project-types' ? <ProjectTypes session={session} /> : null}
+            {mode == 'personalization' ? <Personalization session={session} /> : null}
           </div>
         </div>
       </div>

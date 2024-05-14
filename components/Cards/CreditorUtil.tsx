@@ -5,15 +5,15 @@ import { BsCalendarPlus } from 'react-icons/bs'
 import { FaPiggyBank } from 'react-icons/fa6'
 import Avatar from '../utils/Avatar'
 
-type CreditorProps = {
+type CreditorUtilProps = {
   creditor: TCreditorDTO
 }
-function Creditor({ creditor }: CreditorProps) {
+function CreditorUtil({ creditor }: CreditorUtilProps) {
   return (
     <div className="flex w-full flex-col rounded-md border border-gray-200 p-2">
       <div className="flex w-full flex-col items-start justify-between gap-2 lg:flex-row lg:items-center">
         <div className="flex items-center gap-1">
-          <div className="flex h-[20px] w-[20px] items-center justify-center rounded-full border border-black p-1 text-[15px]">
+          <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1 text-[15px]">
             <FaPiggyBank />
           </div>
           <p className="text-[0.6rem] font-medium leading-none tracking-tight lg:text-xs">{creditor.valor}</p>
@@ -35,4 +35,4 @@ function Creditor({ creditor }: CreditorProps) {
   )
 }
 
-export default Creditor
+export default CreditorUtil

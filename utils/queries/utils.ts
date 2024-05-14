@@ -1,6 +1,6 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { TCreditorDTO } from '../schemas/utils'
+import { TCreditorDTO, TEquipment, TEquipmentDTO } from '../schemas/utils'
 
 type UseDistanceDataParams = {
   originCity: string
@@ -39,4 +39,20 @@ async function fetchCreditors() {
 
 export function useCreditors() {
   return useQuery({ queryKey: ['creditors'], queryFn: fetchCreditors })
+}
+
+async function fetchEquipment({ category }: { category?: TEquipment['categoria'] | null }) {
+  try {
+    const { data } = await axios.get(`/api/utils?identifier=EQUIPMENT&equipmentCategory=${category}`)
+    return data.data as TEquipmentDTO[]
+  } catch (error) {
+    throw error
+  }
+}
+
+export function useEquipments({ category }: { category?: TEquipment['categoria'] | null }) {
+  return useQuery({
+    queryKey: ['equipments', category],
+    queryFn: async () => await fetchEquipment({ category }),
+  })
 }

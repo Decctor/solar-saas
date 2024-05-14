@@ -1,27 +1,37 @@
 import { insertUtil } from '@/repositories/utils/mutations'
-import { getCreditors } from '@/repositories/utils/queries'
+import { getCreditors, getEquipments } from '@/repositories/utils/queries'
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
-import { GeneralUtilSchema, TUtil, UtilsIdentifierSchema } from '@/utils/schemas/utils'
+import { GeneralUtilSchema, TEquipment, TUtil, UtilsIdentifierSchema } from '@/utils/schemas/utils'
 import createHttpError from 'http-errors'
-import { Collection } from 'mongodb'
+import { Collection, Filter } from 'mongodb'
 import { NextApiHandler } from 'next'
 
-type GetResponse = any
+type GetResponse = {
+  data: TUtil[]
+}
 
 const getUtilsRelated: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
 
+  const { equipmentCategory } = req.query
   const identifier = UtilsIdentifierSchema.parse(req.query.identifier)
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TUtil> = db.collection('utils')
   if (identifier == 'CREDITOR') {
     const creditors = await getCreditors({ collection: collection })
-
     return res.status(200).json({ data: creditors })
   }
 
+  if (identifier == 'EQUIPMENT') {
+    const categoryQuery: Filter<TUtil> =
+      equipmentCategory && equipmentCategory != 'null' && equipmentCategory != 'undefined' ? { categoria: equipmentCategory } : {}
+
+    const query = { ...categoryQuery }
+    const equipments = await getEquipments({ collection: collection, query: query })
+    return res.status(200).json({ data: equipments })
+  }
   return res.status(200).json({ data: [] })
 }
 
