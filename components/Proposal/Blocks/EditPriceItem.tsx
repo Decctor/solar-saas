@@ -1,3 +1,4 @@
+import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import NumberInput from '@/components/Inputs/NumberInput'
 import { getCalculatedFinalValue, getProfitMargin, getSalePrice } from '@/utils/pricing/methods'
 import { TPricingItem } from '@/utils/schemas/proposal.schema'
@@ -10,7 +11,7 @@ type EditPriceItemProps = {
   closeModal: () => void
 }
 function EditPriceItem({ itemIndex, pricing, setPricing, closeModal }: EditPriceItemProps) {
-  const { custoFinal, margemLucro, valorCalculado, valorFinal } = pricing[itemIndex]
+  const { custoFinal, margemLucro, valorCalculado, valorFinal, faturavel } = pricing[itemIndex]
   return (
     <div id="edit-pricing-item" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="fixed left-[50%] top-[50%] z-[100] h-fit w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px]  lg:w-[30%]">
@@ -67,6 +68,19 @@ function EditPriceItem({ itemIndex, pricing, setPricing, closeModal }: EditPrice
                   setPricing(newPricing)
                 }}
                 width="100%"
+              />
+            </div>
+            <div className="my-2 flex w-fit items-center justify-center self-center">
+              <CheckboxInput
+                labelFalse="FATURÁVEL"
+                labelTrue="FATURÁVEL"
+                checked={faturavel}
+                justify="justify-center"
+                handleChange={(value) => {
+                  const pricingCopy = [...pricing]
+                  pricingCopy[itemIndex].faturavel = value
+                  setPricing(pricingCopy)
+                }}
               />
             </div>
             <div className="w-full self-center lg:w-[50%]">

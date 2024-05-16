@@ -9,6 +9,8 @@ import { Session } from 'next-auth'
 import { getPricingTotal } from '@/utils/pricing/methods'
 import { formatToMoney } from '@/utils/methods'
 import EditFinalPrice from '../Blocks/EditFinalPrice'
+import { MdAdd } from 'react-icons/md'
+import AddPricingItem from '../Blocks/AddPricingItem'
 type PricingProps = {
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
@@ -23,6 +25,7 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
   const alterationLimit = userHasPricingEditPermission ? undefined : 0.02
 
   const [pricing, setPricing] = useState<TPricingItem[]>(infoHolder.precificacao)
+  const [addNewPriceItemModalIsOpen, setAddNewPriceItemModalIsOpen] = useState<boolean>(false)
   const [editFinalPriceModalIsOpen, setEditFinalPriceModalIsOpen] = useState<boolean>(false)
   const pricingTotal = getPricingTotal({ pricing: pricing })
   const [addCostModalIsOpen, setAddCostModalIsOpen] = useState<boolean>(false)
@@ -47,14 +50,17 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
         opportunity={opportunity}
         proposal={infoHolder}
       />
-      {/* {session?.user.permissoes.precos.editar ? (
-        <button
-          onClick={() => setAddCostModalIsOpen(true)}
-          className="self-center rounded border border-[#fead41] p-1 font-bold text-[#fead41] duration-300 ease-in-out hover:scale-105 hover:bg-[#fead41] hover:text-black"
-        >
-          NOVO CUSTO
-        </button>
-      ) : null} */}
+      {userHasPricingEditPermission ? (
+        <div className="my-4 flex w-full items-center justify-center">
+          <button
+            onClick={() => setAddNewPriceItemModalIsOpen(true)}
+            className="flex items-center gap-2 rounded bg-orange-600 px-4 py-2 text-white duration-100 ease-in-out hover:bg-orange-700"
+          >
+            <MdAdd />
+            <h1 className="text-xs font-bold">NOVO CUSTO</h1>
+          </button>
+        </div>
+      ) : null}
 
       <div className="flex w-full items-center justify-center gap-2 py-1">
         <div className="flex gap-2 rounded border border-gray-600 px-2 py-1 font-medium text-gray-600">
@@ -78,7 +84,7 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
           Prosseguir
         </button>
       </div>
-
+      {addNewPriceItemModalIsOpen ? <AddPricingItem pricing={pricing} setPricing={setPricing} closeModal={() => setAddNewPriceItemModalIsOpen(false)} /> : null}
       {editFinalPriceModalIsOpen ? (
         <EditFinalPrice pricing={pricing} setPricing={setPricing} closeModal={() => setEditFinalPriceModalIsOpen(false)} alterationLimit={alterationLimit} />
       ) : null}

@@ -111,3 +111,5 @@ export function getConditionOptions({ variable, additional }: GetConditionOption
   if (variable == 'idParceiro') return additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id }))
   return []
 }
+
+export const operators = ['(', ')', '/', '*', '+', '-']

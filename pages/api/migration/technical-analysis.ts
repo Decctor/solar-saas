@@ -110,18 +110,19 @@ const migrate: NextApiHandler<any> = async (req, res) => {
     const previousInverterEquipment = getEquipmentInformation(analysis.equipamentos.modulos, 'INVERSOR')
     const previousEquipments = [...previousModulesEquipment, ...previousInverterEquipment]
 
-    const analysisFiles: TFileReference[] = analysis.arquivos.map((file) => ({
-      titulo: file.descricao,
-      idParceiro: '65454ba15cf3e3ecf534b308',
-      formato: file.formato,
-      url: file.url,
-      autor: {
-        id: analysis.requerente.idCRM || '',
-        nome: analysis.requerente.nomeCRM || '',
-        avatar_url: analysis.requerente.avatar_url,
-      },
-      dataInsercao: analysis.dataInsercao || new Date().toISOString(),
-    }))
+    const analysisFiles: TFileReference[] =
+      analysis.arquivos?.map((file) => ({
+        titulo: file.descricao,
+        idParceiro: '65454ba15cf3e3ecf534b308',
+        formato: file.formato,
+        url: file.url,
+        autor: {
+          id: analysis.requerente.idCRM || '',
+          nome: analysis.requerente.nomeCRM || '',
+          avatar_url: analysis.requerente.avatar_url,
+        },
+        dataInsercao: analysis.dataInsercao || new Date().toISOString(),
+      })) || []
     fileReferences = [...fileReferences, ...analysisFiles]
     return {
       idParceiro: '65454ba15cf3e3ecf534b308',

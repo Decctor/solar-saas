@@ -25,7 +25,7 @@ export const authOptions = {
         const usersCollection = db.collection('users')
         const partnersCollection = db.collection('partners')
         const userInDb = await usersCollection.findOne({ email: email })
-
+        console.log(userInDb)
         if (!userInDb) throw new createHttpError.BadRequest('Usuário não encontrado.')
 
         let compareResult = bcrypt.compareSync(password, userInDb.senha)

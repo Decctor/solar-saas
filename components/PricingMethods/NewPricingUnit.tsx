@@ -9,7 +9,15 @@ import { VscChromeClose } from 'react-icons/vsc'
 import { MdContentCopy, MdDelete } from 'react-icons/md'
 import { TPricingMethod, TPricingMethodItemResultItem } from '@/utils/schemas/pricing-method.schema'
 import { ElectricalInstallationGroups, StructureTypes } from '@/utils/select-options'
-import { conditionsAlias, formatCondition, formatConditionValue, formatFormulaItem, getConditionOptions, variablesAlias } from '@/utils/pricing/helpers'
+import {
+  conditionsAlias,
+  formatCondition,
+  formatConditionValue,
+  formatFormulaItem,
+  getConditionOptions,
+  operators,
+  variablesAlias,
+} from '@/utils/pricing/helpers'
 import { usePartnersSimplified } from '@/utils/queries/partners'
 import { TPricingConditionData } from '@/utils/pricing/methods'
 
@@ -22,7 +30,6 @@ const options = {
   tipoEstrutura: StructureTypes.map((s) => s.value),
   grupoInstalacao: ElectricalInstallationGroups.map((s) => s.value),
 }
-const operators = ['(', ')', '/', '*', '+', '-']
 
 type NewPricingUnitProps = {
   pricingHolder: TPricingMethod['itens'][number]
