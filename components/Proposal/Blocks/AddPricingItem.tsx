@@ -73,7 +73,6 @@ function AddPricingItem({ pricing, setPricing, proposal, closeModal }: AddPricin
       })
       .filter((p) => p != null)
     calculableItemsIndexes.push(pricingItems.length - 1)
-    console.log(calculableItemsIndexes, pricingItems)
     const newPricing = handlePartialPricingReCalculation({ variableData, calculableItemsIndexes, pricingItems: pricingItems, keepFinalValues: false })
     setPricing(newPricing)
     closeModal()
