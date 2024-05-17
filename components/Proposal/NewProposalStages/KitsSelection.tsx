@@ -109,9 +109,9 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
     setFilters,
   } = useKitsByQuery({ enabled: true, queryType: queryType, pipeline: queryPipeline })
 
-  const [selectedKits, setSelectedKits] = useState<TKitDTOWithPricingMethod[]>([])
+  const [selectedKits, setSelectedKits] = useState<(TKitDTOWithPricingMethod & { valorFinal: number })[]>([])
 
-  function selectKit(kit: TKitDTOWithPricingMethod) {
+  function selectKit(kit: TKitDTOWithPricingMethod & { valorFinal: number }) {
     if (selectedKits.some((k) => k.topologia != kit.topologia)) return toast.error('Não é permitida a adição de kits de diferentes topologias.')
     if (selectedKits.some((k) => k.idMetodologiaPrecificacao != kit.idMetodologiaPrecificacao))
       return toast.error('Não é permitida a adição de kits de diferentes metodologias de precificação.')
@@ -133,7 +133,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
 
     const products = combineUniqueProducts(selectedProducts)
     const services = combineUniqueServices(selectedServices)
-    const price = selectedKits.reduce((acc, current) => acc + current.preco, 0)
+    const kitPrice = selectedKits.reduce((acc, current) => acc + (current.preco || 0), 0)
     const moduleQty = getModulesQty(products)
     const inverterQty = getInverterQty(products)
     const modulePeakPower = getModulesPeakPotByProducts(products)
@@ -147,7 +147,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       idParceiro: opportunity.idParceiro,
     }
     const variableData: TPricingVariableData = {
-      kit: price,
+      kit: kitPrice,
       numModulos: moduleQty,
       product: 0,
       service: 0,
@@ -165,7 +165,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
     }
     const pricing = handlePricingCalculation({
       methodology: methodology,
-      kit: { name: kitName, price: price, tax: 0, profitMargin: 12 },
+      kit: { name: kitName, price: kitPrice, tax: 0, profitMargin: 12 },
       conditionData,
       variableData,
     })
@@ -264,7 +264,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
   }
   function handleProceed() {
     if (selectedKits.length == 0) return toast.error('Selecione ao menos um kit para prosseguir.')
-    const proposalKits: TProposal['kits'] = selectedKits.map((s) => ({ id: s._id, nome: s.nome, valor: s.preco }))
+    const proposalKits: TProposal['kits'] = selectedKits.map((s) => ({ id: s._id, nome: s.nome, preco: s.preco, valor: s.valorFinal }))
     const kitIds = selectedKits.map((s) => s._id)
     const kitName = selectedKits.map((s) => s.nome).join(' + ')
     const topology = selectedKits[0].topologia
@@ -275,7 +275,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
 
     const products = combineUniqueProducts(selectedProducts)
     const services = combineUniqueServices(selectedServices)
-    const price = selectedKits.reduce((acc, current) => acc + current.preco, 0)
+    const price = selectedKits.reduce((acc, current) => acc + (current.preco || 0), 0)
     const moduleQty = getModulesQty(products)
     const inverterQty = getInverterQty(products)
     const modulePeakPower = getModulesPeakPotByProducts(products)

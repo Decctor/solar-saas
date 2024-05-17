@@ -22,7 +22,7 @@ type KitCardProps = {
   kit: TKitDTOWithPricingMethod
   proposal: TProposal
   opportunity: TOpportunityDTO
-  handleClick: (info: TKitDTOWithPricingMethod) => void
+  handleClick: (info: TKitDTOWithPricingMethod & { valorFinal: number }) => void
   userHasPricingView: boolean
 }
 function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingView }: KitCardProps) {
@@ -165,7 +165,7 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
               <p className="text-[0.6rem] font-medium">{formatDateAsLocale(kit.dataInsercao)}</p>
             </div>
             <button
-              onClick={() => handleClick(kit)}
+              onClick={() => handleClick({ ...kit, valorFinal: proposalTotalPreview })}
               className="rounded-full border border-cyan-500 p-1 text-cyan-500 duration-300 ease-in-out hover:bg-cyan-500 hover:text-white"
             >
               <IoMdAdd />

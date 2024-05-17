@@ -6,7 +6,7 @@ import { TPricingConditionData, TPricingVariableData, handlePricingCalculation }
 import { useComercialServicesWithPricingMethod } from '@/utils/queries/services'
 import { TServiceItem } from '@/utils/schemas/kits.schema'
 import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TProposal, TProposalService } from '@/utils/schemas/proposal.schema'
 import { TServiceDTOWithPricingMethod } from '@/utils/schemas/service.schema'
 import { Session } from 'next-auth'
 import React, { useState } from 'react'
@@ -38,15 +38,16 @@ function ServicesSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
     const topology = infoHolder.premissas.topologia
     const methodology = selectedServices[0].metodologia
     const methodologyId = selectedServices[0].idMetodologiaPrecificacao
-    const selectedServicesFormatted: TServiceItem[] = selectedServices.map((service) => ({
+    const selectedServicesFormatted: TProposalService[] = selectedServices.map((service) => ({
       id: service._id,
       descricao: service.descricao,
       garantia: service.garantia,
       observacoes: service.observacoes,
       valor: service.valorFinal,
+      preco: service.preco,
     }))
     const services = selectedServicesFormatted
-    const price = selectedServicesFormatted.reduce((acc, current) => acc + (current.valor || 0), 0)
+    const servicePrice = selectedServicesFormatted.reduce((acc, current) => acc + (current.preco || 0), 0)
     const conditionData: TPricingConditionData = {
       uf: opportunity.localizacao.uf,
       cidade: opportunity.localizacao.cidade,
@@ -60,7 +61,7 @@ function ServicesSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       kit: 0,
       numModulos: infoHolder.premissas.numModulos || 0,
       product: 0,
-      service: price,
+      service: servicePrice,
       potenciaPico: infoHolder.premissas.potenciaPico || 0,
       distancia: infoHolder.premissas.distancia || 0,
       plan: 0,

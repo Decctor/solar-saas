@@ -37,6 +37,7 @@ const getClients: NextApiHandler<GetResponse> = async (req, res) => {
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
   if (id) {
+    console.log(id)
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
     if (!!partnerScope && !partnerScope.includes(id)) throw new createHttpError.Unauthorized('Nível de autorização insuficiente.')
 
@@ -73,13 +74,14 @@ type PutResponse = {
 }
 
 const editPartners: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'parceiro', true)
-  const userPartnerId = session.user.idParceiro
-  const userIsAdmin = session.user.administrador
+  const session = await validateAuthorization(req, res, 'parceiros', 'editar', true)
+  const partnerId = session.user.idParceiro
+  const partnerScope = session.user.permissoes.parceiros.escopo
 
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido ou não fornecido.')
-  if (!userIsAdmin && id != userPartnerId) throw new createHttpError.BadRequest('Nível de autorização insuficiente.')
+
+  if (!!partnerScope && !partnerScope.includes(id)) throw new createHttpError.Unauthorized('Nível de autorização insuficiente.')
 
   const changes = InsertPartnerSchema.partial().parse(req.body)
 
@@ -89,8 +91,9 @@ const editPartners: NextApiHandler<PutResponse> = async (req, res) => {
   const updateResponse = await partnersCollection.updateOne({ _id: new ObjectId(id) }, { $set: { ...changes } })
 
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro na atualização do parceiro.')
+  if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Parceiro não encontrado.')
 
-  return res.status(201).json({ data: 'Atualização feita com sucesso !', message: 'Atualização feita com suceso !' })
+  return res.status(201).json({ data: 'Parceiro atualizado com sucesso !', message: 'Parceiro atualizado com sucesso !' })
 }
 
 export default apiHandler({ POST: createPartner, GET: getClients, PUT: editPartners })

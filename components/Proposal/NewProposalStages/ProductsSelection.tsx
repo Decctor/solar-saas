@@ -10,7 +10,7 @@ import { useComercialProducts, useComercialProductsWithPricingMethod } from '@/u
 import { TProductItem } from '@/utils/schemas/kits.schema'
 import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
 import { TProductDTOWithPricingMethod } from '@/utils/schemas/products.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TProposal, TProposalProduct } from '@/utils/schemas/proposal.schema'
 import { Session } from 'next-auth'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
@@ -47,7 +47,7 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
     if (selectedProducts.length == 0) return null
     const topology = infoHolder.premissas.topologia
     const methodology = selectedProducts[0].metodologia
-    const selectedProductsFormatted: TProductItem[] = selectedProducts.map((product) => ({
+    const selectedProductsFormatted: TProposalProduct[] = selectedProducts.map((product) => ({
       id: product._id,
       categoria: product.categoria,
       fabricante: product.fabricante,
@@ -56,10 +56,11 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       potencia: product.potencia,
       garantia: product.garantia,
       valor: product.valorFinal,
+      preco: product.preco,
     }))
     const productName = selectedProducts.map((s) => s.modelo).join(' + ')
     const products = combineUniqueProducts(selectedProductsFormatted)
-    const price = selectedProductsFormatted.reduce((acc, current) => acc + (current.valor || 0), 0)
+    const productPrice = selectedProductsFormatted.reduce((acc, current) => acc + (current.preco || 0), 0)
     const moduleQty = getModulesQty(products)
     const inverterQty = getInverterQty(products)
     const modulePeakPower = getModulesPeakPotByProducts(products)
@@ -75,7 +76,7 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
     const variableData: TPricingVariableData = {
       kit: 0,
       numModulos: moduleQty,
-      product: price,
+      product: productPrice,
       service: 0,
       potenciaPico: modulePeakPower,
       distancia: infoHolder.premissas.distancia || 0,
@@ -159,7 +160,7 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
     const topology = infoHolder.premissas.topologia
     const methodology = selectedProducts[0].metodologia
     const methodologyId = selectedProducts[0].idMetodologiaPrecificacao
-    const selectedProductsFormatted: TProductItem[] = selectedProducts.map((product) => ({
+    const selectedProductsFormatted: TProposalProduct[] = selectedProducts.map((product) => ({
       id: product._id,
       categoria: product.categoria,
       fabricante: product.fabricante,
@@ -168,10 +169,11 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       potencia: product.potencia,
       garantia: product.garantia,
       valor: product.valorFinal,
+      preco: product.preco,
     }))
     const productName = selectedProducts.map((s) => s.modelo).join(' + ')
     const products = combineUniqueProducts(selectedProductsFormatted)
-    const price = selectedProductsFormatted.reduce((acc, current) => acc + (current.valor || 0), 0)
+    const price = selectedProductsFormatted.reduce((acc, current) => acc + (current.preco || 0), 0)
     const moduleQty = getModulesQty(products)
     const inverterQty = getInverterQty(products)
     const modulePeakPower = getModulesPeakPotByProducts(products)

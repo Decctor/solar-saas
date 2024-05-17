@@ -35,17 +35,22 @@ function PricingTable({ pricing, setPricing, proposal, opportunity, userHasPrici
   function handleRecalculateCumulatives({ pricing, keepFinalValues }: { pricing: TPricingItem[]; keepFinalValues: boolean }) {
     const moduleQty = getModulesQty(proposal.produtos)
     const inverterQty = getInverterQty(proposal.produtos)
-    const kitPrice = proposal.kits.reduce((acc, current) => acc + current.valor, 0)
+    const kitPrice = proposal.kits.reduce((acc, current) => acc + (current.preco || 0), 0)
+    const productPrice = proposal.produtos.reduce((acc, current) => acc + (current.valor || 0), 0)
+    const servicePrice = proposal.servicos.reduce((acc, current) => acc + (current.valor || 0), 0)
+    const planPrice = proposal.planos.reduce((acc, current) => acc + (current.preco || 0), 0)
     const variableData: TPricingVariableData = {
       kit: kitPrice,
       numModulos: moduleQty,
-      product: 0,
-      service: 0,
+      product: productPrice,
+      service: servicePrice,
       potenciaPico: proposal.potenciaPico || 0,
       distancia: proposal.premissas.distancia || 0,
-      plan: 0,
+      plan: planPrice,
       numInversores: inverterQty,
       valorReferencia: proposal.premissas.valorReferencia || 0,
+      consumoEnergiaMensal: proposal.premissas.consumoEnergiaMensal || 0,
+      tarifaEnergia: proposal.premissas.tarifaEnergia || 0,
       custosInstalacao: proposal.premissas.custosInstalacao || 0,
       custosPadraoEnergia: proposal.premissas.custosPadraoEnergia || 0,
       custosEstruturaInstalacao: proposal.premissas.custosEstruturaInstalacao || 0,

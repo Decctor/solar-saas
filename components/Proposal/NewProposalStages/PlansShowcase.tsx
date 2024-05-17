@@ -4,7 +4,13 @@ import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { TSignaturePlanDTOWithPricingMethod } from '@/utils/schemas/signature-plans.schema'
 import { Session } from 'next-auth'
-import React from 'react'
+import React, { useState } from 'react'
+import EditPlanPrice from '../Blocks/EditPlanPrice'
+
+type TEditPriceModal = {
+  isOpen: boolean
+  planIndex: null | number
+}
 
 type PlansShowcaseProps = {
   signaturePlans: TSignaturePlanDTOWithPricingMethod[]
@@ -16,6 +22,7 @@ type PlansShowcaseProps = {
   session: Session
 }
 function PlansShowcase({ signaturePlans, infoHolder, setInfoHolder, opportunity, moveToNextStage, moveToPreviousStage, session }: PlansShowcaseProps) {
+  const [editPriceModal, setEditPriceModal] = useState<TEditPriceModal>({ isOpen: false, planIndex: null })
   function handleProceed() {
     return moveToNextStage()
   }
@@ -25,9 +32,15 @@ function PlansShowcase({ signaturePlans, infoHolder, setInfoHolder, opportunity,
         <h1 className="font-Raleway font-bold text-gray-800">PLANOS DE ASSINATURA</h1>
       </div>
       <div className="flex w-full grow flex-wrap items-center justify-center gap-2">
-        {infoHolder.planos.map((plan) => (
+        {infoHolder.planos.map((plan, index) => (
           <div className="w-full lg:w-1/4">
-            <ProposalSignaturePlanShowcase plan={plan} />
+            <ProposalSignaturePlanShowcase
+              key={plan.id}
+              plan={plan}
+              planIndex={index}
+              userHasPricingEditPermission={session.user.permissoes.precos.editar}
+              editPlanPrice={(id) => setEditPriceModal({ planIndex: id, isOpen: true })}
+            />
           </div>
         ))}
       </div>
@@ -39,6 +52,15 @@ function PlansShowcase({ signaturePlans, infoHolder, setInfoHolder, opportunity,
           Prosseguir
         </button>
       </div>
+      {editPriceModal.isOpen && editPriceModal.planIndex != null ? (
+        <EditPlanPrice
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
+          planIndex={editPriceModal.planIndex}
+          closeModal={() => setEditPriceModal({ isOpen: false, planIndex: null })}
+          alterationLimit={undefined}
+        />
+      ) : null}
     </>
   )
 }

@@ -4,22 +4,24 @@ import Avatar from '@/components/utils/Avatar'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import { TUserDTOSimplified } from '@/utils/schemas/user.schema'
 import { OpportunityResponsibilityRoles } from '@/utils/select-options'
+import { Session } from 'next-auth'
 import React, { useState } from 'react'
 import toast from 'react-hot-toast'
 import { MdDelete } from 'react-icons/md'
 
 type ResponsiblesInformationBlockProps = {
+  session: Session
   opportunity: TOpportunity
   setOpportunity: React.Dispatch<React.SetStateAction<TOpportunity>>
   opportunityCreators: TUserDTOSimplified[]
 }
-function ResponsiblesInformationBlock({ opportunity, setOpportunity, opportunityCreators }: ResponsiblesInformationBlockProps) {
+function ResponsiblesInformationBlock({ session, opportunity, setOpportunity, opportunityCreators }: ResponsiblesInformationBlockProps) {
   const [responsibleHolder, setResponsibleHolder] = useState<TOpportunity['responsaveis'][number]>({
-    id: '',
-    nome: '',
+    id: session.user.id,
+    nome: session.user.nome,
     papel: OpportunityResponsibilityRoles[0].value,
-    avatar_url: null,
-    telefone: '',
+    avatar_url: session.user.avatar_url,
+    telefone: session.user.telefone,
   })
   function addOpportunityResponsible(responsible: TOpportunity['responsaveis'][number]) {
     if (responsible.id.trim().length < 20) return toast.error('Escolha um responsável válido.')

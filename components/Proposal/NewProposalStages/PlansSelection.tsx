@@ -40,6 +40,7 @@ function PlansSelection({
       id: s._id,
       nome: s.nome,
       valor: s.valorFinal,
+      preco: s.preco,
       descricao: s.descricao,
       descritivo: s.descritivo,
       intervalo: s.intervalo,

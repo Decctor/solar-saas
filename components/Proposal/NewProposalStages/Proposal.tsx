@@ -30,6 +30,7 @@ import { TProjectTypeDTO } from '@/utils/schemas/project-types.schema'
 import SelectInput from '@/components/Inputs/SelectInput'
 import { handleDownload } from '@/lib/methods/download'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
+import toast from 'react-hot-toast'
 
 function renderProposalPreview({
   proposal,
@@ -82,6 +83,7 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
     idAnvil?: string | null
   }) {
     try {
+      if (proposal.nome.trim().length < 3) return toast.error('Preencha um nome de ao menos 3 caractéres para a proposta.')
       const response = await createProposalPersonalized({ proposal, opportunityWithClient, saveAsActive, idAnvil })
       const fileName = proposal.nome
       const fileUrl = response.data?.fileUrl
