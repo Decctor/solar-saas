@@ -84,7 +84,9 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
           Prosseguir
         </button>
       </div>
-      {addNewPriceItemModalIsOpen ? <AddPricingItem pricing={pricing} setPricing={setPricing} closeModal={() => setAddNewPriceItemModalIsOpen(false)} /> : null}
+      {addNewPriceItemModalIsOpen ? (
+        <AddPricingItem pricing={pricing} setPricing={setPricing} proposal={infoHolder} closeModal={() => setAddNewPriceItemModalIsOpen(false)} />
+      ) : null}
       {editFinalPriceModalIsOpen ? (
         <EditFinalPrice pricing={pricing} setPricing={setPricing} closeModal={() => setEditFinalPriceModalIsOpen(false)} alterationLimit={alterationLimit} />
       ) : null}

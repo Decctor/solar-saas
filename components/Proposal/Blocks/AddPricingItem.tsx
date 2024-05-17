@@ -1,9 +1,10 @@
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import NumberInput from '@/components/Inputs/NumberInput'
 import TextInput from '@/components/Inputs/TextInput'
-import { formatFormulaItem, operators, variablesAlias } from '@/utils/pricing/helpers'
-import { getCalculatedFinalValue, getProfitMargin } from '@/utils/pricing/methods'
-import { TPricingItem } from '@/utils/schemas/proposal.schema'
+import { getInverterQty, getModulesQty } from '@/lib/methods/extracting'
+import { cumulativeVariablesValues, formatFormulaItem, operators, variablesAlias } from '@/utils/pricing/helpers'
+import { getCalculatedFinalValue, getProfitMargin, handlePartialPricingReCalculation, TPricingVariableData } from '@/utils/pricing/methods'
+import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import React, { useState } from 'react'
 import { FiDelete } from 'react-icons/fi'
 import { VscChromeClose } from 'react-icons/vsc'
@@ -11,9 +12,10 @@ import { VscChromeClose } from 'react-icons/vsc'
 type AddPricingItemProps = {
   pricing: TPricingItem[]
   setPricing: React.Dispatch<React.SetStateAction<TPricingItem[]>>
+  proposal: TProposal
   closeModal: () => void
 }
-function AddPricingItem({ pricing, setPricing, closeModal }: AddPricingItemProps) {
+function AddPricingItem({ pricing, setPricing, proposal, closeModal }: AddPricingItemProps) {
   const [type, setType] = useState<'DEFINED COST' | 'CALCULATE COST'>('DEFINED COST')
   const [itemHolder, setItemHolder] = useState<TPricingItem>({
     descricao: '',
@@ -41,7 +43,39 @@ function AddPricingItem({ pricing, setPricing, closeModal }: AddPricingItemProps
   function addNewPriceItem(item: TPricingItem) {
     const pricingItems = [...pricing]
     pricingItems.push(item)
-    setPricing(pricingItems)
+    const moduleQty = getModulesQty(proposal.produtos)
+    const inverterQty = getInverterQty(proposal.produtos)
+    const kitPrice = proposal.kits.reduce((acc, current) => acc + current.valor, 0)
+    const variableData: TPricingVariableData = {
+      kit: kitPrice,
+      numModulos: moduleQty,
+      product: 0,
+      service: 0,
+      potenciaPico: proposal.potenciaPico || 0,
+      distancia: proposal.premissas.distancia || 0,
+      plan: 0,
+      numInversores: inverterQty,
+      valorReferencia: proposal.premissas.valorReferencia || 0,
+      custosInstalacao: proposal.premissas.custosInstalacao || 0,
+      custosPadraoEnergia: proposal.premissas.custosPadraoEnergia || 0,
+      custosEstruturaInstalacao: proposal.premissas.custosEstruturaInstalacao || 0,
+      custosOutros: proposal.premissas.custosOutros || 0,
+    }
+    const calculableItemsIndexes = pricing
+      .map((item, index) => {
+        if (!item.formulaArr) return null
+        const includesCumulativeVariable = item.formulaArr.some((f) => {
+          const variable = f.replace('[', '').replace(']', '')
+          return cumulativeVariablesValues.includes(variable)
+        })
+        if (!includesCumulativeVariable) return null
+        return index
+      })
+      .filter((p) => p != null)
+    calculableItemsIndexes.push(pricingItems.length - 1)
+    console.log(calculableItemsIndexes, pricingItems)
+    const newPricing = handlePartialPricingReCalculation({ variableData, calculableItemsIndexes, pricingItems: pricingItems, keepFinalValues: false })
+    setPricing(newPricing)
     closeModal()
   }
   return (
