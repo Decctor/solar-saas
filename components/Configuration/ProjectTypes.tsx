@@ -56,7 +56,6 @@ function ProjectTypes({ session }: ProjectTypesProps) {
                       <p className="text-sm font-medium leading-none tracking-tight">{type.nome}</p>
                     )}
                   </div>
-                  {type.idParceiro ? null : <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">FIXO</h1>}
                 </div>
 
                 <h1 className='"w-full mt-2 text-start text-xs font-medium'>SEÇÕES DE DIMENSIONAMENTO</h1>

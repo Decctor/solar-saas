@@ -31,14 +31,14 @@ export async function getSignaturePlans({ collection, query }: GetSignaturePlans
 
 type GetSignaturePlansWithPricingMethodParams = {
   collection: Collection<TSignaturePlan>
-  partnerId: string
+  query: Filter<TSignaturePlan>
 }
-export async function getSignaturePlansWithPricingMethod({ collection, partnerId }: GetSignaturePlansWithPricingMethodParams) {
+export async function getSignaturePlansWithPricingMethod({ collection, query }: GetSignaturePlansWithPricingMethodParams) {
   const pipeline = [
     {
       $match: {
         ativo: true,
-        idParceiro: partnerId,
+        ...query,
       },
     },
     {

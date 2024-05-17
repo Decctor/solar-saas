@@ -10,7 +10,6 @@ export const ElectricalInstallationGroupsSchema = z.union([z.literal('RESIDENCIA
   required_error: 'Grupo da instalação elétrica não informado.',
   invalid_type_error: 'Tipo não válido para grupo da instalação elétrica.',
 })
-
 export type TElectricalInstallationGroups = z.infer<typeof ElectricalInstallationGroupsSchema>
 export const SaleCategorySchema = z.enum(['KIT', 'PLANO', 'PRODUTOS', 'SERVIÇOS'], {
   required_error: 'Categoria de venda não fornecida.',

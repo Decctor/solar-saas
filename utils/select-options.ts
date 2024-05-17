@@ -15,7 +15,7 @@ import {
 import { BsCart, BsFillHouseFill } from 'react-icons/bs'
 import { TbTopologyFull } from 'react-icons/tb'
 import { TUserDTO } from './schemas/user.schema'
-import { TProposalPremisses } from './schemas/proposal.schema'
+import { ElectricalPhasesSchema, TEletricalPhases, TProposalPremisses } from './schemas/proposal.schema'
 import { TSaleCategory } from './schemas/opportunity.schema'
 import { TSignaturePlanDTO } from './schemas/signature-plans.schema'
 import { TProject } from './schemas/project.schema'
@@ -563,13 +563,15 @@ export const PremissesFieldOptions: TPremissesFieldOptions[] = [
   { id: 6, value: 'numInversores', label: 'Nº DE INVERSORES' },
   { id: 7, value: 'potenciaPico', label: 'POTÊNCIA PICO' },
   { id: 8, value: 'distancia', label: 'DISTÂNCIA' },
-  { id: 0, value: 'valorReferencia', label: 'VALOR DE REFERÊNCIA' },
-  { id: 10, value: 'consumoEnergiaMensal', label: 'CONSUMO DE ENERGIA' },
-  { id: 11, value: 'fatorSimultaneidade', label: 'FATOR DE SIMULTANEIDADE' },
-  { id: 12, value: 'tarifaEnergia', label: 'TARIFA DE ENERGIA' },
-  { id: 13, value: 'tarifaFioB', label: 'TARIFA DE FIO B' },
-  { id: 14, value: 'orientacao', label: 'ORIENTAÇÃO' },
-  { id: 15, value: 'eficienciaGeracao', label: 'EFICIÊNCIA DE GERAÇÃO' },
+  { id: 9, value: 'consumoEnergiaMensal', label: 'CONSUMO DE ENERGIA' },
+  { id: 10, value: 'fatorSimultaneidade', label: 'FATOR DE SIMULTANEIDADE' },
+  { id: 11, value: 'tarifaEnergia', label: 'TARIFA DE ENERGIA' },
+  { id: 12, value: 'tarifaFioB', label: 'TARIFA DE FIO B' },
+  { id: 13, value: 'orientacao', label: 'ORIENTAÇÃO' },
+  { id: 14, value: 'eficienciaGeracao', label: 'EFICIÊNCIA DE GERAÇÃO' },
+  { id: 15, value: 'grupoInstalacao', label: 'GRUPO DE INSTALAÇÃO' },
+  { id: 16, value: 'valorReferencia', label: 'VALOR DE REFERÊNCIA' },
+  { id: 17, value: 'faseamentoEletrico', label: 'TIPO DE CONEXÃO ELÉTRICA' },
 ]
 
 type TAutomaticPremissesBySaleCategory = {
@@ -614,7 +616,11 @@ export const ElectricalInstallationGroups = [
   { id: 3, label: 'INDUSTRIAL', value: 'INDUSTRIAL' },
   { id: 4, label: 'RURAL', value: 'RURAL' },
 ]
-
+export const EletricalPhasesTypes: { id: number; label: string; value: TEletricalPhases }[] = [
+  { id: 1, label: 'MONOFÁSICO', value: 'MONOFÁSICO' },
+  { id: 2, label: 'BIFÁSICO', value: 'BIFÁSICO' },
+  { id: 3, label: 'TRIFÁSICO', value: 'TRIFÁSICO' },
+]
 type TUserGroup = {
   id: string
   grupo: string

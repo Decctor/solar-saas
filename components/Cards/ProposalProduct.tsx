@@ -27,6 +27,7 @@ function ProposalProduct({ product, proposal, opportunity, handleClick, userHasP
     topologia: proposal.premissas.topologia || 'INVERSOR',
     grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
     tipoEstrutura: proposal.premissas.tipoEstrutura || 'Fibrocimento',
+    faseamentoEletrico: proposal.premissas.faseamentoEletrico || 'MONOFÁSICO',
     idParceiro: opportunity.idParceiro,
   }
 
@@ -40,6 +41,8 @@ function ProposalProduct({ product, proposal, opportunity, handleClick, userHasP
     potenciaPico: product.potencia || 0,
     distancia: proposal.premissas.distancia || 0,
     valorReferencia: proposal.premissas.valorReferencia || 0,
+    consumoEnergiaMensal: proposal.premissas.consumoEnergiaMensal || 0,
+    tarifaEnergia: proposal.premissas.tarifaEnergia || 0,
     custosInstalacao: proposal.premissas.custosInstalacao || 0,
     custosPadraoEnergia: proposal.premissas.custosPadraoEnergia || 0,
     custosEstruturaInstalacao: proposal.premissas.custosEstruturaInstalacao || 0,

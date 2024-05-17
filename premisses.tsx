@@ -3,7 +3,7 @@ import SelectInput from './components/Inputs/SelectInput'
 import TextInput from './components/Inputs/TextInput'
 import { orientations, structureTypes } from './utils/constants'
 import { TProposalPremisses } from './utils/schemas/proposal.schema'
-import { ElectricalInstallationGroups } from './utils/select-options'
+import { ElectricalInstallationGroups, EletricalPhasesTypes } from './utils/select-options'
 
 type PremissesFieldOptions<T extends keyof TProposalPremisses> = {
   label: string
@@ -203,6 +203,19 @@ export function renderProposalPremisseField<T extends keyof TProposalPremisses>(
         placeholder="Preencha aqui um valor de referência para precificação..."
         value={(value as number) || null}
         handleChange={handleChange as (value: number) => void}
+        width="100%"
+      />
+    )
+  }
+  if (field == 'faseamentoEletrico') {
+    return (
+      <SelectInput
+        label="Tipo de conexão elétrica"
+        value={value as TProposalPremisses['faseamentoEletrico']}
+        handleChange={handleChange as (value: TProposalPremisses['faseamentoEletrico']) => void}
+        onReset={() => handleChange(null)}
+        selectedItemLabel="NÃO DEFINIDO"
+        options={EletricalPhasesTypes}
         width="100%"
       />
     )

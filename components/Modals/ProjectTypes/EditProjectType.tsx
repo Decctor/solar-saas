@@ -24,6 +24,7 @@ function EditProjectType({ projectTypeId, session, closeModal }: EditProjectType
     categoriaVenda: 'KIT',
     dimensionamento: [],
     modelosProposta: [],
+    documentacao: [],
     autor: {
       id: session.user.id,
       nome: session.user.nome,

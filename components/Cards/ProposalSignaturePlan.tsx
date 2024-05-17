@@ -51,6 +51,8 @@ function ProposalSignaturePlan({
     cidade: opportunity.localizacao.cidade,
     topologia: proposal.premissas.topologia || 'INVERSOR',
     grupoInstalacao: proposal.premissas.grupoInstalacao || 'RESIDENCIAL',
+    tipoEstrutura: proposal.premissas.tipoEstrutura || 'Fibrocimento',
+    faseamentoEletrico: proposal.premissas.faseamentoEletrico || 'MONOFÁSICO',
     idParceiro: opportunity.idParceiro,
   }
   const variableData: TPricingVariableData = {
@@ -63,6 +65,8 @@ function ProposalSignaturePlan({
     potenciaPico: proposal.premissas.potenciaPico || 0,
     distancia: proposal.premissas.distancia || 0,
     valorReferencia: proposal.premissas.valorReferencia || 0,
+    consumoEnergiaMensal: proposal.premissas.consumoEnergiaMensal || 0,
+    tarifaEnergia: proposal.premissas.tarifaEnergia || 0,
     custosInstalacao: proposal.premissas.custosInstalacao || 0,
     custosPadraoEnergia: proposal.premissas.custosPadraoEnergia || 0,
     custosEstruturaInstalacao: proposal.premissas.custosEstruturaInstalacao || 0,

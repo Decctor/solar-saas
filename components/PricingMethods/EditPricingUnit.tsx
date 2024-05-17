@@ -133,27 +133,6 @@ function EditPricingUnit({
         className="w-full rounded-md border border-gray-200 p-3 text-sm outline-none placeholder:italic"
       />
       <h1 className="mt-4 w-full text-center font-Inter text-sm font-black leading-none tracking-tight">CONSTRUÇÃO DO CÁLCULO DE CUSTO</h1>
-      <div className="my-2 flex w-full flex-col items-center gap-2 lg:flex-row">
-        <div className="w-full lg:w-1/2">
-          <NumberInput
-            labelClassName="font-semibold leading-none tracking-tight text-xs"
-            label="MARGEM DE LUCRO"
-            placeholder="Preencha a margem de lucro aplicável a esse item."
-            value={resultHolder.margemLucro}
-            handleChange={(value) => setResultHolder((prev) => ({ ...prev, margemLucro: value }))}
-            width="100%"
-          />
-        </div>
-        <div className="w-fit">
-          <CheckboxInput
-            labelTrue="FATURÁVEL"
-            labelFalse="FATURÁVEL"
-            checked={resultHolder.faturavel}
-            handleChange={(value) => setResultHolder((prev) => ({ ...prev, faturavel: value }))}
-            justify="justify-center"
-          />
-        </div>
-      </div>
       <h1 className="my-2 w-full text-start text-sm font-black text-[#FF9B50]">VALORES</h1>
       <div className="flex w-full items-end gap-2">
         <div className="grow">
@@ -235,6 +214,27 @@ function EditPricingUnit({
         >
           <FiDelete size={23} />
         </button>
+      </div>
+      <div className="my-2 flex w-full flex-col items-center gap-2 lg:flex-row">
+        <div className="w-full lg:w-1/2">
+          <NumberInput
+            labelClassName="font-semibold leading-none tracking-tight text-xs"
+            label="MARGEM DE LUCRO"
+            placeholder="Preencha a margem de lucro aplicável a esse item."
+            value={resultHolder.margemLucro}
+            handleChange={(value) => setResultHolder((prev) => ({ ...prev, margemLucro: value }))}
+            width="100%"
+          />
+        </div>
+        <div className="w-fit">
+          <CheckboxInput
+            labelTrue="FATURÁVEL"
+            labelFalse="FATURÁVEL"
+            checked={resultHolder.faturavel}
+            handleChange={(value) => setResultHolder((prev) => ({ ...prev, faturavel: value }))}
+            justify="justify-center"
+          />
+        </div>
       </div>
       <h1 className="my-2 w-full text-start text-sm font-black text-[#FF9B50]">FÓRMULA</h1>
       <div className="my-2 flex w-full flex-col items-center gap-2 lg:flex-row">

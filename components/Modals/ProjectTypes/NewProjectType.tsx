@@ -22,6 +22,7 @@ function NewProjectType({ session, closeModal }: NewProjectTypeProps) {
     categoriaVenda: 'KIT',
     dimensionamento: [],
     modelosProposta: [],
+    documentacao: [],
     autor: {
       id: session.user.id,
       nome: session.user.nome,
@@ -69,7 +70,7 @@ function NewProjectType({ session, closeModal }: NewProjectTypeProps) {
               }}
               className="h-9 whitespace-nowrap rounded bg-green-700 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-green-600 enabled:hover:text-white"
             >
-              CRIAR KIT
+              CRIAR TIPO DE PROJETO
             </button>
           </div>
         </div>

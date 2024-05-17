@@ -83,6 +83,7 @@ function System({ opportunity, infoHolder, setInfoHolder, moveToNextStage, moveT
       city: opportunity.localizacao.cidade,
       orientation: infoHolder.premissas.orientacao || 'NORTE',
     }),
+
     structure: infoHolder.premissas.tipoEstrutura,
   })
 

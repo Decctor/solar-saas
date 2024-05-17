@@ -20,7 +20,11 @@ const OrientationsSchema = z.union(
   { invalid_type_error: 'Tipo inválido para orientação.' }
 )
 const TopologySchema = z.union([z.literal('MICRO-INVERSOR'), z.literal('INVERSOR')], { invalid_type_error: 'Tipo inválido para topologia.' })
-
+export const ElectricalPhasesSchema = z.union([z.literal('MONOFÁSICO'), z.literal('BIFÁSICO'), z.literal('TRIFÁSICO')], {
+  required_error: 'Conexão elétrica não informada.',
+  invalid_type_error: 'Tipo não válido para a conexão elétrica.',
+})
+export type TEletricalPhases = z.infer<typeof ElectricalPhasesSchema>
 const PricingItemSchema = z.object({
   descricao: z.string({
     required_error: 'Descrição da unidade de preço não informada.',
@@ -92,6 +96,7 @@ const PremissesSchema = z.object({
   eficienciaGeracao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de eficiência de geração.' }).optional().nullable(),
   grupoInstalacao: ElectricalInstallationGroupsSchema.optional().nullable(),
   valorReferencia: z.number({ invalid_type_error: 'Tipo inválido para a premissa de valor de referência.' }).optional().nullable(),
+  faseamentoEletrico: ElectricalPhasesSchema.optional().nullable(),
   custosInstalacao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de custo estimado de instalação.' }).optional().nullable(),
   custosPadraoEnergia: z.number({ invalid_type_error: 'Tipo inválido para a premissa de custo estimado de adequação de padrão.' }).optional().nullable(),
   custosEstruturaInstalacao: z

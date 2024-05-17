@@ -1,6 +1,6 @@
 import { stateCities } from '../estados_cidades'
 import { TPartnerSimplifiedDTO } from '../schemas/partner.schema'
-import { ElectricalInstallationGroups, StructureTypes } from '../select-options'
+import { ElectricalInstallationGroups, EletricalPhasesTypes, StructureTypes } from '../select-options'
 import { TPricingConditionData, TPricingVariableData } from './methods'
 
 type TVariablesAlias = { label: string; value: keyof TPricingVariableData; type: 'general' | 'technical-analysis' | 'cumulative' }
@@ -14,6 +14,8 @@ export const variablesAlias: TVariablesAlias[] = [
   { label: 'POTÊNCIA PICO', value: 'potenciaPico', type: 'general' },
   { label: 'DISTÂNCIA', value: 'distancia', type: 'general' },
   { label: 'VALOR DE REFERÊNCIA', value: 'valorReferencia', type: 'general' },
+  { label: 'CONSUMO DE ENERGIA', value: 'consumoEnergiaMensal', type: 'general' },
+  { label: 'TARIFA DE ENERGIA', value: 'tarifaEnergia', type: 'general' },
   { label: 'CUSTOS DE INSTALAÇÃO', value: 'custosInstalacao', type: 'technical-analysis' },
   { label: 'CUSTOS DE PADRÃO', value: 'custosPadraoEnergia', type: 'technical-analysis' },
   { label: 'CUSTOS DE ESTRUTURA', value: 'custosEstruturaInstalacao', type: 'technical-analysis' },
@@ -32,6 +34,7 @@ export const conditionsAlias: TConditionsAlias[] = [
   { label: 'TOPOLOGIA', value: 'topologia' },
   { label: 'TIPO DE ESTRUTURA', value: 'tipoEstrutura' },
   { label: 'GRUPO DA INSTALAÇÃO', value: 'grupoInstalacao' },
+  { label: 'TIPO DE CONEXÃO ELÉTRICA', value: 'faseamentoEletrico' },
   { label: 'PARCEIRO', value: 'idParceiro' },
 ]
 
@@ -86,6 +89,10 @@ export function formatConditionValue({ conditionVariable, conditionValue, additi
     const installationGroupLabel = ElectricalInstallationGroups.find((g) => g.value == conditionValue)?.label
     return installationGroupLabel || 'NÃO DEFINIDO'
   }
+  if (conditionVariable == 'faseamentoEletrico') {
+    const electricalConnection = EletricalPhasesTypes.find((g) => g.value == conditionValue)?.label
+    return electricalConnection || 'NÃO DEFINIDO'
+  }
   if (conditionVariable == 'idParceiro') {
     const partnerLabel = additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id })).find((p) => p.value == conditionValue)?.label
     return partnerLabel
@@ -108,6 +115,7 @@ export function getConditionOptions({ variable, additional }: GetConditionOption
   if (variable == 'topologia') return ['INVERSOR', 'MICRO-INVERSOR'].map((t, index) => ({ id: index + 1, label: t, value: t }))
   if (variable == 'tipoEstrutura') return StructureTypes
   if (variable == 'grupoInstalacao') return ElectricalInstallationGroups
+  if (variable == 'faseamentoEletrico') return EletricalPhasesTypes
   if (variable == 'idParceiro') return additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id }))
   return []
 }

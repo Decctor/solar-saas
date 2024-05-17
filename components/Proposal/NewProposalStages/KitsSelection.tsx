@@ -141,8 +141,9 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       uf: opportunity.localizacao.uf,
       cidade: opportunity.localizacao.cidade,
       topologia: topology,
-      tipoEstrutura: infoHolder.premissas.tipoEstrutura || undefined,
+      tipoEstrutura: infoHolder.premissas.tipoEstrutura || 'Fibrocimento',
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
+      faseamentoEletrico: infoHolder.premissas.faseamentoEletrico || 'MONOFÁSICO',
       idParceiro: opportunity.idParceiro,
     }
     const variableData: TPricingVariableData = {
@@ -155,6 +156,8 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       plan: 0,
       numInversores: inverterQty,
       valorReferencia: infoHolder.premissas.valorReferencia || 0,
+      consumoEnergiaMensal: infoHolder.premissas.consumoEnergiaMensal || 0,
+      tarifaEnergia: infoHolder.premissas.tarifaEnergia || 0,
       custosInstalacao: infoHolder.premissas.custosInstalacao || 0,
       custosPadraoEnergia: infoHolder.premissas.custosPadraoEnergia || 0,
       custosEstruturaInstalacao: infoHolder.premissas.custosEstruturaInstalacao || 0,
@@ -281,6 +284,8 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       cidade: opportunity.localizacao.cidade,
       topologia: topology,
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
+      tipoEstrutura: infoHolder.premissas.tipoEstrutura || 'Fibrocimento',
+      faseamentoEletrico: infoHolder.premissas.faseamentoEletrico || 'MONOFÁSICO',
       idParceiro: opportunity.idParceiro,
     }
     const variableData: TPricingVariableData = {
@@ -293,6 +298,8 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       plan: 0,
       numInversores: inverterQty,
       valorReferencia: infoHolder.premissas.valorReferencia || 0,
+      consumoEnergiaMensal: infoHolder.premissas.consumoEnergiaMensal || 0,
+      tarifaEnergia: infoHolder.premissas.tarifaEnergia || 0,
       custosInstalacao: infoHolder.premissas.custosInstalacao || 0,
       custosPadraoEnergia: infoHolder.premissas.custosPadraoEnergia || 0,
       custosEstruturaInstalacao: infoHolder.premissas.custosEstruturaInstalacao || 0,
