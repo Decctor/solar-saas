@@ -13,6 +13,7 @@ import PlansShowcase from '../NewProposalStages/PlansShowcase'
 import { useSignaturePlanWithPricingMethod } from '@/utils/queries/signature-plans'
 import Proposal from '../NewProposalStages/Proposal'
 import { useProjectTypes } from '@/utils/queries/project-types'
+import Pricing from '../NewProposalStages/Pricing'
 
 type ProposalWithPlansProps = {
   opportunity: TOpportunityDTOWithClientAndPartner
@@ -25,6 +26,7 @@ function ProposalWithPlans({ opportunity, infoHolder, setInfoHolder, session, pa
   const { data: signaturePlans, isLoading, isError, isSuccess } = useSignaturePlanWithPricingMethod()
   const { data: projectTypes } = useProjectTypes()
   const [stage, setStage] = useState<number>(1)
+  console.log(infoHolder)
   return (
     <div className="m-6 flex h-fit flex-col rounded-md border border-gray-200 bg-[#fff] p-2 shadow-lg">
       <div className="grid min-h-[50px] w-full grid-cols-1 grid-rows-5 items-center gap-6 border-b border-gray-200 pb-4 lg:grid-cols-5 lg:grid-rows-1 lg:gap-1">
@@ -68,7 +70,8 @@ function ProposalWithPlans({ opportunity, infoHolder, setInfoHolder, session, pa
           session={session}
         />
       ) : null}
-      {stage == 3 ? (
+      {/**In case there multiple plan options defined, showing the plans showcase */}
+      {stage == 3 && infoHolder.planos.length > 1 ? (
         <PlansShowcase
           signaturePlans={signaturePlans || []}
           infoHolder={infoHolder}
@@ -79,6 +82,17 @@ function ProposalWithPlans({ opportunity, infoHolder, setInfoHolder, session, pa
           session={session}
         />
       ) : null}
+      {stage == 3 && infoHolder.planos.length == 1 ? (
+        <Pricing
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
+          opportunity={opportunity}
+          moveToPreviousStage={() => setStage((prev) => prev - 1)}
+          moveToNextStage={() => setStage((prev) => prev + 1)}
+          session={session}
+        />
+      ) : null}
+
       {stage == 4 ? (
         <Proposal
           infoHolder={infoHolder}

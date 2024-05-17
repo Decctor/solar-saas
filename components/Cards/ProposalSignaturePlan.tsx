@@ -13,7 +13,7 @@ import { AiOutlineSafety } from 'react-icons/ai'
 import { ImPower } from 'react-icons/im'
 import { FaIndustry } from 'react-icons/fa'
 import { TOpportunityDTO } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import { TPricingConditionData, TPricingVariableData, getPricingTotal, handlePricingCalculation } from '@/utils/pricing/methods'
 import { IoMdAdd } from 'react-icons/io'
 
@@ -31,7 +31,7 @@ type ProposalSignaturePlanProps = {
   plan: TSignaturePlanDTOWithPricingMethod
   proposal: TProposal
   opportunity: TOpportunityDTO
-  handleSelect: (id: TSignaturePlanDTOWithPricingMethod & { valorFinal: number }) => void
+  handleSelect: (id: TSignaturePlanDTOWithPricingMethod & { valorFinal: number; precificacao: TPricingItem[] }) => void
   handleRemove: (index: number) => void
   userHasPricingView: boolean
 }
@@ -172,7 +172,7 @@ function ProposalSignaturePlan({
             </div>
             {!selectedIds.includes(plan._id) ? (
               <button
-                onClick={() => handleSelect({ ...plan, valorFinal: proposalTotalPreview })}
+                onClick={() => handleSelect({ ...plan, valorFinal: proposalTotalPreview, precificacao: pricing })}
                 className="rounded-full border border-cyan-500 p-1 text-cyan-500 duration-300 ease-in-out hover:bg-cyan-500 hover:text-white"
               >
                 <IoMdAdd />

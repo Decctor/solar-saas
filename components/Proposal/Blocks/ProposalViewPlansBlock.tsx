@@ -1,5 +1,5 @@
-import ProposalSignaturePlanShowcase from '@/components/Cards/ProposalSignaturePlanShowcase'
-import { formatToMoney } from '@/utils/methods'
+import { formatToMoney } from '@/lib/methods/formatting'
+
 import { TProposalDTO } from '@/utils/schemas/proposal.schema'
 import React from 'react'
 import { BsCheckCircleFill } from 'react-icons/bs'
@@ -19,7 +19,7 @@ function ProposalViewPlansBlock({ plans }: ProposalViewPlansBlockProps) {
             </div>
             <p className="w-full text-start text-sm text-gray-500">{plan?.descricao || '...'}</p>
             <div className="my-4 flex w-full items-end justify-center gap-1">
-              <h1 className="text-4xl font-black">{formatToMoney(plan.valor)}</h1>
+              <h1 className="text-4xl font-black">{formatToMoney(plan.valor || 0)}</h1>
               <h1 className="text-xs font-light text-gray-500">/ {plan?.intervalo.tipo}</h1>
             </div>
 
@@ -37,9 +37,6 @@ function ProposalViewPlansBlock({ plans }: ProposalViewPlansBlockProps) {
               </div>
             </div>
           </div>
-          // <div className="w-full lg:w-1/4">
-          //   <ProposalSignaturePlanShowcase plan={plan} />
-          // </div>
         ))}
       </div>
     </div>

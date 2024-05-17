@@ -2,9 +2,10 @@ import ProposalSignaturePlan from '@/components/Cards/ProposalSignaturePlan'
 import ErrorComponent from '@/components/utils/ErrorComponent'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import { combineUniqueProducts, combineUniqueServices } from '@/lib/methods/array-manipulation'
+import { getModulesPeakPotByProducts } from '@/lib/methods/extracting'
 import { useSignaturePlanWithPricingMethod } from '@/utils/queries/signature-plans'
 import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
-import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import { TSignaturePlanDTO, TSignaturePlanDTOWithPricingMethod } from '@/utils/schemas/signature-plans.schema'
 import { Session } from 'next-auth'
 import React, { useState } from 'react'
@@ -33,7 +34,7 @@ function PlansSelection({
   moveToPreviousStage,
   session,
 }: PlansSelectionProps) {
-  const [selectedPlans, setSelectedPlans] = useState<(TSignaturePlanDTOWithPricingMethod & { valorFinal: number })[]>([])
+  const [selectedPlans, setSelectedPlans] = useState<(TSignaturePlanDTOWithPricingMethod & { valorFinal: number; precificacao: TPricingItem[] })[]>([])
   function handleProceed() {
     if (selectedPlans.length == 0) return toast.error('Selecione ao menos um plano de assinatura.')
     const proposalPlans: TProposal['planos'] = selectedPlans.map((s) => ({
@@ -45,15 +46,32 @@ function PlansSelection({
       descritivo: s.descritivo,
       intervalo: s.intervalo,
     }))
-
-    // const selectedProducts = selectedPlans.flatMap((p) => p.produtos)
-    // const selectedServices = selectedPlans.flatMap((p) => p.servicos)
-
-    // const products = combineUniqueProducts(selectedProducts)
-    // const services = combineUniqueServices(selectedServices)
-
-    setInfoHolder((prev) => ({ ...prev, planos: proposalPlans }))
-    moveToNextStage()
+    // In case the proposal aims to show multiple options signature plans,
+    // then, there can not be defined products, services or pricing yet
+    if (selectedPlans.length > 1) {
+      setInfoHolder((prev) => ({ ...prev, planos: proposalPlans }))
+      moveToNextStage()
+    } else {
+      // In case there is only one plan selected, this plan will be the active one for the proposal
+      // Therefore, there can be already defined the products, services and pricing
+      const selectedProducts = selectedPlans.flatMap((p) => p.produtos)
+      const selectedServices = selectedPlans.flatMap((p) => p.servicos)
+      const products = combineUniqueProducts(selectedProducts)
+      const services = combineUniqueServices(selectedServices)
+      const modulePeakPower = getModulesPeakPotByProducts(products)
+      const methodologyId = selectedPlans[0].idMetodologiaPrecificacao
+      const pricing = selectedPlans[0].precificacao
+      setInfoHolder((prev) => ({
+        ...prev,
+        idMetodologiaPrecificacao: methodologyId,
+        planos: proposalPlans,
+        produtos: products,
+        servicos: services,
+        precificacao: pricing,
+        potenciaPico: modulePeakPower,
+      }))
+      moveToNextStage()
+    }
   }
   return (
     <div className="flex min-h-[400px] w-full flex-col gap-2 py-4">
