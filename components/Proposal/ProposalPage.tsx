@@ -102,13 +102,13 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
                 </div>
               </div>
             </div>
-            <button
+            {/* <button
               // @ts-ignore
               onClick={() => setTestRequestIsOpen(true)}
               className="rounded border border-cyan-600 px-4 py-2 text-sm font-bold text-cyan-600 duration-300 ease-in-out hover:bg-cyan-600 hover:text-white"
             >
               TESTAR GANHO
-            </button>
+            </button> */}
             <WinBlock
               opportunityId={proposal.oportunidade.id}
               proposalId={proposalId}

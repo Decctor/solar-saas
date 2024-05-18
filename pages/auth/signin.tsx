@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import WorkingIllustration from '../../utils/svgs/working.svg'
-import Logo from '../../utils/images/logo.png'
+import Logo from '../../utils/images/whiteLogo.png'
 import { IMessage } from '@/utils/models'
 import { signIn } from 'next-auth/react'
 import { toast } from 'react-hot-toast'
@@ -41,11 +41,10 @@ function SignIn() {
     }
   }
   return (
-    <div className="flex h-full w-full flex-col items-center justify-center bg-[#264653] p-3 lg:flex-row">
+    <div className="flex h-full w-full flex-col items-center justify-center bg-[#15599a] p-3 lg:flex-row">
       <div className="flex h-fit w-full flex-col items-center justify-center px-2 py-4 lg:h-full lg:w-2/3 lg:px-4 lg:py-6">
         <Image src={Logo} height={250} width={250} alt="Logo CRM" />
-        <h1 className="w-full text-center text-2xl font-black text-white lg:text-5xl">SynergiaCRM</h1>
-        <h1 className="w-full text-center text-2xl font-black text-cyan-500 lg:text-4xl">Sua experiência completa de vendas.</h1>
+        <h1 className="w-full text-center text-2xl font-black text-white lg:text-4xl">Sua experiência completa de vendas.</h1>
         {/* <p className="mt-4 w-full text-center text-xl font-bold text-[#fead41] lg:text-3xl">
           Conecte, venda, cresça! A gestão de vendas e projetos nunca foi tão fácil.
         </p> */}
