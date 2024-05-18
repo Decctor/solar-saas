@@ -123,38 +123,42 @@ function Kits() {
           </div>
           {filterMenuIsOpen ? <FilterMenu setFilters={setFilters} filters={filters} /> : null}
           <div className="mt-4 flex w-full flex-col items-center gap-2 lg:flex-row">
-            <button
-              onClick={async () => {
-                if (kits) handleDataExport(kits)
-              }}
-              className="flex w-full items-center gap-2 rounded-md bg-gray-300 px-2 py-1 text-sm font-medium lg:w-fit"
-            >
-              <p>Exportar dados como .XLSX</p>
-              <TbFileExport />
-            </button>
-            <button
-              onClick={async () => {
-                const fileUrl = '/operacao-em-massa-kits.xlsx'
-                // Create a temporary link element
-                const link = document.createElement('a')
-                link.href = fileUrl
+            {session.user.permissoes.kits.editar ? (
+              <>
+                <button
+                  onClick={async () => {
+                    if (kits) handleDataExport(kits)
+                  }}
+                  className="flex w-full items-center gap-2 rounded-md bg-gray-300 px-2 py-1 text-sm font-medium lg:w-fit"
+                >
+                  <p>Exportar dados como .XLSX</p>
+                  <TbFileExport />
+                </button>
+                <button
+                  onClick={async () => {
+                    const fileUrl = '/operacao-em-massa-kits.xlsx'
+                    // Create a temporary link element
+                    const link = document.createElement('a')
+                    link.href = fileUrl
 
-                // Set the download attribute to specify the filename
+                    // Set the download attribute to specify the filename
 
-                link.download = 'operacao-em-massa-kits.xlsx'
+                    link.download = 'operacao-em-massa-kits.xlsx'
 
-                // Append the link to the document and trigger a click event
-                document.body.appendChild(link)
-                link.click()
+                    // Append the link to the document and trigger a click event
+                    document.body.appendChild(link)
+                    link.click()
 
-                // Remove the link from the document
-                document.body.removeChild(link)
-              }}
-              className="flex w-full items-center gap-2 rounded-md bg-blue-300 px-2 py-1 text-sm font-medium lg:w-fit"
-            >
-              <p>Baixar planilha de referência</p>
-              <TbFileDownload />
-            </button>
+                    // Remove the link from the document
+                    document.body.removeChild(link)
+                  }}
+                  className="flex w-full items-center gap-2 rounded-md bg-blue-300 px-2 py-1 text-sm font-medium lg:w-fit"
+                >
+                  <p>Baixar planilha de referência</p>
+                  <TbFileDownload />
+                </button>
+              </>
+            ) : null}
           </div>
         </div>
         <div className="flex flex-wrap justify-between gap-2 py-2">

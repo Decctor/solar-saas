@@ -54,10 +54,12 @@ function SignaturePlanCard({ plan, handleOpenModal, userHasEditPermission, userH
             {getStatusTag({ active: plan.ativo })}
           </div>
           <div className="mt-2 flex w-full items-center gap-2">
-            <div className="flex items-center gap-1 text-green-500">
-              <MdAttachMoney />
-              <p className="text-[0.65rem] font-bold lg:text-xs">{formatToMoney(plan.preco)}</p>
-            </div>
+            {userHasPricingViewPermission ? (
+              <div className="flex items-center gap-1 text-green-500">
+                <MdAttachMoney />
+                <p className="text-[0.65rem] font-bold lg:text-xs">{formatToMoney(plan.preco)}</p>
+              </div>
+            ) : null}
             <div className="flex items-center gap-1">
               <MdRepeat />
               <p className="text-[0.65rem] font-bold lg:text-xs">{plan.intervalo.tipo}</p>

@@ -47,11 +47,14 @@ const createUser: NextApiHandler<PostResponse> = async (req, res) => {
   if (user.permissoes.analisesTecnicas.escopo && user.permissoes.analisesTecnicas.escopo.length == 0) {
     updates.$set = { ...updates.$set, 'permissoes.analisesTecnicas.escopo': [insertedIdAsString] }
   }
-  if (user.permissoes.parceiros.escopo && user.permissoes.parceiros.escopo.length == 0) {
-    updates.$set = { ...updates.$set, 'permissoes.parceiros.escopo': [insertedIdAsString] }
+  if (user.permissoes.homologacoes.escopo && user.permissoes.homologacoes.escopo.length == 0) {
+    updates.$set = { ...updates.$set, 'permissoes.homologacoes.escopo': [insertedIdAsString] }
   }
   if (user.permissoes.clientes.escopo && user.permissoes.clientes.escopo.length == 0) {
     updates.$set = { ...updates.$set, 'permissoes.clientes.escopo': [insertedIdAsString] }
+  }
+  if (user.permissoes.parceiros.escopo && user.permissoes.parceiros.escopo.length == 0) {
+    updates.$set = { ...updates.$set, 'permissoes.parceiros.escopo': [insertedIdAsString] }
   }
   if (user.permissoes.resultados.escopo && user.permissoes.resultados.escopo.length == 0) {
     updates.$set = { ...updates.$set, 'permissoes.resultados.escopo': [insertedIdAsString] }

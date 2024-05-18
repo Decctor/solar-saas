@@ -38,6 +38,7 @@ const getHomologations: NextApiHandler<GetResponse> = async (req, res) => {
   }
   // Ajusting the query for the user's scope visualization
   const applicantQuery: Filter<THomologation> = homologationScope ? { 'requerente.id': { $in: [...homologationScope] } } : {}
+  console.log(applicantQuery)
   const query = { ...partnerQuery, ...applicantQuery }
   const homologations = await getPartnerHomologations({ collection: collection, query: query })
   return res.status(200).json({ data: homologations })

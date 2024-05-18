@@ -406,7 +406,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
                     handleClick={(selectedKit) => selectKit(selectedKit)}
                     opportunity={opportunity}
                     proposal={infoHolder}
-                    userHasPricingView={true}
+                    userHasPricingView={session.user.permissoes.precos.visualizar}
                   />
                 ))
               ) : (
