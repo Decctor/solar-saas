@@ -1,9 +1,11 @@
+import { insertFunnelReference } from '@/repositories/funnel-references/mutations'
 import { getLeadReceivers } from '@/repositories/users/queries'
 import connectToDatabase from '@/services/mongodb/main-db-connection'
 import { ErrorResponse, apiHandler, errorHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { stateCities } from '@/utils/estados_cidades'
 import { calculateStringSimilarity, formatToPhone } from '@/utils/methods'
 import { TClient } from '@/utils/schemas/client.schema'
+import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
 import { TIntegrationRDStation } from '@/utils/schemas/integration.schema'
 import { TNotification } from '@/utils/schemas/notification.schema'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
@@ -129,10 +131,12 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
   const testCollection = db.collection('test')
   const clientsCollection: Collection<TClient> = db.collection('clients')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
+  const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
+
   const usersCollection: Collection<TUser> = db.collection('users')
   const notificationsCollection: Collection<TNotification> = db.collection('notifications')
 
-  // Getting users for linear distrubution of leads
+  // Getting lead receivers for linear distrubution of leads
   const receivers = await getLeadReceivers({ collection: usersCollection, query: {} })
 
   await testCollection.insertOne(lead)
@@ -159,13 +163,13 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
     profissao: null,
     estadoCivil: null,
     canalAquisicao: 'MARKETING (GERAL)',
-    dataInsercao: new Date().toISOString(),
     idMarketing: lead.id,
     indicador: {
       nome: null,
       contato: null,
     },
     autor: newReceiver,
+    dataInsercao: new Date().toISOString(),
   }
 
   const { insertedId: clientInsertedId, acknowledged: clientInsertAcknowledged } = await clientsCollection.insertOne(newClient)
@@ -219,9 +223,23 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
     dataInsercao: new Date().toISOString(),
     // adicionar contrato e solicitação de contrato futuramente
   }
+
   const { insertedId: opportunityInsertedId, acknowledged: opportunityInsertAcknowledged } = await opportunitiesCollection.insertOne(newOpportunity)
   console.log('OPORTUNIDADE INSERIDA', opportunityInsertedId)
 
+  // Creating a funnel reference
+  const funnelReference = {
+    idParceiro: '65454ba15cf3e3ecf534b308',
+    idOportunidade: opportunityInsertedId.toString(),
+    idFunil: '661eb0996dd818643c5334f5',
+    idEstagioFunil: '1',
+    dataInsercao: new Date().toISOString(),
+  }
+  const insertFunnelReferenceResponse = await insertFunnelReference({
+    collection: funnelReferencesCollection,
+    info: funnelReference,
+    partnerId: partnerId || '',
+  })
   // Notifying the opportunity receiver
   const newNotification: TNotification = {
     remetente: { id: 'SISTEMA', nome: 'SISTEMA' },

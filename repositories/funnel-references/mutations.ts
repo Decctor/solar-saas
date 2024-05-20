@@ -20,12 +20,12 @@ type UpdateFunnelReferenceParams = {
   collection: Collection<TFunnelReference>
   funnelReferenceId: string
   newStageId: string | number
-  query: Filter<TFunnelReference>
+  // query: Filter<TFunnelReference>
 }
 
-export async function updateFunnelReference({ collection, funnelReferenceId, newStageId, query }: UpdateFunnelReferenceParams) {
+export async function updateFunnelReference({ collection, funnelReferenceId, newStageId }: UpdateFunnelReferenceParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(funnelReferenceId), ...query }, { $set: { idEstagioFunil: newStageId } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(funnelReferenceId) }, { $set: { idEstagioFunil: newStageId } })
     return updateResponse
   } catch (error) {
     throw error

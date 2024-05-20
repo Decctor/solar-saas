@@ -106,7 +106,9 @@ function RDStationIntegrationBlock({ session }: RDStationIntegrationBlockProps) 
               <div className="mt-2 flex w-full items-center justify-center gap-2">
                 <h1 className="text-center text-xs font-bold text-blue-800">{`https://erp-rose.vercel.app/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`}</h1>
                 <button
-                  onClick={() => copyToClipboard(`https://erp-rose.vercel.app/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`)}
+                  onClick={() =>
+                    copyToClipboard(`https://crm.ampereenergias.com.br/api/integration/rd-station/opportunities?partnerId=${session.user.idParceiro}`)
+                  }
                   className="text-blue-800"
                 >
                   <MdContentCopy />

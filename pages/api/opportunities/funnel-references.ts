@@ -33,9 +33,9 @@ type PutResponse = {
 }
 const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true)
-  const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TFunnelReference> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
+  // const partnerId = session.user.idParceiro
+  // const parterScope = session.user.permissoes.parceiros.escopo
+  // const partnerQuery: Filter<TFunnelReference> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
 
   // Validing update id
   const { id } = req.query
@@ -53,7 +53,7 @@ const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
     collection: funnelReferencesCollection,
     funnelReferenceId: id,
     newStageId: newStageId,
-    query: partnerQuery,
+    // query: partnerQuery,
   })
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na atualização da referência de funil.')
   res.status(201).json({ data: 'Atualização feita com sucesso!', message: 'Atualização feita com sucesso !' })
