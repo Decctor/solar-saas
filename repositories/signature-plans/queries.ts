@@ -8,9 +8,28 @@ type GetSignaturePlanByIdParams = {
 }
 export async function getSignaturePlanById({ id, query, collection }: GetSignaturePlanByIdParams) {
   try {
-    const plan = await collection.findOne({ _id: new ObjectId(id), ...query })
+    const addFields = { pricingMethodAsObjectId: { $toObjectId: '$idMetodologiaPrecificacao' } }
+    const pricingMethodLookup = { from: 'pricing-methods', localField: 'pricingMethodAsObjectId', foreignField: '_id', as: 'metodos' }
+    const plansArr = await collection
+      .aggregate([
+        {
+          $match: {
+            _id: new ObjectId(id),
+            ...query,
+          },
+        },
+        {
+          $addFields: addFields,
+        },
+        {
+          $lookup: pricingMethodLookup,
+        },
+      ])
+      .toArray()
 
-    return plan
+    // const plan = await collection.findOne({ _id: new ObjectId(id), ...query })
+    const plan = plansArr.map((plan) => ({ ...plan, metodologia: plan.metodos[0] }))
+    return plan[0] as TSignaturePlanWithPricingMethod
   } catch (error) {
     throw error
   }

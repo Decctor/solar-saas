@@ -330,7 +330,15 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
                 </div>
               </div>
             </div>
-            {proposal.planos.length > 0 ? <ProposalViewPlansBlock plans={proposal.planos} /> : null}
+            {proposal.planos.length > 0 ? (
+              <ProposalViewPlansBlock
+                plans={proposal.planos}
+                opportunity={{ ...proposal.oportunidadeDados }}
+                proposal={proposal}
+                userHasPricingEditPermission={userHasPricingEditPermission}
+                userHasPricingViewPermission={userHasPricingViewPermission}
+              />
+            ) : null}
             {proposal.precificacao.length > 0 ? (
               <ProposalViewPricingBlock userHasPricingViewPermission={userHasPricingViewPermission} pricing={proposal.precificacao} />
             ) : null}

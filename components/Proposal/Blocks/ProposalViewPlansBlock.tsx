@@ -1,44 +1,79 @@
 import { formatToMoney } from '@/lib/methods/formatting'
 
 import { TProposalDTO } from '@/utils/schemas/proposal.schema'
-import React from 'react'
+import React, { useState } from 'react'
 import { BsCheckCircleFill } from 'react-icons/bs'
+import ProposalPlan from './ProposalPlan'
+import { fetchSignaturePlanById } from '@/utils/queries/signature-plans'
+import { TOpportunityDTO } from '@/utils/schemas/opportunity.schema'
+import {
+  getPricingSuggestedTotal,
+  getPricingTotal,
+  getPricingTotals,
+  handleFinalPriceCorrection,
+  handlePricingCalculation,
+  TPricingConditionData,
+  TPricingVariableData,
+} from '@/utils/pricing/methods'
+import { editProposal } from '@/utils/mutations/proposals'
+import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
+import { useQueryClient } from '@tanstack/react-query'
+import { boolean } from 'zod'
+import DefinePlan from './DefinePlan'
+import { Session } from 'next-auth'
+import EditPlanFinalPrice from './EditPlanFinalPrice'
+
+type TEditPriceModal = {
+  isOpen: boolean
+  index: null | number
+}
 
 type ProposalViewPlansBlockProps = {
   plans: TProposalDTO['planos']
+  proposal: TProposalDTO
+  opportunity: TOpportunityDTO
+  userHasPricingViewPermission: boolean
+  userHasPricingEditPermission: boolean
 }
-function ProposalViewPlansBlock({ plans }: ProposalViewPlansBlockProps) {
+function ProposalViewPlansBlock({ plans, proposal, opportunity, userHasPricingViewPermission, userHasPricingEditPermission }: ProposalViewPlansBlockProps) {
+  const queryClient = useQueryClient()
+  const alterationLimit = userHasPricingEditPermission ? undefined : 0.02
+  const [definePlanModal, setDefinePlanModal] = useState<{ plan: TProposalDTO['planos'][number] | null; isOpen: boolean }>({ plan: null, isOpen: false })
+  const [editPriceModal, setEditPriceModal] = useState<TEditPriceModal>({ isOpen: false, index: null })
   return (
     <div className="mt-4 flex w-full flex-col gap-2 rounded border border-gray-500 bg-[#fff]">
       <h1 className="w-full rounded bg-gray-800 py-2 text-center font-bold text-white ">PLANOS DE ASSINATURA</h1>
       <div className="my-4 flex h-fit w-full flex-wrap items-stretch justify-center gap-2 py-2">
         {plans.map((plan, index) => (
-          <div key={index} className="flex w-[450px] flex-col rounded-lg border border-gray-500 bg-[#fff] p-6 shadow-lg">
-            <div className="flex w-full items-center justify-between gap-2">
-              <h1 className="font-black">{plan.nome}</h1>
-            </div>
-            <p className="w-full text-start text-sm text-gray-500">{plan?.descricao || '...'}</p>
-            <div className="my-4 flex w-full items-end justify-center gap-1">
-              <h1 className="text-4xl font-black">{formatToMoney(plan.valor || 0)}</h1>
-              <h1 className="text-xs font-light text-gray-500">/ {plan?.intervalo.tipo}</h1>
-            </div>
-
-            <div className="my-4 flex flex-grow flex-col gap-1">
-              <h1 className="text-[0.6rem] tracking-tight text-gray-500">DESCRITIVO</h1>
-              <div className="flex flex-grow flex-col gap-2">
-                {plan.descritivo.map((d, idx) => (
-                  <div key={idx} className="flex items-center gap-1">
-                    <div className="w-fit">
-                      <BsCheckCircleFill color="rgb(21,128,61)" size={15} />
-                    </div>
-                    <p className="text-xs font-medium tracking-tight">{d.descricao}</p>
-                  </div>
-                ))}
-              </div>
-            </div>
-          </div>
+          <ProposalPlan
+            key={plan.id}
+            plan={plan}
+            editPrice={() => setEditPriceModal({ index: index, isOpen: true })}
+            definePlan={(plan) => setDefinePlanModal({ plan: plan, isOpen: true })}
+            enableSelection={plans.length > 1}
+            userHasPricingEditPermission={userHasPricingEditPermission}
+          />
         ))}
       </div>
+      {!!definePlanModal.plan && definePlanModal.isOpen ? (
+        <DefinePlan
+          proposalPlan={definePlanModal.plan}
+          opportunity={opportunity}
+          proposal={proposal}
+          closeModal={() => setDefinePlanModal({ plan: null, isOpen: false })}
+          userHasPricingViewPermission={userHasPricingViewPermission}
+          userHasPricingEditPermission={userHasPricingEditPermission}
+        />
+      ) : null}
+      {editPriceModal.isOpen && editPriceModal.index != null ? (
+        <EditPlanFinalPrice
+          plans={proposal.planos}
+          planIndex={editPriceModal.index}
+          proposalId={proposal._id}
+          alterationLimit={alterationLimit}
+          closeModal={() => setEditPriceModal({ isOpen: false, index: null })}
+        />
+      ) : null}
     </div>
   )
 }

@@ -821,7 +821,7 @@ export const UserGroups: TUserGroup[] = [
         editar: false,
       },
       kits: {
-        visualizar: false,
+        visualizar: true,
         editar: false,
         criar: false,
       },
@@ -836,7 +836,7 @@ export const UserGroups: TUserGroup[] = [
         criar: false,
       },
       planos: {
-        visualizar: false,
+        visualizar: true,
         editar: false,
         criar: false,
       },
@@ -882,7 +882,7 @@ export const UserGroups: TUserGroup[] = [
       resultados: {
         escopo: null,
         visualizarComercial: false,
-        visualizarOperacional: true,
+        visualizarOperacional: false,
       },
       configuracoes: {
         parceiro: false,
@@ -910,7 +910,7 @@ export const UserGroups: TUserGroup[] = [
         editar: false,
       },
       kits: {
-        visualizar: false,
+        visualizar: true,
         editar: false,
         criar: false,
       },
@@ -925,7 +925,7 @@ export const UserGroups: TUserGroup[] = [
         criar: false,
       },
       planos: {
-        visualizar: false,
+        visualizar: true,
         editar: false,
         criar: false,
       },
@@ -948,9 +948,9 @@ export const UserGroups: TUserGroup[] = [
       },
       homologacoes: {
         escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
-        visualizar: false,
+        visualizar: true,
         editar: false,
-        criar: false,
+        criar: true,
       },
       clientes: {
         escopo: null,
@@ -971,7 +971,7 @@ export const UserGroups: TUserGroup[] = [
       resultados: {
         escopo: null,
         visualizarComercial: false,
-        visualizarOperacional: true,
+        visualizarOperacional: false,
       },
       configuracoes: {
         parceiro: false,

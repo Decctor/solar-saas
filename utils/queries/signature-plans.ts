@@ -4,10 +4,10 @@ import { useQuery } from '@tanstack/react-query'
 import { useState } from 'react'
 import { formatWithoutDiacritics } from '@/lib/methods/formatting'
 
-async function fetchSignaturePlanById({ id }: { id: string }) {
+export async function fetchSignaturePlanById({ id }: { id: string }) {
   try {
     const { data } = await axios.get(`/api/signature-plans?id=${id}`)
-    return data.data as TSignaturePlanDTO
+    return data.data as TSignaturePlanDTOWithPricingMethod
   } catch (error) {
     throw error
   }

@@ -8,14 +8,17 @@ import ErrorComponent from '../utils/ErrorComponent'
 import FilterMenu from '../Kits/FilterMenu'
 import { AnimatePresence, motion } from 'framer-motion'
 import { GeneralVisibleHiddenExitMotionVariants } from '@/utils/constants'
+import { Session } from 'next-auth'
 
 type KitsSelectionMenuProps = {
   selectedKitId: string | null
   handleSelect: (kit: TKitDTO) => void
+  session: Session
   closeMenu: () => void
 }
-function KitsSelectionMenu({ selectedKitId, handleSelect, closeMenu }: KitsSelectionMenuProps) {
+function KitsSelectionMenu({ selectedKitId, handleSelect, session, closeMenu }: KitsSelectionMenuProps) {
   const { data: kits, isLoading, isError, isFetching, isSuccess, filters, setFilters } = useActiveKits()
+  const userHasPricingViewPermission = session.user.permissoes.precos.visualizar
   return (
     <AnimatePresence>
       <motion.div
@@ -35,6 +38,7 @@ function KitsSelectionMenu({ selectedKitId, handleSelect, closeMenu }: KitsSelec
                   selectedId={selectedKitId}
                   key={kit._id}
                   kit={kit}
+                  userHasPricingViewPermission={userHasPricingViewPermission}
                   handleClick={(kit) => {
                     handleSelect(kit)
                     closeMenu()

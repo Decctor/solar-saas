@@ -22,7 +22,7 @@ function AddPricingItem({ pricing, setPricing, proposal, closeModal }: AddPricin
     custoCalculado: 0,
     custoFinal: 0,
     faturavel: false,
-    formulaArr: [],
+    formulaArr: null,
     margemLucro: 0,
     valorCalculado: 0,
     valorFinal: 0,

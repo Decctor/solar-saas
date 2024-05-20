@@ -262,7 +262,7 @@ export function handlePartialPricingReCalculation({
           custoFinal: evaluatedCostValue,
           faturavel: faturable,
           formulaArr: formulaArr,
-          margemLucro: newProfitMargin,
+          margemLucro: newProfitMargin * 100,
           valorCalculado: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
           valorFinal: item.valorFinal,
         }
@@ -294,6 +294,24 @@ export function handlePartialPricingReCalculation({
     iteration++
   }
   return newPricingItems
+}
+
+type HandleFinalPriceCorrectionProps = {
+  pricing: TPricingItem[]
+  diffPercentage: number
+}
+export function handleFinalPriceCorrection({ diffPercentage, pricing }: HandleFinalPriceCorrectionProps) {
+  const pricingCopy = [...pricing]
+  const newPricing = pricingCopy.map((p) => {
+    // Getting current pricing item suggested sale price
+    const itemSuggestedValue = p.valorCalculado
+    // Using the percentage difference to update the item's sale price by that proportion
+    const newSalePrice = itemSuggestedValue * (1 - diffPercentage)
+    // Getting new margin based on the new sale price
+    const newMargin = getProfitMargin(p.custoFinal, newSalePrice)
+    return { ...p, margemLucro: newMargin * 100, valorFinal: newSalePrice }
+  })
+  return newPricing
 }
 export function getPricingTotal({ pricing }: { pricing: TPricingItem[] }) {
   const total = pricing.reduce((acc, current) => {

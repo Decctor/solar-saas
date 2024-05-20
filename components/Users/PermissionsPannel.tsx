@@ -353,8 +353,8 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
         }
       />
       <CheckboxInput
-        labelFalse="APTO A EDITAR QUALQUER CLIENTE"
-        labelTrue="APTO A EDITAR QUALQUER CLIENTE"
+        labelFalse="APTO A EDITAR CLIENTE"
+        labelTrue="APTO A EDITAR CLIENTE"
         checked={userInfo.permissoes.clientes.editar}
         editable={session.user.permissoes.clientes.editar}
         justify="justify-start"

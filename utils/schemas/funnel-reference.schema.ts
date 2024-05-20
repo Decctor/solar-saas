@@ -18,10 +18,12 @@ export const InsertFunnelReferenceSchema = z.object({
     required_error: 'Referência a oportunidade não informada.',
     invalid_type_error: 'Tipo não válido para referência a oportunidade.',
   }),
-  idFunil: z.string({
-    required_error: 'Referência a funil não informada.',
-    invalid_type_error: 'Tipo não válido para referência a funil.',
-  }),
+  idFunil: z
+    .string({
+      required_error: 'Referência a funil não informada.',
+      invalid_type_error: 'Tipo não válido para referência a funil.',
+    })
+    .min(15, 'Funil inválido.'),
   idEstagioFunil: z.union([z.string(), z.number()], {
     required_error: 'Referência a estagio do funil não informada.',
     invalid_type_error: 'Tipo não válido para referência a estagio do funil.',

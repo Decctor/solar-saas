@@ -72,7 +72,7 @@ function OpportunityTechnicalAnalysisItem({ analysis }: OpportunityTechnicalAnal
           </div>
         </div>
         <div className="mt-2 flex w-full flex-col items-center justify-between gap-2 lg:flex-row">
-          {analysis.dataEfetivacao ? (
+          {analysis.dataEfetivacao || analysis.status == 'CONCLUIDO' ? (
             <button
               className="rounded bg-cyan-500 px-2 py-1 text-center text-[0.6rem] font-bold text-white"
               onClick={() => setReportsMenuIsOpen((prev) => !prev)}

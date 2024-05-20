@@ -36,9 +36,10 @@ function getStatusTag({ active, expiryDate }: { active: boolean; expiryDate?: st
 type KitCardProps = {
   kit: TKitDTO
   selectedId: string | null
+  userHasPricingViewPermission: boolean
   handleClick: (info: TKitDTO) => void
 }
-function TechnicalAnalysisKit({ kit, selectedId, handleClick }: KitCardProps) {
+function TechnicalAnalysisKit({ kit, selectedId, userHasPricingViewPermission, handleClick }: KitCardProps) {
   return (
     <div className="flex min-h-[250px] w-full gap-2 rounded-md border border-gray-300 bg-[#fff] font-Inter shadow-sm">
       <div className="flex w-full grow flex-col p-3">
@@ -55,10 +56,12 @@ function TechnicalAnalysisKit({ kit, selectedId, handleClick }: KitCardProps) {
 
         <div className="flex w-full grow flex-col">
           <div className="mt-2 flex w-full items-center gap-2">
-            <div className="flex items-center gap-1 text-green-500">
-              <MdAttachMoney />
-              <p className="text-[0.6rem] font-bold lg:text-xs">{formatToMoney(kit.preco)}</p>
-            </div>
+            {userHasPricingViewPermission ? (
+              <div className="flex items-center gap-1 text-green-500">
+                <MdAttachMoney />
+                <p className="text-[0.6rem] font-bold lg:text-xs">{formatToMoney(kit.preco)}</p>
+              </div>
+            ) : null}
             <div className="flex items-center gap-1 text-red-500">
               <ImPower color="rgb(239,68,68)" />
               <p className="text-[0.6rem] font-bold lg:text-xs">{kit.potenciaPico} kW</p>

@@ -41,14 +41,19 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
 
   function handleResponsibleRemoval({
     responsibles,
-    responsibleToRemove,
+    responsibleToRemoveIndex,
   }: {
     responsibles: TOpportunityDTOWithClient['responsaveis']
-    responsibleToRemove: number
+    responsibleToRemoveIndex: number
   }) {
+    // Validating scope for removal
+    const responsibleToRemove = responsibles[responsibleToRemoveIndex]
+    const responsibleToRemoveId = responsibleToRemove.id
+    if (!!session.user.permissoes.oportunidades.escopo && !session.user.permissoes.oportunidades.escopo.includes(responsibleToRemoveId))
+      return toast.error('Você não possui permissão para remover esse responsável.')
     if (responsibles.length == 1) return toast.error('Não é possível remover o único responsável da oportunidade.')
     const newResponsibles = [...responsibles]
-    newResponsibles.splice(responsibleToRemove, 1)
+    newResponsibles.splice(responsibleToRemoveIndex, 1)
 
     // @ts-ignore
     return handleUpdateOpportunity({ id: infoHolder._id, changes: { responsaveis: newResponsibles } })
@@ -86,7 +91,7 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
               </div>
               <div className="flex grow items-center justify-end gap-2">
                 <button
-                  onClick={() => handleResponsibleRemoval({ responsibles: infoHolder.responsaveis, responsibleToRemove: index })}
+                  onClick={() => handleResponsibleRemoval({ responsibles: infoHolder.responsaveis, responsibleToRemoveIndex: index })}
                   type="button"
                   className="flex items-center justify-center gap-2 rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
                 >
