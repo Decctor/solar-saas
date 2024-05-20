@@ -399,7 +399,7 @@ async function refreshToken({ collection, partnerId }: RefreshTokenParams) {
       console.log('NOVO ACESS_TOKEN', access_token)
       await collection.updateOne(
         { identificador: 'RD_STATION', idParceiro: partnerId },
-        { $set: { valor: access_token, dataAlteracao: new Date().toISOString() } }
+        { $set: { access_token: access_token, dataValidacaoToken: new Date().toISOString() } }
       )
       return access_token as string
     } else throw new createHttpError.InternalServerError('Erro ao buscar acess_token.')

@@ -1334,6 +1334,7 @@ export const TechnicalAnalysisPendencyCategories = [
   { id: 1, label: 'PENDÊNCIA COMERCIAL', value: 'PENDÊNCIA COMERCIAL' },
   { id: 2, label: 'PENDÊNCIA TERCEIROS', value: 'PENDÊNCIA TERCEIROS' }, // COTAÇÕES, ETC
   { id: 3, label: 'PENDÊNCIA CONCESSIONÁRIA', value: 'PENDÊNCIA CONCESSIONÁRIA' },
+  { id: 4, label: 'OUTROS', value: 'OUTROS' },
 ]
 export const EngineeringAnalysts = [
   {
