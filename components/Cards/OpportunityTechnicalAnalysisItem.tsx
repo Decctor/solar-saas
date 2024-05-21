@@ -29,8 +29,8 @@ function getTagColor(status: string) {
   if (status == 'REJEITADA') {
     return 'bg-red-500'
   }
-
-  return 'bg-blue-500'
+  if (status == 'PENDENTE') return 'bg-gray-500'
+  return 'bg-gray-500'
 }
 function getStatusColor(status: string) {
   if (status == 'CONCLUIDO') {
@@ -48,7 +48,9 @@ function getStatusColor(status: string) {
   if (status == 'REJEITADA') {
     return <h1 className="w-fit self-center rounded border border-red-500 p-1 text-center text-[0.6rem] font-black text-red-500">REJEITADA</h1>
   }
-  return <h1 className="w-fit self-center rounded border border-red-500 p-1 text-center text-[0.6rem] font-black text-red-500">REJEITADA</h1>
+  if (status == 'PENDENTE')
+    return <h1 className="border-bg-gray-500 text-bg-gray-500 w-fit self-center rounded border p-1 text-center text-[0.6rem] font-black">PENDENTE</h1>
+  return <h1 className="border-bg-gray-500 text-bg-gray-500 w-fit self-center rounded border p-1 text-center text-[0.6rem] font-black">PENDENTE</h1>
 }
 
 type OpportunityTechnicalAnalysisItemProps = {

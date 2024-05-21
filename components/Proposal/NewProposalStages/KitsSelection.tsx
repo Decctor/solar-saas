@@ -30,6 +30,7 @@ import { TPricingConditionData, TPricingVariableData, getPricingTotal, handlePri
 import { getModulesQty, useKitQueryPipelines } from '@/utils/methods'
 import { GeneralVisibleHiddenExitMotionVariants, orientations } from '@/utils/constants'
 import genFactors from '../../../utils/json-files/generationFactors.json'
+import CreateProposalKit from '@/components/Modals/Kit/CreateProposalKit'
 
 type QueryTypes = 'KITS POR PREMISSA' | 'TODOS OS KITS'
 
@@ -72,12 +73,14 @@ type KitsSelectionProps = {
   session: Session
 }
 function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, session }: KitsSelectionProps) {
+  const userHasKitEditPermission = session.user.permissoes.kits.editar
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
   const partnerQuery = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
 
-  const [queryType, setQueryType] = useState<QueryTypes>('TODOS OS KITS')
+  const [queryType, setQueryType] = useState<QueryTypes>('KITS POR PREMISSA')
   const [showFilters, setShowFilters] = useState(false)
+  const [createProposalKitModalIsOpen, setCreateProposalKitModalIsOpen] = useState<boolean>(false)
   // Getting peak power measures based on params
   const { max, min, ideal } = getIdealPowerInterval({
     consumption: infoHolder.premissas.consumoEnergiaMensal || 0,
@@ -353,6 +356,15 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
           <div className="flex w-full flex-col items-center justify-between lg:flex-row">
             <h1 className="font-bold leading-none tracking-tight">KITS DISPONÍVEIS ({kits ? kits.length : '...'})</h1>
             <div className="flex w-full flex-col items-center gap-2 lg:w-fit lg:flex-row">
+              {userHasKitEditPermission ? (
+                <button
+                  onClick={() => setCreateProposalKitModalIsOpen(true)}
+                  className={`w-full rounded border border-black bg-black px-2 py-1  font-medium text-white hover:bg-gray-800 lg:w-fit`}
+                >
+                  CRIAR KIT PARA PROPOSTA
+                </button>
+              ) : null}
+
               <button
                 onClick={() => setQueryType('KITS POR PREMISSA')}
                 className={`${
@@ -422,6 +434,16 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
           </div>
         </div>
       </div>
+      {createProposalKitModalIsOpen ? (
+        <CreateProposalKit
+          session={session}
+          opportunity={opportunity}
+          proposal={infoHolder}
+          setProposal={setInfoHolder}
+          closeModal={() => setCreateProposalKitModalIsOpen(false)}
+          goToNextStage={() => moveToNextStage()}
+        />
+      ) : null}
       <div className="flex w-full items-center justify-between gap-2 px-1">
         <button onClick={() => moveToPreviousStage()} className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105">
           Voltar

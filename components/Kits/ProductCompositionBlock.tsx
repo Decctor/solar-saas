@@ -7,7 +7,7 @@ import SelectInput from '../Inputs/SelectInput'
 import NumberInput from '../Inputs/NumberInput'
 import TextInput from '../Inputs/TextInput'
 
-import { TInverter, TKitDTO, TModule, TProductItem } from '@/utils/schemas/kits.schema'
+import { TInverter, TKit, TKitDTO, TModule, TProductItem } from '@/utils/schemas/kits.schema'
 import Inverters from '../../utils/json-files/pvinverters.json'
 import Modules from '../../utils/json-files/pvmodules.json'
 import { ProductItemCategories } from '@/utils/select-options'
@@ -16,8 +16,8 @@ import { useEquipments } from '@/utils/queries/utils'
 import SelectInputVirtualized from '../Inputs/SelectInputVirtualized'
 
 type ProductCompositionProps = {
-  infoHolder: TKitDTO | TNewKit
-  setInfoHolder: React.Dispatch<React.SetStateAction<TKitDTO | TNewKit>>
+  infoHolder: TKit
+  setInfoHolder: React.Dispatch<React.SetStateAction<TKit>>
 }
 function ProductComposition({ infoHolder, setInfoHolder }: ProductCompositionProps) {
   const { data: equipments, isLoading, isError, isSuccess } = useEquipments({ category: null })

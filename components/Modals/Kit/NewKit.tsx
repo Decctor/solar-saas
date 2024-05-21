@@ -26,7 +26,7 @@ type ModalNewKitProps = {
 function ModalNewKit({ session, closeModal }: ModalNewKitProps) {
   const queryClient = useQueryClient()
   const { data: pricingMethods } = usePricingMethods()
-  const [kitInfo, setKitInfo] = useState<TNewKit>({
+  const [kitInfo, setKitInfo] = useState<TKit>({
     nome: '',
     idParceiro: session.user.idParceiro || '',
     idMetodologiaPrecificacao: '660dab0b0fcb72da4ed8c35e',

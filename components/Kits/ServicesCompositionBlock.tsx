@@ -2,7 +2,7 @@ import React, { useState } from 'react'
 
 import TextInput from '../Inputs/TextInput'
 import NumberInput from '../Inputs/NumberInput'
-import { TKitDTO, TServiceItem } from '@/utils/schemas/kits.schema'
+import { TKit, TKitDTO, TServiceItem } from '@/utils/schemas/kits.schema'
 import toast from 'react-hot-toast'
 
 import { TNewKit } from '../Modals/Kit/NewKit'
@@ -10,8 +10,8 @@ import { MdDelete, MdOutlineMiscellaneousServices } from 'react-icons/md'
 import { AiOutlineSafety } from 'react-icons/ai'
 
 type ServicesCompositionBlockProps = {
-  infoHolder: TKitDTO | TNewKit
-  setInfoHolder: React.Dispatch<React.SetStateAction<TKitDTO | TNewKit>>
+  infoHolder: TKit
+  setInfoHolder: React.Dispatch<React.SetStateAction<TKit>>
 }
 function ServicesCompositionBlock({ infoHolder, setInfoHolder }: ServicesCompositionBlockProps) {
   const [serviceHolder, setServiceHolder] = useState<TServiceItem>({

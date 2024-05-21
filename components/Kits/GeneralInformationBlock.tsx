@@ -1,4 +1,4 @@
-import { TKitDTO } from '@/utils/schemas/kits.schema'
+import { TKit, TKitDTO } from '@/utils/schemas/kits.schema'
 import React from 'react'
 import CheckboxInput from '../Inputs/CheckboxInput'
 import TextInput from '../Inputs/TextInput'
@@ -15,8 +15,8 @@ import { usePartnersSimplified } from '@/utils/queries/partners'
 import SelectWithImages from '../Inputs/SelectWithImages'
 
 type GeneralInformationBlockProps = {
-  infoHolder: TKitDTO | TNewKit
-  setInfoHolder: React.Dispatch<React.SetStateAction<TKitDTO | TNewKit>>
+  infoHolder: TKit
+  setInfoHolder: React.Dispatch<React.SetStateAction<TKit>>
   pricingMethods: TPricingMethodDTO[]
 }
 function GeneralInformationBlock({ infoHolder, setInfoHolder, pricingMethods }: GeneralInformationBlockProps) {

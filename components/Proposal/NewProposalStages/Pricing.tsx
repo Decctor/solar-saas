@@ -36,7 +36,6 @@ function Pricing({ opportunity, infoHolder, setInfoHolder, moveToNextStage, move
     // Moving to next stage
     moveToNextStage()
   }
-  console.log(pricing)
   return (
     <>
       <div className="flex w-full flex-col gap-4 py-4">
