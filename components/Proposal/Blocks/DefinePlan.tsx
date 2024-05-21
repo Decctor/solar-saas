@@ -91,53 +91,50 @@ function DefinePlan({ proposalPlan, proposal, opportunity, userHasPricingEditPer
   }, [plan])
   console.log('PLANO', plan)
   console.log('PRICING', pricing)
+
   return (
     <div id="edit-final-price" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
-      <div className="fixed left-[50%] top-[50%] z-[100] h-fit max-h-[90%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px]  lg:w-[80%]">
-        <div className="flex h-full flex-col">
-          <div className="flex flex-wrap items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg">
-            <h3 className="text-xl font-bold text-[#353432] dark:text-white ">DEFINIÇÃO DE PLANO</h3>
-            <button
-              onClick={() => closeModal()}
-              type="button"
-              className="flex items-center justify-center rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
-            >
-              <VscChromeClose style={{ color: 'red' }} />
-            </button>
-          </div>
-          <div className="flex grow flex-col gap-y-2 overflow-y-auto overscroll-y-auto py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
-            <p className="w-full text-center text-sm tracking-tight text-gray-500">
-              A ação de escolha do plano é <strong className="text-orange-500">irreversível.</strong>{' '}
-            </p>
-            <p className="w-full text-center text-sm tracking-tight text-gray-500">
-              Ao escolher um plano, sua proposta perderá as opções dos demais planos selecionados.
-            </p>
-            <p className="w-full text-center text-sm tracking-tight text-gray-500">
-              Escolha somente quando houver certeza do plano de assinatura a ser vendido.
-            </p>
-            {userHasPricingViewPermission ? (
-              <PricingTable
-                opportunity={opportunity}
-                proposal={proposal}
-                pricing={pricing}
-                setPricing={setPricing}
-                userHasPricingEditPermission={userHasPricingEditPermission}
-                userHasPricingViewPermission={userHasPricingViewPermission}
-              />
-            ) : null}
-          </div>
-          <div className="flex w-full items-center justify-end p-2">
-            <button
-              onClick={() => {
-                // @ts-ignore
-                handleDefineProposalPlan({ newPricing: pricing })
-              }}
-              disabled={isPending}
-              className="h-9 whitespace-nowrap rounded bg-blue-800 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-blue-800 enabled:hover:text-white"
-            >
-              ESCOLHER PLANO
-            </button>
-          </div>
+      <div className="fixed left-[50%] top-[50%] z-[100] flex h-fit max-h-[90%] w-[90%] translate-x-[-50%] translate-y-[-50%] flex-col rounded-md bg-[#fff] p-[10px] lg:w-[80%]">
+        <div className="flex flex-wrap items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg">
+          <h3 className="text-xl font-bold text-[#353432] dark:text-white ">DEFINIÇÃO DE PLANO</h3>
+          <button
+            onClick={() => closeModal()}
+            type="button"
+            className="flex items-center justify-center rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
+          >
+            <VscChromeClose style={{ color: 'red' }} />
+          </button>
+        </div>
+        <div className="flex grow flex-col gap-y-2 overflow-y-auto overscroll-y-auto py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
+          <p className="w-full text-center text-sm tracking-tight text-gray-500">Escolha somente quando houver certeza do plano de assinatura a ser vendido.</p>
+          <p className="w-full text-center text-sm tracking-tight text-gray-500">
+            A ação de escolha do plano é <strong className="text-orange-500">irreversível.</strong>{' '}
+          </p>
+          <p className="w-full text-center text-sm tracking-tight text-gray-500">
+            Ao escolher um plano, sua proposta perderá as opções dos demais planos selecionados.
+          </p>
+          {userHasPricingViewPermission ? (
+            <PricingTable
+              opportunity={opportunity}
+              proposal={proposal}
+              pricing={pricing}
+              setPricing={setPricing}
+              userHasPricingEditPermission={userHasPricingEditPermission}
+              userHasPricingViewPermission={userHasPricingViewPermission}
+            />
+          ) : null}
+        </div>
+        <div className="flex w-full items-center justify-end p-2">
+          <button
+            onClick={() => {
+              // @ts-ignore
+              handleDefineProposalPlan({ newPricing: pricing })
+            }}
+            disabled={isPending}
+            className="h-9 whitespace-nowrap rounded bg-blue-800 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-blue-800 enabled:hover:text-white"
+          >
+            ESCOLHER PLANO
+          </button>
         </div>
       </div>
     </div>
