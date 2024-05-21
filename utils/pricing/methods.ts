@@ -142,6 +142,7 @@ export function handlePricingCalculation({ methodology, kit, variableData, condi
         // Evaluating the formula as a string now
         const evaluatedCostValue = eval(populatedFormula)
         // Creating and returning the pricing item
+
         const pricingItem: TPricingItem = {
           descricao: costName,
           custoCalculado: evaluatedCostValue,
@@ -222,6 +223,7 @@ export function handlePartialPricingReCalculation({
         // Now, getting the pricing item based on the specified result
         const faturable = item.faturavel
         const profitMargin = item.margemLucro
+
         // Using the formulaArr and the variableData to populate the result's formula
         const formulaArr = item.formulaArr
         if (!formulaArr) return item
@@ -254,6 +256,7 @@ export function handlePartialPricingReCalculation({
           }
           return pricingItem
         }
+
         // If it is necessary to maintain the final values, calculating the new margin and returning the new pricing item
         const newProfitMargin = getProfitMargin(evaluatedCostValue, item.valorFinal)
         const pricingItem: TPricingItem = {
@@ -263,7 +266,7 @@ export function handlePartialPricingReCalculation({
           faturavel: faturable,
           formulaArr: formulaArr,
           margemLucro: newProfitMargin * 100,
-          valorCalculado: getCalculatedFinalValue({ value: evaluatedCostValue, margin: profitMargin / 100 }),
+          valorCalculado: getCalculatedFinalValue({ value: evaluatedCostValue, margin: newProfitMargin }),
           valorFinal: item.valorFinal,
         }
         return pricingItem

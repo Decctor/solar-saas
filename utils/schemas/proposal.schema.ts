@@ -52,7 +52,7 @@ const PricingItemSchema = z.object({
   }),
   valorCalculado: z.number({
     required_error: 'Valor calculado da unidade de preço não informado.',
-    invalid_type_error: 'Tipo não válido para a taxa de imposto da unidade de preço.',
+    invalid_type_error: 'Tipo não válido para o valor calculado da unidade de preço.',
   }),
   valorFinal: z.number({
     required_error: 'Valor final da unidade de preço não informado.',
