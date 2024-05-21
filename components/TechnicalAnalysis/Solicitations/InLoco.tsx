@@ -17,16 +17,21 @@ import Modules from '@/utils/json-files/pvmodules.json'
 import NumberInput from '@/components/Inputs/NumberInput'
 import { ProductItemCategories } from '@/utils/select-options'
 import KitsSelectionMenu from '../KitsSelectionMenu'
+import { Session } from 'next-auth'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import UseActiveProposalProducts from '../UseActiveProposalProducts'
 
 type InlocoProps = {
+  session: Session
   infoHolder: TTechnicalAnalysis
   setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   resetSolicitationType: () => void
   files: TFileHolder
   setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
+  activeProposalId: TOpportunity['idPropostaAtiva']
   handleRequestAnalysis: ({ info, files }: { info: TTechnicalAnalysis; files: TFileHolder }) => void
 }
-function Inloco({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationType, handleRequestAnalysis }: InlocoProps) {
+function Inloco({ session, infoHolder, setInfoHolder, files, setFiles, activeProposalId, resetSolicitationType, handleRequestAnalysis }: InlocoProps) {
   const queryClient = useQueryClient()
   const [showKits, setShowKits] = useState<boolean>(false)
   const [selectedKitId, setSelectedKitId] = useState<string | null>(null)
@@ -526,6 +531,12 @@ function Inloco({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationT
           </button>
         </div>
       </div>
+      {activeProposalId ? (
+        <UseActiveProposalProducts
+          activeProposalId={activeProposalId}
+          getProducts={(products) => setInfoHolder((prev) => ({ ...prev, equipamentos: products }))}
+        />
+      ) : null}
       <p className="w-full text-center text-sm leading-none tracking-tight text-gray-500">
         Deseja utilizar os equipamentos de um kit específico ? Abra o menu e <strong className="text-cyan-500">Escolha uma das opções de kit.</strong>
       </p>
@@ -540,8 +551,10 @@ function Inloco({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationT
           </button>
         )}
       </div>
+
       {showKits ? (
         <KitsSelectionMenu
+          session={session}
           selectedKitId={selectedKitId}
           handleSelect={(kit) => {
             addEquipmentFromKit(kit)

@@ -9,6 +9,7 @@ import FilterMenu from '../Kits/FilterMenu'
 import { AnimatePresence, motion } from 'framer-motion'
 import { GeneralVisibleHiddenExitMotionVariants } from '@/utils/constants'
 import { Session } from 'next-auth'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 
 type KitsSelectionMenuProps = {
   selectedKitId: string | null

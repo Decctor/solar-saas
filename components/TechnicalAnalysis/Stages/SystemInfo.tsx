@@ -19,13 +19,19 @@ import { MdDelete } from 'react-icons/md'
 import KitsSelectionMenu from '../KitsSelectionMenu'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import PreviousEquipmentMenu from '../PreviousEquipmentMenu'
+import { Session } from 'next-auth'
+import { TProposal } from '@/utils/schemas/proposal.schema'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import UseActiveProposalProducts from '../UseActiveProposalProducts'
 type SystemInfoProps = {
   infoHolder: TTechnicalAnalysis
   setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   goToNextStage: () => void
   goToPreviousStage: () => void
+  activeProposalId: TOpportunity['idPropostaAtiva']
+  session: Session
 }
-function SystemInfo({ infoHolder, setInfoHolder, goToNextStage, goToPreviousStage }: SystemInfoProps) {
+function SystemInfo({ infoHolder, setInfoHolder, goToNextStage, goToPreviousStage, activeProposalId, session }: SystemInfoProps) {
   const [showKits, setShowKits] = useState<boolean>(false)
   const [selectedKitId, setSelectedKitId] = useState<string | null>(null)
   const [isAmpliation, setIsAmpliation] = useState<boolean>(false)
@@ -402,6 +408,12 @@ function SystemInfo({ infoHolder, setInfoHolder, goToNextStage, goToPreviousStag
             </button>
           </div>
         </div>
+        {activeProposalId ? (
+          <UseActiveProposalProducts
+            activeProposalId={activeProposalId}
+            getProducts={(products) => setInfoHolder((prev) => ({ ...prev, equipamentos: products }))}
+          />
+        ) : null}
         <p className="w-full text-center text-sm leading-none tracking-tight text-gray-500">
           Deseja utilizar os equipamentos de um kit específico ? Abra o menu e <strong className="text-cyan-500">Escolha uma das opções de kit.</strong>
         </p>
@@ -418,6 +430,7 @@ function SystemInfo({ infoHolder, setInfoHolder, goToNextStage, goToPreviousStag
         </div>
         {showKits ? (
           <KitsSelectionMenu
+            session={session}
             selectedKitId={selectedKitId}
             handleSelect={(kit) => {
               addEquipmentFromKit(kit)

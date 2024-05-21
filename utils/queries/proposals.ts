@@ -21,7 +21,7 @@ export function useOpportunityProposals({ opportunityId }: { opportunityId?: str
   })
 }
 
-async function fetchProposalById(id?: string) {
+export async function fetchProposalById(id?: string) {
   try {
     const { data } = await axios.get(`/api/proposals?id=${id}`)
     return data.data as TProposalDTOWithOpportunityAndClient

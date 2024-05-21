@@ -18,17 +18,22 @@ import { ImPower } from 'react-icons/im'
 import { BsCheckCircleFill } from 'react-icons/bs'
 import KitsSelectionMenu from '../KitsSelectionMenu'
 import DocumentFileInput from '@/components/Inputs/DocumentFileInput'
+import { Session } from 'next-auth'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import UseActiveProposalProducts from '../UseActiveProposalProducts'
 
 type DrawingProps = {
+  session: Session
   infoHolder: TTechnicalAnalysis
   setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   resetSolicitationType: () => void
   files: TFileHolder
   setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
+  activeProposalId: TOpportunity['idPropostaAtiva']
   handleRequestAnalysis: ({ info, files }: { info: TTechnicalAnalysis; files: TFileHolder }) => void
 }
 
-function Drawing({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationType, handleRequestAnalysis }: DrawingProps) {
+function Drawing({ session, infoHolder, setInfoHolder, files, setFiles, activeProposalId, resetSolicitationType, handleRequestAnalysis }: DrawingProps) {
   const [showKits, setShowKits] = useState<boolean>(false)
   const [selectedKitId, setSelectedKitId] = useState<string | null>(null)
   const [inverterHolder, setInverterHolder] = useState<TInverter>({
@@ -527,6 +532,12 @@ function Drawing({ infoHolder, setInfoHolder, files, setFiles, resetSolicitation
           </button>
         </div>
       </div>
+      {activeProposalId ? (
+        <UseActiveProposalProducts
+          activeProposalId={activeProposalId}
+          getProducts={(products) => setInfoHolder((prev) => ({ ...prev, equipamentos: products }))}
+        />
+      ) : null}
       <p className="w-full text-center text-sm leading-none tracking-tight text-gray-500">
         Deseja utilizar os equipamentos de um kit específico ? Abra o menu e <strong className="text-cyan-500">Escolha uma das opções de kit.</strong>
       </p>
@@ -543,6 +554,7 @@ function Drawing({ infoHolder, setInfoHolder, files, setFiles, resetSolicitation
       </div>
       {showKits ? (
         <KitsSelectionMenu
+          session={session}
           selectedKitId={selectedKitId}
           handleSelect={(kit) => {
             addEquipmentFromKit(kit)

@@ -9,16 +9,29 @@ import ReviewInfo from '../Stages/ReviewInfo'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 import { TFileHolder } from '@/utils/schemas/file-reference.schema'
 import AdditionalServicesInfo from '../Stages/AdditionalServicesInfo'
+import { Session } from 'next-auth'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 type RemoteRuralProps = {
+  session: Session
   infoHolder: TTechnicalAnalysis
   setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   resetSolicitationType: () => void
   files: TFileHolder
   setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
+  activeProposalId: TOpportunity['idPropostaAtiva']
   handleRequestAnalysis: ({ info, files }: { info: TTechnicalAnalysis; files: TFileHolder }) => void
 }
 
-function RemoteRural({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationType, handleRequestAnalysis }: RemoteRuralProps) {
+function RemoteRural({
+  session,
+  infoHolder,
+  setInfoHolder,
+  files,
+  setFiles,
+  activeProposalId,
+  resetSolicitationType,
+  handleRequestAnalysis,
+}: RemoteRuralProps) {
   const [stage, setStage] = useState(1)
 
   return (
@@ -35,6 +48,8 @@ function RemoteRural({ infoHolder, setInfoHolder, files, setFiles, resetSolicita
       ) : null}
       {stage == 2 ? (
         <SystemInfo
+          session={session}
+          activeProposalId={activeProposalId}
           infoHolder={infoHolder}
           setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}

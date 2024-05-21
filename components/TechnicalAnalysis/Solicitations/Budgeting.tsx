@@ -31,17 +31,22 @@ import KitsSelectionMenu from '../KitsSelectionMenu'
 import { MdDelete } from 'react-icons/md'
 import { renderCategoryIcon } from '@/lib/methods/rendering'
 import DocumentFileInput from '@/components/Inputs/DocumentFileInput'
+import { Session } from 'next-auth'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import UseActiveProposalProducts from '../UseActiveProposalProducts'
 
 type BudgetingProps = {
+  session: Session
   infoHolder: TTechnicalAnalysis
   setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   resetSolicitationType: () => void
   files: TFileHolder
   setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
+  activeProposalId: TOpportunity['idPropostaAtiva']
   handleRequestAnalysis: ({ info, files }: { info: TTechnicalAnalysis; files: TFileHolder }) => void
 }
 
-function Budgeting({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationType, handleRequestAnalysis }: BudgetingProps) {
+function Budgeting({ session, infoHolder, setInfoHolder, files, setFiles, activeProposalId, resetSolicitationType, handleRequestAnalysis }: BudgetingProps) {
   const [costHolder, setCostHolder] = useState<TTechnicalAnalysis['custos'][number]>({
     categoria: null,
     descricao: '',
@@ -584,6 +589,12 @@ function Budgeting({ infoHolder, setInfoHolder, files, setFiles, resetSolicitati
           </button>
         </div>
       </div>
+      {activeProposalId ? (
+        <UseActiveProposalProducts
+          activeProposalId={activeProposalId}
+          getProducts={(products) => setInfoHolder((prev) => ({ ...prev, equipamentos: products }))}
+        />
+      ) : null}
       <p className="w-full text-center text-sm leading-none tracking-tight text-gray-500">
         Deseja utilizar os equipamentos de um kit específico ? Abra o menu e <strong className="text-cyan-500">Escolha uma das opções de kit.</strong>
       </p>
@@ -600,6 +611,7 @@ function Budgeting({ infoHolder, setInfoHolder, files, setFiles, resetSolicitati
       </div>
       {showKits ? (
         <KitsSelectionMenu
+          session={session}
           selectedKitId={selectedKitId}
           handleSelect={(kit) => {
             addEquipmentFromKit(kit)

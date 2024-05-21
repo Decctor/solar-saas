@@ -8,16 +8,29 @@ import InstallationInfo from '../Stages/InstallationInfo'
 import ReviewInfo from '../Stages/ReviewInfo'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 import { TFileHolder } from '@/utils/schemas/file-reference.schema'
+import { Session } from 'next-auth'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 
 type RemoteUrbanProps = {
+  session: Session
   infoHolder: TTechnicalAnalysis
   setInfoHolder: React.Dispatch<React.SetStateAction<TTechnicalAnalysis>>
   resetSolicitationType: () => void
   files: TFileHolder
   setFiles: React.Dispatch<React.SetStateAction<TFileHolder>>
+  activeProposalId: TOpportunity['idPropostaAtiva']
   handleRequestAnalysis: ({ info, files }: { info: TTechnicalAnalysis; files: TFileHolder }) => void
 }
-function RemoteUrban({ infoHolder, setInfoHolder, files, setFiles, resetSolicitationType, handleRequestAnalysis }: RemoteUrbanProps) {
+function RemoteUrban({
+  session,
+  infoHolder,
+  setInfoHolder,
+  files,
+  setFiles,
+  activeProposalId,
+  resetSolicitationType,
+  handleRequestAnalysis,
+}: RemoteUrbanProps) {
   const [stage, setStage] = useState(1)
 
   return (
@@ -38,6 +51,8 @@ function RemoteUrban({ infoHolder, setInfoHolder, files, setFiles, resetSolicita
           setInfoHolder={setInfoHolder}
           goToNextStage={() => setStage((prev) => prev + 1)}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
+          session={session}
+          activeProposalId={activeProposalId}
         />
       ) : null}
       {stage == 3 ? (

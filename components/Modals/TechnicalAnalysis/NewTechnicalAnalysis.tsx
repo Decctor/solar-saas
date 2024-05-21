@@ -224,7 +224,7 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
     queryClient: queryClient,
     affectedQueryKey: ['opportunity-technical-analysis', opportunity._id],
   })
-  console.log(infoHolder)
+
   return (
     <div id="new-technical-analysis" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="relative left-[50%] top-[50%] z-[100] h-[80%] max-h-[80%] w-[90%] translate-x-[-50%] translate-y-[-50%] overflow-hidden rounded-md bg-[#fff] p-[10px] lg:w-[80%]">
@@ -262,6 +262,8 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
                 ) : null}
                 {infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA REMOTA URBANA' || infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA REMOTA' ? (
                   <RemoteUrban
+                    session={session}
+                    activeProposalId={opportunity.idPropostaAtiva}
                     infoHolder={infoHolder}
                     setInfoHolder={setInfoHolder}
                     resetSolicitationType={() =>
@@ -278,6 +280,8 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
                 ) : null}
                 {infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA REMOTA RURAL' ? (
                   <RemoteRural
+                    session={session}
+                    activeProposalId={opportunity.idPropostaAtiva}
                     infoHolder={infoHolder}
                     setInfoHolder={setInfoHolder}
                     resetSolicitationType={() =>
@@ -295,6 +299,7 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
                 {infoHolder.tipoSolicitacao == 'ANÁLISE TÉCNICA IN LOCO' ? (
                   <Inloco
                     infoHolder={infoHolder}
+                    activeProposalId={opportunity.idPropostaAtiva}
                     setInfoHolder={setInfoHolder}
                     resetSolicitationType={() =>
                       setInfoHolder((prev) => ({
@@ -310,6 +315,7 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
                 ) : null}
                 {infoHolder.tipoSolicitacao == 'DESENHO PERSONALIZADO' ? (
                   <Drawing
+                    activeProposalId={opportunity.idPropostaAtiva}
                     infoHolder={infoHolder}
                     setInfoHolder={setInfoHolder}
                     resetSolicitationType={() =>
@@ -326,6 +332,7 @@ function NewTechnicalAnalysis({ session, opportunity, closeModal }: NewTechnical
                 ) : null}
                 {infoHolder.tipoSolicitacao == 'ORÇAMENTAÇÃO' ? (
                   <Budgeting
+                    activeProposalId={opportunity.idPropostaAtiva}
                     infoHolder={infoHolder}
                     setInfoHolder={setInfoHolder}
                     resetSolicitationType={() =>
