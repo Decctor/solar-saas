@@ -1,4 +1,4 @@
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication } from '@/utils/api'
 import { IKit } from '@/utils/models'
 import { NextApiHandler } from 'next'

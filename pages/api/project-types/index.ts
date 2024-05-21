@@ -1,6 +1,6 @@
 import { insertProjectType, updateProjectType } from '@/repositories/project-type/mutations'
 import { getProjectTypeById, getProjectTypes } from '@/repositories/project-type/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { TProduct } from '@/utils/schemas/products.schema'
 import { InsertProjectTypeSchema, TProjectType } from '@/utils/schemas/project-types.schema'

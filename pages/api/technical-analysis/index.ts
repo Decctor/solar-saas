@@ -1,6 +1,6 @@
 import { insertTechnicalAnalysis, updateTechnicalAnalysis } from '@/repositories/technical-analysis/mutations'
 import { getTechnicalAnalysis, getTechnicalAnalysisById, getTechnicalAnalysisByOpportunityId } from '@/repositories/technical-analysis/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { GeneralTechnicalAnalysisSchema, TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 import createHttpError from 'http-errors'

@@ -1,5 +1,5 @@
 import { getProductsWithPricingMethod } from '@/repositories/products/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { TProduct, TProductDTOWithPricingMethod, TProductWithPricingMethod } from '@/utils/schemas/products.schema'
 import { Collection, Filter } from 'mongodb'

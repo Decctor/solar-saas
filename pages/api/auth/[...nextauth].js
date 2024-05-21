@@ -2,7 +2,7 @@ import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
 import bcrypt from 'bcrypt'
 import createHttpError from 'http-errors'
-import connectToDatabase from '../../../services/mongodb/main-db-connection'
+import connectToDatabase from '../../../services/mongodb/crm-db-connection'
 import { ObjectId } from 'mongodb'
 // Hash para senha padrão 123456789: $2b$10$zh5TZpnAZ9APevFJaYFIf.1DgkIuLfWlKrbXfS0Gdy0XxDSlSb74K
 

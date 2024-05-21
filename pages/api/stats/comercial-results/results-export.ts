@@ -9,7 +9,7 @@ import { formatDateAsLocale } from '@/lib/methods/formatting'
 import createHttpError from 'http-errors'
 
 import { TUser } from '@/utils/schemas/user.schema'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { z } from 'zod'

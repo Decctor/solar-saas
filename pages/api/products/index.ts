@@ -1,6 +1,6 @@
 import { insertProduct, updateProduct } from '@/repositories/products/mutations'
 import { getProductById, getProducts } from '@/repositories/products/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertProductSchema, TProduct } from '@/utils/schemas/products.schema'
 import createHttpError from 'http-errors'

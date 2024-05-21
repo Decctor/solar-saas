@@ -1,6 +1,6 @@
 import { insertSignaturePlan, updateSignaturePlan } from '@/repositories/signature-plans/mutations'
 import { getSignaturePlanById, getSignaturePlans } from '@/repositories/signature-plans/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertSignaturePlanSchema, TSignaturePlan, TSignaturePlanDTO } from '@/utils/schemas/signature-plans.schema'
 import createHttpError from 'http-errors'

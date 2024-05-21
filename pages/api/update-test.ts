@@ -1,8 +1,9 @@
 import { NextApiHandler } from 'next'
 import { apiHandler } from '@/utils/api'
 
-import connectToDatabase from '@/services/mongodb/main-db-connection'
-
+import connectToCRMDatabase from '@/services/mongodb/crm-db-connection'
+import connectToProjectsDatabase from '@/services/mongodb/projects-db-connection'
+import connectToRequestsDatabase from '@/services/mongodb/ampere/resquests-db-connection'
 import AmpereProjects from '@/ampere-migration/main.projects.json'
 import AmpereProposes from '@/ampere-migration/main.proposes.json'
 import { TClient } from '@/utils/schemas/client.schema'
@@ -16,6 +17,7 @@ import { TMonitoringPropose } from '@/ampere-migration/proposes-schemas/monitori
 import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import { TProductItem } from '@/utils/schemas/kits.schema'
 import { TUser } from '@/utils/schemas/user.schema'
+import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 type PostResponse = any
 
 const typeEquivalents = {
@@ -52,26 +54,48 @@ const typeEquivalents = {
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   const { id } = req.query
 
-  const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
-  const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
-  // const proposalsCollection: Collection<TProposal> = db.collection('proposals')
-  const opportunities = await opportunitiesCollection.find({ 'tipo.titulo': 'OPERAÇÃO E MANUTENÇÃO' }, { projection: { tipo: 1 } }).toArray()
-  const bulkWriteArr = opportunities.map((opportunity) => {
-    return {
-      updateOne: {
-        filter: { _id: new ObjectId(opportunity._id) },
-        update: {
-          $set: {
-            tipo: {
-              id: '661ec7e5e03128a48f94b4de',
-              titulo: 'OPERAÇÃO E MANUTENÇÃO',
-            },
-          },
-        },
-      },
-    }
-  })
-  const bulkwriteResponse = await opportunitiesCollection.bulkWrite(bulkWriteArr)
+  // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'main')
+  // const requestsDb = await connectToRequestsDatabase(process.env.MONGODB_URI)
+
+  // const crmTechnicalAnalysisCollection: Collection<TTechnicalAnalysis> = crmDb.collection('technical-analysis')
+  // const requestsTechnicalAnalysisCollection = requestsDb.collection('analisesTecnicas')
+
+  // // const proposalsCollection: Collection<TProposal> = db.collection('proposals')
+  // const crmAnalysis = await crmTechnicalAnalysisCollection.find({}).toArray()
+  // const requestsAnalysis = await requestsTechnicalAnalysisCollection.find({}).toArray()
+
+  // const bulkWriteArr = crmAnalysis.map((analysis) => {
+  //   const requestEquivalent = requestsAnalysis.find((a) => a._id.toString() == analysis._id.toString())
+  //   console.log(requestEquivalent?.nome, requestEquivalent?.dataEfetivacao)
+  //   const finishDate = analysis.dataEfetivacao ? analysis.dataEfetivacao : requestEquivalent?.dataEfetivacao || null
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(analysis._id) },
+  //       update: {
+  //         $set: {
+  //           dataEfetivacao: finishDate,
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
+  // const bulkwriteResponse = await crmTechnicalAnalysisCollection.bulkWrite(bulkWriteArr)
+  // const bulkWriteArr = opportunities.map((opportunity) => {
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(opportunity._id) },
+  //       update: {
+  //         $set: {
+  //           tipo: {
+  //             id: '661ec7e5e03128a48f94b4de',
+  //             titulo: 'OPERAÇÃO E MANUTENÇÃO',
+  //           },
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
+  // const bulkwriteResponse = await opportunitiesCollection.bulkWrite(bulkWriteArr)
   // const usersCollection: Collection<TUser> = db.collection('users')
 
   // const opportunities = await opportunitiesCollection.find({}, { projection: { idCliente: 1 } }).toArray()
@@ -108,7 +132,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //   }
   // })
   // const bulkwriteResponse = await usersCollection.bulkWrite(bulkwriteArr)
-  return res.json(bulkwriteResponse)
+  return res.json('DESATIVADA')
 }
 export default apiHandler({
   GET: migrate,

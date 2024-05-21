@@ -1,4 +1,4 @@
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler } from '@/utils/api'
 
 import { stateCities } from '@/utils/estados_cidades'

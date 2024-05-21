@@ -1,5 +1,5 @@
 import { getSignaturePlansWithPricingMethod } from '@/repositories/signature-plans/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { TSignaturePlan, TSignaturePlanDTOWithPricingMethod, TSignaturePlanWithPricingMethod } from '@/utils/schemas/signature-plans.schema'
 import { Collection, Filter } from 'mongodb'

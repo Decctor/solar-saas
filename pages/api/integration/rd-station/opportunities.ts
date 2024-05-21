@@ -1,6 +1,6 @@
 import { insertFunnelReference } from '@/repositories/funnel-references/mutations'
 import { getLeadReceivers } from '@/repositories/users/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { ErrorResponse, apiHandler, errorHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { stateCities } from '@/utils/estados_cidades'
 import { calculateStringSimilarity, formatToPhone } from '@/utils/methods'

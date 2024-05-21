@@ -1,6 +1,6 @@
 import { insertPricingMethod } from '@/repositories/pricing-methods/mutations'
 import { getPartnerPricingMethodById, getPartnerPricingMethods } from '@/repositories/pricing-methods/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 import { InsertPricingMethodSchema, TPricingMethod } from '@/utils/schemas/pricing-method.schema'
 import createHttpError from 'http-errors'

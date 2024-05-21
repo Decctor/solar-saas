@@ -1,6 +1,6 @@
 import { insertProposal, updateProposal } from '@/repositories/proposals/mutations'
 import { getOpportunityProposals, getProposalById } from '@/repositories/proposals/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthorization } from '@/utils/api'
 import { InsertProposalSchema, TProposal, TProposalDTOWithOpportunity, TProposalEntity } from '@/utils/schemas/proposal.schema'
 import createHttpError from 'http-errors'

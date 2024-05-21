@@ -1,6 +1,6 @@
 import { insertKit, updateKit } from '@/repositories/kits/mutations'
 import { getKitById, getPartnerActiveKits, getPartnerKits } from '@/repositories/kits/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthorization } from '@/utils/api'
 import { IKit } from '@/utils/models'
 import { InsertNewKitSchema, TKit } from '@/utils/schemas/kits.schema'

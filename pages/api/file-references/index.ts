@@ -5,7 +5,7 @@ import {
   getFileReferencesByHomologationId,
   getFileReferencesByOpportunityId,
 } from '@/repositories/file-references/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { InsertFileReferenceSchema, TFileReference, TFileReferenceEntity } from '@/utils/schemas/file-reference.schema'
 import createHttpError from 'http-errors'

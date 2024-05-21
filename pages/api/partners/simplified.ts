@@ -1,5 +1,5 @@
 import { getPartnerOwnInformation, getPartnersSimplified } from '@/repositories/partner-simplified/query'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { TPartner, TPartnerSimplified } from '@/utils/schemas/partner.schema'
 import createHttpError from 'http-errors'

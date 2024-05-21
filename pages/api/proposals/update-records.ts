@@ -1,6 +1,6 @@
 import { insertProposalUpdateRecord } from '@/repositories/proposal-update-records/mutations'
 import { getProposalUpdateRecordsByProposeId } from '@/repositories/proposal-update-records/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertProposalUpdateRecordSchema, TProposalUpdateRecord } from '@/utils/schemas/proposal-update-records.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'

@@ -1,5 +1,5 @@
 import { getPartnerFunnels } from '@/repositories/funnels/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 
 import { Funnel } from '@/utils/models'

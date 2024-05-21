@@ -1,4 +1,4 @@
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 import { ISession } from '@/utils/models'
 import { TActivity, TActivityDTO } from '@/utils/schemas/activities.schema'

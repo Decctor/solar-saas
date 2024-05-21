@@ -1,4 +1,4 @@
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler } from '@/utils/api'
 import { InsertUserSchema, TUser } from '@/utils/schemas/user.schema'
 import { hashSync } from 'bcrypt'

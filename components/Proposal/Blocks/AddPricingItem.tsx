@@ -42,7 +42,7 @@ function AddPricingItem({ pricing, setPricing, proposal, closeModal }: AddPricin
   }
   function addNewPriceItem(item: TPricingItem) {
     const pricingItems = [...pricing]
-    pricingItems.push(item)
+    pricingItems.push({ ...item, descricao: item.descricao.toUpperCase() })
     const moduleQty = getModulesQty(proposal.produtos)
     const inverterQty = getInverterQty(proposal.produtos)
     const kitPrice = proposal.kits.reduce((acc, current) => acc + (current.preco || 0), 0)

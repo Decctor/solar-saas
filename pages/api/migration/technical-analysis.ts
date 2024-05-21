@@ -1,5 +1,5 @@
 import connectToAmpereDatabase from '@/services/mongodb/ampere/resquests-db-connection'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler } from '@/utils/api'
 import { calculateStringSimilarity } from '@/utils/methods'
 import { TFileReference } from '@/utils/schemas/file-reference.schema'

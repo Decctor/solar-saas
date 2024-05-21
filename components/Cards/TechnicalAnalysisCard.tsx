@@ -110,22 +110,24 @@ function TechnicalAnalysisCard({ analysis, handleClick, userHasEditPermission }:
             <p className="text-xs font-semibold leading-none tracking-tight text-gray-500">{analysis.oportunidade.nome || 'NÃO DEFINIDO'}</p>
           </div> */}
         </div>
-        <div className="flex w-full items-center justify-between">
-          <div className={`flex items-center gap-2`}>
-            <div className="ites-center flex gap-1">
-              <BsCalendarPlus />
-              <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(analysis.dataInsercao, true)}</p>
-            </div>
+        <div className="flex w-full justify-between">
+          <div className="flex items-center gap-1">
             {analysis.dataEfetivacao ? (
-              <div className="ites-center flex gap-1">
+              <>
                 <BsCalendarCheck color="rgb(34,197,94)" />
-                <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(analysis.dataEfetivacao)}</p>
-              </div>
+                <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
+              </>
             ) : null}
           </div>
-          <div className="flex items-center justify-center gap-1">
-            <Avatar fallback={'U'} height={20} width={20} url={analysis.analista?.avatar_url || undefined} />
-            <p className="text-xs font-medium text-gray-500">{analysis.analista?.apelido || 'ANALISTA A DEFINIR'}</p>
+          <div className="flex items-center gap-2">
+            <div className={`flex items-center gap-1`}>
+              <BsCalendarPlus />
+              <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataInsercao, true)}</p>
+            </div>
+            <div className="flex items-center gap-1">
+              <Avatar fallback={'R'} url={analysis.analista?.avatar_url || undefined} height={20} width={20} />
+              <p className="text-[0.65rem] font-medium text-gray-500">{analysis.analista?.nome || 'ANALISTA INDEFINIDO'}</p>
+            </div>
           </div>
         </div>
       </div>

@@ -7,7 +7,7 @@ import { GetServerSidePropsContext } from 'next'
 import { authOptions } from '../../api/auth/[...nextauth]'
 
 import { getPartnerFunnels } from '@/repositories/funnels/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 
 import { AiOutlinePlus } from 'react-icons/ai'
 import { BsDownload } from 'react-icons/bs'

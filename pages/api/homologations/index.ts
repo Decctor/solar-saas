@@ -1,6 +1,6 @@
 import { insertHomologation, updateHomologation } from '@/repositories/homologations/mutations'
 import { getHomologationById, getHomologationByOpportunityId, getPartnerHomologations } from '@/repositories/homologations/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization, validateModuleAccess } from '@/utils/api'
 import { InsertHomologationSchema, THomologation } from '@/utils/schemas/homologation.schema'
 import createHttpError from 'http-errors'

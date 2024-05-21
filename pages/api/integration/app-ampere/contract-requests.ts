@@ -1,5 +1,5 @@
 import connectToRequestsDatabase from '@/services/mongodb/ampere/resquests-db-connection'
-import connectoToCRMDatabase from '@/services/mongodb/main-db-connection'
+import connectoToCRMDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { calculateStringSimilarity } from '@/utils/methods'
 import { NextApiHandler } from 'next'

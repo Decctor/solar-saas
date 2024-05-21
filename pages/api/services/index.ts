@@ -2,7 +2,7 @@ import { insertProduct, updateProduct } from '@/repositories/products/mutations'
 import { getProductById, getProducts } from '@/repositories/products/queries'
 import { insertService, updateService } from '@/repositories/services/mutations'
 import { getServiceById, getServices } from '@/repositories/services/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertServiceSchema, TService } from '@/utils/schemas/service.schema'
 

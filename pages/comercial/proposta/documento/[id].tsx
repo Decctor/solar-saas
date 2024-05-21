@@ -7,7 +7,7 @@ import ProposalWithServicesTemplate from '@/components/Proposal/Templates/Propos
 import { getOpportunityById } from '@/repositories/opportunities/queries'
 import { getPartnerOwnInformation } from '@/repositories/partner-simplified/query'
 import { getProposalById } from '@/repositories/proposals/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { TOpportunity, TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
 import { TPartner, TPartnerDTO } from '@/utils/schemas/partner.schema'
 import { TProposal, TProposalDTO } from '@/utils/schemas/proposal.schema'

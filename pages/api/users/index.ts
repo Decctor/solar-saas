@@ -1,6 +1,6 @@
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession, validateAuthorization } from '../../../utils/api'
 import { NextApiHandler } from 'next'
-import connectToDatabase from '../../../services/mongodb/main-db-connection'
+import connectToDatabase from '../../../services/mongodb/crm-db-connection'
 import { IUsuario } from '../../../utils/models'
 import { z } from 'zod'
 import { hashSync } from 'bcrypt'

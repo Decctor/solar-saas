@@ -1,5 +1,5 @@
 import { insertManyKits } from '@/repositories/kits/mutations'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 import { InsertNewKitSchema, KitDTOSchema, TKit } from '@/utils/schemas/kits.schema'
 

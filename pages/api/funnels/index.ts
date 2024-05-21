@@ -1,6 +1,6 @@
 import { insertFunnel, updateFunnel } from '@/repositories/funnels/mutations'
 import { getFunnelById, getPartnerFunnels } from '@/repositories/funnels/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertFunnelSchema, TFunnel, TFunnelEntity } from '@/utils/schemas/funnel.schema'
 import createHttpError from 'http-errors'

@@ -1,4 +1,4 @@
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { IUsuario } from '@/utils/models'
 import { TUser, TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'

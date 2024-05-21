@@ -1,7 +1,7 @@
 import { NextApiHandler } from 'next'
 import { apiHandler } from '@/utils/api'
 
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 
 import { Collection, ObjectId, WithId } from 'mongodb'
 import { TSolarSystemPropose } from '@/ampere-migration/proposes-schemas/solar-system.schema'

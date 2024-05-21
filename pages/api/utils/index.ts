@@ -1,6 +1,6 @@
 import { insertUtil } from '@/repositories/utils/mutations'
 import { getCreditors, getEquipments } from '@/repositories/utils/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { GeneralUtilSchema, TEquipment, TUtil, UtilsIdentifierSchema } from '@/utils/schemas/utils'
 import createHttpError from 'http-errors'

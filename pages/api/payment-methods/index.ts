@@ -1,6 +1,6 @@
 import { insertPaymentMethod, updatePaymentMethod } from '@/repositories/payment-methods/mutations'
 import { getPaymentMethods, getPaymentMethodsById } from '@/repositories/payment-methods/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertPaymentMethodSchema, TPaymentMethod, TPaymentMethodEntity } from '@/utils/schemas/payment-methods'
 import createHttpError from 'http-errors'

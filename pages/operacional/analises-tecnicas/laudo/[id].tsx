@@ -6,7 +6,7 @@ import LaudoSimplesUrbano from '@/components/TechnicalAnalysis/Reports/LaudoSimp
 import LaudoTecnicoRural from '@/components/TechnicalAnalysis/Reports/LaudoTecnicoRural'
 import LaudoTecnicoUrbano from '@/components/TechnicalAnalysis/Reports/LaudoTecnicoUrbano'
 import ErrorComponent from '@/components/utils/ErrorComponent'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { TTechnicalAnalysis, TTechnicalAnalysisDTO } from '@/utils/schemas/technical-analysis.schema'
 import { Collection, ObjectId } from 'mongodb'
 import { GetServerSidePropsContext } from 'next'

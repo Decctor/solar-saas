@@ -1,6 +1,6 @@
 import { insertOpportunityHistory, updateOpportunityHistory } from '@/repositories/opportunity-history/mutation'
 import { getOpportunityHistory, getOpportunityHistoryById } from '@/repositories/opportunity-history/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 import {
   InsertOpportunityHistorySchema,

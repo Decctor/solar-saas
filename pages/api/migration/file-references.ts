@@ -1,5 +1,5 @@
 import connectToAmpereDatabase from '@/services/mongodb/ampere-db-connection'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler } from '@/utils/api'
 import { TClient } from '@/utils/schemas/client.schema'
 import { TFileReference } from '@/utils/schemas/file-reference.schema'

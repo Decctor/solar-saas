@@ -2,7 +2,7 @@ import { NextApiHandler } from 'next'
 import { ISession } from '../../../utils/models'
 
 import { apiHandler, validateAuthentication, validateAuthorization } from '@/utils/api'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { Collection, Db, MatchKeysAndValues, ObjectId } from 'mongodb'
 import createHttpError from 'http-errors'
 

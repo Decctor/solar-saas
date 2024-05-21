@@ -1,4 +1,4 @@
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthorization } from '@/utils/api'
 import { ProjectActivity, ProjectNote } from '@/utils/models'
 import createHttpError from 'http-errors'

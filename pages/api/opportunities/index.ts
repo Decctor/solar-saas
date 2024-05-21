@@ -3,7 +3,7 @@ import { getFunnelReferences } from '@/repositories/funnel-references/queries'
 import { insertOpportunity, updateOpportunity } from '@/repositories/opportunities/mutations'
 import { getOpportunitiesByQuery, getOpportunityById } from '@/repositories/opportunities/queries'
 import { getOpenActivities } from '@/repositories/opportunity-history/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthorization } from '@/utils/api'
 import { TActivity, TActivityDTO } from '@/utils/schemas/activities.schema'
 

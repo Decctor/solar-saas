@@ -1,6 +1,6 @@
 import { updateSaleGoal } from '@/repositories/sale-goals/mutations'
 import { getSaleGoalsByUserId } from '@/repositories/sale-goals/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertSaleGoalSchema, TSaleGoal } from '@/utils/schemas/sale-goal.schema'
 

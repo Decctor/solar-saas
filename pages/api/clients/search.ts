@@ -1,5 +1,5 @@
 import { getSimilarClients } from '@/repositories/clients/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { IClient } from '@/utils/models'
 import { TClient, TSimilarClientSimplified } from '@/utils/schemas/client.schema'

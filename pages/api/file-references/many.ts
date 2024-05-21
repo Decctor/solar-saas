@@ -1,5 +1,5 @@
 import { insertManyFileReferences } from '@/repositories/file-references/mutation'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { InsertFileReferenceSchema, TFileReference } from '@/utils/schemas/file-reference.schema'
 import createHttpError from 'http-errors'

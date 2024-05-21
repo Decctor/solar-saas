@@ -1,6 +1,6 @@
 import { insertNotification, updateNotification } from '@/repositories/notifications/mutations'
 import { getNotificationById, getNotificationByOpportunityId, getNotificationByRecipientId } from '@/repositories/notifications/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 
 import { InsertNotificationSchema, TNotification } from '@/utils/schemas/notification.schema'

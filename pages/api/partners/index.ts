@@ -1,4 +1,4 @@
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAdminAuthorizaton, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertPartnerSchema, TPartner, TPartnerEntity, TPartnerDTOWithUsers } from '@/utils/schemas/partner.schema'
 import createHttpError from 'http-errors'

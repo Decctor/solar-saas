@@ -1,5 +1,5 @@
 import connectToAmpereDatabase from '@/services/mongodb/ampere-db-connection'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler } from '@/utils/api'
 import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'

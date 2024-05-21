@@ -1,5 +1,5 @@
 import { insertFunnelReference, updateFunnelReference } from '@/repositories/funnel-references/mutations'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 import { InsertFunnelReferenceSchema, TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
 import createHttpError from 'http-errors'

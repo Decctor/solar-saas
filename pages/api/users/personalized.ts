@@ -1,6 +1,6 @@
 import { getTechnicalAnalysis } from '@/repositories/technical-analysis/queries'
 import { getLeadReceivers, getOpportunityCreators, getTechnicalAnalysts } from '@/repositories/users/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { TUser, TUserEntity } from '@/utils/schemas/user.schema'
 import { Collection, Filter, WithId } from 'mongodb'

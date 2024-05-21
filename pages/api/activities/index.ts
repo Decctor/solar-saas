@@ -6,7 +6,7 @@ import {
   getActivitiesByTechnicalAnalysisId,
   getAllActivities,
 } from '@/repositories/acitivities/queries'
-import connectToDatabase from '@/services/mongodb/main-db-connection'
+import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { InsertActivitySchema, TActivity } from '@/utils/schemas/activities.schema'
 import createHttpError from 'http-errors'

@@ -332,7 +332,7 @@ function PaymentInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextS
                 width={'100%'}
                 label={'VALOR DO CONTRATO FOTOVOLTAICO(SEM CUSTOS ADICIONAIS)'}
                 editable={true}
-                value={requestInfo.valorContrato}
+                value={requestInfo.valorContrato || null}
                 placeholder={'Preencha aqui o valor do contrato (sem custos adicionais de estrutura/padrão/O&M, etc...'}
                 handleChange={(value) =>
                   setRequestInfo((prev) => ({
@@ -469,7 +469,7 @@ function PaymentInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextS
                 label={'SE CARTÃO OU CHEQUE, QUANTAS PARCELAS?'}
                 placeholder="Preencha aqui o número de parcelas."
                 editable={true}
-                value={requestInfo.numParcelas}
+                value={requestInfo.numParcelas || null}
                 handleChange={(value) =>
                   setRequestInfo({
                     ...requestInfo,
@@ -485,7 +485,7 @@ function PaymentInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextS
                 label={'VALOR DA PARCELA'}
                 placeholder="Preencha aqui o valor das parcelas."
                 editable={true}
-                value={requestInfo.valorParcela}
+                value={requestInfo.valorParcela || null}
                 handleChange={(value) =>
                   setRequestInfo({
                     ...requestInfo,
