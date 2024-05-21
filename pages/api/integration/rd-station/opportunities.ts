@@ -359,7 +359,7 @@ export default async function handler(req: NextApiRequest, res: NextApiResponse)
   if (req.method == 'PUT') {
     await updateOpportunities(req, res)
   }
-  if (req.method == 'GET') {
+  if (req.method == 'POST') {
     await receiveOpportunity(req, res)
   }
 }
