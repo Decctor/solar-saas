@@ -77,6 +77,7 @@ function DefinePlan({ proposalPlan, proposal, opportunity, userHasPricingEditPer
     mutationFn: defineProposalPlan,
     queryClient: queryClient,
     affectedQueryKey: ['proposal-by-id', proposal._id],
+    callbackFn: () => closeModal(),
   })
   useEffect(() => {
     if (!plan) return
@@ -89,9 +90,6 @@ function DefinePlan({ proposalPlan, proposal, opportunity, userHasPricingEditPer
     const ajustedPricing = handleFinalPriceCorrection({ diffPercentage, pricing: p })
     setPricing(ajustedPricing)
   }, [plan])
-  console.log('PLANO', plan)
-  console.log('PRICING', pricing)
-
   return (
     <div id="edit-final-price" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="fixed left-[50%] top-[50%] z-[100] flex h-fit max-h-[90%] w-[90%] translate-x-[-50%] translate-y-[-50%] flex-col rounded-md bg-[#fff] p-[10px] lg:w-[80%]">

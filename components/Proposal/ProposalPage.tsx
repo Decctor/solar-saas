@@ -330,7 +330,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
                 </div>
               </div>
             </div>
-            {proposal.planos.length > 0 ? (
+            {proposal.planos.length > 1 ? (
               <ProposalViewPlansBlock
                 plans={proposal.planos}
                 opportunity={{ ...proposal.oportunidadeDados }}

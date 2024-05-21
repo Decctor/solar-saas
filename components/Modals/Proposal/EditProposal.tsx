@@ -29,6 +29,10 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
   const queryClient = useQueryClient()
   const alterationLimit = userHasPricingEditPermission ? undefined : 0.02
 
+  // Creating a flag for the need of updating the defined plan price, if
+  // there is one. So, if there is only one plan to the proposal, it is the defined one.
+  const updatePlanPrice = info.planos.length == 1
+
   const [proposalName, setProposalName] = useState(info.nome)
   const [regenerateFile, setRegenerateFile] = useState<boolean>(false)
   const [pricing, setPricing] = useState<TPricingItem[]>(info.precificacao)
@@ -75,9 +79,11 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
       }
       await createProposalUpdateRecord({ info: record })
 
+      const proposalPlans: TProposalDTO['planos'] = updatePlanPrice ? [{ ...info.planos[0], valor: newTotal }] : info.planos
+
       const response = await editProposalPersonalized({
         id: info._id,
-        proposal: { ...info, nome: newName, precificacao: newPricing, valor: newTotal },
+        proposal: { ...info, nome: newName, planos: proposalPlans, precificacao: newPricing, valor: newTotal },
         opportunity: info.oportunidadeDados,
         client: info.clienteDados,
         regenerateFile: regenerateFile,
@@ -104,64 +110,62 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
   })
   return (
     <div id="edit-proposal" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
-      <div className="fixed left-[50%] top-[50%] z-[100] h-[90%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:w-[90%]">
-        <div className="flex h-full flex-col">
-          <div className="flex flex-col items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg lg:flex-row">
-            <h3 className="text-xl font-bold text-[#353432] dark:text-white ">EDITAR PROPOSTA</h3>
-            <button
-              onClick={() => closeModal()}
-              type="button"
-              className="flex items-center justify-center rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
-            >
-              <VscChromeClose style={{ color: 'red' }} />
-            </button>
-          </div>
-          <div className="flex grow flex-col gap-y-2 overflow-y-auto overscroll-y-auto px-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
-            <TextInput
-              label="NOME DA PROPOSTA"
-              placeholder="Preencha o nome da proposta..."
-              value={proposalName}
-              handleChange={(value) => setProposalName(value)}
-              width="100%"
-            />
-            <PricingTable
-              opportunity={info.oportunidadeDados}
-              proposal={info}
-              pricing={pricing}
-              setPricing={setPricing}
-              userHasPricingEditPermission={userHasPricingEditPermission}
-              userHasPricingViewPermission={userHasPricingViewPermission}
-            />
-            <div className="flex w-full items-center justify-center gap-2 py-1">
-              <div className="flex gap-2 rounded border border-gray-600 px-2 py-1 font-medium text-gray-600">
-                <p>{formatToMoney(pricingTotal)}</p>
-                {userHasPricingEditPermission ? (
-                  <button onClick={() => setEditFinalPriceModalIsOpen((prev) => !prev)} className="text-md text-gray-400 hover:text-[#fead61]">
-                    <AiFillEdit />
-                  </button>
-                ) : null}
-              </div>
-            </div>
-            <div className="flex w-full items-center justify-end gap-2 p-2">
-              {info.idModeloAnvil ? (
-                <div className="w-fit">
-                  <CheckboxInput
-                    labelFalse="GERAR NOVO DOCUMENTO"
-                    labelTrue="GERAR NOVO DOCUMENTO"
-                    checked={regenerateFile}
-                    handleChange={(value) => setRegenerateFile(value)}
-                  />
-                </div>
+      <div className="fixed left-[50%] top-[50%] z-[100] flex h-fit max-h-[90%] w-[90%] translate-x-[-50%] translate-y-[-50%] flex-col rounded-md bg-[#fff] p-[10px] lg:w-[90%]">
+        <div className="flex flex-col items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg lg:flex-row">
+          <h3 className="text-xl font-bold text-[#353432] dark:text-white ">EDITAR PROPOSTA</h3>
+          <button
+            onClick={() => closeModal()}
+            type="button"
+            className="flex items-center justify-center rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
+          >
+            <VscChromeClose style={{ color: 'red' }} />
+          </button>
+        </div>
+        <div className="flex grow flex-col gap-y-2 overflow-y-auto overscroll-y-auto px-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
+          <TextInput
+            label="NOME DA PROPOSTA"
+            placeholder="Preencha o nome da proposta..."
+            value={proposalName}
+            handleChange={(value) => setProposalName(value)}
+            width="100%"
+          />
+          <PricingTable
+            opportunity={info.oportunidadeDados}
+            proposal={info}
+            pricing={pricing}
+            setPricing={setPricing}
+            userHasPricingEditPermission={userHasPricingEditPermission}
+            userHasPricingViewPermission={userHasPricingViewPermission}
+          />
+          <div className="flex w-full items-center justify-center gap-2 py-1">
+            <div className="flex gap-2 rounded border border-gray-600 px-2 py-1 font-medium text-gray-600">
+              <p>{formatToMoney(pricingTotal)}</p>
+              {userHasPricingEditPermission ? (
+                <button onClick={() => setEditFinalPriceModalIsOpen((prev) => !prev)} className="text-md text-gray-400 hover:text-[#fead61]">
+                  <AiFillEdit />
+                </button>
               ) : null}
-              <button
-                disabled={isPending}
-                // @ts-ignore
-                onClick={() => handleUpdate({ previousName: info.nome, previousPricing: info.precificacao, newName: proposalName, newPricing: pricing })}
-                className="h-9 whitespace-nowrap rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-blue-600 enabled:hover:text-white"
-              >
-                ATUALIZAR PROPOSTA
-              </button>
             </div>
+          </div>
+          <div className="flex w-full items-center justify-end gap-2 p-2">
+            {info.idModeloAnvil ? (
+              <div className="w-fit">
+                <CheckboxInput
+                  labelFalse="GERAR NOVO DOCUMENTO"
+                  labelTrue="GERAR NOVO DOCUMENTO"
+                  checked={regenerateFile}
+                  handleChange={(value) => setRegenerateFile(value)}
+                />
+              </div>
+            ) : null}
+            <button
+              disabled={isPending}
+              // @ts-ignore
+              onClick={() => handleUpdate({ previousName: info.nome, previousPricing: info.precificacao, newName: proposalName, newPricing: pricing })}
+              className="h-9 whitespace-nowrap rounded bg-blue-700 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-blue-600 enabled:hover:text-white"
+            >
+              ATUALIZAR PROPOSTA
+            </button>
           </div>
         </div>
       </div>
