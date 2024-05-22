@@ -15,7 +15,12 @@ type AnalysisVinculationMenuProps = {
   closeMenu: () => void
 }
 function AnalysisVinculationMenu({ infoHolder, setInfoHolder, closeMenu }: AnalysisVinculationMenuProps) {
-  const { data: opportunityAnalysis, isLoading, isError, isSuccess } = useOpportunityTechnicalAnalysis({ opportunityId: infoHolder.oportunidade.id || '' })
+  const {
+    data: opportunityAnalysis,
+    isLoading,
+    isError,
+    isSuccess,
+  } = useOpportunityTechnicalAnalysis({ opportunityId: infoHolder.oportunidade.id || '', concludedOnly: false })
   function handleVinculation(analysis: TTechnicalAnalysisDTO) {
     const analysisId = analysis._id
     var info = { ...analysis } as Optional<TTechnicalAnalysisDTO, '_id'>

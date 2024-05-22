@@ -123,18 +123,25 @@ function InstallationInfo({ infoHolder, setInfoHolder, files, setFiles, goToNext
         </div>
         <h1 className="mt-2 w-full text-start font-sans  font-bold text-cyan-500">ARQUIVOS</h1>
         <div className="flex w-full flex-col items-center justify-center gap-2 lg:flex-row">
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-1/3">
             <DocumentFileInput
               label="FOTO DA FACHADA"
               value={files['FOTO DA FACHADA']}
               handleChange={(value) => setFiles((prev) => ({ ...prev, ['FOTO DA FACHADA']: value }))}
             />
           </div>
-          <div className="w-full lg:w-1/2">
+          <div className="w-full lg:w-1/3">
             <DocumentFileInput
               label="FOTO DO QUADRO DE DISTRIBUIÇÃO"
               value={files['FOTO DO QUADRO DE DISTRIBUIÇÃO']}
               handleChange={(value) => setFiles((prev) => ({ ...prev, ['FOTO DO QUADRO DE DISTRIBUIÇÃO']: value }))}
+            />
+          </div>
+          <div className="w-full lg:w-1/3">
+            <DocumentFileInput
+              label="FOTO DO LOCAL DE INSTALAÇÃO DO NOVO DISJUNTOR"
+              value={files['FOTO DO LOCAL DE INSTALAÇÃO DO NOVO DISJUNTOR']}
+              handleChange={(value) => setFiles((prev) => ({ ...prev, ['FOTO DO LOCAL DE INSTALAÇÃO DO NOVO DISJUNTOR']: value }))}
             />
           </div>
         </div>

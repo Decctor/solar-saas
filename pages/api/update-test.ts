@@ -18,15 +18,15 @@ import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import { TProductItem } from '@/utils/schemas/kits.schema'
 import { TUser } from '@/utils/schemas/user.schema'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
+import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
 type PostResponse = any
 
+type Reduced = { [key: string]: string[] }
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   const { id } = req.query
 
-  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'main')
   // const requestsDb = await connectToRequestsDatabase(process.env.MONGODB_URI)
 
-  const crmTechnicalAnalysisCollection: Collection<TTechnicalAnalysis> = crmDb.collection('technical-analysis')
   // const requestsTechnicalAnalysisCollection = requestsDb.collection('analisesTecnicas')
 
   // // // const proposalsCollection: Collection<TProposal> = db.collection('proposals')

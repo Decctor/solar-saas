@@ -54,7 +54,7 @@ function OpportunityTechnicalAnalysis({ session, opportunity }: OpportunityTechn
           {isError ? <ErrorComponent msg="Erro ao buscar análises técnicas da oportunidade." /> : null}
           {isSuccess ? (
             analysis.length > 0 ? (
-              analysis.map((analysis) => <OpportunityTechnicalAnalysisItem key={analysis._id} analysis={analysis} />)
+              analysis.map((analysis) => <OpportunityTechnicalAnalysisItem key={analysis._id} analysis={analysis} session={session} />)
             ) : (
               <p className="flex w-full grow items-center justify-center py-2 text-center font-medium italic tracking-tight text-gray-500">
                 Sem análises técnicas vinculadas a essa oportunidade.

@@ -3,12 +3,15 @@ import React from 'react'
 import Link from 'next/link'
 import FileReferenceCard from '@/components/FileReference/FileReferenceCard'
 import { useFileReferencesByAnalysisId } from '@/utils/queries/file-references'
+import AttachFileMenu from '../AttachFileMenu'
+import { Session } from 'next-auth'
 
 type FilesBlockProps = {
   auxiliarFilesLink?: string | null
   analysisId: string
+  session: Session
 }
-function FilesBlock({ auxiliarFilesLink, analysisId }: FilesBlockProps) {
+function FilesBlock({ auxiliarFilesLink, analysisId, session }: FilesBlockProps) {
   const { data: fileReferences } = useFileReferencesByAnalysisId({ analysisId })
   return (
     <div className="mt-4 flex w-full flex-col">
@@ -37,6 +40,9 @@ function FilesBlock({ auxiliarFilesLink, analysisId }: FilesBlockProps) {
         ) : (
           <p className="w-full text-center text-xs font-medium italic text-gray-500">Nenhum arquivo adicionado.</p>
         )}
+      </div>
+      <div className="mt-2 w-full">
+        <AttachFileMenu analysisId={analysisId} session={session} />
       </div>
     </div>
   )

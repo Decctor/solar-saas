@@ -12,6 +12,8 @@ import Avatar from '../utils/Avatar'
 import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
 import { VscChromeClose } from 'react-icons/vsc'
 import Link from 'next/link'
+import { Session } from 'next-auth'
+import PartialControlTechnicalAnalysis from '../Modals/TechnicalAnalysis/PartialControlTechnicalAnalysis'
 
 function getTagColor(status: string) {
   if (status == 'CONCLUIDO') {
@@ -55,9 +57,14 @@ function getStatusColor(status: string) {
 
 type OpportunityTechnicalAnalysisItemProps = {
   analysis: TTechnicalAnalysisDTO
+  session: Session
 }
-function OpportunityTechnicalAnalysisItem({ analysis }: OpportunityTechnicalAnalysisItemProps) {
+function OpportunityTechnicalAnalysisItem({ analysis, session }: OpportunityTechnicalAnalysisItemProps) {
   const [reportsMenuIsOpen, setReportsMenuIsOpen] = useState<boolean>(false)
+  const userScope = session.user.permissoes.analisesTecnicas.escopo
+  const userHasPartialEditPermission = !userScope || userScope.includes(analysis.requerente.id || '')
+  const [editModalIsOpen, setEditModalIsOpen] = useState<boolean>(false)
+
   return (
     <div className="relative flex w-full items-center rounded-md border border-gray-200">
       <div className={`h-full w-[5px] rounded-bl-md rounded-tl-md ${getTagColor(analysis.status)}`}></div>
@@ -74,16 +81,22 @@ function OpportunityTechnicalAnalysisItem({ analysis }: OpportunityTechnicalAnal
           </div>
         </div>
         <div className="mt-2 flex w-full flex-col items-center justify-between gap-2 lg:flex-row">
-          {analysis.dataEfetivacao || analysis.status == 'CONCLUIDO' ? (
-            <button
-              className="rounded bg-cyan-500 px-2 py-1 text-center text-[0.6rem] font-bold text-white"
-              onClick={() => setReportsMenuIsOpen((prev) => !prev)}
-            >
-              LAUDOS
-            </button>
-          ) : (
-            <div></div>
-          )}
+          <div className="flex items-center gap-2">
+            {analysis.dataEfetivacao || analysis.status == 'CONCLUIDO' ? (
+              <button
+                className="rounded bg-cyan-500 px-2 py-1 text-center text-[0.6rem] font-bold text-white"
+                onClick={() => setReportsMenuIsOpen((prev) => !prev)}
+              >
+                LAUDOS
+              </button>
+            ) : null}
+            {analysis.status == 'PENDÊNCIA COMERCIAL' && userHasPartialEditPermission ? (
+              <button onClick={() => setEditModalIsOpen(true)} className="rounded bg-black px-2 py-1 text-center text-[0.6rem] font-bold text-white">
+                REALIMENTAR ANÁLISE
+              </button>
+            ) : null}
+          </div>
+
           <div className="flex flex-col items-center gap-2 lg:flex-row">
             {analysis.dataEfetivacao ? (
               <div className={`flex items-center gap-1`}>
@@ -130,6 +143,7 @@ function OpportunityTechnicalAnalysisItem({ analysis }: OpportunityTechnicalAnal
           </div>
         </div>
       ) : null}
+      {editModalIsOpen ? <PartialControlTechnicalAnalysis analysisId={analysis._id} session={session} closeModal={() => setEditModalIsOpen(false)} /> : null}
     </div>
   )
 }

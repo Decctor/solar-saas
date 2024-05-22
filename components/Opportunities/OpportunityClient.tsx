@@ -10,16 +10,18 @@ import { MdEmail } from 'react-icons/md'
 import Avatar from '../utils/Avatar'
 import { Session } from 'next-auth'
 import EditClient from '../Modals/Client/EditClient'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 
 type OpportunityClientProps = {
   opportunityId: string
   client: TClientDTO
+  responsibles: TOpportunity['responsaveis']
   session: Session
 }
-function OpportunityClient({ opportunityId, client, session }: OpportunityClientProps) {
+function OpportunityClient({ opportunityId, client, responsibles, session }: OpportunityClientProps) {
   const [editModalIsOpen, setEditModalIsOpen] = useState<boolean>(false)
   const userScope = session.user.permissoes.clientes.escopo
-  const userHasClientEditPermission = !userScope || userScope.includes(client.autor.id)
+  const userHasClientEditPermission = !userScope || userScope.includes(client.autor.id) || responsibles.some((r) => userScope.includes(r.id))
   return (
     <div className="flex h-[450px] w-full flex-col rounded-md border border-gray-200 bg-[#fff] p-3 shadow-lg lg:h-[300px]">
       <div className="flex h-[40px] items-center justify-between border-b border-gray-200 pb-2">

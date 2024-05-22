@@ -36,12 +36,12 @@ import { BsCalendarCheckFill, BsCalendarFill, BsCode } from 'react-icons/bs'
 import { FaSolarPanel, FaUser } from 'react-icons/fa'
 import { VscChromeClose } from 'react-icons/vsc'
 
-type ControlTechnicalAnalysisProps = {
+type PartialControlTechnicalAnalysisProps = {
   analysisId: string
   session: Session
   closeModal: () => void
 }
-export default function ControlTechnicalAnalysis({ analysisId, session, closeModal }: ControlTechnicalAnalysisProps) {
+export default function PartialControlTechnicalAnalysis({ analysisId, session, closeModal }: PartialControlTechnicalAnalysisProps) {
   const queryClient = useQueryClient()
   const { data: analysis, isLoading, isError, isSuccess, error } = useTechnicalAnalysisById({ id: analysisId })
   const { data: analysts } = useTechnicalAnalysts()
@@ -212,32 +212,6 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
                         width="100%"
                       />
                     </div>
-                    <div className="w-full lg:w-[1/2]">
-                      {/**[TODO] CREATE ROUTE FOR USERS WITH ANALYSIS EDIT PERMISSIONS */}
-                      <SelectWithImages
-                        label={'ANALISTA RESPONSÁVEL'}
-                        value={infoHolder.analista?.id}
-                        options={analysts?.map((a) => ({ id: a._id, label: a.nome, value: a, url: a.avatar_url || undefined })) || []}
-                        handleChange={(value) => {
-                          setInfoHolder((prev) => ({
-                            ...prev,
-                            analista: { id: value._id, nome: value.nome, apelido: value.nome, avatar_url: value.avatar_url },
-                          }))
-                          setChanges((prev) => ({
-                            ...prev,
-                            analista: { id: value._id, nome: value.nome, apelido: value.nome, avatar_url: value.avatar_url },
-                          }))
-                        }}
-                        selectedItemLabel="NÃO DEFINIDO"
-                        onReset={() => {
-                          setInfoHolder((prev) => ({ ...prev, analista: null }))
-                          setChanges((prev) => ({ ...prev, analista: null }))
-                        }}
-                        width="100%"
-                      />
-                    </div>
-                  </div>
-                  <div className="flex w-full flex-col justify-center gap-2 lg:flex-row">
                     <div className="w-full lg:w-1/2">
                       <SelectInput
                         label="TIPO DE SOLICITAÇÃO"
@@ -255,82 +229,7 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
                         width="100%"
                       />
                     </div>
-                    <div className="w-full lg:w-1/2">
-                      <SelectInput
-                        label="COMPLEXIDADE DO LAUDO"
-                        options={TechnicalAnalysisComplexity}
-                        value={infoHolder.complexidade}
-                        handleChange={(value) => {
-                          setInfoHolder((prev) => ({ ...prev, complexidade: value }))
-                          setChanges((prev) => ({ ...prev, complexidade: value }))
-                        }}
-                        onReset={() => {
-                          setInfoHolder((prev) => ({ ...prev, complexidade: 'SIMPLES' }))
-                          setChanges((prev) => ({ ...prev, complexidade: 'SIMPLES' }))
-                        }}
-                        selectedItemLabel="NÃO DEFINIDO"
-                        width="100%"
-                      />
-                    </div>
                   </div>
-                  {infoHolder.dataEfetivacao ? (
-                    <div className="flex w-full flex-col items-center gap-2">
-                      <div className={`flex items-center gap-2 text-green-500`}>
-                        <BsCalendarCheckFill />
-                        <p className="text-xs font-medium">{formatDateAsLocale(infoHolder.dataEfetivacao, true)}</p>
-                      </div>
-                      <button
-                        onClick={() =>
-                          // @ts-ignore
-                          handleEditTechnicalAnalysis({ id: analysisId, changes: { status: 'PENDENTE', dataEfetivacao: null } })
-                        }
-                        className="rounded border border-gray-500 p-1 font-bold text-gray-500 duration-300 ease-in-out hover:bg-gray-500 hover:text-white"
-                      >
-                        REABRIR ANÁLISE
-                      </button>
-                    </div>
-                  ) : (
-                    <div className="flex w-full flex-col items-center gap-2">
-                      {infoHolder.status != 'CONCLUIDO' ? (
-                        <SelectInput
-                          label={'STATUS DA ANÁLISE'}
-                          selectedItemLabel={'NÃO DEFINIDO'}
-                          options={TechnicalAnalysisStatus.filter((s) => s.value != 'CONCLUIDO')}
-                          value={infoHolder.status}
-                          handleChange={(value) => {
-                            setInfoHolder((prev) => ({ ...prev, status: value }))
-                            setChanges((prev) => ({ ...prev, status: value }))
-                          }}
-                          onReset={() => {
-                            setInfoHolder((prev) => ({ ...prev, status: 'PENDENTE' }))
-                            setChanges((prev) => ({ ...prev, status: 'PENDENTE' }))
-                          }}
-                        />
-                      ) : null}
-
-                      <button
-                        onClick={() =>
-                          //@ts-ignore
-                          handleEditTechnicalAnalysis({ id: analysisId, changes: { status: 'CONCLUIDO', dataEfetivacao: new Date().toISOString() } })
-                        }
-                        className="rounded border border-green-500 p-1 font-bold text-green-500 duration-300 ease-in-out hover:bg-green-500 hover:text-white"
-                      >
-                        FINALIZAR ANÁLISE
-                      </button>
-                    </div>
-                  )}
-                  <textarea
-                    placeholder="SEM ANOTAÇÕES PREENCHIDAS..."
-                    value={infoHolder.anotacoes || ''}
-                    onChange={(e) => {
-                      setInfoHolder((prev) => ({
-                        ...prev,
-                        anotacoes: e.target.value,
-                      }))
-                      setChanges((prev) => ({ ...prev, anotacoes: e.target.value }))
-                    }}
-                    className="min-h-[80px] w-full resize-none rounded-bl-sm rounded-br-sm bg-gray-100 p-3 text-center text-xs font-medium text-gray-600 outline-none"
-                  />
                   <div className="flex w-full items-center justify-center gap-2 rounded-md bg-gray-800 p-2">
                     <h1 className="font-bold text-white">PROJETO</h1>
                   </div>
@@ -390,14 +289,9 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
                   <StructureBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
                   <EnergyPABlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
                   <TransformerBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
-                  <SupplyBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
                   <ExecutionBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
-                  <ModuleOrientationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
-                  <DescriptiveBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
                   <AdditionalServicesBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
-                  <AdditionalCostsBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />
                   <DrawBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} updateAnalysis={(change) => {}} />
-                  <ConclusionBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} changes={changes} setChanges={setChanges} />{' '}
                   <div className="mt-4 flex w-full items-center justify-center gap-2 rounded-md bg-gray-800 p-2">
                     <h1 className="font-bold text-white">TIPOS DE LAUDO</h1>
                   </div>
