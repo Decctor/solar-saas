@@ -242,7 +242,7 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
   })
   // Notifying the opportunity receiver
   const newNotification: TNotification = {
-    remetente: { id: 'SISTEMA', nome: 'SISTEMA' },
+    remetente: { id: null, nome: 'SISTEMA' },
     idParceiro: partnerId,
     destinatarios: [newReceiver],
     oportunidade: {
