@@ -7,12 +7,13 @@ import { useSession } from 'next-auth/react'
 import Image from 'next/image'
 import React, { use } from 'react'
 import { toast } from 'react-hot-toast'
-import { BsCalendarCheck, BsCalendarPlus, BsCheck2, BsCheck2All, BsCheckAll, BsFillCalendar3Fill } from 'react-icons/bs'
+import { BsCalendarCheck, BsCalendarPlus, BsCheck2, BsCheck2All, BsCheckAll, BsCode, BsFillCalendar3Fill } from 'react-icons/bs'
 import { FaRobot, FaUserAlt } from 'react-icons/fa'
 import Avatar from '../utils/Avatar'
 import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
 import { editNotification } from '@/utils/mutations/notifications'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
+import Link from 'next/link'
 
 function getHeaderMessage({ sender }: { sender: TNotificationDTO['remetente'] }) {
   if (!sender.id) return <h1 className="text-xs font-black leading-none tracking-tight">AUTOMAÇÃO</h1>
@@ -75,6 +76,16 @@ function NotificationCard({ notification, session }: NotificationCardProps) {
         {getSenderFlag(notification.remetente)}
         {getHeaderMessage({ sender: notification.remetente })}
       </div>
+      {notification.oportunidade.id ? (
+        <Link href={`/comercial/oportunidades/id/${notification.oportunidade.id}`}>
+          <div className="flex items-center gap-1">
+            <BsCode color="#fead41" size={15} />
+            <p className="text-[0.65rem] font-medium uppercase tracking-tight text-gray-500 duration-300 ease-in-out hover:text-cyan-500">
+              {notification.oportunidade.nome}
+            </p>
+          </div>
+        </Link>
+      ) : null}
       <div className="flex w-full grow flex-col">
         <h1 className="rounded-md border border-gray-200 px-2 py-1 text-[0.65rem] font-medium tracking-tight">{notification.mensagem}</h1>
       </div>
