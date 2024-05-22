@@ -43,12 +43,11 @@ function getNewFunnelReferenceOptions({ funnelReferences, funnels }: GetNewFunne
 
 type OpportunityFunnelReferencesBlockProps = {
   opportunity: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
+  setOpportunity: React.Dispatch<React.SetStateAction<TOpportunityDTOWithClientAndPartnerAndFunnelReferences>>
 }
-function OpportunityFunnelReferencesBlock({ opportunity }: OpportunityFunnelReferencesBlockProps) {
+function OpportunityFunnelReferencesBlock({ opportunity, setOpportunity }: OpportunityFunnelReferencesBlockProps) {
   const queryClient = useQueryClient()
   const { data: funnels } = useFunnels()
-
-  const [funnelReferencesHolder, setFunnelReferencesHolder] = useState(opportunity.referenciasFunil)
 
   async function updateOpportunityFunnelReference({ id, newStageId }: { id: string; newStageId: string }) {
     try {
@@ -65,7 +64,7 @@ function OpportunityFunnelReferencesBlock({ opportunity }: OpportunityFunnelRefe
     affectedQueryKey: ['opportunity-by-id', opportunity._id],
   })
 
-  const newFunnelReferencesOptions = getNewFunnelReferenceOptions({ funnelReferences: funnelReferencesHolder, funnels })
+  const newFunnelReferencesOptions = getNewFunnelReferenceOptions({ funnelReferences: opportunity.referenciasFunil, funnels })
   const [newFunnelReferenceMenuIsOpen, setNewFunnelReferenceMenuIsOpen] = useState<boolean>(false)
   const [newFunnelReference, setNewFunnelReference] = useState<TFunnelReference>({
     idParceiro: opportunity.idParceiro || '',
@@ -102,9 +101,9 @@ function OpportunityFunnelReferencesBlock({ opportunity }: OpportunityFunnelRefe
 
       const funnelReferenceId = opportunityFunnelReferences[funnelReferenceToRemoveIndex]._id
       const response = await deleteFunnelReference({ id: funnelReferenceId })
-      const newReferences = [...funnelReferencesHolder]
+      const newReferences = [...opportunity.referenciasFunil]
       newReferences.splice(funnelReferenceToRemoveIndex, 1)
-      setFunnelReferencesHolder(newReferences)
+      setOpportunity((prev) => ({ ...prev, referenciasFunil: newReferences }))
       return response
     } catch (error) {
       throw error
@@ -120,7 +119,7 @@ function OpportunityFunnelReferencesBlock({ opportunity }: OpportunityFunnelRefe
     <div className=" flex w-full flex-col gap-2">
       <h1 className="w-full rounded-md bg-[#fead41] p-1 text-center text-sm font-medium text-white">FUNIS</h1>
       <div className="flex flex-col gap-2">
-        {funnelReferencesHolder.map((funnelReference, index) => {
+        {opportunity.referenciasFunil.map((funnelReference, index) => {
           const { funnelLabel, stageOptions } = getFunnelInfo({
             funnelId: funnelReference.idFunil,
             funnels,
@@ -136,15 +135,17 @@ function OpportunityFunnelReferencesBlock({ opportunity }: OpportunityFunnelRefe
                 </div>
                 <div className="flex grow items-center justify-end gap-2">
                   <button
-                    // @ts-ignore
-                    onClick={() => handleRemoveFunnelReference({ funnelReferenceToRemoveIndex: index, opportunityFunnelReferences: funnelReferencesHolder })}
+                    onClick={() =>
+                      // @ts-ignore
+                      handleRemoveFunnelReference({ funnelReferenceToRemoveIndex: index, opportunityFunnelReferences: opportunity.referenciasFunil })
+                    }
                     type="button"
                     className="flex items-center justify-center gap-2 rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
                   >
                     <MdDelete style={{ color: 'red' }} size={15} />
                   </button>
                   <button
-                    disabled={isPending || funnelReference.idEstagioFunil == opportunity.referenciasFunil[index].idEstagioFunil}
+                    disabled={isPending}
                     onClick={() =>
                       // @ts-ignore
                       handleUpdateOpportunityFunnelReference({ id: funnelReference._id, newStageId: funnelReference.idEstagioFunil })
@@ -168,15 +169,15 @@ function OpportunityFunnelReferencesBlock({ opportunity }: OpportunityFunnelRefe
                   value={funnelReference.idEstagioFunil}
                   options={stageOptions}
                   handleChange={(value) => {
-                    const references = [...funnelReferencesHolder]
+                    const references = [...opportunity.referenciasFunil]
                     references[index].idEstagioFunil = value
-                    setFunnelReferencesHolder(references)
+                    setOpportunity((prev) => ({ ...prev, referenciasFunil: references }))
                   }}
                   selectedItemLabel="NÃO DEFINIDO"
                   onReset={() => {
-                    const references = [...funnelReferencesHolder]
+                    const references = [...opportunity.referenciasFunil]
                     references[index].idEstagioFunil = opportunity.referenciasFunil[index].idEstagioFunil
-                    setFunnelReferencesHolder(references)
+                    setOpportunity((prev) => ({ ...prev, referenciasFunil: references }))
                   }}
                   width="100%"
                 />
