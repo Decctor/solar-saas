@@ -26,6 +26,7 @@ import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatti
 import { Session } from 'next-auth'
 import OpportunityWonFlag from './OpportunityWonFlag'
 import OpportunityContractRequestedFlag from './OpportunityContractRequestedFlag'
+import OpportunityClient from './OpportunityClient'
 
 export type TOpportunityBlockMode = 'PROPOSES' | 'FILES' | 'TECHNICAL ANALYSIS'
 
@@ -99,46 +100,7 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
           {/* <div className="flex w-full flex-col items-start gap-6 py-4 lg:flex-row"></div> */}
           <div className="flex w-full flex-col gap-6 lg:flex-row">
             <div className="flex w-full flex-col gap-4 lg:w-[40%] ">
-              <div className="flex h-[300px] w-full flex-col rounded-md border border-gray-200 bg-[#fff] p-3 shadow-lg lg:h-[250px]">
-                <div className="flex h-[40px] items-center justify-between border-b border-gray-200 pb-2">
-                  <h1 className="font-bold text-black">Dados do Cliente</h1>
-                </div>
-                <div className="mt-3 flex w-full grow flex-col gap-1 lg:flex-row">
-                  <div className="flex h-full w-full flex-col items-start justify-around gap-2 lg:w-[50%] lg:items-center">
-                    <div className="flex w-full items-center justify-center gap-2 lg:justify-start">
-                      <AiOutlineUser style={{ color: '#15599a', fontSize: '20px' }} />
-                      <p className="font-Poppins text-sm text-gray-500">{opportunity.cliente.nome}</p>
-                    </div>
-                    <div className="flex w-full items-center justify-center gap-2 lg:justify-start">
-                      <MdEmail style={{ color: '#15599a', fontSize: '20px' }} />
-                      <p className="break-all font-Poppins text-sm text-gray-500">{opportunity.cliente.email || 'NÃO DEFINIDO'}</p>
-                    </div>
-                    <div className="flex w-full items-center justify-center gap-2 lg:justify-start">
-                      <BsTelephoneFill style={{ color: '#15599a', fontSize: '20px' }} />
-                      <p className="font-Poppins text-sm text-gray-500">{opportunity.cliente.telefonePrimario}</p>
-                    </div>
-                  </div>
-                  <div className="flex h-full w-full flex-col items-start justify-around gap-2 lg:w-[50%] lg:items-center">
-                    <div className="flex w-full items-center justify-center gap-2 lg:justify-start">
-                      <HiIdentification style={{ color: '#15599a', fontSize: '20px' }} />
-                      <p className="font-Poppins text-sm text-gray-500">{opportunity.cliente.cpfCnpj || 'NÃO DEFINIDO'}</p>
-                    </div>
-                    <div className="flex w-full items-center justify-center gap-2 lg:justify-start">
-                      <FaCity style={{ color: '#15599a', fontSize: '20px' }} />
-                      <p className="font-Poppins text-sm text-gray-500">
-                        {opportunity.localizacao.cidade} ({opportunity.localizacao.uf})
-                      </p>
-                    </div>
-                    <div className="flex w-full items-center justify-center gap-2 lg:justify-start">
-                      <GiPositionMarker style={{ color: '#15599a', fontSize: '20px' }} />
-                      <p className="font-Poppins text-sm text-gray-500">
-                        {opportunity.localizacao.endereco || 'NÃO DEFINIDO'}, {opportunity.localizacao.bairro || 'NÃO DEFINIDO'}, Nº{' '}
-                        {opportunity.localizacao.numeroOuIdentificador}, CEP: {opportunity.localizacao.cep || 'NÃO DEFINIDO'}
-                      </p>
-                    </div>
-                  </div>
-                </div>
-              </div>
+              <OpportunityClient client={opportunity.cliente} session={session} opportunityId={opportunityId} />
               <OpportunityDetails info={opportunity} session={session} opportunityId={opportunity._id} />
             </div>
 

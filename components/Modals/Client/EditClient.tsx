@@ -22,14 +22,15 @@ import { useClientById } from '@/utils/queries/clients'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import ErrorComponent from '@/components/utils/ErrorComponent'
 
-type NewClientModalProps = {
+type EditClientModalProps = {
   clientId: string
   session: Session
   partnerId: string
   closeModal: () => void
+  additionalAffectedQuery?: string[]
 }
 
-function NewClient({ clientId, session, partnerId, closeModal }: NewClientModalProps) {
+function EditClient({ clientId, session, partnerId, closeModal, additionalAffectedQuery }: EditClientModalProps) {
   const queryClient = useQueryClient()
   const { data: client, isSuccess, isError, isLoading } = useClientById({ id: clientId })
   const [clientInfo, setClientInfo] = useState<TClient>({
@@ -89,6 +90,10 @@ function NewClient({ clientId, session, partnerId, closeModal }: NewClientModalP
     mutationFn: updateClient,
     queryClient: queryClient,
     affectedQueryKey: ['clients'],
+    callbackFn: async () => {
+      await queryClient.invalidateQueries({ queryKey: ['client', clientId] })
+      if (additionalAffectedQuery) await queryClient.invalidateQueries({ queryKey: additionalAffectedQuery })
+    },
   })
 
   useEffect(() => {
@@ -377,4 +382,4 @@ function NewClient({ clientId, session, partnerId, closeModal }: NewClientModalP
   )
 }
 
-export default NewClient
+export default EditClient
