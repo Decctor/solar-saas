@@ -1,4 +1,4 @@
-import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import { TPartnerSimplifiedDTO } from '@/utils/schemas/partner.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { Session } from 'next-auth'
@@ -16,7 +16,7 @@ import { useProjectTypes } from '@/utils/queries/project-types'
 import Pricing from '../NewProposalStages/Pricing'
 
 type ProposalWithPlansProps = {
-  opportunity: TOpportunityDTOWithClientAndPartner
+  opportunity: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
   session: Session

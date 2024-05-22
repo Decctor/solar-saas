@@ -10,7 +10,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { customersAcquisitionChannels } from '@/utils/constants'
 
 import { Session } from 'next-auth'
-import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { updateOpportunity } from '@/utils/mutations/opportunities'
 import { updateClient } from '@/utils/mutations/clients'
@@ -20,8 +20,9 @@ import { stateCities } from '@/utils/estados_cidades'
 import { ElectricalInstallationGroups } from '@/utils/select-options'
 import SelectWithImages from '../Inputs/SelectWithImages'
 import { usePartnersSimplified } from '@/utils/queries/partners'
+import OpportunityFunnelReferencesBlock from './OpportunityFunnelReferencesBlock'
 type DetailsBlockType = {
-  info: TOpportunityDTOWithClient
+  info: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   session: Session
   opportunityId: string
 }
@@ -29,7 +30,7 @@ type DetailsBlockType = {
 function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
   const queryClient = useQueryClient()
   const partnersScope = session.user.permissoes.parceiros.escopo
-  const [infoHolder, setInfoHolder] = useState<TOpportunityDTOWithClient>({ ...info })
+  const [infoHolder, setInfoHolder] = useState<TOpportunityDTOWithClientAndPartnerAndFunnelReferences>({ ...info })
   const [newFunnelHolder, setNewFunnelHolder] = useState<{
     id: number | null
     etapaId: number | null
@@ -138,6 +139,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
             session={session}
             handleUpdateOpportunity={handleUpdateOpportunity}
           />
+          <OpportunityFunnelReferencesBlock opportunity={infoHolder} />
           <h1 className="w-full rounded-md bg-[#fead41] p-1 text-center text-sm font-medium text-white">DADOS DA LOCALIZAÇÃO</h1>
           <div className="flex w-full gap-2">
             <div className="flex grow items-center gap-1">

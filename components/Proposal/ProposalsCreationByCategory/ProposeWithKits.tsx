@@ -1,4 +1,4 @@
-import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import React, { useState } from 'react'
 import GeneralSizing from '../NewProposalStages/GeneralSizing'
@@ -16,7 +16,7 @@ import { ImFileEmpty } from 'react-icons/im'
 import { useProjectTypes } from '@/utils/queries/project-types'
 
 type ProposalWithKitsProps = {
-  opportunity: TOpportunityDTOWithClientAndPartner
+  opportunity: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
   session: Session

@@ -6,7 +6,7 @@ import { renderProposalPremisseField } from '@/premisses'
 import { orientations, ProjectTypes, structureTypes } from '@/utils/constants'
 import { useOpportunityTechnicalAnalysis } from '@/utils/queries/technical-analysis'
 import { useDistanceData } from '@/utils/queries/utils'
-import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import { TProjectTypeDTO } from '@/utils/schemas/project-types.schema'
 import { TProposal, TProposalPremisses } from '@/utils/schemas/proposal.schema'
 import { useQuery } from '@tanstack/react-query'
@@ -16,7 +16,7 @@ import React, { SetStateAction, useEffect, useState } from 'react'
 import { toast } from 'react-hot-toast'
 import TechnicalAnalysisVinculation from '../TechnicalAnalysisVinculation'
 type GeneralSizingProps = {
-  opportunity: TOpportunityDTOWithClientAndPartner
+  opportunity: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   projectTypes: TProjectTypeDTO[]
   session: Session
   infoHolder: TProposal

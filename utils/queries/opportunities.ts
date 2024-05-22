@@ -2,7 +2,7 @@ import axios from 'axios'
 import {
   TOpportunityDTO,
   TOpportunityDTOWithClient,
-  TOpportunityDTOWithClientAndPartner,
+  TOpportunityDTOWithClientAndPartnerAndFunnelReferences,
   TOpportunityDTOWithFunnelReferenceAndActivities,
   TOpportunityDTOWithFunnelReferenceAndActivitiesByStatus,
   TOpportunitySimplifiedDTOWithProposalAndActivitiesAndFunnels,
@@ -36,7 +36,7 @@ export function useOpportunities({ responsible, funnel, after, before, status }:
 async function fetchOpportunity({ opportunityId }: { opportunityId: string }) {
   try {
     const { data } = await axios.get(`/api/opportunities?id=${opportunityId}`)
-    return data.data as TOpportunityDTOWithClientAndPartner
+    return data.data as TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   } catch (error) {
     throw error
   }

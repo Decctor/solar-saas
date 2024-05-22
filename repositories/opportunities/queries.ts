@@ -3,7 +3,7 @@ import {
   TOpportunity,
   TOpportunityDTO,
   TOpportunityDTOWithClient,
-  TOpportunityDTOWithClientAndPartner,
+  TOpportunityDTOWithClientAndPartnerAndFunnelReferences,
   TOpportunitySimplified,
 } from '@/utils/schemas/opportunity.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
@@ -18,9 +18,10 @@ export async function getOpportunityById({ collection, id, query }: GetOpportuni
   try {
     // const opportunity = await collection.findOne({ _id: new ObjectId(id), idParceiro: partnerId || '' })
 
-    const addFields = { clientAsObjectId: { $toObjectId: '$idCliente' }, partnerAsObjectId: { $toObjectId: '$idParceiro' } }
+    const addFields = { clientAsObjectId: { $toObjectId: '$idCliente' }, partnerAsObjectId: { $toObjectId: '$idParceiro' }, idAsString: { $toString: '$_id' } }
     const clientLookup = { from: 'clients', localField: 'clientAsObjectId', foreignField: '_id', as: 'cliente' }
     const partnerLookup = { from: 'partners', localField: 'partnerAsObjectId', foreignField: '_id', as: 'parceiro' }
+    const funnelReferencesLookup = { from: 'funnel-references', localField: 'idAsString', foreignField: 'idOportunidade', as: 'referenciasFunil' }
     const opportunityArr = await collection
       .aggregate([
         {
@@ -38,11 +39,14 @@ export async function getOpportunityById({ collection, id, query }: GetOpportuni
         {
           $lookup: partnerLookup,
         },
+        {
+          $lookup: funnelReferencesLookup,
+        },
       ])
       .toArray()
-    const opportunity = opportunityArr.map((op) => ({ ...op, cliente: op.cliente[0], parceiro: op.parceiro[0] }))
+    const opportunity = opportunityArr.map((op) => ({ ...op, cliente: op.cliente[0], parceiro: op.parceiro[0], referenciasFunil: op.referenciasFunil }))
 
-    return opportunity[0] as TOpportunityDTOWithClientAndPartner
+    return opportunity[0] as TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   } catch (error) {
     throw error
   }

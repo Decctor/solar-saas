@@ -4,7 +4,7 @@ import { ClientDTOSchema, InsertClientSchema, TClientDTO } from './client.schema
 import { ActivitiesByStatus } from '@/pages/api/opportunities'
 import { TActivityDTO } from './activities.schema'
 import { TProposal } from './proposal.schema'
-import { TFunnelReference } from './funnel-reference.schema'
+import { TFunnelReference, TFunnelReferenceDTO } from './funnel-reference.schema'
 import { TPartnerSimplifiedDTO } from './partner.schema'
 export const ElectricalInstallationGroupsSchema = z.union([z.literal('RESIDENCIAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL'), z.literal('RURAL')], {
   required_error: 'Grupo da instalação elétrica não informado.',
@@ -468,7 +468,11 @@ export type TOpportunitySimplifiedDTOWithProposalAndActivitiesAndFunnels = TOppo
 }
 
 export type TOpportunityDTOWithClient = TOpportunityDTO & { cliente: TClientDTO }
-export type TOpportunityDTOWithClientAndPartner = TOpportunityDTO & { cliente: TClientDTO; parceiro: TPartnerSimplifiedDTO }
+export type TOpportunityDTOWithClientAndPartnerAndFunnelReferences = TOpportunityDTO & {
+  cliente: TClientDTO
+  parceiro: TPartnerSimplifiedDTO
+  referenciasFunil: TFunnelReferenceDTO[]
+}
 
 export type TOpportunityDTOWithFunnelReferenceAndActivitiesByStatus = TOpportunityDTO & {
   funil: { id: string; idFunil: string; idEstagio: string }

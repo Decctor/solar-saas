@@ -1,6 +1,6 @@
 import ProposalSignaturePlanShowcase from '@/components/Cards/ProposalSignaturePlanShowcase'
 import { useSignaturePlanWithPricingMethod } from '@/utils/queries/signature-plans'
-import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { TSignaturePlanDTOWithPricingMethod } from '@/utils/schemas/signature-plans.schema'
 import { Session } from 'next-auth'
@@ -16,7 +16,7 @@ type PlansShowcaseProps = {
   signaturePlans: TSignaturePlanDTOWithPricingMethod[]
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
-  opportunity: TOpportunityDTOWithClientAndPartner
+  opportunity: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   moveToNextStage: () => void
   moveToPreviousStage: () => void
   session: Session

@@ -1,7 +1,7 @@
 import { TClient } from '@/utils/schemas/client.schema'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId, TopologyClosedEvent } from 'mongodb'
+import { Collection, Filter, ObjectId, TopologyClosedEvent } from 'mongodb'
 
 type CreateOpportunityParams = {
   collection: Collection<TOpportunity>
@@ -84,12 +84,12 @@ type UpdateOpportunityParams = {
   id: string
   collection: Collection<TOpportunity>
   changes: Partial<TOpportunity>
-  partnerId: string
+  query: Filter<TOpportunity>
 }
 
-export async function updateOpportunity({ id, collection, changes, partnerId }: UpdateOpportunityParams) {
+export async function updateOpportunity({ id, collection, changes, query }: UpdateOpportunityParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), idParceiro: partnerId }, { $set: { ...changes } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), ...query }, { $set: { ...changes } })
     return updateResponse
   } catch (error) {
     throw error

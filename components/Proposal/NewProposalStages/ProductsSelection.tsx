@@ -8,7 +8,7 @@ import { renderCategoryIcon } from '@/lib/methods/rendering'
 import { TPricingConditionData, TPricingVariableData, getPricingTotal, handlePricingCalculation } from '@/utils/pricing/methods'
 import { useComercialProducts, useComercialProductsWithPricingMethod } from '@/utils/queries/products'
 import { TProductItem } from '@/utils/schemas/kits.schema'
-import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import { TProductDTOWithPricingMethod } from '@/utils/schemas/products.schema'
 import { TProposal, TProposalProduct } from '@/utils/schemas/proposal.schema'
 import { Session } from 'next-auth'
@@ -20,7 +20,7 @@ import { ImPower, ImSad } from 'react-icons/im'
 import { MdAttachMoney } from 'react-icons/md'
 
 type ProductsSelectionProps = {
-  opportunity: TOpportunityDTOWithClientAndPartner
+  opportunity: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
   moveToNextStage: () => void

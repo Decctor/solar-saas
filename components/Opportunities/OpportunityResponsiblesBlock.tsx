@@ -1,4 +1,4 @@
-import { TOpportunityDTOWithClient } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import React, { useState } from 'react'
 import Avatar from '../utils/Avatar'
 import { formatNameAsInitials } from '@/lib/methods/formatting'
@@ -12,8 +12,8 @@ import SelectWithImages from '../Inputs/SelectWithImages'
 import { Session } from 'next-auth'
 import { useOpportunityCreators } from '@/utils/queries/users'
 type OpportunityResponsiblesBlockProps = {
-  infoHolder: TOpportunityDTOWithClient
-  setInfoHolder: React.Dispatch<React.SetStateAction<TOpportunityDTOWithClient>>
+  infoHolder: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
+  setInfoHolder: React.Dispatch<React.SetStateAction<TOpportunityDTOWithClientAndPartnerAndFunnelReferences>>
   handleUpdateOpportunity: UseMutateFunction<
     unknown,
     Error,
@@ -43,7 +43,7 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
     responsibles,
     responsibleToRemoveIndex,
   }: {
-    responsibles: TOpportunityDTOWithClient['responsaveis']
+    responsibles: TOpportunityDTOWithClientAndPartnerAndFunnelReferences['responsaveis']
     responsibleToRemoveIndex: number
   }) {
     // Validating scope for removal
@@ -62,8 +62,8 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
     responsibles,
     responsibleToAdd,
   }: {
-    responsibles: TOpportunityDTOWithClient['responsaveis']
-    responsibleToAdd: TOpportunityDTOWithClient['responsaveis'][number]
+    responsibles: TOpportunityDTOWithClientAndPartnerAndFunnelReferences['responsaveis']
+    responsibleToAdd: TOpportunityDTOWithClientAndPartnerAndFunnelReferences['responsaveis'][number]
   }) {
     if (!responsibleToAdd.nome || !responsibleToAdd.id) return toast.error('Responsável inválido ou não preenchido.')
     if (!responsibleToAdd.papel) return toast.error('Papel de responsável inválido.')

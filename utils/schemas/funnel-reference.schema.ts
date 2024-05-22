@@ -43,5 +43,5 @@ const FunnelReferenceEntitySchema = z.object({
 })
 
 export type TFunnelReference = z.infer<typeof GeneralFunnelReferenceSchema>
-
+export type TFunnelReferenceDTO = TFunnelReference & { _id: string }
 export type TFunnelReferenceEntity = z.infer<typeof FunnelReferenceEntitySchema>

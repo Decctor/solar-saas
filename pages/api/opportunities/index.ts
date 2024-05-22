@@ -13,7 +13,7 @@ import {
   InsertOpportunitySchema,
   TOpportunity,
   TOpportunityDTOWithClient,
-  TOpportunityDTOWithClientAndPartner,
+  TOpportunityDTOWithClientAndPartnerAndFunnelReferences,
   TOpportunitySimplifiedWithProposalAndActivitiesAndFunnels,
 } from '@/utils/schemas/opportunity.schema'
 import dayjs from 'dayjs'
@@ -72,7 +72,7 @@ const statusOptionsQueries = {
 }
 
 type GetResponse = {
-  data: TOpportunitySimplifiedWithProposalAndActivitiesAndFunnels[] | TOpportunityDTOWithClientAndPartner
+  data: TOpportunitySimplifiedWithProposalAndActivitiesAndFunnels[] | TOpportunityDTOWithClientAndPartnerAndFunnelReferences
 }
 
 const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
@@ -199,7 +199,7 @@ const editOpportunity: NextApiHandler<PutResponse> = async (req, res) => {
   const hasEditAuthorizationForOpportunity = !userScope || opportunity.responsaveis.some((opResp) => opResp.id == userId || userScope.includes(opResp.id))
   if (!hasEditAuthorizationForOpportunity) throw new createHttpError.Unauthorized('Você não possui permissão para alterar informações dessa oportunidade.')
 
-  const updateResponse = await updateOpportunity({ id: id, collection: opportunitiesCollection, changes: changes, partnerId: partnerId || '' })
+  const updateResponse = await updateOpportunity({ id: id, collection: opportunitiesCollection, changes: changes, query: partnerQuery })
 
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na atualização da oportunidade.')
   return res.status(201).json({ data: 'Oportunidade alterada com sucesso !', message: 'Oportunidade alterada com sucesso !' })

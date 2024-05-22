@@ -31,3 +31,18 @@ export async function updateFunnelReference({ collection, funnelReferenceId, new
     throw error
   }
 }
+
+type DeleteFunnelReferenceParams = {
+  collection: Collection<TFunnelReference>
+  id: string
+  query: Filter<TFunnelReference>
+}
+
+export async function deleteFunnelReference({ collection, id, query }: DeleteFunnelReferenceParams) {
+  try {
+    const deleteResponse = await collection.deleteOne({ _id: new ObjectId(id), ...query })
+    return deleteResponse
+  } catch (error) {
+    throw error
+  }
+}

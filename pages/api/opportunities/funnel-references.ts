@@ -1,7 +1,9 @@
-import { insertFunnelReference, updateFunnelReference } from '@/repositories/funnel-references/mutations'
+import { deleteFunnelReference, insertFunnelReference, updateFunnelReference } from '@/repositories/funnel-references/mutations'
+import { getFunnelReferenceById } from '@/repositories/funnel-references/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
 import { InsertFunnelReferenceSchema, TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import createHttpError from 'http-errors'
 import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
@@ -58,7 +60,42 @@ const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na atualização da referência de funil.')
   res.status(201).json({ data: 'Atualização feita com sucesso!', message: 'Atualização feita com sucesso !' })
 }
+
+type DeleteResponse = {
+  data: string
+  message: string
+}
+
+const removeFunnelReferenceRoute: NextApiHandler<DeleteResponse> = async (req, res) => {
+  const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true)
+  const userId = session.user.id
+  const userOpportunityScope = session.user.permissoes.oportunidades.escopo
+  const { id } = req.query
+  if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
+
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
+  const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
+  const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
+
+  const funnelReference = await getFunnelReferenceById({ collection: funnelReferencesCollection, id: id, query: {} })
+  if (!funnelReference) throw new createHttpError.NotFound('Referência de funil não encontrada.')
+  const opportunityId = funnelReference.idOportunidade
+  const opportunity = await opportunitiesCollection.findOne({ _id: new ObjectId(opportunityId) }, { projection: { responsaveis: 1 } })
+  if (!opportunity) throw new createHttpError.NotFound('Oops, houve um erro ao excluir referência de funil.')
+
+  // Validating if user either: has global opportunity scope, its one of the opportunity responsibles or has one of the opportunity responsibles within his scope
+  const hasEditAuthorizationForOpportunity =
+    !userOpportunityScope || opportunity.responsaveis.some((opResp) => opResp.id == userId || userOpportunityScope.includes(opResp.id))
+  if (!hasEditAuthorizationForOpportunity) throw new createHttpError.Unauthorized('Você não possui permissão para realizar essa operação.')
+
+  const deleteResponse = await deleteFunnelReference({ collection: funnelReferencesCollection, id: id, query: {} })
+  if (!deleteResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao excluir referência de funil.')
+
+  return res.status(200).json({ data: 'Referência de funil removida com sucesso !', message: 'Referência de funil removida com sucesso !' })
+}
+
 export default apiHandler({
   POST: createFunnelReference,
   PUT: editFunnelReference,
+  DELETE: removeFunnelReferenceRoute,
 })

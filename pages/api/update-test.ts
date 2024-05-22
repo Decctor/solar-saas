@@ -20,60 +20,35 @@ import { TUser } from '@/utils/schemas/user.schema'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 type PostResponse = any
 
-const typeEquivalents = {
-  'SISTEMA FOTOVOLTAICO': {
-    tipo: {
-      id: '6615785ddcb7a6e66ede9785',
-      titulo: 'SISTEMA FOTOVOLTAICO',
-    },
-    categoriaVenda: 'KIT',
-  },
-  'OPERAÇÃO E MANUTENÇÃO': {
-    tipo: {
-      id: '661ec7e5e03128a48f94b4de',
-      titulo: 'OPERAÇÃO E MANUTENÇÃO',
-    },
-    categoriaVenda: 'PLANO',
-  },
-  'MONTAGEM E DESMONTAGEM': {
-    tipo: {
-      id: '661ec86de03128a48f94b4df',
-      titulo: 'SERVIÇOS AVULSOS',
-    },
-    categoriaVenda: 'SERVIÇOS',
-  },
-  MONITORAMENTO: {
-    tipo: {
-      id: '661ec8dae03128a48f94b4e0',
-      titulo: 'SERVIÇOS AVULSOS',
-    },
-    categoriaVenda: 'SERVIÇOS',
-  },
-}
-
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   const { id } = req.query
 
-  // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'main')
+  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'main')
   // const requestsDb = await connectToRequestsDatabase(process.env.MONGODB_URI)
 
-  // const crmTechnicalAnalysisCollection: Collection<TTechnicalAnalysis> = crmDb.collection('technical-analysis')
+  const crmTechnicalAnalysisCollection: Collection<TTechnicalAnalysis> = crmDb.collection('technical-analysis')
   // const requestsTechnicalAnalysisCollection = requestsDb.collection('analisesTecnicas')
 
-  // // const proposalsCollection: Collection<TProposal> = db.collection('proposals')
+  // // // const proposalsCollection: Collection<TProposal> = db.collection('proposals')
   // const crmAnalysis = await crmTechnicalAnalysisCollection.find({}).toArray()
-  // const requestsAnalysis = await requestsTechnicalAnalysisCollection.find({}).toArray()
-
+  // // const requestsAnalysis = await requestsTechnicalAnalysisCollection.find({}).toArray()
+  // const typeEquivalents = {
+  //   'ALTERAÇÃO DE PROJETO': 'ANÁLISE TÉCNICA REMOTA URBANA',
+  //   'VISITA TÉCNICA REMOTA - RURAL': 'ANÁLISE TÉCNICA REMOTA RURAL',
+  //   'AUMENTO DE SISTEMA AMPÈRE': 'ANÁLISE TÉCNICA REMOTA URBANA',
+  //   'VISITA TÉCNICA IN LOCO - RURAL': 'ANÁLISE TÉCNICA IN LOCO',
+  //   'VISITA TÉCNICA REMOTA - URBANA': 'ANÁLISE TÉCNICA REMOTA URBANA',
+  //   'AUMENTO DE SISTEMA': 'ANÁLISE TÉCNICA REMOTA RURAL',
+  //   'VISITA TÉCNICA IN LOCO - URBANA': 'ANÁLISE TÉCNICA REMOTA URBANA',
+  // }
   // const bulkWriteArr = crmAnalysis.map((analysis) => {
-  //   const requestEquivalent = requestsAnalysis.find((a) => a._id.toString() == analysis._id.toString())
-  //   console.log(requestEquivalent?.nome, requestEquivalent?.dataEfetivacao)
-  //   const finishDate = analysis.dataEfetivacao ? analysis.dataEfetivacao : requestEquivalent?.dataEfetivacao || null
+  //   const type = typeEquivalents[analysis.tipoSolicitacao]
   //   return {
   //     updateOne: {
   //       filter: { _id: new ObjectId(analysis._id) },
   //       update: {
   //         $set: {
-  //           dataEfetivacao: finishDate,
+  //           tipoSolicitacao: type,
   //         },
   //       },
   //     },

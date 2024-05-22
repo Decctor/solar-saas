@@ -37,9 +37,9 @@ function FunnelReferenceInformationBlock({ funnelReference, setFunnelReference, 
           onChange={(selected) => {
             const selectedFunnel = funnels.find((f) => f._id == selected.value)
             const firstStage = selectedFunnel?.etapas[0].id || ''
-            setFunnelReference((prev) => ({ ...prev, idFunil: selected.value, idEstagioFunil: firstStage }))
+            setFunnelReference((prev) => ({ ...prev, idFunil: selected.value, idEstagioFunil: firstStage.toString() }))
           }}
-          onReset={() => setFunnelReference((prev) => ({ ...prev, idFunil: '' }))}
+          onReset={() => setFunnelReference((prev) => ({ ...prev, idFunil: '', idEstagioFunil: '' }))}
           width="100%"
         />
       </div>

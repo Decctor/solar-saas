@@ -1,7 +1,7 @@
 import axios from 'axios'
 import { TFunnelReference } from '../schemas/funnel-reference.schema'
 import { QueryClient, QueryFilters, QueryKey, useMutation } from '@tanstack/react-query'
-import { TOpportunityDTOWithFunnelReference, TOpportunityEntityWithFunnelReference } from '../schemas/opportunity.schema'
+import { TOpportunitySimplifiedDTOWithProposalAndActivitiesAndFunnels } from '../schemas/opportunity.schema'
 
 type HandleFunnelReferenceCreation = {
   info: TFunnelReference
@@ -22,24 +22,21 @@ type UseUpdateFunnelReferenceParams = {
   queryClient: QueryClient
   affectedQueryKey: QueryKey
 }
-async function updateFunnelReference({ funnelReferenceId, newStageId }: Omit<UseUpdateFunnelReferenceParams, 'queryClient' | 'affectedQueryKey'>) {
+export async function updateFunnelReference({ funnelReferenceId, newStageId }: Omit<UseUpdateFunnelReferenceParams, 'queryClient' | 'affectedQueryKey'>) {
   try {
     const { data } = await axios.put(`/api/opportunities/funnel-references?id=${funnelReferenceId}`, { idEstagioFunil: newStageId })
     if (typeof data.data != 'string') return 'Estágio atualizado com sucesso !'
     return data.data
   } catch (error) {}
 }
-export function useFunnelReferenceUpdate({
-  queryClient,
-  affectedQueryKey,
-}: Omit<UseUpdateFunnelReferenceParams, 'funnelReferenceId' | 'newStageId'>) {
+export function useFunnelReferenceUpdate({ queryClient, affectedQueryKey }: Omit<UseUpdateFunnelReferenceParams, 'funnelReferenceId' | 'newStageId'>) {
   return useMutation({
     mutationKey: ['upate-funnel-reference'],
     mutationFn: async ({ funnelReferenceId, newStageId }: Omit<UseUpdateFunnelReferenceParams, 'queryClient' | 'affectedQueryKey'>) =>
       await updateFunnelReference({ funnelReferenceId, newStageId }),
     onMutate: async (variables) => {
       await queryClient.cancelQueries({ queryKey: affectedQueryKey })
-      const querySnapshot: TOpportunityDTOWithFunnelReference[] | undefined = queryClient.getQueryData(affectedQueryKey)
+      const querySnapshot: TOpportunitySimplifiedDTOWithProposalAndActivitiesAndFunnels[] | undefined = queryClient.getQueryData(affectedQueryKey)
       if (!querySnapshot) return { querySnapshot }
 
       // Updating opportunity optimistically
@@ -63,4 +60,14 @@ export function useFunnelReferenceUpdate({
       queryClient.invalidateQueries({ queryKey: affectedQueryKey })
     },
   })
+}
+
+export async function deleteFunnelReference({ id }: { id: string }) {
+  try {
+    const { data } = await axios.delete(`/api/opportunities/funnel-references?id=${id}`)
+    if (typeof data.message != 'string') return 'Referência de funil removida com sucesso !'
+    return data.message as string
+  } catch (error) {
+    throw error
+  }
 }

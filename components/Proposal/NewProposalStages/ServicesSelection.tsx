@@ -5,7 +5,7 @@ import { combineUniqueServices } from '@/lib/methods/array-manipulation'
 import { TPricingConditionData, TPricingVariableData, handlePricingCalculation } from '@/utils/pricing/methods'
 import { useComercialServicesWithPricingMethod } from '@/utils/queries/services'
 import { TServiceItem } from '@/utils/schemas/kits.schema'
-import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import { TProposal, TProposalService } from '@/utils/schemas/proposal.schema'
 import { TServiceDTOWithPricingMethod } from '@/utils/schemas/service.schema'
 import { Session } from 'next-auth'
@@ -14,7 +14,7 @@ import toast from 'react-hot-toast'
 import { ImSad } from 'react-icons/im'
 
 type ServicesSelectionProps = {
-  opportunity: TOpportunityDTOWithClientAndPartner
+  opportunity: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
   moveToNextStage: () => void

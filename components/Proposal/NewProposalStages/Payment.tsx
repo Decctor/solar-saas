@@ -1,7 +1,7 @@
 import ErrorComponent from '@/components/utils/ErrorComponent'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import { usePaymentMethods } from '@/utils/queries/payment-methods'
-import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartner } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClient, TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
 import { TProposal, TProposalPaymentMethodItem } from '@/utils/schemas/proposal.schema'
 import { Session } from 'next-auth'
 import React, { useState } from 'react'
@@ -14,7 +14,7 @@ import toast from 'react-hot-toast'
 type PaymentProps = {
   infoHolder: TProposal
   setInfoHolder: React.Dispatch<React.SetStateAction<TProposal>>
-  opportunity: TOpportunityDTOWithClientAndPartner
+  opportunity: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   moveToNextStage: () => void
   moveToPreviousStage: () => void
   session: Session
