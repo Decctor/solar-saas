@@ -4,17 +4,18 @@ import { useSession } from 'next-auth/react'
 import React, { Dispatch, SetStateAction, useEffect, useState } from 'react'
 import { MdNotifications, MdNotificationsActive } from 'react-icons/md'
 import Notifications from './Modals/Notifications'
+import { useNotificationsByRecipient } from '@/utils/queries/notifications'
+import { TNotificationDTO } from '@/utils/schemas/notification.schema'
+import { Session } from 'next-auth'
 
-function NotificationBlock({ sidebarExtended }: { sidebarExtended: boolean }) {
-  const { data: session } = useSession()
-  const { data: notifications } = useNotifications(session?.user.id)
+function NotificationBlock({ sidebarExtended, session }: { sidebarExtended: boolean; session: Session }) {
+  const { data: notifications } = useNotificationsByRecipient({ recipientId: session.user.id })
   const [notificationModalIsOpen, setNotificationModalIsOpen] = useState<boolean>(false)
-  function countUnreadNotifications(notifications?: any[]) {
-    if (notifications) {
-      const unreadArr = notifications.filter((x) => !x.dataLeitura)
-      return unreadArr.length
-    }
-    return 0
+  function countUnreadNotifications(notifications?: TNotificationDTO[]) {
+    if (!notifications) return 0
+    // Filtering notifications by the unexistence of the userId in the recebimentos list of ids
+    const unreadArr = notifications.filter((n) => !n.recebimentos.map((r) => r.id).includes(session.user.id))
+    return unreadArr.length
   }
   useEffect(() => {
     if (notificationModalIsOpen) setNotificationModalIsOpen((prev) => !prev)
@@ -39,7 +40,7 @@ function NotificationBlock({ sidebarExtended }: { sidebarExtended: boolean }) {
         )}
       </div>
       {notificationModalIsOpen ? (
-        <Notifications notifications={notifications} sidebarExtended={sidebarExtended} closeModal={() => setNotificationModalIsOpen(false)} />
+        <Notifications notifications={notifications} session={session} sidebarExtended={sidebarExtended} closeModal={() => setNotificationModalIsOpen(false)} />
       ) : null}
     </>
   )

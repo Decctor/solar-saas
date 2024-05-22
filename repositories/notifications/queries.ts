@@ -3,12 +3,11 @@ import { Collection, ObjectId } from 'mongodb'
 
 type GetNotificationByIdParams = {
   collection: Collection<TNotification>
-  notificationId: string
-  partnerId: string
+  id: string
 }
-export async function getNotificationById({ collection, notificationId, partnerId }: GetNotificationByIdParams) {
+export async function getNotificationById({ collection, id }: GetNotificationByIdParams) {
   try {
-    const notification = await collection.findOne({ _id: new ObjectId(notificationId), idParceiro: partnerId })
+    const notification = await collection.findOne({ _id: new ObjectId(id) })
 
     return notification
   } catch (error) {
@@ -19,11 +18,10 @@ export async function getNotificationById({ collection, notificationId, partnerI
 type GetNotificationByRecipientIdParams = {
   collection: Collection<TNotification>
   recipientId: string
-  partnerId: string
 }
-export async function getNotificationByRecipientId({ collection, recipientId, partnerId }: GetNotificationByRecipientIdParams) {
+export async function getNotificationByRecipientId({ collection, recipientId }: GetNotificationByRecipientIdParams) {
   try {
-    const notifications = await collection.find({ 'destinatario.id': recipientId, idParceiro: partnerId }).toArray()
+    const notifications = await collection.find({ 'destinatarios.id': recipientId }).toArray()
     return notifications
   } catch (error) {
     throw error
@@ -32,11 +30,10 @@ export async function getNotificationByRecipientId({ collection, recipientId, pa
 type GetNotificationByOpportunityIdParams = {
   collection: Collection<TNotification>
   opportunityId: string
-  partnerId: string
 }
-export async function getNotificationByOpportunityId({ collection, opportunityId, partnerId }: GetNotificationByOpportunityIdParams) {
+export async function getNotificationByOpportunityId({ collection, opportunityId }: GetNotificationByOpportunityIdParams) {
   try {
-    const notifications = await collection.find({ 'oportunidade.id': opportunityId, idParceiro: partnerId }).toArray()
+    const notifications = await collection.find({ 'oportunidade.id': opportunityId }).toArray()
     return notifications
   } catch (error) {
     throw error

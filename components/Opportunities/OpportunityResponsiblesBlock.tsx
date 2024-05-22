@@ -11,6 +11,8 @@ import { OpportunityResponsibilityRoles } from '@/utils/select-options'
 import SelectWithImages from '../Inputs/SelectWithImages'
 import { Session } from 'next-auth'
 import { useOpportunityCreators } from '@/utils/queries/users'
+import { TNotification } from '@/utils/schemas/notification.schema'
+import { createNotification } from '@/utils/mutations/notifications'
 type OpportunityResponsiblesBlockProps = {
   infoHolder: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   setInfoHolder: React.Dispatch<React.SetStateAction<TOpportunityDTOWithClientAndPartnerAndFunnelReferences>>
@@ -58,7 +60,7 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
     // @ts-ignore
     return handleUpdateOpportunity({ id: infoHolder._id, changes: { responsaveis: newResponsibles } })
   }
-  function handleResponsibleAddition({
+  async function handleResponsibleAddition({
     responsibles,
     responsibleToAdd,
   }: {
@@ -76,7 +78,22 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
     }
     opportunityResponsibles.push(responsible)
     // @ts-ignore
-    return handleUpdateOpportunity({ id: infoHolder._id, changes: { responsaveis: opportunityResponsibles } })
+    handleUpdateOpportunity({ id: infoHolder._id, changes: { responsaveis: opportunityResponsibles } })
+    // Notifying the new opportunity responsible
+    const newNotification: TNotification = {
+      remetente: { id: null, nome: 'SISTEMA' },
+      idParceiro: infoHolder.idParceiro,
+      destinatarios: [{ id: responsibleToAdd.id, nome: responsibleToAdd.nome, avatar_url: responsibleToAdd.avatar_url }],
+      oportunidade: {
+        id: infoHolder._id,
+        nome: infoHolder.nome,
+        identificador: infoHolder.identificador,
+      },
+      mensagem: `${session.user.nome} adicionou você como responsável (com o papel de ${responsibleToAdd.papel}) da oportunidade ${infoHolder.nome}.`,
+      recebimentos: [],
+      dataInsercao: new Date().toISOString(),
+    }
+    await createNotification({ info: newNotification })
   }
   return (
     <div className=" flex w-full flex-col gap-2">

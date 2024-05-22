@@ -4,11 +4,13 @@ import {
   getActivitiesByOpportunityId,
   getActivitiesByResponsibleId,
   getActivitiesByTechnicalAnalysisId,
+  getActivityById,
   getAllActivities,
 } from '@/repositories/acitivities/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { InsertActivitySchema, TActivity } from '@/utils/schemas/activities.schema'
+import { TNotification } from '@/utils/schemas/notification.schema'
 import createHttpError from 'http-errors'
 import { Collection, Filter, FilterOperators, MatchKeysAndValues, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
@@ -96,6 +98,30 @@ const editActivity: NextApiHandler<PutResponse> = async (req, res) => {
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TActivity> = db.collection('activities')
+  const notificationsCollection: Collection<TNotification> = db.collection('notifications')
+  if (!!changes.dataConclusao) {
+    const activity = await getActivityById({ collection: collection, id: id, query: {} })
+    if (!activity) throw new createHttpError.NotFound('Atividade não encontrada.')
+    // Validating if activity was concluded by someone else than the author
+    const { autor } = activity
+    if (session.user.id != autor.id) {
+      // If so, then, notifying the author about the activity conclusion
+      const newNotification: TNotification = {
+        remetente: { id: null, nome: 'SISTEMA' },
+        idParceiro: partnerId,
+        destinatarios: [{ id: autor.id, nome: autor.nome, avatar_url: autor.avatar_url }],
+        oportunidade: {
+          id: activity.oportunidade.id?.toString(),
+          nome: activity.oportunidade.nome,
+          identificador: null,
+        },
+        mensagem: `A atividade que você criou (${activity.titulo}) foi concluída por ${session.user.nome}.`,
+        recebimentos: [],
+        dataInsercao: new Date().toISOString(),
+      }
+      await notificationsCollection.insertOne(newNotification)
+    }
+  }
 
   const updateResponse = await updateActivity({ activityId: id, collection: collection, changes: changes, query: partnerQuery })
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar atividade.')

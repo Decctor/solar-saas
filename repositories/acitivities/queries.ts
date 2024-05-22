@@ -1,5 +1,20 @@
 import { TActivity } from '@/utils/schemas/activities.schema'
-import { Collection, Filter } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
+
+type GetActivityByIdParams = {
+  collection: Collection<TActivity>
+  id: string
+  query: Filter<TActivity>
+}
+
+export async function getActivityById({ id, collection, query }: GetActivityByIdParams) {
+  try {
+    const activity = await collection.findOne({ _id: new ObjectId(id) })
+    return activity
+  } catch (error) {
+    throw error
+  }
+}
 
 type GetActivitiesByOpportunityIdParams = {
   opportunityId: string

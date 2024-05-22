@@ -105,6 +105,7 @@ function EquipmentBlock({ infoHolder, setInfoHolder, changes, setChanges }: Equi
     productsArr.push(productInfo)
     const orderProducts = productsArr.sort((a, b) => a.categoria.localeCompare(b.categoria))
     setInfoHolder((prev) => ({ ...prev, equipamentos: orderProducts }))
+    setChanges((prev) => ({ ...prev, equipamentos: orderProducts }))
     setInverterHolder({
       id: '',
       fabricante: '',
@@ -133,6 +134,7 @@ function EquipmentBlock({ infoHolder, setInfoHolder, changes, setChanges }: Equi
     productsArr.push(productInfo)
     const orderProducts = productsArr.sort((a, b) => a.categoria.localeCompare(b.categoria))
     setInfoHolder((prev) => ({ ...prev, equipamentos: orderProducts }))
+    setChanges((prev) => ({ ...prev, equipamentos: orderProducts }))
     setModuleHolder({
       id: '',
       fabricante: '',
@@ -159,6 +161,7 @@ function EquipmentBlock({ infoHolder, setInfoHolder, changes, setChanges }: Equi
     productsArr.push(productInfo)
     const orderProducts = productsArr.sort((a, b) => a.categoria.localeCompare(b.categoria))
     setInfoHolder((prev) => ({ ...prev, equipamentos: orderProducts }))
+    setChanges((prev) => ({ ...prev, equipamentos: orderProducts }))
     setPersonalizedProductHolder({
       id: null,
       categoria: 'OUTROS',
@@ -173,6 +176,7 @@ function EquipmentBlock({ infoHolder, setInfoHolder, changes, setChanges }: Equi
     const currenTEquipmentList = [...infoHolder.equipamentos]
     currenTEquipmentList.splice(index, 1)
     setInfoHolder((prev) => ({ ...prev, equipamentos: currenTEquipmentList }))
+    setChanges((prev) => ({ ...prev, equipamentos: currenTEquipmentList }))
   }
 
   return (

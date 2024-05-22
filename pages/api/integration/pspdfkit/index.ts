@@ -1,46 +1,3 @@
-// import { NextApiHandler } from 'next'
-
-// import axios from 'axios'
-// import { apiHandler } from '@/utils/api'
-// import fs from 'fs'
-// import path from 'path'
-// type GetResponse = any
-
-// async function fetchDocxFile() {
-//   // Ensure that you correctly resolve the path to where your 'public' directory resides in your file system
-//   const filePath = path.resolve('./public/test-file.docx')
-//   return new Promise((resolve, reject) => {
-//     fs.readFile(filePath, (err, data) => {
-//       if (err) reject(err)
-//       else resolve(data.toString('binary')) // Convert buffer to binary string if necessary
-//     })
-//   })
-// }
-
-// const testing: NextApiHandler<GetResponse> = async (req, res) => {
-//   const fileStr = await fetchDocxFile()
-//   const header = { Authorization: `Token token=${process.env.PSPDFKIT_DOCUMENT_ENGINE_API_KEY}`, 'content-type': 'multipart/form-data' }
-//   const pspdfresponse = await axios.post(
-//     'http://localhost:5000/api/process_office_template',
-//     {
-//       model: {
-//         config: { delimiter: { start: '{{', end: '}}' } },
-//         model: {
-//           name: 'TESTE',
-//           greeting: 'TESTANDO GREETING',
-//         },
-//       },
-//       document: fileStr,
-//     },
-//     { headers: header }
-//   )
-//   console.log('RESPOSTA', pspdfresponse)
-
-//   return res.status(200).json(pspdfresponse)
-// }
-
-// export default apiHandler({ GET: testing })
-
 import { NextApiHandler } from 'next'
 import axios from 'axios'
 import { apiHandler } from '@/utils/api'
@@ -53,7 +10,7 @@ import { storage } from '@/services/firebase/storage-config'
 type GetResponse = any
 
 async function fetchDocxFile() {
-  const filePath = path.resolve('./public/test-file.docx')
+  const filePath = path.resolve('./public/test-file-two.docx')
   return new Promise((resolve, reject) => {
     fs.readFile(filePath, (err, data) => {
       if (err) reject(err)
@@ -91,11 +48,9 @@ const testing: NextApiHandler<GetResponse> = async (req, res) => {
   const binaryData = Buffer.from(response.data)
 
   // Upload to Firebase Storage
-  const storageRef = ref(storage, 'testing-pspdfkit/uploaded-test2')
-  const uploadResponse = await uploadBytes(storageRef, binaryData)
+  // const storageRef = ref(storage, 'testing-pspdfkit/uploaded-test2')
+  // const uploadResponse = await uploadBytes(storageRef, binaryData)
   return res.status(200).json({ message: 'File uploaded successfully' })
-  console.log('Response:', response.data)
-  return res.status(200).json(response.data)
 }
 
 export default apiHandler({ GET: testing })

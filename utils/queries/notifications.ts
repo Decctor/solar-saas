@@ -5,7 +5,7 @@ import { useQuery } from '@tanstack/react-query'
 async function fetchNotificationsByRecipientId({ recipientId }: { recipientId: string }) {
   try {
     const { data } = await axios.get(`/api/notifications?recipientId=${recipientId}`)
-    return data.data as TNotificationDTO
+    return data.data as TNotificationDTO[]
   } catch (error) {
     throw error
   }

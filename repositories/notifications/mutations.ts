@@ -1,5 +1,5 @@
 import { TNotification } from '@/utils/schemas/notification.schema'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 
 type InsertNotificationParams = {
   collection: Collection<TNotification>
@@ -15,13 +15,14 @@ export async function insertNotification({ collection, info, partnerId }: Insert
   }
 }
 type UpdateNotificationParams = {
+  id: string
   collection: Collection<TNotification>
   info: Partial<TNotification>
-  partnerId: string
+  query: Filter<TNotification>
 }
-export async function updateNotification({ collection, info, partnerId }: UpdateNotificationParams) {
+export async function updateNotification({ id, collection, info, query }: UpdateNotificationParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(partnerId), idParceiro: partnerId }, { $set: { ...info } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(id), ...query }, { $set: { ...info } })
     return updateResponse
   } catch (error) {
     throw error

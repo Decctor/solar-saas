@@ -212,9 +212,10 @@ const collectLead: NextApiHandler<PostResponse> = async (req, res) => {
   const { insertedId: opportunityInsertedId, acknowledged: opportunityInsertAcknowledged } = await opportunitiesCollection.insertOne(newOpportunity)
 
   // Notifying the opportunity receiver
-  const newNotification = {
+  const newNotification: TNotification = {
+    idParceiro: partnerId,
     remetente: { id: 'SISTEMA', nome: 'SISTEMA' },
-    destinatario: [newReceiver],
+    destinatarios: [newReceiver],
     oportunidade: {
       id: opportunityInsertedId.toString(),
       nome: newOpportunity.nome,

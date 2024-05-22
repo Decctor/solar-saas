@@ -9,7 +9,10 @@ const GeneralNotificationSchema = z.object({
     invalid_type_error: 'Tipo não válido para o ID de referência do parceiro.',
   }),
   remetente: z.object({
-    id: z.string({ required_error: 'ID de referência do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o ID do remetente.' }),
+    id: z
+      .string({ required_error: 'ID de referência do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o ID do remetente.' })
+      .optional()
+      .nullable(),
     nome: z.string({ required_error: 'Nome do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o nome do remetente.' }),
     avatar_url: z.string({ invalid_type_error: 'Avatar do remetente não fornecido.' }).optional().nullable(),
   }),
@@ -42,6 +45,7 @@ const GeneralNotificationSchema = z.object({
     z.object({
       id: z.string({ required_error: 'ID do recebedor não informado.', invalid_type_error: 'Tipo não válido para o ID do recebedor.' }),
       nome: z.string({ required_error: 'Nome do recebedor não informado.', invalid_type_error: 'Tipo não válido para o nome do recebedor.' }),
+      avatar_url: z.string({ invalid_type_error: 'Tipo inválido para o avatar do usuário recebedor.' }).optional().nullable(),
       dataLeitura: z
         .string({ required_error: 'Date de recebimento não informada.', invalid_type_error: 'Tipo não válido para a data de recebimento.' })
         .datetime(),
@@ -58,7 +62,10 @@ export const InsertNotificationSchema = z.object({
     invalid_type_error: 'Tipo não válido para o ID de referência do parceiro.',
   }),
   remetente: z.object({
-    id: z.string({ required_error: 'ID de referência do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o ID do remetente.' }),
+    id: z
+      .string({ required_error: 'ID de referência do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o ID do remetente.' })
+      .optional()
+      .nullable(),
     nome: z.string({ required_error: 'Nome do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o nome do remetente.' }),
     avatar_url: z.string({ invalid_type_error: 'Avatar do remetente não fornecido.' }).optional().nullable(),
   }),
@@ -91,6 +98,7 @@ export const InsertNotificationSchema = z.object({
     z.object({
       id: z.string({ required_error: 'ID do recebedor não informado.', invalid_type_error: 'Tipo não válido para o ID do recebedor.' }),
       nome: z.string({ required_error: 'Nome do recebedor não informado.', invalid_type_error: 'Tipo não válido para o nome do recebedor.' }),
+      avatar_url: z.string({ invalid_type_error: 'Tipo inválido para o avatar do usuário recebedor.' }).optional().nullable(),
       dataLeitura: z
         .string({ required_error: 'Date de recebimento não informada.', invalid_type_error: 'Tipo não válido para a data de recebimento.' })
         .datetime(),
@@ -108,7 +116,10 @@ const NotificationEntitySchema = z.object({
     invalid_type_error: 'Tipo não válido para o ID de referência do parceiro.',
   }),
   remetente: z.object({
-    id: z.string({ required_error: 'ID de referência do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o ID do remetente.' }),
+    id: z
+      .string({ required_error: 'ID de referência do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o ID do remetente.' })
+      .optional()
+      .nullable(),
     nome: z.string({ required_error: 'Nome do remetente não fornecido.', invalid_type_error: 'Tipo não válido para o nome do remetente.' }),
     avatar_url: z.string({ invalid_type_error: 'Avatar do remetente não fornecido.' }).optional().nullable(),
   }),
@@ -141,6 +152,7 @@ const NotificationEntitySchema = z.object({
     z.object({
       id: z.string({ required_error: 'ID do recebedor não informado.', invalid_type_error: 'Tipo não válido para o ID do recebedor.' }),
       nome: z.string({ required_error: 'Nome do recebedor não informado.', invalid_type_error: 'Tipo não válido para o nome do recebedor.' }),
+      avatar_url: z.string({ invalid_type_error: 'Tipo inválido para o avatar do usuário recebedor.' }).optional().nullable(),
       dataLeitura: z
         .string({ required_error: 'Date de recebimento não informada.', invalid_type_error: 'Tipo não válido para a data de recebimento.' })
         .datetime(),
