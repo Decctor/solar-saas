@@ -21,7 +21,10 @@ type GetNotificationByRecipientIdParams = {
 }
 export async function getNotificationByRecipientId({ collection, recipientId }: GetNotificationByRecipientIdParams) {
   try {
-    const notifications = await collection.find({ 'destinatarios.id': recipientId }).toArray()
+    const notifications = await collection
+      .find({ 'destinatarios.id': recipientId }, { sort: { 'recebimentos.dataLeitura': 1 } })
+      .limit(30)
+      .toArray()
     return notifications
   } catch (error) {
     throw error
