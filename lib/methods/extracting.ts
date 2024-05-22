@@ -71,8 +71,10 @@ export function getInvertersStrByProducts(products: TProductItem[]) {
   }
   return str
 }
-export function getModulesAveragePower(modules: TProductItem[]) {
-  const averagepower = modules.filter((m) => m.categoria == 'MÓDULO').reduce((acc, current) => acc + (current.potencia || 0), 0) / modules.length
+export function getModulesAveragePower(products: TProductItem[]) {
+  const modules = products.filter((m) => m.categoria == 'MÓDULO')
+  const averagepower = modules.reduce((acc, current) => acc + (current.potencia || 0), 0) / modules.length
+  console.log(averagepower)
   return averagepower
 }
 export function getDateDifference({ dateOne, dateTwo, absolute }: { dateOne?: string | null; dateTwo?: string | null; absolute: boolean }) {
