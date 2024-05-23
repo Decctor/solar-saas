@@ -94,6 +94,7 @@ function ClientsPage() {
               setPartners={setPartners}
               authorsOptions={authorOptions}
               partnersOptions={partnersOptions}
+              resetSelectedPage={() => setPage(1)}
             />
           ) : null}
         </div>

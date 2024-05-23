@@ -76,7 +76,20 @@ function formatDateQuery(date: string, type: 'start' | 'end') {
   if (type == 'end') return dayjs(date).endOf('day').subtract(3, 'hour').toISOString()
   return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
 }
+function getClientByPersonalizedFilterORSearchParams({ name, phone }: { name: string; phone: string }): Filter<TClient> {
+  var orArr: Filter<TClient>[] = []
+  if (name.trim().length > 0) {
+    orArr.push({ nome: { $regex: name, $options: 'i' } })
+    orArr.push({ nome: name })
+  }
 
+  if (phone.trim().length > 0) {
+    orArr.push({ telefonePrimario: { $regex: phone, $options: 'i' } })
+    orArr.push({ telefonePrimario: phone })
+  }
+  if (orArr.length == 0) return {}
+  return { $or: orArr }
+}
 export type TClientsByFilterResult = {
   clients: TClientDTOSimplified[]
   clientsMatched: number
@@ -120,9 +133,9 @@ const getClientsByPersonalizedFilters: NextApiHandler<PostResponse> = async (req
 
   const authorsQuery: Filter<TClient> = authors ? { 'autor.id': { $in: authors } } : {}
   const partnerQuery: Filter<TClient> = partners ? { idParceiro: { $in: [...partners] } } : {}
+  const orQuery = getClientByPersonalizedFilterORSearchParams({ name: filters.name, phone: filters.phone })
   const filtersQuery: Filter<TClient> = {
-    nome: filters.name.trim().length > 0 ? { $regex: filters.name, $options: 'i' } : { $ne: undefined },
-    telefonePrimario: filters.phone.trim().length > 0 ? { $regex: filters.phone, $options: 'i' } : { $ne: undefined },
+    ...orQuery,
     cidade: filters.city.length > 0 ? { $in: filters.city } : { $ne: '' },
     canalAquisicao: filters.acquisitionChannel.length > 0 ? { $in: filters.acquisitionChannel } : { $ne: '' },
   }
@@ -130,7 +143,7 @@ const getClientsByPersonalizedFilters: NextApiHandler<PostResponse> = async (req
   const query = { ...filtersQuery, ...insertionQuery, ...authorsQuery, ...partnerQuery }
   const skip = PAGE_SIZE * (Number(page) - 1)
   const limit = PAGE_SIZE
-
+  console.log(filtersQuery)
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection<TClient>('clients')
   const { clients, clientsMatched } = await getClientsByFilters({ collection: collection, query: query, skip: skip, limit: limit })

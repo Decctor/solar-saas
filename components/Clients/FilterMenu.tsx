@@ -17,6 +17,7 @@ import { TPersonalizedClientsFilter } from '@/utils/schemas/client.schema'
 import { Session } from 'next-auth'
 import { TUserDTO } from '@/utils/schemas/user.schema'
 import { TPartnerSimplifiedDTO } from '@/utils/schemas/partner.schema'
+import { formatToPhone } from '@/utils/methods'
 const AllCities = StatesAndCities.flatMap((s) => s.cidades).map((c, index) => ({ id: index + 1, label: c, value: c }))
 
 type FilterMenuProps = {
@@ -29,6 +30,7 @@ type FilterMenuProps = {
   partnersOptions?: TPartnerSimplifiedDTO[]
   session: Session
   queryLoading: boolean
+  resetSelectedPage: () => void
 }
 function FilterMenu({
   updateFilters,
@@ -40,6 +42,7 @@ function FilterMenu({
   partnersOptions,
   session,
   queryLoading,
+  resetSelectedPage,
 }: FilterMenuProps) {
   const userPartnerScope = session.user.permissoes.parceiros.escopo
   const userClientsScope = session.user.permissoes.clientes.escopo
@@ -82,7 +85,7 @@ function FilterMenu({
             label="TELEFONE"
             value={filtersHolder.phone}
             handleChange={(value) => {
-              setFiltersHolder((prev) => ({ ...prev, phone: value }))
+              setFiltersHolder((prev) => ({ ...prev, phone: formatToPhone(value) }))
             }}
             placeholder="Filtre pelo telefone do cliente..."
             labelClassName="text-xs font-medium tracking-tight text-black"
@@ -160,6 +163,7 @@ function FilterMenu({
           <button
             disabled={queryLoading}
             onClick={() => {
+              resetSelectedPage()
               updateFilters(filtersHolder)
             }}
             className="h-9 whitespace-nowrap rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-blue-700 enabled:hover:text-white"
