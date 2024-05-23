@@ -1,8 +1,9 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
-import { TTechnicalAnalysis, TTechnicalAnalysisDTO } from '../schemas/technical-analysis.schema'
+import { TPersonalizedTechnicalAnalysisFilter, TTechnicalAnalysis, TTechnicalAnalysisDTO } from '../schemas/technical-analysis.schema'
 import { useState } from 'react'
 import { formatWithoutDiacritics } from '@/lib/methods/formatting'
+import { TTechnicalAnalysisByFiltersResult } from '@/pages/api/technical-analysis/search'
 
 async function fetchUserTechnicalAnalysis({ userId, status }: { userId: string | null; status: 'TODOS' | null }) {
   try {
@@ -140,4 +141,72 @@ export function useTechnicalAnalysisById({ id }: { id: string }) {
     queryKey: ['technical-analysis-by-id', id],
     queryFn: async () => await fetchTechnicalAnalysisById({ id }),
   })
+}
+
+type FetchTechnicalAnalysisByPersonalizedFiltersParams = {
+  after: string | null
+  before: string | null
+  page: number
+  applicants: string[] | null
+  analysts: string[] | null
+  partners: string[] | null
+  filters: TPersonalizedTechnicalAnalysisFilter
+}
+async function fetchTechnicalAnalysisByPersonalizedFilters({
+  after,
+  before,
+  page,
+  applicants,
+  analysts,
+  partners,
+  filters,
+}: FetchTechnicalAnalysisByPersonalizedFiltersParams) {
+  try {
+    const { data } = await axios.post(`/api/technical-analysis/search?after=${after}&before=${before}&page=${page}`, {
+      applicants,
+      analysts,
+      partners,
+      filters,
+    })
+    return data.data as TTechnicalAnalysisByFiltersResult
+  } catch (error) {
+    throw error
+  }
+}
+
+type UseTechnicalAnalysisByPersonalizedFiltersParams = {
+  after: string | null
+  before: string | null
+  page: number
+  applicants: string[] | null
+  analysts: string[] | null
+  partners: string[] | null
+}
+export function useTechnicalAnalysisByPersonalizedFilters({
+  after,
+  before,
+  page,
+  applicants,
+  analysts,
+  partners,
+}: UseTechnicalAnalysisByPersonalizedFiltersParams) {
+  const [filters, setFilters] = useState<TPersonalizedTechnicalAnalysisFilter>({
+    name: '',
+    status: [],
+    complexity: null,
+    city: [],
+    state: [],
+    type: [],
+    pending: false,
+  })
+  function updateFilters(filters: TPersonalizedTechnicalAnalysisFilter) {
+    setFilters(filters)
+  }
+  return {
+    ...useQuery({
+      queryKey: ['analysis-by-personalized-filters', after, before, page, applicants, analysts, partners, filters],
+      queryFn: async () => await fetchTechnicalAnalysisByPersonalizedFilters({ after, before, page, applicants, analysts, partners, filters }),
+    }),
+    updateFilters,
+  }
 }

@@ -1,4 +1,4 @@
-import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
+import { TechnicalAnalysisSimplifiedProjection, TTechnicalAnalysis, TTechnicalAnalysisDTOSimplified } from '@/utils/schemas/technical-analysis.schema'
 import { Collection, Filter, ObjectId } from 'mongodb'
 
 type GetTechnicalAnalysisParams = {
@@ -40,4 +40,22 @@ export async function getTechnicalAnalysisByOpportunityId({ collection, query, o
   } catch (error) {
     throw error
   }
+}
+
+type GetTechnicalAnalysisByFilterParams = {
+  collection: Collection<TTechnicalAnalysis>
+  query: Filter<TTechnicalAnalysis>
+  skip: number
+  limit: number
+}
+export async function getTechnicalAnalysisByFilter({ collection, query, skip, limit }: GetTechnicalAnalysisByFilterParams) {
+  // Getting the total analysis matched by the query
+  const analysisMatched = await collection.countDocuments({ ...query })
+  const sort = { _id: -1 }
+  const match = { ...query }
+  const analysis = await collection
+    .aggregate([{ $sort: sort }, { $match: match }, { $skip: skip }, { $project: TechnicalAnalysisSimplifiedProjection }, { $limit: limit }])
+    .toArray()
+
+  return { analysis, analysisMatched } as { analysis: TTechnicalAnalysisDTOSimplified[]; analysisMatched: number }
 }

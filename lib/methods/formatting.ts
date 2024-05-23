@@ -22,6 +22,12 @@ export function formatToDateTime(date: string | null) {
   if (!date) return ''
   return dayjs(date).format('DD/MM/YYYY HH:mm')
 }
+
+export function formatDateQuery(date: string, type: 'start' | 'end') {
+  if (type == 'start') return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
+  if (type == 'end') return dayjs(date).endOf('day').subtract(3, 'hour').toISOString()
+  return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
+}
 export function formatNameAsInitials(name: string) {
   const splittedName = name.split(' ')
   const firstLetter = splittedName[0][0]

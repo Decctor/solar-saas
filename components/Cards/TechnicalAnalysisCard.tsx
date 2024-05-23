@@ -6,7 +6,7 @@ import { IoMdAlert } from 'react-icons/io'
 import { MdCategory } from 'react-icons/md'
 
 import { BsCalendarCheck, BsCalendarFill, BsCalendarPlus, BsCode, BsFillCalendarCheckFill } from 'react-icons/bs'
-import { TTechnicalAnalysisDTO } from '@/utils/schemas/technical-analysis.schema'
+import { TTechnicalAnalysisDTO, TTechnicalAnalysisDTOSimplified } from '@/utils/schemas/technical-analysis.schema'
 import Avatar from '../utils/Avatar'
 import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
 import { TbAtom, TbWorld } from 'react-icons/tb'
@@ -37,7 +37,7 @@ function getStatusTag(status: string) {
 }
 
 type TechnicalAnalysisCardProps = {
-  analysis: TTechnicalAnalysisDTO
+  analysis: TTechnicalAnalysisDTOSimplified
   handleClick: (id: string) => void
   userHasEditPermission: boolean
 }

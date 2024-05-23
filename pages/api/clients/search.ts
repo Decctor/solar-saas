@@ -1,3 +1,4 @@
+import { formatDateQuery } from '@/lib/methods/formatting'
 import { getClientsByFilters, getSimilarClients } from '@/repositories/clients/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
@@ -71,11 +72,7 @@ const QuerySchema = z.object({
   }),
   page: z.string({ required_error: 'Parâmetro de páginação não informado.' }),
 })
-function formatDateQuery(date: string, type: 'start' | 'end') {
-  if (type == 'start') return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
-  if (type == 'end') return dayjs(date).endOf('day').subtract(3, 'hour').toISOString()
-  return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
-}
+
 function getClientByPersonalizedFilterORSearchParams({ name, phone }: { name: string; phone: string }): Filter<TClient> {
   var orArr: Filter<TClient>[] = []
   if (name.trim().length > 0) {
