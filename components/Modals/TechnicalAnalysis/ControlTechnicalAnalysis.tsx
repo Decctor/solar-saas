@@ -166,23 +166,7 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
     affectedQueryKey: ['technical-analysis-by-id', analysisId],
     callbackFn: async () => await queryClient.invalidateQueries({ queryKey: ['technical-analysis'] }),
   })
-  async function notifyApplicantOnConclusion({ analysis }: { analysis: TTechnicalAnalysisDTO }) {
-    if (!analysis.requerente.id) return
-    const newNotification: TNotification = {
-      remetente: { id: null, nome: 'SISTEMA' },
-      idParceiro: infoHolder.idParceiro,
-      destinatarios: [{ id: analysis.requerente.id, nome: analysis.requerente.nome || '', avatar_url: analysis.requerente.avatar_url }],
-      oportunidade: {
-        id: analysis.oportunidade.id,
-        nome: analysis.oportunidade.nome,
-        identificador: analysis.oportunidade.identificador,
-      },
-      mensagem: `Sua solicitação de análise técnica do tipo ${analysis.tipoSolicitacao} da oportunidade ${analysis.oportunidade.nome} foi concluída.`,
-      recebimentos: [],
-      dataInsercao: new Date().toISOString(),
-    }
-    await createNotification({ info: newNotification })
-  }
+
   useEffect(() => {
     if (analysis) setInfoHolder(analysis)
   }, [analysis])
@@ -328,10 +312,9 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
                       ) : null}
 
                       <button
-                        onClick={async () => {
+                        onClick={() => {
                           //@ts-ignore
                           handleEditTechnicalAnalysis({ id: analysisId, changes: { status: 'CONCLUIDO', dataEfetivacao: new Date().toISOString() } })
-                          await notifyApplicantOnConclusion({ analysis })
                         }}
                         className="rounded border border-green-500 p-1 font-bold text-green-500 duration-300 ease-in-out hover:bg-green-500 hover:text-white"
                       >

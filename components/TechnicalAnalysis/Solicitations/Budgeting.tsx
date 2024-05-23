@@ -753,7 +753,14 @@ function Budgeting({ session, infoHolder, setInfoHolder, files, setFiles, active
         <button onClick={() => resetSolicitationType()} className="rounded p-2 font-bold text-gray-500 duration-300 hover:scale-105">
           Voltar
         </button>
-        <button className="rounded p-2 font-bold hover:bg-black hover:text-white" onClick={() => handleRequestAnalysis({ info: infoHolder, files: files })}>
+        <button
+          className="rounded p-2 font-bold hover:bg-black hover:text-white"
+          onClick={() => {
+            // Validating existing costs to budget
+            if (infoHolder.custos.length < 1) return toast.error('Adicionei ao menos um custo.')
+            handleRequestAnalysis({ info: infoHolder, files: files })
+          }}
+        >
           SOLICITAR ANÁLISE
         </button>
       </div>

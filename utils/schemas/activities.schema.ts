@@ -16,7 +16,7 @@ const GeneralActivitySchema = z.object({
   idParceiro: z.string(),
   titulo: z.string(), // resume of the activity
   descricao: z.string(), // description of what to be done
-  responsaveis: z.array(ResponsibleSchema),
+  responsaveis: z.array(ResponsibleSchema).min(1, 'Adicione ao menos um responsável à atividade.'),
   oportunidade: z.object({
     id: z.string().optional().nullable(),
     nome: z.string().optional().nullable(),
@@ -50,7 +50,7 @@ export const InsertActivitySchema = z.object({
     required_error: 'Descrição da atividade não informada.',
     invalid_type_error: 'Tipo não válido para a descrição da atividade.',
   }), // description of what to be done
-  responsaveis: z.array(ResponsibleSchema),
+  responsaveis: z.array(ResponsibleSchema).min(1, 'Adicione ao menos um responsável à atividade.'),
   oportunidade: z.object({
     id: z.string({ invalid_type_error: 'Tipo não válido para a referência de oportunidade.' }).optional().nullable(),
     nome: z.string({ invalid_type_error: 'Tipo não válido para o nome da oportunidade referência.' }).optional().nullable(),
@@ -120,7 +120,7 @@ const ActivityEntitySchema = z.object({
   _id: z.instanceof(ObjectId),
   titulo: z.string(), // resume of the activity
   descricao: z.string(), // description of what to be done
-  responsaveis: z.array(ResponsibleSchema),
+  responsaveis: z.array(ResponsibleSchema).min(1, 'Adicione ao menos um responsável à atividade.'),
   oportunidade: z.object({
     id: z.string().optional().nullable(),
     nome: z.string().optional().nullable(),

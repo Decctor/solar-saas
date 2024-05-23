@@ -99,6 +99,12 @@ const editActivity: NextApiHandler<PutResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TActivity> = db.collection('activities')
   const notificationsCollection: Collection<TNotification> = db.collection('notifications')
+
+  const updateResponse = await updateActivity({ activityId: id, collection: collection, changes: changes, query: partnerQuery })
+  if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar atividade.')
+  if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Atividade não encontrada.')
+
+  // Validating need to generate an notification in activity conclusion
   if (!!changes.dataConclusao) {
     const activity = await getActivityById({ collection: collection, id: id, query: {} })
     if (!activity) throw new createHttpError.NotFound('Atividade não encontrada.')
@@ -122,10 +128,6 @@ const editActivity: NextApiHandler<PutResponse> = async (req, res) => {
       await notificationsCollection.insertOne(newNotification)
     }
   }
-
-  const updateResponse = await updateActivity({ activityId: id, collection: collection, changes: changes, query: partnerQuery })
-  if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar atividade.')
-
   return res.status(201).json({ data: 'Atividade atualizada com sucesso !', message: 'Atividade atualizada com sucesso !' })
 }
 export default apiHandler({ GET: getActivities, POST: createActivity, PUT: editActivity })

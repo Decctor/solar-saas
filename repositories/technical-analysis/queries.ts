@@ -16,12 +16,12 @@ export async function getTechnicalAnalysis({ collection, query }: GetTechnicalAn
 
 type GetTechnicalAnalysisByIdParams = {
   collection: Collection<TTechnicalAnalysis>
-  partnerId: string
   analysisId: string
+  query: Filter<TTechnicalAnalysis>
 }
-export async function getTechnicalAnalysisById({ collection, partnerId, analysisId }: GetTechnicalAnalysisByIdParams) {
+export async function getTechnicalAnalysisById({ collection, query, analysisId }: GetTechnicalAnalysisByIdParams) {
   try {
-    const analysis = await collection.findOne({ _id: new ObjectId(analysisId), idParceiro: partnerId })
+    const analysis = await collection.findOne({ _id: new ObjectId(analysisId), ...query })
     return analysis
   } catch (error) {
     throw error

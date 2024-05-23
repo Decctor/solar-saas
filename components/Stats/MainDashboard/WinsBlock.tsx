@@ -58,7 +58,7 @@ function WinsBlock({ data, session }: WinsBlockProps) {
                   </div>
                 </div>
               </div>
-              <div className="flex min-w-[100px] items-center gap-1">
+              <div className="flex min-w-fit items-center gap-1">
                 <p className="font-medium">{win.proposta?.valor ? formatToMoney(win.proposta.valor) : 'N/A'}</p>
               </div>
             </div>
