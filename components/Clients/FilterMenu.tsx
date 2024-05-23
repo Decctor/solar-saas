@@ -14,13 +14,43 @@ import StatesAndCities from '@/utils/json-files/cities.json'
 import MultipleSelectInputVirtualized from '../Inputs/MultipleSelectInputVirtualized'
 import { CustomersAcquisitionChannels } from '@/utils/select-options'
 import { TPersonalizedClientsFilter } from '@/utils/schemas/client.schema'
+import { Session } from 'next-auth'
+import { TUserDTO } from '@/utils/schemas/user.schema'
+import { TPartnerSimplifiedDTO } from '@/utils/schemas/partner.schema'
 const AllCities = StatesAndCities.flatMap((s) => s.cidades).map((c, index) => ({ id: index + 1, label: c, value: c }))
 
 type FilterMenuProps = {
   updateFilters: (filters: TPersonalizedClientsFilter) => void
+  selectedAuthors: string[] | null
+  setAuthors: (authors: string[] | null) => void
+  selectedPartners: string[] | null
+  setPartners: (partners: string[] | null) => void
+  authorsOptions?: TUserDTO[]
+  partnersOptions?: TPartnerSimplifiedDTO[]
+  session: Session
   queryLoading: boolean
 }
-function FilterMenu({ updateFilters, queryLoading }: FilterMenuProps) {
+function FilterMenu({
+  updateFilters,
+  selectedAuthors,
+  setAuthors,
+  selectedPartners,
+  setPartners,
+  authorsOptions,
+  partnersOptions,
+  session,
+  queryLoading,
+}: FilterMenuProps) {
+  const userPartnerScope = session.user.permissoes.parceiros.escopo
+  const userClientsScope = session.user.permissoes.clientes.escopo
+
+  const authorSelectableOptions = authorsOptions ? (userClientsScope ? authorsOptions.filter((a) => userClientsScope.includes(a._id)) : authorsOptions) : []
+  const partnersSelectableOptions = partnersOptions
+    ? userPartnerScope
+      ? partnersOptions.filter((a) => userPartnerScope.includes(a._id))
+      : partnersOptions
+    : []
+
   const [filtersHolder, setFiltersHolder] = useState<TPersonalizedClientsFilter>({
     name: '',
     phone: '',
@@ -99,6 +129,30 @@ function FilterMenu({ updateFilters, queryLoading }: FilterMenuProps) {
               }}
               width="100%"
               labelClassName="text-xs font-medium tracking-tight text-black"
+            />
+          </div>
+          <div className="w-full md:w-[250px]">
+            <MultipleSelectInput
+              label="AUTORES"
+              options={authorSelectableOptions?.map((promoter) => ({ id: promoter._id || '', label: promoter.nome, value: promoter._id })) || null}
+              selected={selectedAuthors}
+              handleChange={(value) => setAuthors(value as string[])}
+              selectedItemLabel="TODOS"
+              onReset={() => setAuthors(null)}
+              labelClassName="text-xs font-medium tracking-tight text-black"
+              width="100%"
+            />
+          </div>
+          <div className="w-full md:w-[250px]">
+            <MultipleSelectInput
+              label="PARCEIROS"
+              options={partnersSelectableOptions?.map((promoter) => ({ id: promoter._id || '', label: promoter.nome, value: promoter._id })) || null}
+              selected={selectedPartners}
+              handleChange={(value) => setPartners(value as string[])}
+              selectedItemLabel="TODOS"
+              onReset={() => setPartners(null)}
+              labelClassName="text-xs font-medium tracking-tight text-black"
+              width="100%"
             />
           </div>
         </div>

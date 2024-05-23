@@ -39,7 +39,7 @@ function ClientsPage() {
   const [period, setPeriod] = useState<{ after: string | null; before: string | null }>({ after: null, before: null })
   const [authors, setAuthors] = useState<string[] | null>(null)
   const [partners, setPartners] = useState<string[] | null>(null)
-  const { data: usersOptions } = useUsers()
+  const { data: authorOptions } = useUsers()
   const { data: partnersOptions } = usePartnersSimplified()
   const { data, isLoading, isError, isSuccess, updateFilters } = useClientsByPersonalizedFilters({
     after: period.after,
@@ -70,9 +70,6 @@ function ClientsPage() {
               )}
               <div className="flex flex-col gap-1">
                 <h1 className="text-xl font-black leading-none tracking-tight md:text-2xl">BANCO DE CLIENTES</h1>
-                <p className="text-sm leading-none tracking-tight text-gray-500">
-                  {clients?.length ? (clients.length > 0 ? `${clients.length} clientes encontrados.` : `${clients.length} cliente encontrado.`) : '...'}
-                </p>
               </div>
             </div>
             <div className="flex items-center gap-2">
@@ -86,9 +83,27 @@ function ClientsPage() {
               ) : null}
             </div>
           </div>
-          {filterMenuIsOpen ? <FilterMenu updateFilters={updateFilters} queryLoading={isLoading} /> : null}
+          {filterMenuIsOpen ? (
+            <FilterMenu
+              updateFilters={updateFilters}
+              queryLoading={isLoading}
+              session={session}
+              selectedAuthors={authors}
+              setAuthors={setAuthors}
+              selectedPartners={partners}
+              setPartners={setPartners}
+              authorsOptions={authorOptions}
+              partnersOptions={partnersOptions}
+            />
+          ) : null}
         </div>
-        <ClientsPagination activePage={page} totalPages={totalPages || 0} selectPage={(x) => setPage(x)} queryLoading={isLoading} />
+        <ClientsPagination
+          activePage={page}
+          totalPages={totalPages || 0}
+          selectPage={(x) => setPage(x)}
+          queryLoading={isLoading}
+          clientsMatched={clientsMatched}
+        />
         <div className="flex flex-wrap justify-between gap-2 py-2">
           {isLoading ? <LoadingComponent /> : null}
           {isError ? <ErrorComponent msg="Houve um erro ao buscar clientes." /> : null}
