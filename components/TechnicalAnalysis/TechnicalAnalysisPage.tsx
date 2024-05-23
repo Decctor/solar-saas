@@ -66,6 +66,8 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
               updateFilters={updateFilters}
               queryLoading={isLoading}
               session={session}
+              analystsOptions={analystsOptions}
+              applicantsOptions={applicantOptions}
               selectedApplicants={applicants}
               setApplicants={setApplicants}
               selectedAnalysts={analysts}
