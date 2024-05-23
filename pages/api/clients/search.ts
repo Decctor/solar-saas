@@ -2,7 +2,14 @@ import { getClientsByFilters, getSimilarClients } from '@/repositories/clients/q
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { IClient } from '@/utils/models'
-import { PersonalizedClientQuerySchema, TClient, TClientDTO, TClientSimplified, TSimilarClientSimplified } from '@/utils/schemas/client.schema'
+import {
+  PersonalizedClientQuerySchema,
+  TClient,
+  TClientDTO,
+  TClientDTOSimplified,
+  TClientSimplified,
+  TSimilarClientSimplified,
+} from '@/utils/schemas/client.schema'
 import dayjs from 'dayjs'
 import createHttpError from 'http-errors'
 import { Filter } from 'mongodb'
@@ -69,11 +76,17 @@ function formatDateQuery(date: string, type: 'start' | 'end') {
   if (type == 'end') return dayjs(date).endOf('day').subtract(3, 'hour').toISOString()
   return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
 }
+
+export type TClientsByFilterResult = {
+  clients: TClientDTOSimplified[]
+  clientsMatched: number
+  totalPages: number
+}
 type PostResponse = {
-  data: TClientSimplified[]
+  data: TClientsByFilterResult
 }
 const getClientsByPersonalizedFilters: NextApiHandler<PostResponse> = async (req, res) => {
-  const PAGE_SIZE = 1000
+  const PAGE_SIZE = 500
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
   const partnerScope = session.user.permissoes.parceiros.escopo
@@ -81,7 +94,7 @@ const getClientsByPersonalizedFilters: NextApiHandler<PostResponse> = async (req
   const userId = session.user.id
   const userScope = session.user.permissoes.clientes.escopo
   const { after, before, page } = QuerySchema.parse(req.query)
-  const { authors, partners, match } = PersonalizedClientQuerySchema.parse(req.body)
+  const { authors, partners, filters } = PersonalizedClientQuerySchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
   // to access a overall visualiation, which he/she isnt allowed
@@ -107,15 +120,22 @@ const getClientsByPersonalizedFilters: NextApiHandler<PostResponse> = async (req
 
   const authorsQuery: Filter<TClient> = authors ? { 'autor.id': { $in: authors } } : {}
   const partnerQuery: Filter<TClient> = partners ? { idParceiro: { $in: [...partners] } } : {}
-  const query = { ...match, ...insertionQuery, ...authorsQuery, ...partnerQuery }
+  const filtersQuery: Filter<TClient> = {
+    nome: filters.name.trim().length > 0 ? { $regex: filters.name, $options: 'i' } : { $ne: undefined },
+    telefonePrimario: filters.phone.trim().length > 0 ? { $regex: filters.phone, $options: 'i' } : { $ne: undefined },
+    cidade: filters.city.length > 0 ? { $in: filters.city } : { $ne: '' },
+    canalAquisicao: filters.acquisitionChannel.length > 0 ? { $in: filters.acquisitionChannel } : { $ne: '' },
+  }
+
+  const query = { ...filtersQuery, ...insertionQuery, ...authorsQuery, ...partnerQuery }
   const skip = PAGE_SIZE * (Number(page) - 1)
   const limit = PAGE_SIZE
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection = db.collection<TClient>('clients')
-  const clients = await getClientsByFilters({ collection: collection, query: query, skip: skip, limit: limit })
-
-  return res.status(200).json({ data: clients })
+  const { clients, clientsMatched } = await getClientsByFilters({ collection: collection, query: query, skip: skip, limit: limit })
+  const totalPages = Math.round(clientsMatched / PAGE_SIZE)
+  return res.status(200).json({ data: { clients, clientsMatched, totalPages } })
 }
 
 export default apiHandler({

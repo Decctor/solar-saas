@@ -265,8 +265,25 @@ export const ClientSimplifiedProjection = {
   autor: 1,
   dataInsercao: 1,
 }
+
+const PersonalizedFiltersSchema = z.object({
+  name: z.string({ required_error: 'Filtro de novo não informado.', invalid_type_error: 'Tipo não válido para filtro de nome.' }),
+  phone: z.string({ required_error: 'Filtro de telefone não informado.', invalid_type_error: 'Tipo não válido para filtro de telefone.' }),
+  city: z.array(z.string({ required_error: 'Cidade de filtro não informada.', invalid_type_error: 'Tipo não válido para cidade de filtro.' }), {
+    required_error: 'Lista de cidades de filtro não informada.',
+    invalid_type_error: 'Tipo não válido para lista de cidades de filtro.',
+  }),
+  acquisitionChannel: z.array(
+    z.string({ required_error: 'Canal de aquisição de filtro não informada.', invalid_type_error: 'Tipo não válido para canal de aquisição de filtro.' }),
+    {
+      required_error: 'Lista de canais de aquisição de filtro não informada.',
+      invalid_type_error: 'Tipo não válido para lista de canais de aquisição de filtro.',
+    }
+  ),
+})
+export type TPersonalizedClientsFilter = z.infer<typeof PersonalizedFiltersSchema>
 export const PersonalizedClientQuerySchema = z.object({
   authors: z.array(z.string({ required_error: 'Autores não informados ou inválidos.', invalid_type_error: 'Autores inválidos.' })).nullable(),
   partners: z.array(z.string({ required_error: 'Parceiros não informados ou inválidos.', invalid_type_error: 'Parceiros inválidos.' })).nullable(),
-  match: z.any({ required_error: 'Parâmetros de filtro não informados.', invalid_type_error: 'Tipo não válido para parâmetros de filtro.' }),
+  filters: PersonalizedFiltersSchema,
 })

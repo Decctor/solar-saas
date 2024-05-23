@@ -22,6 +22,7 @@ import { usePartnersSimplified } from '@/utils/queries/partners'
 import dayjs from 'dayjs'
 import { getFirstDayOfMonth, getFirstDayOfYear, getLastDayOfMonth, getLastDayOfYear } from '@/utils/methods'
 import FilterMenu from '@/components/Clients/FilterMenu'
+import ClientsPagination from '@/components/Clients/Pagination'
 
 const currentDate = new Date()
 const firstDayOfYear = getFirstDayOfYear(currentDate.toISOString()).toISOString()
@@ -40,16 +41,16 @@ function ClientsPage() {
   const [partners, setPartners] = useState<string[] | null>(null)
   const { data: usersOptions } = useUsers()
   const { data: partnersOptions } = usePartnersSimplified()
-  const {
-    data: clients,
-    isLoading,
-    isError,
-    isSuccess,
-    filters,
-    setFilters,
-    updateMatch,
-  } = useClientsByPersonalizedFilters({ after: period.after, before: period.before, authors: authors, partners: partners, page: page })
-
+  const { data, isLoading, isError, isSuccess, updateFilters } = useClientsByPersonalizedFilters({
+    after: period.after,
+    before: period.before,
+    authors: authors,
+    partners: partners,
+    page: page,
+  })
+  const clients = data?.clients
+  const clientsMatched = data?.clientsMatched
+  const totalPages = data?.totalPages
   if (status != 'authenticated') return <LoadingPage />
   return (
     <div className="flex h-full flex-col md:flex-row">
@@ -85,21 +86,20 @@ function ClientsPage() {
               ) : null}
             </div>
           </div>
-          {filterMenuIsOpen ? <FilterMenu setFilters={setFilters} filters={filters} updateMatch={updateMatch} queryLoading={isLoading} /> : null}
+          {filterMenuIsOpen ? <FilterMenu updateFilters={updateFilters} queryLoading={isLoading} /> : null}
         </div>
-        {isLoading ? <LoadingComponent /> : null}
-        {isError ? <ErrorComponent msg="Houve um erro ao buscar clientes." /> : null}
-        {isSuccess ? (
-          clients.length > 0 ? (
-            <div className="flex w-full flex-wrap items-start justify-around gap-3 py-2">
-              {clients.map((client) => (
-                <ClientCard key={client._id} client={client} openModal={(id) => setEditClient({ isOpen: true, id: id })} />
-              ))}
-            </div>
-          ) : (
-            <p className="w-full text-center italic text-gray-500">Nenhum cliente encontrado...</p>
-          )
-        ) : null}
+        <ClientsPagination activePage={page} totalPages={totalPages || 0} selectPage={(x) => setPage(x)} queryLoading={isLoading} />
+        <div className="flex flex-wrap justify-between gap-2 py-2">
+          {isLoading ? <LoadingComponent /> : null}
+          {isError ? <ErrorComponent msg="Houve um erro ao buscar clientes." /> : null}
+          {isSuccess && clients ? (
+            clients.length > 0 ? (
+              clients.map((client) => <ClientCard key={client._id} client={client} openModal={(id) => setEditClient({ isOpen: true, id: id })} />)
+            ) : (
+              <p className="w-full text-center italic text-gray-500">Nenhum cliente encontrado...</p>
+            )
+          ) : null}
+        </div>
       </div>
       {newClientModalIsOpen ? (
         <NewClientModal session={session} partnerId={session.user.idParceiro || ''} closeModal={() => setNewClientModalIsOpen(false)} />

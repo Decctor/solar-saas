@@ -45,7 +45,7 @@ function ClientCard({ client, openModal }: ClientCard) {
         </div>
       </div>
 
-      <div className="mt-2 flex w-full items-center justify-end">
+      <div className="mt-2 flex w-full items-center justify-end gap-2">
         <div className={`flex items-center gap-1`}>
           <BsCalendarPlus />
           <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(client.dataInsercao, true)}</p>

@@ -1,4 +1,4 @@
-import React from 'react'
+import React, { useState } from 'react'
 
 import TextInput from '../Inputs/TextInput'
 import MultipleSelectInput from '../Inputs/MultipleSelectInput'
@@ -11,18 +11,22 @@ import CheckboxInput from '../Inputs/CheckboxInput'
 import { useEquipments } from '@/utils/queries/utils'
 import StatesAndCities from '@/utils/json-files/cities.json'
 
-import { UseClientsPersonalizedFilter } from '@/utils/queries/clients'
 import MultipleSelectInputVirtualized from '../Inputs/MultipleSelectInputVirtualized'
 import { CustomersAcquisitionChannels } from '@/utils/select-options'
+import { TPersonalizedClientsFilter } from '@/utils/schemas/client.schema'
 const AllCities = StatesAndCities.flatMap((s) => s.cidades).map((c, index) => ({ id: index + 1, label: c, value: c }))
 
 type FilterMenuProps = {
-  filters: UseClientsPersonalizedFilter
-  setFilters: React.Dispatch<React.SetStateAction<UseClientsPersonalizedFilter>>
-  updateMatch: (filters: UseClientsPersonalizedFilter) => void
+  updateFilters: (filters: TPersonalizedClientsFilter) => void
   queryLoading: boolean
 }
-function FilterMenu({ filters, setFilters, updateMatch, queryLoading }: FilterMenuProps) {
+function FilterMenu({ updateFilters, queryLoading }: FilterMenuProps) {
+  const [filtersHolder, setFiltersHolder] = useState<TPersonalizedClientsFilter>({
+    name: '',
+    phone: '',
+    city: [],
+    acquisitionChannel: [],
+  })
   return (
     <AnimatePresence>
       <motion.div
@@ -37,18 +41,18 @@ function FilterMenu({ filters, setFilters, updateMatch, queryLoading }: FilterMe
         <div className="flex w-full flex-col flex-wrap items-center justify-start gap-2 lg:flex-row">
           <TextInput
             label="PESQUISA"
-            value={filters.search}
+            value={filtersHolder.name}
             handleChange={(value) => {
-              setFilters((prev) => ({ ...prev, search: value }))
+              setFiltersHolder((prev) => ({ ...prev, name: value }))
             }}
             placeholder="Filtre pelo nome do cliente..."
             labelClassName="text-xs font-medium tracking-tight text-black"
           />
           <TextInput
             label="TELEFONE"
-            value={filters.phone}
+            value={filtersHolder.phone}
             handleChange={(value) => {
-              setFilters((prev) => ({ ...prev, phone: value }))
+              setFiltersHolder((prev) => ({ ...prev, phone: value }))
             }}
             placeholder="Filtre pelo telefone do cliente..."
             labelClassName="text-xs font-medium tracking-tight text-black"
@@ -56,17 +60,17 @@ function FilterMenu({ filters, setFilters, updateMatch, queryLoading }: FilterMe
           <div className="w-full lg:w-[200px]">
             <MultipleSelectInputVirtualized
               label="CIDADE"
-              selected={filters.city}
+              selected={filtersHolder.city}
               options={AllCities}
               selectedItemLabel="NÃO DEFINIDO"
               handleChange={(value) => {
-                setFilters((prev) => ({
+                setFiltersHolder((prev) => ({
                   ...prev,
                   city: value as string[],
                 }))
               }}
               onReset={() => {
-                setFilters((prev) => ({
+                setFiltersHolder((prev) => ({
                   ...prev,
                   city: [],
                 }))
@@ -78,17 +82,17 @@ function FilterMenu({ filters, setFilters, updateMatch, queryLoading }: FilterMe
           <div className="w-full lg:w-[200px]">
             <MultipleSelectInput
               label="CANAL DE AQUISIÇÃO"
-              selected={filters.acquisitionChannel}
+              selected={filtersHolder.acquisitionChannel}
               options={CustomersAcquisitionChannels}
               selectedItemLabel="NÃO DEFINIDO"
               handleChange={(value) => {
-                setFilters((prev) => ({
+                setFiltersHolder((prev) => ({
                   ...prev,
                   acquisitionChannel: value as string[],
                 }))
               }}
               onReset={() => {
-                setFilters((prev) => ({
+                setFiltersHolder((prev) => ({
                   ...prev,
                   acquisitionChannel: [],
                 }))
@@ -102,7 +106,7 @@ function FilterMenu({ filters, setFilters, updateMatch, queryLoading }: FilterMe
           <button
             disabled={queryLoading}
             onClick={() => {
-              updateMatch(filters)
+              updateFilters(filtersHolder)
             }}
             className="h-9 whitespace-nowrap rounded bg-blue-600 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-blue-700 enabled:hover:text-white"
           >

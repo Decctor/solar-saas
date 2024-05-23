@@ -3,6 +3,7 @@ import {
   ClientSimplifiedProjection,
   SimilarClientsSimplifiedProjection,
   TClient,
+  TClientDTOSimplified,
   TClientSimplified,
   TSimilarClientSimplified,
   TSimilarClientSimplifiedDTO,
@@ -97,13 +98,15 @@ type GetClientsByFiltersParams = {
 }
 export async function getClientsByFilters({ collection, query, skip, limit }: GetClientsByFiltersParams) {
   try {
+    // Getting the total clients matched by the query
+    const clientsMatched = await collection.countDocuments({ ...query })
     const sort = { _id: -1 }
     const match = { ...query }
     const clients = await collection
       .aggregate([{ $sort: sort }, { $match: match }, { $skip: skip }, { $project: ClientSimplifiedProjection }, { $limit: limit }])
       .toArray()
 
-    return clients as WithId<TClientSimplified>[]
+    return { clients, clientsMatched } as { clients: TClientDTOSimplified[]; clientsMatched: number }
   } catch (error) {
     throw error
   }
