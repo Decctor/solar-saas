@@ -177,7 +177,11 @@ export default function ControlTechnicalAnalysis({ analysisId, session, closeMod
       <div className="relative left-[50%] top-[50%] z-[100] h-[80%] max-h-[80%] w-[90%] translate-x-[-50%] translate-y-[-50%] overflow-hidden rounded-md bg-[#fff] p-[10px] lg:w-[90%]">
         <div className="flex h-full w-full flex-col">
           <div className="flex flex-col items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg lg:flex-row">
-            <h3 className="text-xl font-bold text-[#353432] dark:text-white ">{infoHolder.nome || 'CONTROLAR ANÁLISE TÉCNICA'}</h3>
+            <div className="flex flex-col items-start">
+              <h3 className="text-xl font-bold text-[#353432] dark:text-white ">{infoHolder.nome || 'CONTROLAR ANÁLISE TÉCNICA'}</h3>
+              <p className="text-[0.6rem] italic tracking-tight text-gray-500">#{analysisId}</p>
+            </div>
+
             <button
               onClick={() => closeModal()}
               type="button"

@@ -1,9 +1,11 @@
 import { useQuery } from '@tanstack/react-query'
 import axios from 'axios'
 import { IClient } from '../models'
-import { TClientDTO, TSimilarClientSimplifiedDTO } from '../schemas/client.schema'
+import { TClient, TClientDTO, TClientDTOSimplified, TSimilarClientSimplifiedDTO } from '../schemas/client.schema'
 import { useState } from 'react'
 import { formatWithoutDiacritics } from '@/lib/methods/formatting'
+import { Filter } from 'mongodb'
+import { after, before } from 'lodash'
 
 type SearchClientsParams = {
   cpfCnpj: string
@@ -86,5 +88,67 @@ export function useClients({ author }: { author: string | null }) {
     }),
     filters,
     setFilters,
+  }
+}
+
+type FetchClientsByPersonalizedFiltersParams = {
+  after: string | null
+  before: string | null
+  page: number
+  authors: string[] | null
+  partners: string[] | null
+  match: Filter<TClient>
+}
+async function fetchClientsByPersonalizedFilters({ after, before, page, authors, partners, match }: FetchClientsByPersonalizedFiltersParams) {
+  try {
+    const { data } = await axios.post(`/api/clients/search?after=${after}&before=${before}&page=${page}`, { authors, partners, match })
+
+    return data.data as TClientDTOSimplified[]
+  } catch (error) {
+    throw error
+  }
+}
+
+type UseClientsByPersonalizedFiltersParams = {
+  after: string | null
+  before: string | null
+  page: number
+  authors: string[] | null
+  partners: string[] | null
+}
+export type UseClientsPersonalizedFilter = {
+  search: string
+  city: string[]
+  acquisitionChannel: string[]
+  phone: string
+}
+export function useClientsByPersonalizedFilters({ after, before, page, authors, partners }: UseClientsByPersonalizedFiltersParams) {
+  const [filters, setFilters] = useState<UseClientsPersonalizedFilter>({
+    search: '',
+    city: [],
+    acquisitionChannel: [],
+    phone: '',
+  })
+  const [match, setMatch] = useState<Filter<TClient>>({})
+  function updateMatch(filters: UseClientsPersonalizedFilter) {
+    const name = filters.search.trim().length > 0 ? { $regex: filters.search, $options: 'i' } : { $ne: 'undefined' }
+    const city = filters.city.length > 0 ? { $in: filters.city } : { $ne: '' }
+    const acquisitionChannel = filters.acquisitionChannel.length > 0 ? { $in: filters.acquisitionChannel } : { $ne: '' }
+    const phone = filters.phone.trim().length > 0 ? { $regex: filters.phone, $options: 'i' } : { $ne: 'undefined' }
+    setMatch({
+      nome: name,
+      cidade: city,
+      canalAquisicao: acquisitionChannel,
+      telefonePrimario: phone,
+    })
+  }
+  return {
+    ...useQuery({
+      queryKey: ['clients-by-personalized-filters', after, before, page, authors, partners, match],
+      queryFn: async () => fetchClientsByPersonalizedFilters({ after, before, page, authors, partners, match }),
+    }),
+    filters,
+    setFilters,
+    updateMatch,
   }
 }

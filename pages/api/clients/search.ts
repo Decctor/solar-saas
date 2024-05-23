@@ -1,10 +1,13 @@
-import { getSimilarClients } from '@/repositories/clients/queries'
+import { getClientsByFilters, getSimilarClients } from '@/repositories/clients/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { IClient } from '@/utils/models'
-import { TClient, TSimilarClientSimplified } from '@/utils/schemas/client.schema'
+import { PersonalizedClientQuerySchema, TClient, TClientDTO, TClientSimplified, TSimilarClientSimplified } from '@/utils/schemas/client.schema'
+import dayjs from 'dayjs'
 import createHttpError from 'http-errors'
+import { Filter } from 'mongodb'
 import { NextApiHandler } from 'next'
+import { z } from 'zod'
 
 type GetSearchParams = {
   cpfCnpj: unknown
@@ -49,6 +52,73 @@ const getPartnerSimilarClients: NextApiHandler<GetResponse> = async (req, res) =
 
   res.status(200).json({ data: clients })
 }
+
+const QuerySchema = z.object({
+  after: z.string({
+    required_error: 'Parâmetros de período não fornecidos ou inválidos.',
+    invalid_type_error: 'Parâmetros de período não fornecidos ou inválidos.',
+  }),
+  before: z.string({
+    required_error: 'Parâmetros de período não fornecidos ou inválidos.',
+    invalid_type_error: 'Parâmetros de período não fornecidos ou inválidos.',
+  }),
+  page: z.string({ required_error: 'Parâmetro de páginação não informado.' }),
+})
+function formatDateQuery(date: string, type: 'start' | 'end') {
+  if (type == 'start') return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
+  if (type == 'end') return dayjs(date).endOf('day').subtract(3, 'hour').toISOString()
+  return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
+}
+type PostResponse = {
+  data: TClientSimplified[]
+}
+const getClientsByPersonalizedFilters: NextApiHandler<PostResponse> = async (req, res) => {
+  const PAGE_SIZE = 1000
+  const session = await validateAuthenticationWithSession(req, res)
+  const partnerId = session.user.idParceiro
+  const partnerScope = session.user.permissoes.parceiros.escopo
+
+  const userId = session.user.id
+  const userScope = session.user.permissoes.clientes.escopo
+  const { after, before, page } = QuerySchema.parse(req.query)
+  const { authors, partners, match } = PersonalizedClientQuerySchema.parse(req.body)
+
+  // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
+  // to access a overall visualiation, which he/she isnt allowed
+  if (!!userScope && !authors) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
+
+  // If user has a scope defined and in the request there isnt a partners arr defined, then user is trying
+  // to access a overall visualiation, which he/she isnt allowed
+  if (!!partnerScope && !partners) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
+
+  // If user has a scope defined and in the responsible arr request there is a single responsible that is not in hes/shes scope
+  // then user is trying to access a visualization he/she isnt allowed
+  if (!!userScope && authors?.some((r) => !userScope.includes(r)))
+    throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
+
+  // Validating page parameter
+  if (!page || isNaN(Number(page))) throw new createHttpError.BadRequest('Parâmetro de paginação inválido ou não informado.')
+
+  // Defining the queries
+  const insertionQuery: Filter<TClient> =
+    after != 'null' && before != 'null'
+      ? { $and: [{ dataInsercao: { $gte: formatDateQuery(after, 'start') } }, { dataInsercao: { $lte: formatDateQuery(before, 'end') } }] }
+      : {}
+
+  const authorsQuery: Filter<TClient> = authors ? { 'autor.id': { $in: authors } } : {}
+  const partnerQuery: Filter<TClient> = partners ? { idParceiro: { $in: [...partners] } } : {}
+  const query = { ...match, ...insertionQuery, ...authorsQuery, ...partnerQuery }
+  const skip = PAGE_SIZE * (Number(page) - 1)
+  const limit = PAGE_SIZE
+
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
+  const collection = db.collection<TClient>('clients')
+  const clients = await getClientsByFilters({ collection: collection, query: query, skip: skip, limit: limit })
+
+  return res.status(200).json({ data: clients })
+}
+
 export default apiHandler({
   GET: getPartnerSimilarClients,
+  POST: getClientsByPersonalizedFilters,
 })

@@ -1,6 +1,13 @@
 import { getClientSearchParams } from '@/pages/api/clients/search'
-import { SimilarClientsSimplifiedProjection, TClient, TSimilarClientSimplified, TSimilarClientSimplifiedDTO } from '@/utils/schemas/client.schema'
-import { Collection, Filter, MatchKeysAndValues, ObjectId } from 'mongodb'
+import {
+  ClientSimplifiedProjection,
+  SimilarClientsSimplifiedProjection,
+  TClient,
+  TClientSimplified,
+  TSimilarClientSimplified,
+  TSimilarClientSimplifiedDTO,
+} from '@/utils/schemas/client.schema'
+import { Collection, Filter, MatchKeysAndValues, ObjectId, WithId } from 'mongodb'
 
 type GetClientByIdParams = {
   collection: Collection<TClient>
@@ -77,6 +84,26 @@ export async function getSimilarClients({ collection, partnerId, query }: GetSim
   try {
     const clients = await collection.find({ idParceiro: partnerId, ...query }, { projection: SimilarClientsSimplifiedProjection }).toArray()
     return clients as TSimilarClientSimplified[]
+  } catch (error) {
+    throw error
+  }
+}
+
+type GetClientsByFiltersParams = {
+  collection: Collection<TClient>
+  query: Filter<TClient>
+  skip: number
+  limit: number
+}
+export async function getClientsByFilters({ collection, query, skip, limit }: GetClientsByFiltersParams) {
+  try {
+    const sort = { _id: -1 }
+    const match = { ...query }
+    const clients = await collection
+      .aggregate([{ $sort: sort }, { $match: match }, { $skip: skip }, { $project: ClientSimplifiedProjection }, { $limit: limit }])
+      .toArray()
+
+    return clients as WithId<TClientSimplified>[]
   } catch (error) {
     throw error
   }

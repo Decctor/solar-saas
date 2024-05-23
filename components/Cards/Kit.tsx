@@ -140,7 +140,7 @@ function Kit({ kit, handleClick, userHasEditPermission, userHasPricingViewPermis
           <div className="flex items-center gap-2">
             <div className={`flex items-center gap-1`}>
               <BsCalendarPlus />
-              <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(kit.dataInsercao)}</p>
+              <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(kit.dataInsercao, true)}</p>
             </div>
             <div className="flex items-center gap-1">
               <Avatar fallback={'R'} url={kit.autor.avatar_url || undefined} height={20} width={20} />

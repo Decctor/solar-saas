@@ -216,7 +216,23 @@ export type TSimilarClientSimplified = Pick<
   TClient,
   'nome' | 'autor' | 'telefonePrimario' | 'email' | 'cpfCnpj' | 'cep' | 'uf' | 'cidade' | 'bairro' | 'endereco' | 'numeroOuIdentificador' | 'complemento'
 >
-
+export type TClientSimplified = Pick<
+  TClient,
+  | 'nome'
+  | 'telefonePrimario'
+  | 'email'
+  | 'cpfCnpj'
+  | 'cep'
+  | 'uf'
+  | 'cidade'
+  | 'bairro'
+  | 'endereco'
+  | 'numeroOuIdentificador'
+  | 'complemento'
+  | 'autor'
+  | 'dataInsercao'
+>
+export type TClientDTOSimplified = TClientSimplified & { _id: string }
 export const SimilarClientsSimplifiedProjection = {
   _id: 1,
   nome: 1,
@@ -233,3 +249,24 @@ export const SimilarClientsSimplifiedProjection = {
   complemento: 1,
   dataInsercao: 1,
 }
+export const ClientSimplifiedProjection = {
+  _id: 1,
+  nome: 1,
+  telefonePrimario: 1,
+  email: 1,
+  cpfCnpj: 1,
+  cep: 1,
+  uf: 1,
+  cidade: 1,
+  bairro: 1,
+  endereco: 1,
+  numeroOuIdentificador: 1,
+  complemento: 1,
+  autor: 1,
+  dataInsercao: 1,
+}
+export const PersonalizedClientQuerySchema = z.object({
+  authors: z.array(z.string({ required_error: 'Autores não informados ou inválidos.', invalid_type_error: 'Autores inválidos.' })).nullable(),
+  partners: z.array(z.string({ required_error: 'Parceiros não informados ou inválidos.', invalid_type_error: 'Parceiros inválidos.' })).nullable(),
+  match: z.any({ required_error: 'Parâmetros de filtro não informados.', invalid_type_error: 'Tipo não válido para parâmetros de filtro.' }),
+})

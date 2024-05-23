@@ -12,76 +12,80 @@ import LoadingPage from '@/components/utils/LoadingPage'
 
 import StatesAndCities from '@/utils/json-files/cities.json'
 
-import { useClients } from '@/utils/queries/clients'
+import { useClients, useClientsByPersonalizedFilters } from '@/utils/queries/clients'
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from 'react-icons/io'
 import TextInput from '@/components/Inputs/TextInput'
 import MultipleSelectInput from '@/components/Inputs/MultipleSelectInput'
 import MultipleSelectInputVirtualized from '@/components/Inputs/MultipleSelectInputVirtualized'
+import { useUsers } from '@/utils/queries/users'
+import { usePartnersSimplified } from '@/utils/queries/partners'
+import dayjs from 'dayjs'
+import { getFirstDayOfMonth, getFirstDayOfYear, getLastDayOfMonth, getLastDayOfYear } from '@/utils/methods'
+import FilterMenu from '@/components/Clients/FilterMenu'
 
-const AllCities = StatesAndCities.flatMap((s) => s.cidades).map((c, index) => ({ id: index + 1, label: c, value: c }))
+const currentDate = new Date()
+const firstDayOfYear = getFirstDayOfYear(currentDate.toISOString()).toISOString()
+const lastDayOfYear = getLastDayOfYear(currentDate.toISOString()).toISOString()
 
 function ClientsPage() {
   const { data: session, status } = useSession({ required: true })
-  // States
-  const [dropdownMenuVisible, setDropdownMenuVisible] = useState<boolean>(false)
+  const [filterMenuIsOpen, setFilterMenuIsOpen] = useState<boolean>(false)
   const [newClientModalIsOpen, setNewClientModalIsOpen] = useState(false)
   const [editClient, setEditClient] = useState<{ isOpen: boolean; id: string | null }>({ isOpen: false, id: null })
 
   // Queries and functions
-  const { data: clients, isLoading, isError, isSuccess, filters, setFilters } = useClients({ author: null })
+  const [page, setPage] = useState<number>(1)
+  const [period, setPeriod] = useState<{ after: string | null; before: string | null }>({ after: null, before: null })
+  const [authors, setAuthors] = useState<string[] | null>(null)
+  const [partners, setPartners] = useState<string[] | null>(null)
+  const { data: usersOptions } = useUsers()
+  const { data: partnersOptions } = usePartnersSimplified()
+  const {
+    data: clients,
+    isLoading,
+    isError,
+    isSuccess,
+    filters,
+    setFilters,
+    updateMatch,
+  } = useClientsByPersonalizedFilters({ after: period.after, before: period.before, authors: authors, partners: partners, page: page })
 
-  console.log(AllCities)
   if (status != 'authenticated') return <LoadingPage />
   return (
     <div className="flex h-full flex-col md:flex-row">
       <Sidebar session={session} />
       <div className="flex w-full max-w-full grow flex-col overflow-x-hidden bg-[#f8f9fa] p-6">
         <div className="flex w-full flex-col gap-2 border-b border-black pb-2">
-          <div className="flex w-full items-center justify-between">
-            <div className="flex flex-col gap-1">
-              <h1 className="text-3xl font-black leading-none tracking-tight md:text-2xl">BANCO DE CLIENTES</h1>
-              <p className="text-sm leading-none tracking-tight text-gray-500">{clients?.length || '...'} clientes cadastrados</p>
-            </div>
-            {dropdownMenuVisible ? (
-              <div className="cursor-pointer text-gray-600 hover:text-blue-400">
-                <IoMdArrowDropupCircle style={{ fontSize: '25px' }} onClick={() => setDropdownMenuVisible(false)} />
-              </div>
-            ) : (
-              <div className="cursor-pointer text-gray-600 hover:text-blue-400">
-                <IoMdArrowDropdownCircle style={{ fontSize: '25px' }} onClick={() => setDropdownMenuVisible(true)} />
-              </div>
-            )}
-          </div>
-          <div className="flex w-full items-center justify-end">
-            <button
-              onClick={() => setNewClientModalIsOpen(true)}
-              className="h-9 whitespace-nowrap rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-gray-800 enabled:hover:text-white"
-            >
-              CRIAR CLIENTE
-            </button>
-          </div>
-          <AnimatePresence>
-            {dropdownMenuVisible ? (
-              <motion.div initial={{ scale: 0.8, opacity: 0.6 }} animate={{ scale: 1, opacity: 1 }} className="mt-4 flex w-full flex-col gap-y-2">
-                <div className="flex flex-col flex-wrap items-center justify-center gap-2 lg:flex-row">
-                  <TextInput
-                    label="NOME DO CLIENTE"
-                    placeholder="Filtre pelo nome do cliente..."
-                    value={filters.search}
-                    handleChange={(value) => setFilters((prev) => ({ ...prev, search: value }))}
-                  />
-                  <MultipleSelectInputVirtualized
-                    label="CIDADE"
-                    options={AllCities}
-                    selected={filters.city}
-                    selectedItemLabel="NÃO DEFINIDO"
-                    handleChange={(value) => setFilters((prev) => ({ ...prev, city: value as string[] }))}
-                    onReset={() => setFilters((prev) => ({ ...prev, city: [] }))}
-                  />
+          <div className="flex w-full flex-col items-center justify-between gap-2 lg:flex-row">
+            <div className="flex items-center gap-1">
+              {filterMenuIsOpen ? (
+                <div className="cursor-pointer text-gray-600 hover:text-blue-400">
+                  <IoMdArrowDropupCircle style={{ fontSize: '25px' }} onClick={() => setFilterMenuIsOpen(false)} />
                 </div>
-              </motion.div>
-            ) : null}
-          </AnimatePresence>
+              ) : (
+                <div className="cursor-pointer text-gray-600 hover:text-blue-400">
+                  <IoMdArrowDropdownCircle style={{ fontSize: '25px' }} onClick={() => setFilterMenuIsOpen(true)} />
+                </div>
+              )}
+              <div className="flex flex-col gap-1">
+                <h1 className="text-xl font-black leading-none tracking-tight md:text-2xl">BANCO DE CLIENTES</h1>
+                <p className="text-sm leading-none tracking-tight text-gray-500">
+                  {clients?.length ? (clients.length > 0 ? `${clients.length} clientes encontrados.` : `${clients.length} cliente encontrado.`) : '...'}
+                </p>
+              </div>
+            </div>
+            <div className="flex items-center gap-2">
+              {session?.user.permissoes.clientes.criar ? (
+                <button
+                  onClick={() => setNewClientModalIsOpen(true)}
+                  className="h-9 whitespace-nowrap rounded bg-gray-900 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-gray-800 enabled:hover:text-white"
+                >
+                  CRIAR CLIENTE
+                </button>
+              ) : null}
+            </div>
+          </div>
+          {filterMenuIsOpen ? <FilterMenu setFilters={setFilters} filters={filters} updateMatch={updateMatch} queryLoading={isLoading} /> : null}
         </div>
         {isLoading ? <LoadingComponent /> : null}
         {isError ? <ErrorComponent msg="Houve um erro ao buscar clientes." /> : null}

@@ -507,6 +507,12 @@ export function getFirstDayOfMonth(year: number, month: number) {
 export function getLastDayOfMonth(year: number, month: number) {
   return new Date(year, month + 1, 0)
 }
+export function getFirstDayOfYear(date: string) {
+  return dayjs(date).startOf('year').toDate()
+}
+export function getLastDayOfYear(date: string) {
+  return dayjs(date).endOf('year').toDate()
+}
 export function isEmpty(value: any) {
   return value == null || (typeof value === 'string' && value.trim().length === 0)
 }
