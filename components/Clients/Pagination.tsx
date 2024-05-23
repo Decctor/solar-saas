@@ -49,10 +49,11 @@ type ClientsPaginationProps = {
   activePage: number
   totalPages: number
   clientsMatched?: number
+  clientsShowing?: number
   selectPage: (page: number) => void
   queryLoading: boolean
 }
-function ClientsPagination({ totalPages, activePage, selectPage, clientsMatched, queryLoading }: ClientsPaginationProps) {
+function ClientsPagination({ totalPages, activePage, selectPage, clientsMatched, clientsShowing, queryLoading }: ClientsPaginationProps) {
   return (
     <div className="flex w-full flex-col items-center gap-1">
       <div className="my-2 flex items-center justify-center gap-4">
@@ -88,6 +89,9 @@ function ClientsPagination({ totalPages, activePage, selectPage, clientsMatched,
       </div>
       <p className="w-full text-center text-sm leading-none tracking-tight text-gray-500">
         {clientsMatched ? (clientsMatched > 0 ? `${clientsMatched} clientes encontrados.` : `${clientsMatched} cliente encontrado.`) : '...'}.
+      </p>
+      <p className="w-full text-center text-sm leading-none tracking-tight text-gray-500">
+        {clientsShowing ? (clientsShowing > 0 ? `Mostrando ${clientsShowing} clientes.` : `Mostrando ${clientsShowing} cliente.`) : '...'}.
       </p>
     </div>
   )

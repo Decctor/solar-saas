@@ -103,6 +103,7 @@ function ClientsPage() {
           selectPage={(x) => setPage(x)}
           queryLoading={isLoading}
           clientsMatched={clientsMatched}
+          clientsShowing={clients?.length}
         />
         <div className="flex flex-wrap justify-between gap-2 py-2">
           {isLoading ? <LoadingComponent /> : null}
