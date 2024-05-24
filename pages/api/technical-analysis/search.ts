@@ -74,8 +74,9 @@ const getTechnicalAnalysisByPersonalizedFilters: NextApiHandler<PostResponse> = 
   const applicantQuery: Filter<TTechnicalAnalysis> = applicants ? { 'requerente.id': { $in: applicants } } : {}
   const partnerQuery: Filter<TTechnicalAnalysis> = partners ? { idParceiro: { $in: [...partners] } } : {}
   const analystQuery: Filter<TTechnicalAnalysis> = analysts ? { 'analista.id': { $in: analysts } } : {}
+  const nameQuery = filters.name.trim().length > 0 ? { $or: [{ nome: { $regex: filters.name, $options: 'i' } }, { nome: filters.name }] } : { $ne: undefined }
   const filtersQuery: Filter<TTechnicalAnalysis> = {
-    nome: filters.name.trim().length > 0 ? { $or: [{ nome: { $regex: filters.name, $options: 'i' } }, { nome: filters.name }] } : { $ne: undefined },
+    ...nameQuery,
     status: filters.pending ? { $ne: 'CONCLUIDO' } : filters.status.length > 0 ? { $in: filters.status } : { $ne: undefined },
     // @ts-ignore
     complexidade: filters.complexity ? filters.complexity : { $ne: 'undefined' },
