@@ -168,7 +168,7 @@ function FilterMenu({
           />
         </div>
         <div className="flex w-full flex-col flex-wrap items-center justify-between gap-2 lg:flex-row">
-          <div className="flex w-full flex-wrap items-center gap-2">
+          <div className="flex flex-wrap items-center gap-2">
             <div className="w-fit">
               <CheckboxInput
                 labelFalse="SOMENTE PENDENTES"

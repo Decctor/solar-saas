@@ -1,3 +1,9 @@
+import dayjs from 'dayjs'
+// @ts-ignore
+import dayjsBusinessDays from 'dayjs-business-days'
+
+dayjs.extend(dayjsBusinessDays)
+
 export function getMonthPeriodsStrings({ initialYear, endYear }: { initialYear: number; endYear: number }) {
   var iteratingYear = initialYear
 
@@ -16,4 +22,14 @@ export function getMonthPeriodsStrings({ initialYear, endYear }: { initialYear: 
     }
   }
   return periods
+}
+
+export function getHoursDiff({ start, finish, businessOnly }: { start: string; finish: string; businessOnly?: boolean }) {
+  // if (businessOnly) {
+  //   // @ts-ignore
+  //   const hourDiff = dayjs(finish).businessDiff(dayjs(start), 'hour')
+  //   return hourDiff
+  // }
+  const hourDiff = dayjs(finish).diff(dayjs(start), 'hour')
+  return hourDiff
 }

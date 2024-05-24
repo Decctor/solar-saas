@@ -340,7 +340,7 @@ export const InsertUserSchema = z.object({
     .string({ required_error: 'Nome do usuário não informado.', invalid_type_error: 'Tipo não válido para nome do usuário.' })
     .min(3, 'É necessário que o nome do usuário tenha ao menos 3 letras.'),
   administrador: z.boolean({
-    required_error: 'Tag de adminstrador não informada.',
+    required_error: 'Tag de administrador não informada.',
     invalid_type_error: 'Tipo não válido para tag de administrador.',
   }),
   telefone: z.string().optional().nullable(),

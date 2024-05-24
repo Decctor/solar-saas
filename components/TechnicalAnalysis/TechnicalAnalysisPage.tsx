@@ -2,7 +2,7 @@ import { usePartnersSimplified } from '@/utils/queries/partners'
 import { useTechnicalAnalysisByPersonalizedFilters } from '@/utils/queries/technical-analysis'
 import { useTechnicalAnalysts, useUsers } from '@/utils/queries/users'
 import { Session } from 'next-auth'
-import React, { useState } from 'react'
+import React, { use, useState } from 'react'
 import { IoMdArrowDropdownCircle, IoMdArrowDropupCircle } from 'react-icons/io'
 import { Sidebar } from '../Sidebar'
 import FilterMenu from './FilterMenu'
@@ -11,6 +11,8 @@ import ErrorComponent from '../utils/ErrorComponent'
 import TechnicalAnalysisCard from '../Cards/TechnicalAnalysisCard'
 import TechnicalAnalysisPagination from './Pagination'
 import ControlTechnicalAnalysis from '../Modals/TechnicalAnalysis/ControlTechnicalAnalysis'
+import { AiOutlineTeam } from 'react-icons/ai'
+import Stats from './Stats'
 
 type TechnicalAnalysisPageParams = {
   session: Session
@@ -19,6 +21,7 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
   const userAnalysisScope = session.user.permissoes.analisesTecnicas.escopo || null
   const userPartnersScope = session.user.permissoes.parceiros.escopo || null
   const [filterMenuIsOpen, setFilterMenuIsOpen] = useState<boolean>(false)
+  const [statsBlockIsOpen, setStatsBlockIsOpen] = useState<boolean>(false)
   const [editModal, setEditModal] = useState<{ id: string | null; isOpen: boolean }>({ id: null, isOpen: false })
 
   const [page, setPage] = useState<number>(1)
@@ -61,6 +64,13 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
                 <h1 className="text-xl font-black leading-none tracking-tight md:text-2xl">CONTROLE DE ANÁLISES TÉCNICAS</h1>
               </div>
             </div>
+            <button
+              onClick={() => setStatsBlockIsOpen(true)}
+              className="flex items-center gap-1 font-bold tracking-tight text-gray-500 duration-300 ease-in-out hover:text-cyan-500"
+            >
+              <p className="text-sm">ACOMPANHAMENTO DE RESULTADOS</p>
+              <AiOutlineTeam />
+            </button>
           </div>
           {filterMenuIsOpen ? (
             <FilterMenu
@@ -76,6 +86,7 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
               resetSelectedPage={() => setPage(1)}
             />
           ) : null}
+          {statsBlockIsOpen ? <Stats closeMenu={() => setStatsBlockIsOpen(false)} /> : null}
         </div>
         <TechnicalAnalysisPagination
           activePage={page}

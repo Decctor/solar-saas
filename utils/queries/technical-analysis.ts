@@ -42,7 +42,6 @@ export function useUserTechnicalAnalysis({ enabled, userId, status }: UseUserTec
     setFilters,
   }
 }
-
 async function fetchTechnicalAnalysisByOpportunityId({ opportunityId, concludedOnly }: { opportunityId: string; concludedOnly: boolean }) {
   try {
     const { data } = await axios.get(`/api/technical-analysis?opportunityId=${opportunityId}&concludedOnly=${concludedOnly}`)
@@ -67,7 +66,6 @@ async function fetchTechnicalAnalysis() {
     throw error
   }
 }
-
 export type UseTechnicalAnalysisFilters = {
   search: string
   analyst: string | null
@@ -135,14 +133,12 @@ async function fetchTechnicalAnalysisById({ id }: { id: string }) {
     throw error
   }
 }
-
 export function useTechnicalAnalysisById({ id }: { id: string }) {
   return useQuery({
     queryKey: ['technical-analysis-by-id', id],
     queryFn: async () => await fetchTechnicalAnalysisById({ id }),
   })
 }
-
 type FetchTechnicalAnalysisByPersonalizedFiltersParams = {
   after: string | null
   before: string | null
@@ -173,7 +169,6 @@ async function fetchTechnicalAnalysisByPersonalizedFilters({
     throw error
   }
 }
-
 type UseTechnicalAnalysisByPersonalizedFiltersParams = {
   after: string | null
   before: string | null
