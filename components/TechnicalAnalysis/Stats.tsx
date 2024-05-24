@@ -43,7 +43,7 @@ function Stats({ closeMenu }: StatsProps) {
         exit="exit"
         className="mt-2 flex w-full flex-col gap-2 rounded-md border border-gray-300 bg-[#fff] p-2"
       >
-        <div className="flex w-full flex-col-reverse items-center justify-between gap-2 lg:flex-row">
+        <div className="flex w-full flex-col items-center justify-between gap-2 lg:flex-row">
           <div className="flex items-center gap-2">
             <button
               onClick={() => closeMenu()}
@@ -114,66 +114,66 @@ function Stats({ closeMenu }: StatsProps) {
                   <FaRegHourglassHalf />
                 </div>
                 <div className="mt-2 flex w-full flex-col">
-                  <div className="text-2xl font-bold text-[#15599a]">{formatDecimalPlaces(stats.timeTillConclusion.avgTime)} horas</div>
+                  <div className="text-2xl font-bold text-[#15599a]">{formatDecimalPlaces(stats.avgTimeTillConclusion)} horas</div>
                 </div>
               </div>
             </div>
-
-            <div className="flex min-h-[70px] w-full gap-2 rounded-xl border border-gray-200 bg-[#fff] p-3 shadow-sm">
-              <div className="flex items-center gap-2">
+            <div className="flex min-h-[70px] w-full flex-col gap-2 rounded-xl border border-gray-200 bg-[#fff] p-3 shadow-sm lg:flex-row">
+              <div className="flex min-w-fit items-center gap-2">
                 <FaDiamond />
-                <h1 className="text-sm font-medium uppercase tracking-tight">SOLICITAÇÕES POR TIPO</h1>
+                <h1 className="text-sm font-medium uppercase tracking-tight">SOLICITAÇÕES POR STATUS</h1>
               </div>
-              <div className="mt-2 flex grow flex-wrap items-center justify-around">
-                {Object.entries(stats.byType).map(([key, value], index) => (
-                  <p key={index} className="text-[0.8rem] text-gray-500">
-                    {key}: <strong>{value}</strong>
+              <div className="mt-2 flex grow flex-wrap items-center justify-around gap-2">
+                {stats.byStatus.map((byStatus, index) => (
+                  <p key={index} className={`rounded-md px-2 py-1 text-[0.8rem] text-white ${StatusColors[byStatus.status as keyof typeof StatusColors]}`}>
+                    {byStatus.status}: <strong>{byStatus.value}</strong>
                   </p>
                 ))}
               </div>
             </div>
-            {/* <div className="flex min-h-[70px] w-full gap-2 rounded-xl border border-gray-200 bg-[#fff] p-3 shadow-sm">
-              <div className="flex items-center gap-2">
+            <div className="flex min-h-[70px] w-full flex-col gap-2 rounded-xl border border-gray-200 bg-[#fff] p-3 shadow-sm lg:flex-row">
+              <div className="flex min-w-fit items-center gap-2">
                 <FaDiamond />
-                <h1 className="text-sm font-medium uppercase tracking-tight">TEMPO MÉDIO POR TIPO</h1>
+                <h1 className="text-sm font-medium uppercase tracking-tight">SOLICITAÇÕES POR TIPO</h1>
               </div>
-              <div className="mt-2 flex grow flex-wrap items-center justify-around">
-                {Object.entries(stats.timeTillConclusion.byType).map(([key, value], index) => (
-                  <p key={index} className="text-[0.8rem] text-gray-500">
-                    {key}: <strong>{formatDecimalPlaces(value)} horas</strong>
-                  </p>
+              <div className="mt-2 flex grow flex-wrap items-center justify-around gap-2">
+                {stats.byType.map((byType, index) => (
+                  <div key={index} className="flex flex-col rounded-md border border-gray-500 px-2 py-1">
+                    <h1 className="text-[0.8rem] text-gray-800">{byType.type}</h1>
+                    <div className="flex w-full items-center justify-around gap-2">
+                      <div className="flex items-center gap-1">
+                        <VscDiffAdded />
+                        <h1 className="text-[0.6rem] font-normal text-gray-500">{byType.created} criadas</h1>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <BsPatchCheck color="rgb(22,163,74)" />
+                        <h1 className="text-[0.6rem] font-normal text-gray-500">{byType.concluded} concluídas</h1>
+                      </div>
+                      <div className="flex items-center gap-1">
+                        <FaRegHourglassHalf color="rgb(249,115,22)" />
+                        <h1 className="text-[0.6rem] font-normal text-gray-500">{formatDecimalPlaces(byType.avgTimeTillConclusion)} horas</h1>
+                      </div>
+                    </div>
+                  </div>
                 ))}
               </div>
-            </div> */}
-            <div className="flex min-h-[70px] w-full gap-2 rounded-xl border border-gray-200 bg-[#fff] p-3 shadow-sm">
+            </div>
+            <div className="flex min-h-[70px] w-full flex-col gap-2 rounded-xl border border-gray-200 bg-[#fff] p-3 shadow-sm lg:flex-row">
               <div className="flex min-w-fit items-center gap-2">
                 <FaDiamond />
                 <h1 className="text-sm font-medium uppercase tracking-tight">SOLICITAÇÕES POR REQUERENTE</h1>
               </div>
               <div className="mt-2 flex grow flex-wrap items-center justify-around gap-2">
-                {Object.entries(stats.byApplicant).map(([key, value], index) => (
+                {stats.byApplicant.map((byApplicant, index) => (
                   <div key={index} className="flex items-center gap-2 rounded border border-cyan-500 px-2 py-1">
                     <div className="flex items-center gap-1">
-                      <Avatar width={20} height={20} url={value.avatar_url || undefined} fallback={formatNameAsInitials(key)} />
-                      <p className="text-[0.8rem] text-gray-500">{key}</p>
+                      <Avatar width={20} height={20} url={byApplicant.applicantAvatarUrl || undefined} fallback={formatNameAsInitials(byApplicant.applicant)} />
+                      <p className="text-[0.8rem] text-gray-500">{byApplicant.applicant}</p>
                     </div>
                     <p key={index} className="text-[0.8rem] font-black text-gray-500">
-                      {value.analysis}
+                      {byApplicant.analysis}
                     </p>
                   </div>
-                ))}
-              </div>
-            </div>
-            <div className="flex min-h-[70px] w-full gap-2 rounded-xl border border-gray-200 bg-[#fff] p-3 shadow-sm">
-              <div className="flex items-center gap-2">
-                <FaDiamond />
-                <h1 className="text-sm font-medium uppercase tracking-tight">SOLICITAÇÕES POR STATUS</h1>
-              </div>
-              <div className="mt-2 flex grow flex-wrap items-center justify-around">
-                {Object.entries(stats.byStatus).map(([key, value], index) => (
-                  <p key={index} className={`rounded-md px-2 py-1 text-[0.8rem] text-white ${StatusColors[key as keyof typeof StatusColors]}`}>
-                    {key}: <strong>{value}</strong>
-                  </p>
                 ))}
               </div>
             </div>

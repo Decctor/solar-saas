@@ -110,7 +110,7 @@ function TechnicalAnalysisCard({ analysis, handleClick, userHasEditPermission }:
             <p className="text-xs font-semibold leading-none tracking-tight text-gray-500">{analysis.oportunidade.nome || 'NÃO DEFINIDO'}</p>
           </div> */}
         </div>
-        <div className="flex w-full justify-between">
+        <div className="lg:0 mt-2 flex w-full flex-col-reverse items-center justify-between gap-1 lg:flex-row lg:gap-2">
           <div className="flex items-center gap-1">
             {analysis.dataEfetivacao ? (
               <>
@@ -119,7 +119,7 @@ function TechnicalAnalysisCard({ analysis, handleClick, userHasEditPermission }:
               </>
             ) : null}
           </div>
-          <div className="flex items-center gap-2">
+          <div className="flex flex-col items-center gap-2 lg:flex-row">
             <div className={`flex items-center gap-1`}>
               <BsCalendarPlus />
               <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataInsercao, true)}</p>

@@ -10,10 +10,11 @@ import { z } from 'zod'
 export type TTechnicalAnalysisStats = {
   created: number
   concluded: number
-  timeTillConclusion: TTechnicalAnalysisTimeTillConclusion
-  byType: TTechnicalAnalysisByType
-  byApplicant: TTechnicalAnalysisByApplicant
-  byStatus: TTechnicalAnalysisByStatus
+  totalTimeTillConclusion: number
+  avgTimeTillConclusion: number
+  byType: { type: string; created: number; concluded: number; totalTimeTillConclusion: number; avgTimeTillConclusion: number }[]
+  byStatus: { status: string; value: number }[]
+  byApplicant: { applicant: string; applicantAvatarUrl?: string | null; analysis: number; byType: { [key: string]: number } }[]
 }
 
 type GetResponse = {
@@ -46,16 +47,103 @@ const getTechnicalAnalysisStats: NextApiHandler<GetResponse> = async (req, res) 
   const beforeDateStr = formatDateQuery(before, 'end')
   const analysis = await getAnalysis({ analysisCollection, afterDateStr, beforeDateStr })
 
-  const created = analysis.length
-  const concluded = analysis.filter((a) => !!a.dataEfetivacao).length
-  const byType = getAnalysisByType({ analysis })
-  const timeTillConclusion = getAvgTimeTillConclusion({ analysis })
-  const byApplicant = getAnalysisByApplicant({ analysis })
-  const byStatus = getAnalysisByStatus({ analysis })
+  const condensed = getCondensedStats({ analysis, afterDateStr, beforeDateStr })
 
-  return res.status(200).json({ data: { created, concluded, timeTillConclusion, byType, byApplicant, byStatus } })
+  const stats: TTechnicalAnalysisStats = {
+    created: condensed.created,
+    concluded: condensed.concluded,
+    totalTimeTillConclusion: condensed.totalTimeTillConclusion,
+    avgTimeTillConclusion: condensed.totalTimeTillConclusion / condensed.concluded,
+    byType: Object.entries(condensed.byType).map(([key, value]) => {
+      return {
+        type: key,
+        created: value.created,
+        concluded: value.concluded,
+        totalTimeTillConclusion: value.totalTimeTillConclusion,
+        avgTimeTillConclusion: value.totalTimeTillConclusion / value.concluded,
+      }
+    }),
+    byApplicant: Object.entries(condensed.byApplicant).map(([key, value]) => {
+      return {
+        applicant: key,
+        applicantAvatarUrl: value.avatar_url,
+        analysis: value.analysis,
+        byType: value.byType,
+      }
+    }),
+    byStatus: Object.entries(condensed.byStatus).map(([key, value]) => ({ status: key, value: value })),
+  }
+  return res.status(200).json({ data: stats })
 }
 export default apiHandler({ POST: getTechnicalAnalysisStats })
+
+type TTechnicalAnalysisCondensedStats = {
+  created: number
+  concluded: number
+  totalTimeTillConclusion: number
+  avgTimeTillConclusion: number
+  byType: { [key: string]: { created: number; concluded: number; totalTimeTillConclusion: number; avgTimeTillConclusion: number } }
+  byStatus: { [key: string]: number }
+  byApplicant: { [key: string]: { avatar_url?: string | null; analysis: number; byType: { [key: string]: number } } }
+}
+function getCondensedStats({
+  analysis,
+  afterDateStr,
+  beforeDateStr,
+}: {
+  analysis: TTechnicalAnalysisSimplified[]
+  afterDateStr: string
+  beforeDateStr: string
+}): TTechnicalAnalysisCondensedStats {
+  const afterDate = new Date(afterDateStr)
+  const beforeDate = new Date(beforeDateStr)
+  const condensed = analysis.reduce(
+    (acc: TTechnicalAnalysisCondensedStats, current) => {
+      const type = current.tipoSolicitacao || 'NÃO DEFINIDO'
+      const status = current.status
+      const applicant = current.requerente
+      const applicantName = applicant.nome || 'NÃO DEFINIDO'
+      const applicantAvatar = applicant.avatar_url
+
+      const insertionDate = current.dataInsercao ? new Date(current.dataInsercao) : null
+      const conclusionDate = current.dataEfetivacao ? new Date(current.dataEfetivacao) : null
+
+      const wasInsertedWithinCurrentPeriod = !!insertionDate && insertionDate >= afterDate && insertionDate <= beforeDate
+      const wasConcludedWithinCurrentPeriod = !!conclusionDate && conclusionDate >= afterDate && conclusionDate <= beforeDate
+
+      const timeTillConclusion = wasConcludedWithinCurrentPeriod ? getHoursDiff({ start: current.dataInsercao, finish: current.dataEfetivacao as string }) : 0
+
+      // Defining general metrics
+      if (wasInsertedWithinCurrentPeriod) acc.created += 1
+      if (wasConcludedWithinCurrentPeriod) acc.concluded += 1
+      if (wasConcludedWithinCurrentPeriod) acc.totalTimeTillConclusion += timeTillConclusion
+
+      // Defining metrics by type
+      if (!acc.byType[type]) acc.byType[type] = { created: 0, concluded: 0, totalTimeTillConclusion: 0, avgTimeTillConclusion: 0 }
+      if (wasInsertedWithinCurrentPeriod) acc.byType[type].created += 1
+      if (wasConcludedWithinCurrentPeriod) acc.byType[type].concluded += 1
+      if (wasConcludedWithinCurrentPeriod) acc.byType[type].totalTimeTillConclusion += timeTillConclusion
+      // Defining metrics by status
+      if (!acc.byStatus[status]) acc.byStatus[status] = 0
+      acc.byStatus[status] += 1
+      // Defining metrics by applicant
+      if (!acc.byApplicant[applicantName])
+        acc.byApplicant[applicantName] = {
+          avatar_url: applicantAvatar,
+          analysis: 0,
+          byType: {},
+        }
+      acc.byApplicant[applicantName].analysis += 1
+      if (!acc.byApplicant[applicantName].byType[type]) acc.byApplicant[applicantName].byType[type] = 0
+      acc.byApplicant[applicantName].byType[type] += 1
+
+      return acc
+    },
+    { created: 0, concluded: 0, totalTimeTillConclusion: 0, avgTimeTillConclusion: 0, byType: {}, byStatus: {}, byApplicant: {} }
+  )
+  // Formatting and fixing some metrics
+  return condensed
+}
 
 type TTechnicalAnalysisTimeTillConclusion = {
   avgTime: number

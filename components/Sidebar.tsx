@@ -187,7 +187,7 @@ export const Sidebar = ({ session }: SidebarProps) => {
               hidden: { opacity: 0, y: '-50%' },
             }}
             transition={{ duration: 0.25 }}
-            className="flex h-[40px] w-full flex-wrap items-center justify-center gap-2"
+            className="flex min-h-[40px] w-full flex-wrap items-center justify-center gap-2"
           >
             <div className="flex items-center justify-center p-2 text-[#264653] duration-300 ease-in hover:scale-105 hover:bg-blue-100">
               <Link href={'/'}>
@@ -224,34 +224,19 @@ export const Sidebar = ({ session }: SidebarProps) => {
                 <MdOutlineMiscellaneousServices />
               </Link>
             </div>
+            <div className="flex items-center justify-center p-2 text-[#264653] duration-300 ease-in hover:scale-105 hover:bg-blue-100">
+              <Link href={'/operacional/homologacoes'}>
+                <FaProjectDiagram />
+              </Link>
+            </div>
+            <div className="flex items-center justify-center p-2 text-[#264653] duration-300 ease-in hover:scale-105 hover:bg-blue-100">
+              <Link href={'/operacional/analises-tecnicas'}>
+                <BsFillClipboardDataFill />
+              </Link>
+            </div>
           </motion.div>
         ) : null}
       </div>
     </AnimatePresence>
   )
-}
-{
-  /**
-    <divnimatePresence>
-      <motion.div
-        variants={{
-          hidden: {
-            transform: "translateX(-100%)",
-          },
-          visible: {
-            transform: "translateX(0%)",
-            transition: { ease: [0.08, 0.65, 0.53, 0.96], duration: 0.6 },
-          },
-        }}
-        initial="hidden"
-        animate={sidebarExtended ? "visible" : "hidden"}
-        exit={{
-          opacity: 0,
-          transform: "translateX(-100%)",
-          transition: { duration: 100 },
-        }}
-        style={{ maxHeight: "calc(100vh - 70px)" }}
-        className="overscroll-y scrollbar-thin scrollbar-thumb-gray-300 scrollbar-track-gray-100 sticky top-[70px] flex w-full flex-col overflow-y-auto border-r border-gray-200 bg-[#fff] px-2 py-4 md:w-[250px]"
-      ></motion.div>
-    </AnimatePresence> */
 }

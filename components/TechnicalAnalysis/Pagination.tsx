@@ -38,7 +38,7 @@ function renderPagesIcons({
       }}
       className={`${
         activePage == p ? 'border-black bg-black text-white' : 'border-transparent text-black hover:bg-gray-500'
-      } max-w-10 min-w-10 min-h-10 h-10 max-h-10 w-10 rounded-full border text-xs font-medium`}
+      } max-w-10 lg:min-w-10 lg:min-h-10 min-h-8 min-w-8 h-8 max-h-10 w-8 rounded-full border text-xs font-medium lg:h-10 lg:w-10`}
     >
       {p}
     </button>
@@ -62,7 +62,7 @@ function TechnicalAnalysisPagination({ totalPages, activePage, selectPage, analy
             Um número grande de análises foi encontrado, separamos em páginas para facilitar a visualização. Clique na página desejada para visualizar os demais
             análises.
           </p>
-          <div className="flex items-center justify-center gap-4">
+          <div className="flex flex-col items-center justify-center gap-1 lg:flex-row lg:gap-4">
             <button
               disabled={queryLoading}
               onClick={() => {
