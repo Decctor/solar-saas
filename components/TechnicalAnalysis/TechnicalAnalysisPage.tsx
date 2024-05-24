@@ -10,6 +10,7 @@ import LoadingComponent from '../utils/LoadingComponent'
 import ErrorComponent from '../utils/ErrorComponent'
 import TechnicalAnalysisCard from '../Cards/TechnicalAnalysisCard'
 import TechnicalAnalysisPagination from './Pagination'
+import ControlTechnicalAnalysis from '../Modals/TechnicalAnalysis/ControlTechnicalAnalysis'
 
 type TechnicalAnalysisPageParams = {
   session: Session
@@ -98,6 +99,9 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
             : null}
         </div>
       </div>
+      {editModal.id && editModal.isOpen ? (
+        <ControlTechnicalAnalysis analysisId={editModal.id} session={session} closeModal={() => setEditModal({ id: null, isOpen: false })} />
+      ) : null}
     </div>
   )
 }
