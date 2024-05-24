@@ -366,35 +366,35 @@ const GeneralTechnicalAnalysisSchema = z.object({
   descritivo: z.array(z.object({ topico: z.string(), descricao: z.string() })),
   servicosAdicionais: z.object({
     alambrado: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE AMPÈRE')])
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')])
       .optional()
       .nullable(),
     britagem: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE AMPÈRE')])
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')])
       .optional()
       .nullable(),
     casaDeMaquinas: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE AMPÈRE')])
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')])
       .optional()
       .nullable(),
     barracao: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE AMPÈRE')])
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')])
       .optional()
       .nullable(),
     roteador: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE AMPÈRE')])
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')])
       .optional()
       .nullable(),
     limpezaLocal: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE AMPÈRE')])
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')])
       .optional()
       .nullable(),
     redeReligacao: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE AMPÈRE')])
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')])
       .optional()
       .nullable(),
     terraplanagem: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE AMPÈRE')])
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')])
       .optional()
       .nullable(),
     realimentar: z.boolean(),

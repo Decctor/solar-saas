@@ -79,19 +79,17 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               options={[
                 {
                   id: 1,
-                  label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                  value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                  label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                  value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) =>
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, casaDeMaquinas: value } }))
-              }
+              handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, casaDeMaquinas: value } }))}
               onReset={() => {
                 setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, casaDeMaquinas: null } }))
               }}
@@ -107,13 +105,13 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               options={[
                 {
                   id: 1,
-                  label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                  value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                  label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                  value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -135,13 +133,13 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               options={[
                 {
                   id: 1,
-                  label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                  value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                  label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                  value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -161,13 +159,13 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               options={[
                 {
                   id: 1,
-                  label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                  value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                  label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                  value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -189,13 +187,13 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               options={[
                 {
                   id: 1,
-                  label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                  value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                  label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                  value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -215,19 +213,17 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               options={[
                 {
                   id: 1,
-                  label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                  value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                  label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                  value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) =>
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, redeReligacao: value } }))
-              }
+              handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, redeReligacao: value } }))}
               onReset={() => {
                 setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, redeReligacao: null } }))
               }}
@@ -245,19 +241,17 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               options={[
                 {
                   id: 1,
-                  label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                  value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                  label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                  value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) =>
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: value } }))
-              }
+              handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: value } }))}
               onReset={() => {
                 setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: null } }))
               }}
@@ -273,19 +267,17 @@ function AdditionalServicesInfo({ requestInfo, setRequestInfo, files, setFiles, 
               options={[
                 {
                   id: 1,
-                  label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                  value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                  label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                  value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
-              handleChange={(value) =>
-                setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, terraplanagem: value } }))
-              }
+              handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, terraplanagem: value } }))}
               onReset={() => {
                 setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, terraplanagem: null } }))
               }}

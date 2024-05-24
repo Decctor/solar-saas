@@ -18,6 +18,7 @@ type TechnicalAnalysisPageParams = {
   session: Session
 }
 function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
+  const userHasOperationalResultsViewPermission = session.user.permissoes.resultados.visualizarOperacional
   const userAnalysisScope = session.user.permissoes.analisesTecnicas.escopo || null
   const userPartnersScope = session.user.permissoes.parceiros.escopo || null
   const [filterMenuIsOpen, setFilterMenuIsOpen] = useState<boolean>(false)
@@ -64,13 +65,15 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
                 <h1 className="text-xl font-black leading-none tracking-tight md:text-2xl">CONTROLE DE ANÁLISES TÉCNICAS</h1>
               </div>
             </div>
-            <button
-              onClick={() => setStatsBlockIsOpen(true)}
-              className="flex items-center gap-1 font-bold tracking-tight text-gray-500 duration-300 ease-in-out hover:text-cyan-500"
-            >
-              <p className="text-sm">ACOMPANHAMENTO DE RESULTADOS</p>
-              <AiOutlineTeam />
-            </button>
+            {userHasOperationalResultsViewPermission ? (
+              <button
+                onClick={() => setStatsBlockIsOpen(true)}
+                className="flex items-center gap-1 font-bold tracking-tight text-gray-500 duration-300 ease-in-out hover:text-cyan-500"
+              >
+                <p className="text-sm">ACOMPANHAMENTO DE RESULTADOS</p>
+                <AiOutlineTeam />
+              </button>
+            ) : null}
           </div>
           {filterMenuIsOpen ? (
             <FilterMenu

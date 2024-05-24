@@ -1250,6 +1250,7 @@ export const TechnicalAnalysisReportTypes = [
     value: 'FORMULÁRIO(RURAL)',
   },
 ]
+
 export const HomologationControlStatus = [
   { id: 1, label: 'PENDENTE', value: 'PENDENTE' },
   { id: 2, label: 'ELABORANDO DOCUMENTAÇÕES', value: 'ELABORANDO DOCUMENTAÇÕES' },
@@ -1449,7 +1450,7 @@ export const SupplyOptions = {
 }
 export const AdditionalServicesResponsibilityOptions = [
   { id: 1, label: 'NÃO', value: 'NÃO' },
-  { id: 2, label: 'SIM - RESPONSABILIDADE CLIENTE', value: 'SIM - RESPONSABILIDADE CLIENTE' },
+  { id: 2, label: 'SIM - RESPONSABILIDADE DO CLIENTE', value: 'SIM - RESPONSABILIDADE DO CLIENTE' },
   { id: 3, label: 'SIM - RESPONSABILIDADE DA EMPRESA', value: 'SIM - RESPONSABILIDADE DA EMPRESA' },
 ]
 export const AmperageOptions = [

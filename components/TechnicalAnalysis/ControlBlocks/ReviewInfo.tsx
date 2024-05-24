@@ -506,8 +506,7 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                 <div key={index} className="flex w-full flex-col border border-gray-200 p-2 shadow-sm">
                   <div className="flex w-full items-center justify-between">
                     <h1 className="font-medium leading-none tracking-tight text-gray-500">
-                      PADRÃO <strong className="text-[#fead41]">{paInfo.ligacao} </strong> de{' '}
-                      <strong className="text-[#fead41]">{paInfo.amperagem}</strong>
+                      PADRÃO <strong className="text-[#fead41]">{paInfo.ligacao} </strong> de <strong className="text-[#fead41]">{paInfo.amperagem}</strong>
                     </h1>
                     <button
                       onClick={() => removeEnergyPA(index)}
@@ -867,13 +866,13 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                       options={[
                         {
                           id: 1,
-                          label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                          value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                          label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                          value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                         },
                         {
                           id: 2,
-                          label: 'SIM - RESPONSABILIDADE CLIENTE',
-                          value: 'SIM - RESPONSABILIDADE CLIENTE',
+                          label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                          value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                         },
                         { id: 3, label: 'NÃO', value: 'NÃO' },
                       ]}
@@ -895,19 +894,17 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                       options={[
                         {
                           id: 1,
-                          label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                          value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                          label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                          value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                         },
                         {
                           id: 2,
-                          label: 'SIM - RESPONSABILIDADE CLIENTE',
-                          value: 'SIM - RESPONSABILIDADE CLIENTE',
+                          label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                          value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                         },
                         { id: 3, label: 'NÃO', value: 'NÃO' },
                       ]}
-                      handleChange={(value) =>
-                        setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, alambrado: value } }))
-                      }
+                      handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, alambrado: value } }))}
                       onReset={() => {
                         setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, alambrado: null } }))
                       }}
@@ -925,19 +922,17 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                       options={[
                         {
                           id: 1,
-                          label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                          value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                          label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                          value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                         },
                         {
                           id: 2,
-                          label: 'SIM - RESPONSABILIDADE CLIENTE',
-                          value: 'SIM - RESPONSABILIDADE CLIENTE',
+                          label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                          value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                         },
                         { id: 3, label: 'NÃO', value: 'NÃO' },
                       ]}
-                      handleChange={(value) =>
-                        setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, britagem: value } }))
-                      }
+                      handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, britagem: value } }))}
                       onReset={() => {
                         setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, britagem: null } }))
                       }}
@@ -953,19 +948,17 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                       options={[
                         {
                           id: 1,
-                          label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                          value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                          label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                          value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                         },
                         {
                           id: 2,
-                          label: 'SIM - RESPONSABILIDADE CLIENTE',
-                          value: 'SIM - RESPONSABILIDADE CLIENTE',
+                          label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                          value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                         },
                         { id: 3, label: 'NÃO', value: 'NÃO' },
                       ]}
-                      handleChange={(value) =>
-                        setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, barracao: value } }))
-                      }
+                      handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, barracao: value } }))}
                       onReset={() => {
                         setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, barracao: null } }))
                       }}
@@ -983,19 +976,17 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                       options={[
                         {
                           id: 1,
-                          label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                          value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                          label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                          value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                         },
                         {
                           id: 2,
-                          label: 'SIM - RESPONSABILIDADE CLIENTE',
-                          value: 'SIM - RESPONSABILIDADE CLIENTE',
+                          label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                          value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                         },
                         { id: 3, label: 'NÃO', value: 'NÃO' },
                       ]}
-                      handleChange={(value) =>
-                        setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, roteador: value } }))
-                      }
+                      handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, roteador: value } }))}
                       onReset={() => {
                         setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, roteador: null } }))
                       }}
@@ -1011,13 +1002,13 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                       options={[
                         {
                           id: 1,
-                          label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                          value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                          label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                          value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                         },
                         {
                           id: 2,
-                          label: 'SIM - RESPONSABILIDADE CLIENTE',
-                          value: 'SIM - RESPONSABILIDADE CLIENTE',
+                          label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                          value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                         },
                         { id: 3, label: 'NÃO', value: 'NÃO' },
                       ]}
@@ -1041,19 +1032,17 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                       options={[
                         {
                           id: 1,
-                          label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                          value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                          label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                          value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                         },
                         {
                           id: 2,
-                          label: 'SIM - RESPONSABILIDADE CLIENTE',
-                          value: 'SIM - RESPONSABILIDADE CLIENTE',
+                          label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                          value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                         },
                         { id: 3, label: 'NÃO', value: 'NÃO' },
                       ]}
-                      handleChange={(value) =>
-                        setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: value } }))
-                      }
+                      handleChange={(value) => setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: value } }))}
                       onReset={() => {
                         setRequestInfo((prev) => ({ ...prev, servicosAdicionais: { ...prev.servicosAdicionais, limpezaLocal: null } }))
                       }}
@@ -1069,13 +1058,13 @@ function ReviewInfo({ requestInfo, setRequestInfo, requireFiles = true, files, s
                       options={[
                         {
                           id: 1,
-                          label: 'SIM - RESPONSABILIDADE AMPÈRE',
-                          value: 'SIM - RESPONSABILIDADE AMPÈRE',
+                          label: 'SIM - RESPONSABILIDADE DA EMPRESA',
+                          value: 'SIM - RESPONSABILIDADE DA EMPRESA',
                         },
                         {
                           id: 2,
-                          label: 'SIM - RESPONSABILIDADE CLIENTE',
-                          value: 'SIM - RESPONSABILIDADE CLIENTE',
+                          label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                          value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                         },
                         { id: 3, label: 'NÃO', value: 'NÃO' },
                       ]}

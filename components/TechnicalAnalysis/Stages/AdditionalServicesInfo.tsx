@@ -68,8 +68,8 @@ function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, go
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -94,8 +94,8 @@ function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, go
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -122,8 +122,8 @@ function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, go
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -148,8 +148,8 @@ function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, go
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -176,8 +176,8 @@ function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, go
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -202,8 +202,8 @@ function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, go
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -230,8 +230,8 @@ function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, go
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}
@@ -256,8 +256,8 @@ function AdditionalServicesInfo({ infoHolder, setInfoHolder, files, setFiles, go
                 },
                 {
                   id: 2,
-                  label: 'SIM - RESPONSABILIDADE CLIENTE',
-                  value: 'SIM - RESPONSABILIDADE CLIENTE',
+                  label: 'SIM - RESPONSABILIDADE DO CLIENTE',
+                  value: 'SIM - RESPONSABILIDADE DO CLIENTE',
                 },
                 { id: 3, label: 'NÃO', value: 'NÃO' },
               ]}

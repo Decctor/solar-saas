@@ -79,8 +79,8 @@ const getTechnicalAnalysisByPersonalizedFilters: NextApiHandler<PostResponse> = 
     status: filters.pending ? { $ne: 'CONCLUIDO' } : filters.status.length > 0 ? { $in: filters.status } : { $ne: undefined },
     // @ts-ignore
     complexidade: filters.complexity ? filters.complexity : { $ne: 'undefined' },
-    'localizacao.cidade': filters.city.length > 0 ? { $in: filters.city } : { $ne: undefined },
-    'localizacao.uf': filters.state.length > 0 ? { $in: filters.state } : { $ne: undefined },
+    'localizacao.cidade': filters.city.length > 0 ? { $in: filters.city } : { $ne: 'undefined' },
+    'localizacao.uf': filters.state.length > 0 ? { $in: filters.state } : { $ne: 'undefined' },
     tipoSolicitacao: filters.type.length > 0 ? { $in: filters.type } : { $ne: undefined },
   }
   const query = { ...insertionQuery, ...applicantQuery, ...partnerQuery, ...analystQuery, ...filtersQuery }

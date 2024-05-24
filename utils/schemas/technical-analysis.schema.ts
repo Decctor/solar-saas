@@ -257,13 +257,13 @@ export const GeneralTechnicalAnalysisSchema = z.object({
   ),
   servicosAdicionais: z.object({
     alambrado: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')], {
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')], {
         invalid_type_error: 'Tipo não válido para a especificação de execução de alambrado.',
       })
       .optional()
       .nullable(),
     britagem: z
-      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')], {
+      .union([z.literal('NÃO'), z.literal('SIM - RESPONSABILIDADE DO CLIENTE'), z.literal('SIM - RESPONSABILIDADE DA EMPRESA')], {
         invalid_type_error: 'Tipo não válido para a especificação de execução de britagem.',
       })
       .optional()

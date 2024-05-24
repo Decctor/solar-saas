@@ -399,12 +399,12 @@ export interface ITechnicalAnalysis {
   distanciaInversorRoteador: string //
   obsInstalacao: string //
   adaptacaoQGBT: 'NÃO SE APLICA' | 'CORTE E TRILHO' | 'NÃO' | 'TRILHO' | 'CORTE' //
-  alambrado?: 'NÃO' | 'SIM - RESPONSABILIDADE CLIENTE' | 'SIM - RESPONSABILIDADE DA EMPRESA' //
+  alambrado?: 'NÃO' | 'SIM - RESPONSABILIDADE DO CLIENTE' | 'SIM - RESPONSABILIDADE DA EMPRESA' //
   avaliarTelhado: 'SIM' | 'NÃO' //
-  britagem?: 'NÃO' | 'SIM - RESPONSABILIDADE CLIENTE' | 'SIM - RESPONSABILIDADE DA EMPRESA' //
-  casaDeMaquinas?: 'NÃO' | 'SIM - RESPONSABILIDADE CLIENTE' | 'SIM - RESPONSABILIDADE DA EMPRESA' //
+  britagem?: 'NÃO' | 'SIM - RESPONSABILIDADE DO CLIENTE' | 'SIM - RESPONSABILIDADE DA EMPRESA' //
+  casaDeMaquinas?: 'NÃO' | 'SIM - RESPONSABILIDADE DO CLIENTE' | 'SIM - RESPONSABILIDADE DA EMPRESA' //
   concessionaria: string //
-  construcaoBarracao?: 'NÃO' | 'SIM - RESPONSABILIDADE CLIENTE' | 'SIM - RESPONSABILIDADE DA EMPRESA' //
+  construcaoBarracao?: 'NÃO' | 'SIM - RESPONSABILIDADE DO CLIENTE' | 'SIM - RESPONSABILIDADE DA EMPRESA' //
   custosAdicionais: {
     categoria: 'PADRÃO' | 'ESTRUTURA' | 'INSTALAÇÃO' | 'OUTROS'
     descricao: string
@@ -435,8 +435,8 @@ export interface ITechnicalAnalysis {
   googleEarth: 'SIM' | 'NÃO' //
   infoPadraoConjugado?: string //
   infraCabos: 'NÃO DEFINIDO' | 'KIT NORMAL' | 'KIT+MANGUEIRA' | 'PERSONALIZADO' //
-  instalacaoRoteador?: 'SIM - RESPONSABILIDADE DA EMPRESA' | 'SIM - RESPONSABILIDADE CLIENTE' | 'NÃO' //
-  limpezaLocalUsinaSolo?: 'SIM - RESPONSABILIDADE DA EMPRESA' | 'SIM - RESPONSABILIDADE CLIENTE' | 'NÃO' //
+  instalacaoRoteador?: 'SIM - RESPONSABILIDADE DA EMPRESA' | 'SIM - RESPONSABILIDADE DO CLIENTE' | 'NÃO' //
+  limpezaLocalUsinaSolo?: 'SIM - RESPONSABILIDADE DA EMPRESA' | 'SIM - RESPONSABILIDADE DO CLIENTE' | 'NÃO' //
   links: {
     format: string
     link: string
@@ -474,7 +474,7 @@ export interface ITechnicalAnalysis {
   ramalEntrada?: 'AÉREO' | 'SUBTERRÂNEO' //
   ramalSaida?: 'AÉREO' | 'SUBTERRÂNEO' //
   realimentar: 'SIM' | 'NÃO' //
-  redeReligacao?: 'SIM - RESPONSABILIDADE DA EMPRESA' | 'SIM - RESPONSABILIDADE CLIENTE' | 'NÃO' //
+  redeReligacao?: 'SIM - RESPONSABILIDADE DA EMPRESA' | 'SIM - RESPONSABILIDADE DO CLIENTE' | 'NÃO' //
   respostaConclusao?: string
   respostaEspacoProjeto?: 'SIM' | 'NÃO' | 'NÃO DEFINIDO' //
   respostaEstruturaInclinacao?: 'SIM' | 'NÃO' | 'NÃO DEFINIDO' //
@@ -494,7 +494,7 @@ export interface ITechnicalAnalysis {
   telefoneVendedor: string //
   telhasReservas?: 'NÃO' | 'SIM' | 'NÃO DEFINIDO' //
   temEstudoDeCaso?: 'NÃO' | 'SIM' | 'NÃO DEFINIDO' // UTILIZAR PENDÊNCIAS
-  terraplanagemUsinaSolo?: 'SIM - RESPONSABILIDADE DA EMPRESA' | 'SIM - RESPONSABILIDADE CLIENTE' | 'NÃO' //
+  terraplanagemUsinaSolo?: 'SIM - RESPONSABILIDADE DA EMPRESA' | 'SIM - RESPONSABILIDADE DO CLIENTE' | 'NÃO' //
   tipoDeLaudo?: 'ESTUDO SIMPLES (36 HORAS)' | 'ESTUDO INTERMEDIÁRIO (48 HORAS)' | 'ESTUDO COMPLEXO (72 HORAS)' //
   tipoDesenho?: 'SOLAR EDGE DESIGN' | 'REVIT 3D' | 'AUTOCAD 2D' | 'APENAS VIABILIDADE DE ESPAÇO' //
   tipoDeSolicitacao?: (typeof TechAnalysisSolicitationTypes)[number] //
