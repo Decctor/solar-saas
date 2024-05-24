@@ -45,6 +45,7 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
   const analysis = data?.analysis
   const analysisMatched = data?.analysisMatched
   const totalPages = data?.totalPages
+  console.log(totalPages)
   return (
     <div className="flex h-full flex-col md:flex-row">
       <Sidebar session={session} />
