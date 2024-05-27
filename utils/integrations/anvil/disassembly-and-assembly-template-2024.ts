@@ -13,43 +13,25 @@ type GetTemplateDataParams = {
 export function getDisassemblyAndAssemblyTemplateData({ opportunity, proposal }: GetTemplateDataParams) {
   const seller = opportunity.responsaveis.find((r) => r.papel == 'VENDEDOR')
   const sdr = opportunity.responsaveis.find((r) => r.papel == 'SDR')
-  // const obj = {
-  //   title: proposal.nome || 'PROPOSTA DESMONTAGEM E MONTAGEM',
-  //   fontSize: 10,
-  //   textColor: '#333333',
-  //   data: {
-  //     clientName: opportunity.cliente.nome,
-  //     clientRegistry: opportunity.cliente.cpfCnpj,
-  //     clientCity: `${opportunity.localizacao.cidade} - ${opportunity.localizacao.uf}`,
-  //     proposePower: `${formatDecimalPlaces(proposal.premissas.potenciaPico || 0)} kWp`,
-  //     sellerName: seller?.nome || sdr?.nome || '',
-  //     sellerPhone: seller?.telefone || sdr?.telefone || '',
-  //     proposeDate: dayjs().format('DD [de] MMMM [de] YYYY'),
-  //     modules: `${proposal.premissas.numModulos || 0} módulos`,
-  //     inverters: `${proposal.premissas.numInversores || 0} inversores`,
-  //     assemblyAddress: formatLocation({ location: opportunity.localizacao }),
-  //     investment: formatToMoney(proposal.valor || 0),
-  //     proposeId: proposal._id,
-  //   },
-  // }
   const obj = {
-    title: 'TEMPLATE DESMONTAGEM E MONTAGEM 2024',
+    title: proposal.nome || 'PROPOSTA DESMONTAGEM E MONTAGEM',
     fontSize: 10,
     textColor: '#333333',
     data: {
-      clientName: 'Client Name',
-      clientRegistry: 'Client Registry',
-      clientCity: 'Client City',
-      proposePower: 'Propose Power',
-      sellerName: 'Seller Name',
-      sellerPhone: 'Seller Phone',
-      proposeDate: 'Propose Date',
-      modules: 'Modules',
-      inverters: 'Inverters',
-      assemblyAddress: 'Assembly Address',
-      proposeId: 'Propose ID',
-      investment: 'Investment',
+      clientName: opportunity.cliente.nome,
+      clientRegistry: opportunity.cliente.cpfCnpj,
+      clientCity: `${opportunity.localizacao.cidade} - ${opportunity.localizacao.uf}`,
+      proposePower: `${formatDecimalPlaces(proposal.premissas.potenciaPico || 0)} kWp`,
+      sellerName: seller?.nome || sdr?.nome || '',
+      sellerPhone: seller?.telefone || sdr?.telefone || '',
+      proposeDate: dayjs().format('DD [de] MMMM [de] YYYY'),
+      modules: `${proposal.premissas.numModulos || 0} módulos`,
+      inverters: `${proposal.premissas.numInversores || 0} inversores`,
+      assemblyAddress: formatLocation({ location: opportunity.localizacao }),
+      investment: formatToMoney(proposal.valor || 0),
+      proposeId: proposal._id,
     },
   }
+
   return obj
 }
