@@ -60,9 +60,9 @@ const createProposalPersonalized: NextApiHandler<PostResponse> = async (req, res
       proposal: { _id: insertedId, ...proposal },
       template: template.value as (typeof ProposeTemplateOptions)[number],
     })
-    console.log(anvilTemplateData)
+    console.log(anvilTemplateData, idAnvil)
     const anvilFileResponse = await getPDFByAnvil({ info: anvilTemplateData, idAnvil: idAnvil })
-
+    console.log(anvilFileResponse)
     const { format, size, url } = await uploadFileAsPDF({ file: anvilFileResponse, fileName: proposal.nome, vinculationId: opportunityWithClient._id })
 
     await updateProposal({ id: insertedId, collection: proposalsCollection, changes: { urlArquivo: url }, partnerId: partnerId || '' })
