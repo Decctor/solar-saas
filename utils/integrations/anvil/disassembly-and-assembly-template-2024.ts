@@ -12,7 +12,7 @@ type GetTemplateDataParams = {
 }
 export function getDisassemblyAndAssemblyTemplateData({ opportunity, proposal }: GetTemplateDataParams) {
   const seller = opportunity.responsaveis.find((r) => r.papel == 'VENDEDOR')
-  return {
+  const obj = {
     title: proposal.nome || 'PROPOSTA DESMONTAGEM E MONTAGEM',
     fontSize: 10,
     textColor: '#333333',
@@ -31,4 +31,5 @@ export function getDisassemblyAndAssemblyTemplateData({ opportunity, proposal }:
       proposeId: proposal._id,
     },
   }
+  return obj
 }

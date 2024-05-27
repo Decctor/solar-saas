@@ -71,6 +71,7 @@ export const ProposeTemplateOptions = [
   'TEMPLATE COMPLEXO 2024',
   'TEMPLATE PARCEIRA BYD',
   'TEMPLATE O&M',
+  'TEMPLATE DESMONTAGEM E MONTAGEM',
 ] as const
 
 type GetTemplateDataParams = {
@@ -91,10 +92,9 @@ export function getTemplateData({ opportunity, proposal, template }: GetTemplate
 
   if (template == 'TEMPLATE O&M') return getOeMTemplateData({ opportunity, proposal })
 
+  if (template == 'TEMPLATE DESMONTAGEM E MONTAGEM') return getDisassemblyAndAssemblyTemplateData({ opportunity, proposal })
+
   return getSimpleTemplate2024Data({ opportunity, proposal })
-  // if (template == 'TEMPLATE MONTAGEM E DESMONTAGEM') return getDisassemblyAndAssemblyTemplateData({ opportunity, proposal })
-  // if (template == 'TEMPLATE MONTAGEM E DESMONTAGEM 2024')
-  //   return getDisassemblyAndAssemblyTemplate2024Data(client, project, proposal as IProposeDisassemblyAssemblyInfo, seller)
 }
 export function getExpenseAndEconomyProgression({
   proposal,
