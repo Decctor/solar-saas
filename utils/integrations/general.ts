@@ -7,6 +7,7 @@ import { TProposal, TProposalDTO } from '../schemas/proposal.schema'
 import { getBYDTemplateData } from './anvil/byd-template'
 import { getComplexTemplateData } from './anvil/complex-template'
 import { getComplexTemplate2024Data } from './anvil/complex-template-2024'
+import { getDisassemblyAndAssemblyTemplateData } from './anvil/disassembly-and-assembly-template-2024'
 
 import { getOeMTemplateData } from './anvil/oem-template'
 import { getSimpleTemplate2023Data } from './anvil/simple-template-2023'
@@ -54,6 +55,13 @@ export const ProposalTemplates = [
     value: 'TEMPLATE O&M',
     idAnvil: 'Cf2vPPIkSi7XEpuXV8Xv',
     createProposeObj: getOeMTemplateData,
+  },
+  {
+    active: true,
+    label: 'TEMPLATE DESMONTAGEM E MONTAGEM',
+    value: 'TEMPLATE DESMONTAGEM E MONTAGEM',
+    idAnvil: 'QiAjovgEpAt2RCJx5Am7',
+    createProposeObj: getDisassemblyAndAssemblyTemplateData,
   },
 ]
 export const ProposeTemplateOptions = [

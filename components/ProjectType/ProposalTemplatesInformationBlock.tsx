@@ -19,7 +19,7 @@ function ProposalTemplatesInformationBlock({ infoHolder, setInfoHolder }: Propos
   }
   return (
     <div className="flex w-full flex-col gap-y-2">
-      <h1 className="w-full bg-gray-700  p-1 text-center font-medium text-white">MODELOS DE PROPOSTA</h1>{' '}
+      <h1 className="w-full bg-gray-700  p-1 text-center font-medium text-white">MODELOS DE PROPOSTA</h1>
       <p className="my-2 w-full text-center text-gray-500">
         Escolha, dentro do nosso de banco de templates, um opção que poderá ser utilizada para esse tipo de projeto.
       </p>
