@@ -60,6 +60,7 @@ const createProposalPersonalized: NextApiHandler<PostResponse> = async (req, res
       proposal: { _id: insertedId, ...proposal },
       template: template.value as (typeof ProposeTemplateOptions)[number],
     })
+    console.log(anvilTemplateData)
     const anvilFileResponse = await getPDFByAnvil({ info: anvilTemplateData, idAnvil: idAnvil })
 
     const { format, size, url } = await uploadFileAsPDF({ file: anvilFileResponse, fileName: proposal.nome, vinculationId: opportunityWithClient._id })
@@ -130,6 +131,7 @@ const updateProposalPersonalized: NextApiHandler<PutResponse> = async (req, res)
         proposal: { _id: id, ...proposal },
         template: template.value as (typeof ProposeTemplateOptions)[number],
       })
+      console.log(anvilTemplateData)
       const anvilFileResponse = await getPDFByAnvil({ info: anvilTemplateData, idAnvil: idAnvil })
 
       const { format, size, url } = await uploadFileAsPDF({ file: anvilFileResponse, fileName: proposal.nome, vinculationId: opportunity._id })

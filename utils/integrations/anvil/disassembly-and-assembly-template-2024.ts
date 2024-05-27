@@ -12,6 +12,7 @@ type GetTemplateDataParams = {
 }
 export function getDisassemblyAndAssemblyTemplateData({ opportunity, proposal }: GetTemplateDataParams) {
   const seller = opportunity.responsaveis.find((r) => r.papel == 'VENDEDOR')
+  const sdr = opportunity.responsaveis.find((r) => r.papel == 'SDR')
   const obj = {
     title: proposal.nome || 'PROPOSTA DESMONTAGEM E MONTAGEM',
     fontSize: 10,
@@ -21,8 +22,8 @@ export function getDisassemblyAndAssemblyTemplateData({ opportunity, proposal }:
       clientRegistry: opportunity.cliente.cpfCnpj,
       clientCity: `${opportunity.localizacao.cidade} - ${opportunity.localizacao.uf}`,
       proposePower: `${formatDecimalPlaces(proposal.premissas.potenciaPico || 0)} kWp`,
-      sellerName: seller?.nome,
-      sellerPhone: seller?.telefone,
+      sellerName: seller?.nome || sdr?.nome || '',
+      sellerPhone: seller?.telefone || sdr?.telefone || '',
       proposeDate: dayjs().format('DD [de] MMMM [de] YYYY'),
       modules: `${proposal.premissas.numModulos || 0} módulos`,
       inverters: `${proposal.premissas.numInversores || 0} inversores`,
