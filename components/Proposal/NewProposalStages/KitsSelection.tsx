@@ -31,6 +31,7 @@ import { getModulesQty, useKitQueryPipelines } from '@/utils/methods'
 import { GeneralVisibleHiddenExitMotionVariants, orientations } from '@/utils/constants'
 import genFactors from '../../../utils/json-files/generationFactors.json'
 import CreateProposalKit from '@/components/Modals/Kit/CreateProposalKit'
+import AccessGrantingWarning from '../Utils/AccessGrantingWarning'
 
 type QueryTypes = 'KITS POR PREMISSA' | 'TODOS OS KITS'
 
@@ -339,6 +340,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
         </h1>
         <h1 className="text-center font-medium italic text-gray-800">{formatDecimalPlaces(ideal)} kWp</h1>
       </div>
+      <AccessGrantingWarning proposal={infoHolder} opportunity={opportunity} type="warn" projectTypeId={opportunity.tipo.id} />
       <div className="flex w-full flex-col rounded-md border border-gray-200 p-3">
         <div className="flex w-full items-center justify-between">
           <h1 className="font-bold leading-none tracking-tight">COMPOSIÇÃO DO SISTEMA</h1>

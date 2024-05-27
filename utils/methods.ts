@@ -11,6 +11,8 @@ import { ZodError } from 'zod'
 import { TTechnicalAnalysis } from './schemas/technical-analysis.schema'
 import { Session } from 'next-auth'
 import { TModule, TProductItem } from './schemas/kits.schema'
+import { TOpportunity } from './schemas/opportunity.schema'
+import { TProposal } from './schemas/proposal.schema'
 
 type ViaCEPSuccessfulReturn = {
   cep: string
@@ -23,6 +25,41 @@ type ViaCEPSuccessfulReturn = {
   gia: string
   ddd: string
   siafi: string
+}
+
+type GetMaxHomologationPowerEstimationParams = {
+  group: TProposal['premissas']['grupoInstalacao']
+  avgConsumption: number
+}
+export function getMaxHomologationPowerEstimation({ group, avgConsumption }: GetMaxHomologationPowerEstimationParams) {
+  if (group == 'RESIDENCIAL') {
+    const CS = 0.68
+    const convertionFactor = 115.2 / CS
+    const maxHomologationPower = avgConsumption / convertionFactor
+    return maxHomologationPower
+  }
+  if (group == 'COMERCIAL') {
+    const CS = 0.69
+    const convertionFactor = 115.2 / CS
+    const maxHomologationPower = avgConsumption / convertionFactor
+    return maxHomologationPower
+  }
+  if (group == 'INDUSTRIAL') {
+    const CS = 0.8
+    const convertionFactor = 115.2 / CS
+    const maxHomologationPower = avgConsumption / convertionFactor
+    return maxHomologationPower
+  }
+  if (group == 'RURAL') {
+    const CS = 0.59
+    const convertionFactor = 115.2 / CS
+    const maxHomologationPower = avgConsumption / convertionFactor
+    return maxHomologationPower
+  }
+  const CS = 0.68
+  const convertionFactor = 115.2 / CS
+  const maxHomologationPower = avgConsumption / convertionFactor
+  return maxHomologationPower
 }
 export function isFile(variable: any): variable is File {
   return variable instanceof File

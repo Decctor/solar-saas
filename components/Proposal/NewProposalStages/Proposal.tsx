@@ -31,6 +31,7 @@ import SelectInput from '@/components/Inputs/SelectInput'
 import { handleDownload } from '@/lib/methods/download'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import toast from 'react-hot-toast'
+import AccessGrantingWarning from '../Utils/AccessGrantingWarning'
 
 function renderProposalPreview({
   proposal,
@@ -110,6 +111,7 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
 
   return (
     <div className="flex w-full flex-col gap-2">
+      <AccessGrantingWarning proposal={infoHolder} opportunity={opportunity} type="alert" projectTypeId={opportunity.tipo.id} />
       {isPending ? (
         <div className="flex min-h-[350px] w-full items-center justify-center">
           <LoadingComponent />
