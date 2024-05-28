@@ -11,7 +11,6 @@ import {
   StructureTypes,
   TechnicalAnalysisPendencyCategories,
   TechnicalAnalysisSolicitationTypes,
-  Units,
 } from '@/utils/select-options'
 import { Collection } from 'mongodb'
 import { NextApiHandler } from 'next'
@@ -449,7 +448,7 @@ const GeneralTechnicalAnalysisSchema = z.object({
         .nullable(),
       descricao: z.string(),
       qtde: z.number(),
-      grandeza: z.enum(Units.map((u) => u.value)),
+      grandeza: z.string(),
       custoUnitario: z.number().optional().nullable(),
       total: z.number().optional().nullable(),
     })
@@ -484,7 +483,7 @@ const GeneralTechnicalAnalysisSchema = z.object({
           descricao: z.string(),
           tipo: z.string(),
           qtde: z.number(),
-          grandeza: z.enum(Units.map((u) => u.value)),
+          grandeza: z.string(),
         })
       ),
     })
