@@ -594,7 +594,7 @@ export const ProjectObservationTopics: TProject['observacoes'][number]['assunto'
 
 export const OpportunityLossReasons = [
   { id: 1, label: 'CLIENTE NÃO RESPONDE', value: 'CLIENTE NÃO RESPONDE' },
-  { id: 2, label: 'DEMORA NO FOLLOW', value: 'DEMORA NO FOLLOW' },
+  { id: 2, label: 'DEMORA NO ATENDIMENTO', value: 'DEMORA NO ATENDIMENTO' },
   { id: 3, label: 'FECHOU COM OUTRA EMPRESA (GERAL)', value: 'FECHOU COM OUTRA EMPRESA (GERAL)' },
   { id: 4, label: 'FECHOU COM OUTRA EMPRESA (PREÇO)', value: 'FECHOU COM OUTRA EMPRESA (PREÇO)' },
   { id: 5, label: 'FECHOU COM OUTRA EMPRESA (PORTIFÓLIO)', value: 'FECHOU COM OUTRA EMPRESA (PORTIFÓLIO)' },
