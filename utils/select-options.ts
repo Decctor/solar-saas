@@ -19,6 +19,7 @@ import { ElectricalPhasesSchema, TEletricalPhases, TProposalPremisses } from './
 import { TSaleCategory } from './schemas/opportunity.schema'
 import { TSignaturePlanDTO } from './schemas/signature-plans.schema'
 import { TProject } from './schemas/project.schema'
+import { TTechnicalAnalysisPendencyCategory } from './schemas/technical-analysis.schema'
 
 export const AllSellers = [
   {
@@ -1331,7 +1332,7 @@ export const TechnicalAnalysisSolicitationTypes = [
     ],
   },
 ]
-export const TechnicalAnalysisPendencyCategories = [
+export const TechnicalAnalysisPendencyCategories: { id: number; label: string; value: TTechnicalAnalysisPendencyCategory }[] = [
   { id: 1, label: 'PENDÊNCIA COMERCIAL', value: 'PENDÊNCIA COMERCIAL' },
   { id: 2, label: 'PENDÊNCIA TERCEIROS', value: 'PENDÊNCIA TERCEIROS' }, // COTAÇÕES, ETC
   { id: 3, label: 'PENDÊNCIA CONCESSIONÁRIA', value: 'PENDÊNCIA CONCESSIONÁRIA' },

@@ -1,14 +1,5 @@
 import { z } from 'zod'
-import {
-  InverterFixationOptions,
-  RoofTiles,
-  StructureTypes,
-  TechnicalAnalysisPendencyCategories,
-  TechnicalAnalysisSolicitationTypes,
-  Units,
-} from '../select-options'
-import { ProductItemSchema } from './kits.schema'
-import { AuthorSchema } from './user.schema'
+import { InverterFixationOptions, RoofTiles, StructureTypes, TechnicalAnalysisPendencyCategories, TechnicalAnalysisSolicitationTypes } from '../select-options'
 
 const EquipmentSchema = z.object({
   id: z.string({ invalid_type_error: 'Tipo não válido para ID do módulo.' }).optional().nullable(),
@@ -23,6 +14,11 @@ const EquipmentSchema = z.object({
 })
 export type TEquipment = z.infer<typeof EquipmentSchema>
 
+const TechnicalAnalysisPendencyCategoriesSchema = z.enum(['PENDÊNCIA COMERCIAL', 'PENDÊNCIA TERCEIROS', 'PENDÊNCIA CONCESSIONÁRIA', 'OUTROS'], {
+  required_error: 'Categoria de pendência não informada.',
+  invalid_type_error: 'Tipo não válido para categoria de pendência.',
+})
+export type TTechnicalAnalysisPendencyCategory = z.infer<typeof TechnicalAnalysisPendencyCategoriesSchema>
 export const GeneralTechnicalAnalysisSchema = z.object({
   idParceiro: z.string({
     required_error: 'ID de referência do parceiro não informado.',
@@ -44,10 +40,7 @@ export const GeneralTechnicalAnalysisSchema = z.object({
   arquivosAuxiliares: z.string({ invalid_type_error: 'Tipo não válido para o link de arquivos auxiliares.' }).optional().nullable(), // link de fotos do drone, por exemplo
   pendencias: z.array(
     z.object({
-      categoria: z.enum([TechnicalAnalysisPendencyCategories[0].value, ...TechnicalAnalysisPendencyCategories.slice(1).map((p) => p.value)], {
-        required_error: 'Categoria da pendência não informada.',
-        invalid_type_error: 'Tipo não válido para a categoria da pendência.',
-      }),
+      categoria: TechnicalAnalysisPendencyCategoriesSchema,
       descricao: z.string({
         required_error: 'Descrição não válida para a pendência.',
         invalid_type_error: 'Tipo não válido para a descrição da pendência.',
@@ -406,10 +399,7 @@ export const GeneralTechnicalAnalysisSchema = z.object({
         required_error: 'Quantidade do item de custo não informada.',
         invalid_type_error: 'Tipo não válido para a quantidade do item de custo.',
       }),
-      grandeza: z.enum([Units[0].value, ...Units.slice(1).map((p) => p.value)], {
-        required_error: 'Grandeza do item de custo não informada.',
-        invalid_type_error: 'Tipo não válido para a grandeza do item de custo.',
-      }),
+      grandeza: z.string({ required_error: 'Grandeza do custo não informada.', invalid_type_error: 'Tipo não válido para a grandeza do custo.' }),
       custoUnitario: z.number({ invalid_type_error: 'Tipo não válido para o custo unitário do item de custo.' }).optional().nullable(),
       total: z.number({ invalid_type_error: 'Tipo não válido para o total do item de custo.' }).optional().nullable(),
     })
@@ -452,7 +442,7 @@ export const GeneralTechnicalAnalysisSchema = z.object({
             required_error: 'Quantidade do item de suprimentação não informada.',
             invalid_type_error: 'Tipo não válido para a quantidade do item de suprimentação.',
           }),
-          grandeza: z.enum([Units[0].value, ...Units.slice(1).map((p) => p.value)], {
+          grandeza: z.string({
             required_error: 'Grandeza do item de suprimentação não informada.',
             invalid_type_error: 'Tipo não válido para a grandeza do item de suprimentação.',
           }),
