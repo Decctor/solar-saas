@@ -7,6 +7,7 @@ import Personalization from '@/components/Configuration/Personalization'
 import PricingMethods from '@/components/Configuration/PricingMethods'
 import Profile from '@/components/Configuration/Profile'
 import ProjectTypes from '@/components/Configuration/ProjectTypes'
+import UserGroups from '@/components/Configuration/UserGroups'
 import Users from '@/components/Configuration/Users'
 import { Sidebar } from '@/components/Sidebar'
 import LoadingPage from '@/components/utils/LoadingPage'
@@ -19,6 +20,7 @@ type Modes =
   | 'profile'
   | 'partner'
   | 'users'
+  | 'user-groups'
   | 'funnels'
   | 'pricing-methods'
   | 'payment-methods'
@@ -75,6 +77,16 @@ function ConfigurationMain() {
                 Usuários
               </button>
             ) : null}
+            {session.user.permissoes.configuracoes.gruposUsuarios ? (
+              <button
+                onClick={() => setMode('user-groups')}
+                className={`${
+                  mode == 'user-groups' ? 'bg-gray-100' : ''
+                } w-full rounded-md px-4 py-2 text-center text-xs font-semibold text-gray-600 duration-300 ease-in-out hover:bg-gray-100 lg:text-start lg:text-base`}
+              >
+                Grupos de usuários
+              </button>
+            ) : null}
             {session.user.permissoes.configuracoes.tiposProjeto ? (
               <button
                 onClick={() => setMode('project-types')}
@@ -82,7 +94,7 @@ function ConfigurationMain() {
                   mode == 'project-types' ? 'bg-gray-100' : ''
                 } w-full rounded-md px-4 py-2 text-center text-xs font-semibold text-gray-600 duration-300 ease-in-out hover:bg-gray-100 lg:text-start lg:text-base`}
               >
-                Tipos de Projeto
+                Tipos de projeto
               </button>
             ) : null}
             {session.user.permissoes.configuracoes.funis ? (
@@ -150,6 +162,7 @@ function ConfigurationMain() {
             {mode == 'profile' ? <Profile session={session} /> : null}
             {mode == 'partner' ? <Partner session={session} /> : null}
             {mode == 'users' ? <Users session={session} /> : null}
+            {mode == 'user-groups' ? <UserGroups session={session} /> : null}
             {mode == 'funnels' ? <Funnels session={session} /> : null}
             {mode == 'pricing-methods' ? <PricingMethods session={session} /> : null}
             {mode == 'payment-methods' ? <PaymentMethods session={session} /> : null}

@@ -2,31 +2,29 @@ import React from 'react'
 
 import CheckboxInput from '../Inputs/CheckboxInput'
 import { TUser, TUserDTO, TUserEntity } from '@/utils/schemas/user.schema'
-import ScopeSelection from './ScopeSelection'
+
 import { Session } from 'next-auth'
 import { usePartners, usePartnersSimplified } from '@/utils/queries/partners'
+import { TUserGroup } from '@/utils/schemas/user-groups.schema'
 
-type PermissionsPannelProps = {
-  userInfo: TUser
-  setUserInfo: React.Dispatch<React.SetStateAction<TUser>>
-  users?: TUserDTO[]
-  referenceId: string | null
+type UserGroupPermissionsPannelProps = {
+  infoHolder: TUserGroup
+  setInfoHolder: React.Dispatch<React.SetStateAction<TUserGroup>>
   session: Session
 }
-function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session }: PermissionsPannelProps) {
-  const { data: partners } = usePartnersSimplified()
+function UserGroupPermissionsPannel({ infoHolder, setInfoHolder, session }: UserGroupPermissionsPannelProps) {
   return (
     <>
-      <h1 className="w-full pt-4 text-center text-sm font-medium">PERMISSÕES DO USUÁRIO</h1>
+      <h1 className="w-full pt-4 text-center text-sm font-medium">PERMISSÕES BASE DO GRUPO</h1>
       {/**USUÁRIOS */}
       <h1 className="w-full text-start text-sm text-gray-500">USUÁRIOS</h1>
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR TODOS OS USUÁRIOS"
         labelTrue="APTO A VISUALIZAR TODOS OS USUÁRIOS"
-        checked={userInfo.permissoes.usuarios.visualizar}
+        checked={infoHolder.permissoes.usuarios.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -41,10 +39,10 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR USUÁRIOS"
         labelTrue="APTO A CRIAR USUÁRIOS"
-        checked={userInfo.permissoes.usuarios.criar}
+        checked={infoHolder.permissoes.usuarios.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -56,10 +54,10 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR USUÁRIOS"
         labelTrue="APTO A EDITAR USUÁRIOS"
-        checked={userInfo.permissoes.usuarios.editar}
+        checked={infoHolder.permissoes.usuarios.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -73,11 +71,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR COMISSÕES"
         labelTrue="APTO A VISUALIZAR COMISSÕES"
-        checked={userInfo.permissoes.comissoes.visualizar}
+        checked={infoHolder.permissoes.comissoes.visualizar}
         editable={session.user.permissoes.comissoes.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -89,11 +87,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR COMISSÕES"
         labelTrue="APTO A EDITAR COMISSÕES"
-        checked={userInfo.permissoes.comissoes.editar}
+        checked={infoHolder.permissoes.comissoes.editar}
         editable={session.user.permissoes.comissoes.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -107,11 +105,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR TODOS OS KITS"
         labelTrue="APTO A VISUALIZAR TODOS OS KITS"
-        checked={userInfo.permissoes.kits.visualizar}
+        checked={infoHolder.permissoes.kits.visualizar}
         editable={session.user.permissoes.kits.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -123,11 +121,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR KITS"
         labelTrue="APTO A CRIAR KITS"
-        checked={userInfo.permissoes.kits.criar}
+        checked={infoHolder.permissoes.kits.criar}
         editable={session.user.permissoes.kits.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -139,11 +137,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR KITS"
         labelTrue="APTO A EDITAR KITS"
-        checked={userInfo.permissoes.kits.editar}
+        checked={infoHolder.permissoes.kits.editar}
         editable={session.user.permissoes.kits.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -157,11 +155,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR TODOS OS PRODUTOS"
         labelTrue="APTO A VISUALIZAR TODOS OS PRODUTOS"
-        checked={userInfo.permissoes.produtos.visualizar}
+        checked={infoHolder.permissoes.produtos.visualizar}
         editable={session.user.permissoes.produtos.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -173,11 +171,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR PRODUTOS"
         labelTrue="APTO A CRIAR PRODUTOS"
-        checked={userInfo.permissoes.produtos.criar}
+        checked={infoHolder.permissoes.produtos.criar}
         editable={session.user.permissoes.produtos.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -189,11 +187,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR PRODUTOS"
         labelTrue="APTO A EDITAR PRODUTOS"
-        checked={userInfo.permissoes.produtos.editar}
+        checked={infoHolder.permissoes.produtos.editar}
         editable={session.user.permissoes.produtos.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -207,11 +205,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR TODOS OS SERVIÇOS"
         labelTrue="APTO A VISUALIZAR TODOS OS SERVIÇOS"
-        checked={userInfo.permissoes.servicos.visualizar}
+        checked={infoHolder.permissoes.servicos.visualizar}
         editable={session.user.permissoes.servicos.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -223,11 +221,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR SERVIÇOS"
         labelTrue="APTO A CRIAR SERVIÇOS"
-        checked={userInfo.permissoes.servicos.criar}
+        checked={infoHolder.permissoes.servicos.criar}
         editable={session.user.permissoes.servicos.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -239,11 +237,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR SERVIÇOS"
         labelTrue="APTO A EDITAR SERVIÇOS"
-        checked={userInfo.permissoes.servicos.editar}
+        checked={infoHolder.permissoes.servicos.editar}
         editable={session.user.permissoes.servicos.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -257,11 +255,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR TODOS OS PLANOS"
         labelTrue="APTO A VISUALIZAR TODOS OS PLANOS"
-        checked={userInfo.permissoes.planos.visualizar}
+        checked={infoHolder.permissoes.planos.visualizar}
         editable={session.user.permissoes.planos.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -273,11 +271,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR PLANOS"
         labelTrue="APTO A CRIAR PLANOS"
-        checked={userInfo.permissoes.planos.criar}
+        checked={infoHolder.permissoes.planos.criar}
         editable={session.user.permissoes.planos.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -289,11 +287,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR PLANOS"
         labelTrue="APTO A EDITAR PLANOS"
-        checked={userInfo.permissoes.planos.editar}
+        checked={infoHolder.permissoes.planos.editar}
         editable={session.user.permissoes.planos.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -305,26 +303,15 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       {/**CLIENTES */}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">CLIENTES</h1>
-        <ScopeSelection
-          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
-          referenceId={referenceId}
-          selected={userInfo.permissoes.clientes.escopo}
-          handleScopeSelection={(selected) =>
-            setUserInfo((prev) => ({
-              ...prev,
-              permissoes: { ...prev.permissoes, clientes: { ...prev.permissoes.clientes, escopo: selected } },
-            }))
-          }
-        />
       </div>
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR TODOS OS CLIENTES"
         labelTrue="APTO A VISUALIZAR TODOS OS CLIENTES"
-        checked={userInfo.permissoes.clientes.visualizar}
+        checked={infoHolder.permissoes.clientes.visualizar}
         editable={session.user.permissoes.clientes.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -339,11 +326,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR CLIENTES"
         labelTrue="APTO A CRIAR CLIENTES"
-        checked={userInfo.permissoes.clientes.criar}
+        checked={infoHolder.permissoes.clientes.criar}
         editable={session.user.permissoes.clientes.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -355,11 +342,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR CLIENTE"
         labelTrue="APTO A EDITAR CLIENTE"
-        checked={userInfo.permissoes.clientes.editar}
+        checked={infoHolder.permissoes.clientes.editar}
         editable={session.user.permissoes.clientes.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -371,26 +358,15 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       {/**OPORTUNIDADES */}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">OPORTUNIDADES</h1>
-        <ScopeSelection
-          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
-          referenceId={referenceId}
-          selected={userInfo.permissoes.oportunidades.escopo}
-          handleScopeSelection={(selected) =>
-            setUserInfo((prev) => ({
-              ...prev,
-              permissoes: { ...prev.permissoes, oportunidades: { ...prev.permissoes.oportunidades, escopo: selected } },
-            }))
-          }
-        />
       </div>
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR OPORTUNIDADES"
         labelTrue="APTO A VISUALIZAR OPORTUNIDADES"
-        checked={userInfo.permissoes.oportunidades.visualizar}
+        checked={infoHolder.permissoes.oportunidades.visualizar}
         editable={session.user.permissoes.oportunidades.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -402,11 +378,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR OPORTUNIDADES"
         labelTrue="APTO A CRIAR OPORTUNIDADES"
-        checked={userInfo.permissoes.oportunidades.criar}
+        checked={infoHolder.permissoes.oportunidades.criar}
         editable={session.user.permissoes.oportunidades.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -418,11 +394,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR OPORTUNIDADES"
         labelTrue="APTO A EDITAR OPORTUNIDADES"
-        checked={userInfo.permissoes.oportunidades.editar}
+        checked={infoHolder.permissoes.oportunidades.editar}
         editable={session.user.permissoes.oportunidades.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -434,26 +410,15 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       {/**ANÁLISES TÉCNICAS */}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">ANÁLISES TÉCNICAS</h1>
-        <ScopeSelection
-          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
-          referenceId={referenceId}
-          selected={userInfo.permissoes.analisesTecnicas.escopo}
-          handleScopeSelection={(selected) =>
-            setUserInfo((prev) => ({
-              ...prev,
-              permissoes: { ...prev.permissoes, analisesTecnicas: { ...prev.permissoes.analisesTecnicas, escopo: selected } },
-            }))
-          }
-        />
       </div>
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR ANÁLISES TÉCNICAS"
         labelTrue="APTO A VISUALIZAR ANÁLISES TÉCNICAS"
-        checked={userInfo.permissoes.analisesTecnicas.visualizar}
+        checked={infoHolder.permissoes.analisesTecnicas.visualizar}
         editable={session.user.permissoes.analisesTecnicas.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -465,11 +430,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR ANÁLISES TÉCNICAS"
         labelTrue="APTO A CRIAR ANÁLISES TÉCNICAS"
-        checked={userInfo.permissoes.analisesTecnicas.criar}
+        checked={infoHolder.permissoes.analisesTecnicas.criar}
         editable={session.user.permissoes.analisesTecnicas.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -481,11 +446,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR ANÁLISES TÉCNICAS"
         labelTrue="APTO A EDITAR ANÁLISES TÉCNICAS"
-        checked={userInfo.permissoes.analisesTecnicas.editar}
+        checked={infoHolder.permissoes.analisesTecnicas.editar}
         editable={session.user.permissoes.analisesTecnicas.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -497,26 +462,15 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       {/**HOMOLOGAÇÕES*/}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">HOMOLOGAÇÕES</h1>
-        <ScopeSelection
-          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
-          referenceId={referenceId}
-          selected={userInfo.permissoes.homologacoes.escopo}
-          handleScopeSelection={(selected) =>
-            setUserInfo((prev) => ({
-              ...prev,
-              permissoes: { ...prev.permissoes, homologacoes: { ...prev.permissoes.homologacoes, escopo: selected } },
-            }))
-          }
-        />
       </div>
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR HOMOLOGAÇÕES"
         labelTrue="APTO A VISUALIZAR HOMOLOGAÇÕES"
-        checked={userInfo.permissoes.homologacoes.visualizar}
+        checked={infoHolder.permissoes.homologacoes.visualizar}
         editable={session.user.permissoes.homologacoes.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -528,11 +482,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR HOMOLOGAÇÕES"
         labelTrue="APTO A CRIAR HOMOLOGAÇÕES"
-        checked={userInfo.permissoes.homologacoes.criar}
+        checked={infoHolder.permissoes.homologacoes.criar}
         editable={session.user.permissoes.homologacoes.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -544,11 +498,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR HOMOLOGAÇÕES"
         labelTrue="APTO A EDITAR HOMOLOGAÇÕES"
-        checked={userInfo.permissoes.homologacoes.editar}
+        checked={infoHolder.permissoes.homologacoes.editar}
         editable={session.user.permissoes.homologacoes.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -560,26 +514,15 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       {/**PARCEIROS */}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">PARCEIROS</h1>
-        <ScopeSelection
-          options={partners?.map((p) => ({ id: p._id, label: p.nome, image_url: p.logo_url })) || []}
-          referenceId={userInfo.idParceiro || null}
-          selected={userInfo.permissoes.parceiros.escopo}
-          handleScopeSelection={(selected) =>
-            setUserInfo((prev) => ({
-              ...prev,
-              permissoes: { ...prev.permissoes, parceiros: { ...prev.permissoes.parceiros, escopo: selected } },
-            }))
-          }
-        />
       </div>
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR PARCEIROS"
         labelTrue="APTO A VISUALIZAR PARCEIROS"
-        checked={userInfo.permissoes.parceiros.visualizar}
+        checked={infoHolder.permissoes.parceiros.visualizar}
         editable={session.user.permissoes.parceiros.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -591,11 +534,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR PARCEIROS"
         labelTrue="APTO A CRIAR PARCEIROS"
-        checked={userInfo.permissoes.parceiros.criar}
+        checked={infoHolder.permissoes.parceiros.criar}
         editable={session.user.permissoes.parceiros.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -607,11 +550,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR PARCEIROS"
         labelTrue="APTO A EDITAR PARCEIROS"
-        checked={userInfo.permissoes.parceiros.editar}
+        checked={infoHolder.permissoes.parceiros.editar}
         editable={session.user.permissoes.parceiros.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -623,26 +566,15 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       {/**PROPOSTAS */}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">PROPOSTAS</h1>
-        <ScopeSelection
-          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
-          referenceId={referenceId}
-          selected={userInfo.permissoes.propostas.escopo}
-          handleScopeSelection={(selected) =>
-            setUserInfo((prev) => ({
-              ...prev,
-              permissoes: { ...prev.permissoes, propostas: { ...prev.permissoes.propostas, escopo: selected } },
-            }))
-          }
-        />
       </div>
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR PROPOSTAS"
         labelTrue="APTO A VISUALIZAR PROPOSTAS"
-        checked={userInfo.permissoes.propostas.visualizar}
+        checked={infoHolder.permissoes.propostas.visualizar}
         editable={session.user.permissoes.propostas.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -654,11 +586,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A CRIAR PROPOSTAS"
         labelTrue="APTO A CRIAR PROPOSTAS"
-        checked={userInfo.permissoes.propostas.criar}
+        checked={infoHolder.permissoes.propostas.criar}
         editable={session.user.permissoes.propostas.criar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -670,11 +602,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR PROPOSTAS"
         labelTrue="APTO A EDITAR PROPOSTAS"
-        checked={userInfo.permissoes.propostas.editar}
+        checked={infoHolder.permissoes.propostas.editar}
         editable={session.user.permissoes.propostas.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -688,11 +620,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR DESCRITIVO DE PRECIFICAÇÃO"
         labelTrue="APTO A VISUALIZAR DESCRITIVO DE PRECIFICAÇÃO"
-        checked={userInfo.permissoes.precos.visualizar}
+        checked={infoHolder.permissoes.precos.visualizar}
         editable={session.user.permissoes.precos.visualizar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -704,11 +636,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A EDITAR PRECIFICAÇÃO"
         labelTrue="APTO A EDITAR PRECIFICAÇÃO"
-        checked={userInfo.permissoes.precos.editar}
+        checked={infoHolder.permissoes.precos.editar}
         editable={session.user.permissoes.precos.editar}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -720,26 +652,15 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       {/**RESULTADOS */}
       <div className="flex w-full items-center justify-between">
         <h1 className="w-full text-start text-sm text-gray-500">RESULTADOS</h1>
-        <ScopeSelection
-          options={users?.map((u) => ({ id: u._id, label: u.nome, image_url: u.avatar_url })) || []}
-          referenceId={referenceId}
-          selected={userInfo.permissoes.resultados.escopo}
-          handleScopeSelection={(selected) =>
-            setUserInfo((prev) => ({
-              ...prev,
-              permissoes: { ...prev.permissoes, resultados: { ...prev.permissoes.resultados, escopo: selected } },
-            }))
-          }
-        />
       </div>
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR RESULTADOS COMERCIAIS"
         labelTrue="APTO A VISUALIZAR RESULTADOS COMERCIAIS"
-        checked={userInfo.permissoes.resultados.visualizarComercial}
+        checked={infoHolder.permissoes.resultados.visualizarComercial}
         editable={session.user.permissoes.resultados.visualizarComercial}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -751,11 +672,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A VISUALIZAR RESULTADOS OPERACIONAIS"
         labelTrue="APTO A VISUALIZAR RESULTADOS OPERACIONAIS"
-        checked={userInfo.permissoes.resultados.visualizarOperacional}
+        checked={infoHolder.permissoes.resultados.visualizarOperacional}
         editable={session.user.permissoes.resultados.visualizarOperacional}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -769,10 +690,10 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
         <CheckboxInput
           labelFalse="APTO A CONFIGURAR PARCEIRO"
           labelTrue="APTO A CONFIGURAR PARCEIRO"
-          checked={userInfo.permissoes.configuracoes.parceiro}
+          checked={infoHolder.permissoes.configuracoes.parceiro}
           justify="justify-start"
           handleChange={(value) =>
-            setUserInfo((prev) => ({
+            setInfoHolder((prev) => ({
               ...prev,
               permissoes: {
                 ...prev.permissoes,
@@ -786,11 +707,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
         <CheckboxInput
           labelFalse="APTO A CONFIGURAR MÉTODOS DE PRECIFICAÇÃO"
           labelTrue="APTO A CONFIGURAR MÉTODOS DE PRECIFICAÇÃO"
-          checked={userInfo.permissoes.configuracoes.precificacao}
+          checked={infoHolder.permissoes.configuracoes.precificacao}
           editable={session.user.permissoes.configuracoes.precificacao}
           justify="justify-start"
           handleChange={(value) =>
-            setUserInfo((prev) => ({
+            setInfoHolder((prev) => ({
               ...prev,
               permissoes: {
                 ...prev.permissoes,
@@ -804,11 +725,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
         <CheckboxInput
           labelFalse="APTO A CONFIGURAR FUNIS"
           labelTrue="APTO A CONFIGURAR FUNIS"
-          checked={userInfo.permissoes.configuracoes.funis}
+          checked={infoHolder.permissoes.configuracoes.funis}
           editable={session.user.permissoes.configuracoes.funis}
           justify="justify-start"
           handleChange={(value) =>
-            setUserInfo((prev) => ({
+            setInfoHolder((prev) => ({
               ...prev,
               permissoes: {
                 ...prev.permissoes,
@@ -822,11 +743,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
         <CheckboxInput
           labelFalse="APTO A CONFIGURAR MÉTODOS DE PAGAMENTO"
           labelTrue="APTO A CONFIGURAR MÉTODOS DE PAGAMENTO"
-          checked={userInfo.permissoes.configuracoes.metodosPagamento}
+          checked={infoHolder.permissoes.configuracoes.metodosPagamento}
           editable={session.user.permissoes.configuracoes.metodosPagamento}
           justify="justify-start"
           handleChange={(value) =>
-            setUserInfo((prev) => ({
+            setInfoHolder((prev) => ({
               ...prev,
               permissoes: {
                 ...prev.permissoes,
@@ -840,11 +761,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
         <CheckboxInput
           labelFalse="APTO A CONFIGURAR TIPOS DE PROJETO"
           labelTrue="APTO A CONFIGURAR TIPOS DE PROJETO"
-          checked={userInfo.permissoes.configuracoes.tiposProjeto}
+          checked={infoHolder.permissoes.configuracoes.tiposProjeto}
           editable={session.user.permissoes.configuracoes.tiposProjeto}
           justify="justify-start"
           handleChange={(value) =>
-            setUserInfo((prev) => ({
+            setInfoHolder((prev) => ({
               ...prev,
               permissoes: {
                 ...prev.permissoes,
@@ -858,11 +779,11 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
         <CheckboxInput
           labelFalse="APTO A CONFIGURAR GRUPOS DE USUÁRIO"
           labelTrue="APTO A CONFIGURAR GRUPOS DE USUÁRIO"
-          checked={userInfo.permissoes.configuracoes.gruposUsuarios}
+          checked={infoHolder.permissoes.configuracoes.gruposUsuarios}
           editable={session.user.permissoes.configuracoes.gruposUsuarios}
           justify="justify-start"
           handleChange={(value) =>
-            setUserInfo((prev) => ({
+            setInfoHolder((prev) => ({
               ...prev,
               permissoes: {
                 ...prev.permissoes,
@@ -877,10 +798,10 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
       <CheckboxInput
         labelFalse="APTO A RECEBER LEADS"
         labelTrue="APTO A RECEBER LEADS"
-        checked={userInfo.permissoes.integracoes.receberLeads}
+        checked={infoHolder.permissoes.integracoes.receberLeads}
         justify="justify-start"
         handleChange={(value) =>
-          setUserInfo((prev) => ({
+          setInfoHolder((prev) => ({
             ...prev,
             permissoes: {
               ...prev.permissoes,
@@ -893,4 +814,4 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
   )
 }
 
-export default PermissionsPannel
+export default UserGroupPermissionsPannel

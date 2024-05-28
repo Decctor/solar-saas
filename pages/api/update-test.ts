@@ -1,5 +1,5 @@
 import { NextApiHandler } from 'next'
-import { apiHandler } from '@/utils/api'
+import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 
 import connectToCRMDatabase from '@/services/mongodb/crm-db-connection'
 import connectToProjectsDatabase from '@/services/mongodb/projects-db-connection'
@@ -19,12 +19,45 @@ import { TProductItem } from '@/utils/schemas/kits.schema'
 import { TUser } from '@/utils/schemas/user.schema'
 import { TTechnicalAnalysis } from '@/utils/schemas/technical-analysis.schema'
 import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
+import { TUserGroup } from '@/utils/schemas/user-groups.schema'
+import UserGroup from '@/components/Cards/UserGroup'
+import { UserGroups } from '@/utils/select-options'
 type PostResponse = any
+
+const UserGroupEquivalents = {
+  '1': '66562a2a812707dbf9f04830',
+  '2': '66562a2a812707dbf9f04831',
+  '3': '66562a2a812707dbf9f04832',
+  '4': '66562a2a812707dbf9f04833',
+}
 
 type Reduced = { [key: string]: string[] }
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
+  const session = await validateAuthenticationWithSession(req, res)
   const { id } = req.query
 
+  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  const userGroupsCollection: Collection<TUserGroup> = crmDb.collection('user-groups')
+
+  const usersCollection: Collection<TUser> = crmDb.collection('users')
+
+  const users = await usersCollection.find({}, { projection: { permissoes: 1, idGrupo: 1 } }).toArray()
+
+  const bulkwriteArr = users.map((user) => {
+    const newUserGroup = UserGroupEquivalents[user.idGrupo as keyof typeof UserGroupEquivalents]
+
+    return {
+      updateOne: {
+        filter: { _id: new ObjectId(user._id) },
+        update: {
+          $set: {
+            idGrupoAnterior: user.idGrupo,
+            idGrupo: newUserGroup,
+          },
+        },
+      },
+    }
+  })
   // const requestsDb = await connectToRequestsDatabase(process.env.MONGODB_URI)
 
   // const requestsTechnicalAnalysisCollection = requestsDb.collection('analisesTecnicas')
@@ -107,7 +140,8 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //   }
   // })
   // const bulkwriteResponse = await usersCollection.bulkWrite(bulkwriteArr)
-  return res.json('DESATIVADA')
+  // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
+  return res.json(bulkwriteArr)
 }
 export default apiHandler({
   GET: migrate,

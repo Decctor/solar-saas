@@ -513,6 +513,15 @@ export const AllSellers = [
     comissionAsActive: 0.5,
     comissionWithInside: 0.5,
   },
+  {
+    id: 61,
+    active: true,
+    label: 'ALESSANDER IDALECIO',
+    value: 'ALESSANDER IDALECIO',
+    qualification: 'INSIDE PLENO',
+    comissionAsActive: 0.5,
+    comissionWithInside: 0.5,
+  },
 ].sort((a, b) => a.value.localeCompare(b.value))
 export const SellersInApp = AllSellers.map((s) => s.value)
 export const PPSCallTypes = [
@@ -712,6 +721,7 @@ export const UserGroups: TUserGroup[] = [
         funis: true,
         metodosPagamento: true,
         tiposProjeto: true,
+        gruposUsuarios: true,
       },
       integracoes: {
         receberLeads: false,
@@ -802,6 +812,7 @@ export const UserGroups: TUserGroup[] = [
         funis: false,
         metodosPagamento: true,
         tiposProjeto: false,
+        gruposUsuarios: false,
       },
       integracoes: {
         receberLeads: false,
@@ -891,6 +902,7 @@ export const UserGroups: TUserGroup[] = [
         funis: false,
         metodosPagamento: false,
         tiposProjeto: false,
+        gruposUsuarios: false,
       },
       integracoes: {
         receberLeads: false,
@@ -980,6 +992,7 @@ export const UserGroups: TUserGroup[] = [
         funis: false,
         metodosPagamento: false,
         tiposProjeto: false,
+        gruposUsuarios: false,
       },
       integracoes: {
         receberLeads: true,

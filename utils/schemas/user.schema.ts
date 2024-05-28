@@ -10,7 +10,7 @@ export const AuthorSchema = z.object({
 })
 export type TAuthor = z.infer<typeof AuthorSchema>
 
-const PermissionsSchema = z.object({
+export const PermissionsSchema = z.object({
   usuarios: z.object({
     visualizar: z.boolean({
       required_error: 'Permissão de visualização de usuários não informada.',
@@ -306,6 +306,10 @@ const PermissionsSchema = z.object({
     funis: z.boolean({
       required_error: 'Permissão de configuração de funis não informada.',
       invalid_type_error: 'Tipo não válido para permissão de configuração de funis.',
+    }),
+    gruposUsuarios: z.boolean({
+      required_error: 'Permissão de configuração de grupos de usuários não informada.',
+      invalid_type_error: 'Tipo não válido para configuração de grupos de usuários.',
     }),
   }),
   integracoes: z.object({

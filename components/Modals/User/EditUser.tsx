@@ -14,8 +14,6 @@ import NumberInput from '../../Inputs/NumberInput'
 import ScopeSelection from '../../Users/ScopeSelection'
 
 import { TUser, TUserDTO, TUserEntity } from '@/utils/schemas/user.schema'
-import { UserGroups } from '@/utils/select-options'
-
 import { storage } from '@/services/firebase/storage-config'
 import { createUser, editUser } from '@/utils/mutations/users'
 import { formatToPhone } from '@/utils/methods'
@@ -27,6 +25,7 @@ import PermissionsPannel from '../../Users/PermissionsPannel'
 import { Session } from 'next-auth'
 import { usePartnersSimplified } from '@/utils/queries/partners'
 import SelectWithImages from '@/components/Inputs/SelectWithImages'
+import { useUserGroups } from '@/utils/queries/user-groups'
 type EditUserProps = {
   users?: TUserDTO[]
   closeModal: () => void
@@ -39,6 +38,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
   const queryClient = useQueryClient()
   const { data: user, isLoading, isError, isSuccess } = useUserById({ id: userId })
   const { data: partners } = usePartnersSimplified()
+  const { data: groups } = useUserGroups()
   const [image, setImage] = useState<File | null>()
   const [userInfo, setUserInfo] = useState<TUserDTO>({
     _id: 'id-holder',
@@ -50,7 +50,92 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
     avatar_url: null,
     idParceiro: partnerId,
     idGrupo: '',
-    permissoes: UserGroups[0].permissoes,
+    permissoes: {
+      usuarios: {
+        visualizar: false,
+        criar: false,
+        editar: false,
+      },
+      comissoes: {
+        visualizar: false,
+        editar: false,
+      },
+      kits: {
+        visualizar: true,
+        editar: false,
+        criar: false,
+      },
+      produtos: {
+        visualizar: true,
+        editar: false,
+        criar: false,
+      },
+      servicos: {
+        visualizar: true,
+        editar: false,
+        criar: false,
+      },
+      planos: {
+        visualizar: true,
+        editar: false,
+        criar: false,
+      },
+      propostas: {
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      oportunidades: {
+        escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      analisesTecnicas: {
+        escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
+        visualizar: true,
+        editar: false,
+        criar: true,
+      },
+      homologacoes: {
+        escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
+        visualizar: true,
+        editar: false,
+        criar: true,
+      },
+      clientes: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      parceiros: {
+        escopo: null,
+        visualizar: false,
+        editar: false,
+        criar: false,
+      },
+      precos: {
+        visualizar: false,
+        editar: false,
+      },
+      resultados: {
+        escopo: null,
+        visualizarComercial: false,
+        visualizarOperacional: false,
+      },
+      configuracoes: {
+        parceiro: false,
+        precificacao: false,
+        funis: false,
+        metodosPagamento: false,
+        tiposProjeto: false,
+        gruposUsuarios: false,
+      },
+      integracoes: {
+        receberLeads: false,
+      },
+    },
     comissoes: {
       comSDR: null,
       semSDR: null,
@@ -102,7 +187,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
           </div>
           {isLoading ? <LoadingComponent /> : null}
           {isError ? <ErrorComponent msg="Erro ao buscar informações do usuário." /> : null}
-          {isSuccess ? (
+          {isSuccess && userInfo ? (
             <>
               <div className="flex h-full grow flex-col gap-y-2 overflow-y-auto overscroll-y-auto p-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
                 <div className="flex h-[200px]  flex-col items-center justify-center">
@@ -270,13 +355,15 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                       selectedItemLabel="A SELECIONAR"
                       categoryName="GRUPO DE PERMISSÃO"
                       value={userInfo.idGrupo || null}
-                      options={UserGroups.map((role) => {
-                        return {
-                          id: role.id,
-                          label: role.grupo,
-                          value: role.permissoes,
-                        }
-                      })}
+                      options={
+                        groups?.map((group) => {
+                          return {
+                            id: group._id,
+                            label: group.titulo,
+                            value: group.permissoes,
+                          }
+                        }) || []
+                      }
                       width="100%"
                       onChange={(value) => {
                         const permissions: TUser['permissoes'] = {
@@ -398,6 +485,9 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                             tiposProjeto: session.user.permissoes.configuracoes.tiposProjeto
                               ? value.value.configuracoes.tiposProjeto
                               : session.user.permissoes.configuracoes.tiposProjeto,
+                            gruposUsuarios: session.user.permissoes.configuracoes.gruposUsuarios
+                              ? value.value.configuracoes.gruposUsuarios
+                              : session.user.permissoes.configuracoes.gruposUsuarios,
                           },
                           integracoes: {
                             receberLeads: value.value.integracoes.receberLeads,

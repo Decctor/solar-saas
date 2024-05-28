@@ -313,19 +313,19 @@ export const GeneralTechnicalAnalysisSchema = z.object({
       .optional()
       .nullable(),
     tipoEstrutura: z
-      .enum([StructureTypes[0].value, ...StructureTypes.slice(1).map((p) => p.value)], {
+      .string({
         invalid_type_error: 'Tipo não válido para o tipo de estrutura.',
       })
       .optional()
       .nullable(),
     tipoTelha: z
-      .enum([RoofTiles[0].value, ...RoofTiles.slice(1).map((p) => p.value)], {
+      .string({
         invalid_type_error: 'Tipo não válido para o tipo de telha.',
       })
       .optional()
       .nullable(),
     fixacaoInversores: z
-      .enum([InverterFixationOptions[0].value, ...InverterFixationOptions.slice(1).map((p) => p.value)], {
+      .string({
         invalid_type_error: 'Tipo não válido para a fixação dos inversores.',
       })
       .optional()

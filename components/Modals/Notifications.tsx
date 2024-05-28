@@ -44,7 +44,7 @@ function Notifications({ sidebarExtended, session, closeModal, notifications }: 
             <VscChromeClose style={{ color: 'red' }} />
           </button>
         </div>
-        <div className="flex grow flex-col overflow-y-auto overscroll-y-auto p-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
+        <div className="flex grow flex-col gap-2 overflow-y-auto overscroll-y-auto p-2 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
           {notifications ? (
             notifications?.length > 0 ? (
               notifications.map((notification, index) => <NotificationCard key={index} notification={notification} session={session} />)
