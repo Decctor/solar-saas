@@ -18,7 +18,7 @@ const getSalePromoters: NextApiHandler<GetResponse> = async (req, res) => {
         $match: {
           ativo: true,
           idParceiro: partnerId,
-          idGrupo: { $in: ['3', '4'] },
+          idGrupo: { $in: ['66562a2a812707dbf9f04832', '66562a2a812707dbf9f04833'] },
         },
       },
       {
