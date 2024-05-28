@@ -356,7 +356,9 @@ export const InsertUserSchema = z.object({
     .min(5, 'É necessário que a senha do usuário tenha ao menos 5 caracteres.'),
   avatar_url: z.string({ invalid_type_error: 'Tipo não válido para URL do avatar do usuário.' }).optional().nullable(),
   idParceiro: z.string({ invalid_type_error: 'Tipo não válido para ID do parceiro do usuário.' }),
-  idGrupo: z.string({ required_error: 'Grupo do usuário não informado.', invalid_type_error: 'Tipo não válido para o grupo do usuário.' }),
+  idGrupo: z
+    .string({ required_error: 'Grupo do usuário não informado.', invalid_type_error: 'Tipo não válido para o grupo do usuário.' })
+    .min(15, 'ID de grupo de usuário inválido.'),
   permissoes: PermissionsSchema,
   comissoes: z.object({
     semSDR: z.number().optional().nullable(),

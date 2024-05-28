@@ -26,6 +26,7 @@ import { Session } from 'next-auth'
 import { usePartnersSimplified } from '@/utils/queries/partners'
 import SelectWithImages from '@/components/Inputs/SelectWithImages'
 import { useUserGroups } from '@/utils/queries/user-groups'
+import SelectInput from '@/components/Inputs/SelectInput'
 type EditUserProps = {
   users?: TUserDTO[]
   closeModal: () => void
@@ -349,7 +350,165 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                       width="100%"
                     />
                   </div>
-                  <div className="flex w-full flex-col gap-1">
+                  <SelectInput
+                    label="GRUPO DE PERMISSÃO"
+                    options={
+                      groups?.map((role) => {
+                        return {
+                          id: role._id,
+                          label: role.titulo,
+                          value: role._id,
+                        }
+                      }) || []
+                    }
+                    selectedItemLabel="NÃO DEFINIDO"
+                    value={userInfo.idGrupo}
+                    handleChange={(value) => {
+                      const group = groups?.find((g) => g._id == value)
+                      if (!group) return
+                      const permissions: TUser['permissoes'] = {
+                        usuarios: {
+                          visualizar: session.user.permissoes.usuarios.visualizar
+                            ? group.permissoes.usuarios.visualizar
+                            : session.user.permissoes.usuarios.visualizar,
+                          criar: session.user.permissoes.usuarios.criar ? group.permissoes.usuarios.criar : session.user.permissoes.usuarios.criar,
+                          editar: session.user.permissoes.usuarios.editar ? group.permissoes.usuarios.editar : session.user.permissoes.usuarios.editar,
+                        },
+                        comissoes: {
+                          visualizar: session.user.permissoes.comissoes.visualizar
+                            ? group.permissoes.comissoes.visualizar
+                            : session.user.permissoes.comissoes.visualizar,
+                          editar: session.user.permissoes.comissoes.editar ? group.permissoes.comissoes.editar : session.user.permissoes.comissoes.editar,
+                        },
+                        kits: {
+                          visualizar: session.user.permissoes.kits.visualizar ? group.permissoes.kits.visualizar : session.user.permissoes.kits.visualizar,
+                          editar: session.user.permissoes.kits.editar ? group.permissoes.kits.editar : session.user.permissoes.kits.editar,
+                          criar: session.user.permissoes.kits.criar ? group.permissoes.kits.criar : session.user.permissoes.kits.criar,
+                        },
+                        produtos: {
+                          visualizar: session.user.permissoes.produtos.visualizar
+                            ? group.permissoes.produtos.visualizar
+                            : session.user.permissoes.produtos.visualizar,
+                          editar: session.user.permissoes.produtos.editar ? group.permissoes.produtos.editar : session.user.permissoes.produtos.editar,
+                          criar: session.user.permissoes.produtos.criar ? group.permissoes.produtos.criar : session.user.permissoes.produtos.visualizar,
+                        },
+                        servicos: {
+                          visualizar: session.user.permissoes.servicos.visualizar
+                            ? group.permissoes.servicos.visualizar
+                            : session.user.permissoes.servicos.visualizar,
+                          editar: session.user.permissoes.servicos.editar ? group.permissoes.servicos.editar : session.user.permissoes.servicos.editar,
+                          criar: session.user.permissoes.servicos.criar ? group.permissoes.servicos.criar : session.user.permissoes.servicos.criar,
+                        },
+                        planos: {
+                          visualizar: session.user.permissoes.planos.visualizar
+                            ? group.permissoes.planos.visualizar
+                            : session.user.permissoes.planos.visualizar,
+                          editar: session.user.permissoes.planos.editar ? group.permissoes.planos.editar : session.user.permissoes.planos.editar,
+                          criar: session.user.permissoes.planos.criar ? group.permissoes.planos.criar : session.user.permissoes.planos.criar,
+                        },
+                        propostas: {
+                          escopo: [userId],
+                          visualizar: session.user.permissoes.propostas.visualizar
+                            ? group.permissoes.propostas.visualizar
+                            : session.user.permissoes.propostas.visualizar,
+                          editar: session.user.permissoes.propostas.editar ? group.permissoes.propostas.editar : session.user.permissoes.propostas.editar,
+                          criar: session.user.permissoes.propostas.criar ? group.permissoes.propostas.criar : session.user.permissoes.propostas.criar,
+                        },
+                        oportunidades: {
+                          escopo: [userId], // refere-se ao escopo de atuação
+                          visualizar: session.user.permissoes.oportunidades.visualizar
+                            ? group.permissoes.oportunidades.visualizar
+                            : session.user.permissoes.oportunidades.visualizar,
+                          editar: session.user.permissoes.oportunidades.editar
+                            ? group.permissoes.oportunidades.editar
+                            : session.user.permissoes.oportunidades.editar,
+                          criar: session.user.permissoes.oportunidades.criar
+                            ? group.permissoes.oportunidades.criar
+                            : session.user.permissoes.oportunidades.criar,
+                        },
+                        analisesTecnicas: {
+                          escopo: [userId], // refere-se ao escopo de atuação
+                          visualizar: session.user.permissoes.analisesTecnicas.visualizar
+                            ? group.permissoes.analisesTecnicas.visualizar
+                            : session.user.permissoes.analisesTecnicas.visualizar,
+                          editar: session.user.permissoes.analisesTecnicas.editar
+                            ? group.permissoes.analisesTecnicas.editar
+                            : session.user.permissoes.analisesTecnicas.editar,
+                          criar: session.user.permissoes.analisesTecnicas.criar
+                            ? group.permissoes.analisesTecnicas.criar
+                            : session.user.permissoes.analisesTecnicas.criar,
+                        },
+                        homologacoes: {
+                          escopo: [userId], // refere-se ao escopo de atuação
+                          visualizar: session.user.permissoes.homologacoes.visualizar
+                            ? group.permissoes.homologacoes.visualizar
+                            : session.user.permissoes.homologacoes.visualizar,
+                          editar: session.user.permissoes.homologacoes.editar
+                            ? group.permissoes.homologacoes.editar
+                            : session.user.permissoes.homologacoes.editar,
+                          criar: session.user.permissoes.homologacoes.criar ? group.permissoes.homologacoes.criar : session.user.permissoes.homologacoes.criar,
+                        },
+                        clientes: {
+                          escopo: [userId],
+                          visualizar: session.user.permissoes.clientes.visualizar
+                            ? group.permissoes.clientes.visualizar
+                            : session.user.permissoes.clientes.visualizar,
+                          editar: session.user.permissoes.clientes.editar ? group.permissoes.clientes.editar : session.user.permissoes.clientes.editar,
+                          criar: session.user.permissoes.clientes.criar ? group.permissoes.clientes.criar : session.user.permissoes.clientes.criar,
+                        },
+                        parceiros: {
+                          escopo: session.user.idParceiro ? [session.user.idParceiro] : null,
+                          visualizar: session.user.permissoes.parceiros.visualizar
+                            ? group.permissoes.parceiros.visualizar
+                            : session.user.permissoes.parceiros.visualizar,
+                          editar: session.user.permissoes.parceiros.editar ? group.permissoes.parceiros.editar : session.user.permissoes.parceiros.editar,
+                          criar: session.user.permissoes.parceiros.criar ? group.permissoes.parceiros.criar : session.user.permissoes.parceiros.criar,
+                        },
+                        precos: {
+                          visualizar: session.user.permissoes.precos.visualizar
+                            ? group.permissoes.precos.visualizar
+                            : session.user.permissoes.precos.visualizar,
+                          editar: session.user.permissoes.precos.editar ? group.permissoes.precos.editar : session.user.permissoes.precos.editar,
+                        },
+                        resultados: {
+                          escopo: [userId], // refere-se ao escopo de atuação
+                          visualizarComercial: session.user.permissoes.resultados.visualizarComercial
+                            ? group.permissoes.resultados.visualizarComercial
+                            : session.user.permissoes.resultados.visualizarComercial,
+                          visualizarOperacional: session.user.permissoes.resultados.visualizarOperacional
+                            ? group.permissoes.resultados.visualizarOperacional
+                            : session.user.permissoes.resultados.visualizarOperacional,
+                        },
+                        configuracoes: {
+                          funis: session.user.permissoes.configuracoes.funis
+                            ? group.permissoes.configuracoes.funis
+                            : session.user.permissoes.configuracoes.funis,
+                          parceiro: session.user.permissoes.configuracoes.parceiro
+                            ? group.permissoes.configuracoes.parceiro
+                            : session.user.permissoes.configuracoes.parceiro,
+                          precificacao: session.user.permissoes.configuracoes.precificacao
+                            ? group.permissoes.configuracoes.precificacao
+                            : session.user.permissoes.configuracoes.precificacao,
+                          metodosPagamento: session.user.permissoes.configuracoes.metodosPagamento
+                            ? group.permissoes.configuracoes.metodosPagamento
+                            : session.user.permissoes.configuracoes.metodosPagamento,
+                          tiposProjeto: session.user.permissoes.configuracoes.tiposProjeto
+                            ? group.permissoes.configuracoes.tiposProjeto
+                            : session.user.permissoes.configuracoes.tiposProjeto,
+                          gruposUsuarios: session.user.permissoes.configuracoes.gruposUsuarios
+                            ? group.permissoes.configuracoes.gruposUsuarios
+                            : session.user.permissoes.configuracoes.gruposUsuarios,
+                        },
+                        integracoes: {
+                          receberLeads: group.permissoes.integracoes.receberLeads,
+                        },
+                      }
+                      setUserInfo((prev) => ({ ...prev, idGrupo: value, permissoes: permissions }))
+                    }}
+                    onReset={() => setUserInfo((prev) => ({ ...prev, idGrupo: '' }))}
+                    width="100%"
+                  />
+                  {/* <div className="flex w-full flex-col gap-1">
                     <label className="font-sans font-bold  text-[#353432]">GRUPO DE PERMISSÃO</label>
                     <DropdownSelect
                       selectedItemLabel="A SELECIONAR"
@@ -506,7 +665,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                         }))
                       }
                     />
-                  </div>
+                  </div> */}
                 </div>
 
                 <PermissionsPannel

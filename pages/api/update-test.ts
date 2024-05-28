@@ -33,31 +33,30 @@ const UserGroupEquivalents = {
 
 type Reduced = { [key: string]: string[] }
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
-  const { id } = req.query
+  // const session = await validateAuthenticationWithSession(req, res)
+  // const { id } = req.query
 
-  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
-  const userGroupsCollection: Collection<TUserGroup> = crmDb.collection('user-groups')
+  // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  // const userGroupsCollection: Collection<TUserGroup> = crmDb.collection('user-groups')
 
-  const usersCollection: Collection<TUser> = crmDb.collection('users')
+  // const usersCollection: Collection<TUser> = crmDb.collection('users')
 
-  const users = await usersCollection.find({}, { projection: { permissoes: 1, idGrupo: 1 } }).toArray()
+  // const users = await usersCollection.find({}, { projection: { permissoes: 1, idGrupo: 1 } }).toArray()
 
-  const bulkwriteArr = users.map((user) => {
-    const newUserGroup = UserGroupEquivalents[user.idGrupo as keyof typeof UserGroupEquivalents]
+  // const bulkwriteArr = users.map((user) => {
+  //   const newUserGroup = UserGroupEquivalents[user.idGrupo as keyof typeof UserGroupEquivalents]
 
-    return {
-      updateOne: {
-        filter: { _id: new ObjectId(user._id) },
-        update: {
-          $set: {
-            idGrupoAnterior: user.idGrupo,
-            idGrupo: newUserGroup,
-          },
-        },
-      },
-    }
-  })
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(user._id) },
+  //       update: {
+  //         $set: {
+  //           idGrupo: newUserGroup,
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
   // const requestsDb = await connectToRequestsDatabase(process.env.MONGODB_URI)
 
   // const requestsTechnicalAnalysisCollection = requestsDb.collection('analisesTecnicas')
@@ -141,7 +140,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // })
   // const bulkwriteResponse = await usersCollection.bulkWrite(bulkwriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.json(bulkwriteArr)
+  return res.json('DESATIVADA')
 }
 export default apiHandler({
   GET: migrate,
