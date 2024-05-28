@@ -747,9 +747,9 @@ export const UserGroups: TUserGroup[] = [
         criar: true,
       },
       planos: {
-        visualizar: false,
-        editar: false,
-        criar: false,
+        visualizar: true,
+        editar: true,
+        criar: true,
       },
       propostas: {
         escopo: null, // refere-se ao escopo de atuação, com IDs dos usuários a quem ele tem acesso
