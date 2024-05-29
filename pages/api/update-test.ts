@@ -36,14 +36,32 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
 
-  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  // const funnelReferencesCollection: Collection<TFunnelReference> = crmDb.collection('funnel-references')
+
+  // const references = await funnelReferencesCollection.find({}).toArray()
+
+  // const bulkwriteArr = references.map((ref) => {
+  //   const currentStageId = ref.idEstagioFunil
+
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(ref._id) },
+  //       update: {
+  //         $set: {
+  //           [`estagios.${currentStageId}.entrada`]: new Date().toISOString(),
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
   // const userGroupsCollection: Collection<TUserGroup> = crmDb.collection('user-groups')
 
-  const usersCollection: Collection<TUser> = crmDb.collection('users')
+  // const usersCollection: Collection<TUser> = crmDb.collection('users')
 
   // const users = await usersCollection.find({ _id: new ObjectId('6463ccaa8c5e3e227af54d89') })
 
-  await usersCollection.updateOne({ _id: new ObjectId('6463ccaa8c5e3e227af54d89') }, { $set: { 'teste.teste': 'AAAAA' } })
+  // await usersCollection.updateOne({ _id: new ObjectId('6463ccaa8c5e3e227af54d89') }, { $set: { 'teste.teste': 'AAAAA' } })
 
   // const bulkwriteArr = users.map((user) => {
   //   const newUserGroup = UserGroupEquivalents[user.idGrupo as keyof typeof UserGroupEquivalents]
@@ -140,9 +158,9 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  // const bulkwriteResponse = await usersCollection.bulkWrite(bulkwriteArr)
+  // const bulkwriteResponse = await funnelReferencesCollection.bulkWrite(bulkwriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.json('OK')
+  return res.json('desativada')
 }
 export default apiHandler({
   GET: migrate,

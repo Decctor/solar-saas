@@ -228,11 +228,12 @@ const receiveOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
   console.log('OPORTUNIDADE INSERIDA', opportunityInsertedId)
 
   // Creating a funnel reference
-  const funnelReference = {
+  const funnelReference: TFunnelReference = {
     idParceiro: '65454ba15cf3e3ecf534b308',
     idOportunidade: opportunityInsertedId.toString(),
     idFunil: '661eb0996dd818643c5334f5',
     idEstagioFunil: '1',
+    estagios: {},
     dataInsercao: new Date().toISOString(),
   }
   const insertFunnelReferenceResponse = await insertFunnelReference({
