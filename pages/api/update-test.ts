@@ -36,12 +36,14 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
 
-  // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
   // const userGroupsCollection: Collection<TUserGroup> = crmDb.collection('user-groups')
 
-  // const usersCollection: Collection<TUser> = crmDb.collection('users')
+  const usersCollection: Collection<TUser> = crmDb.collection('users')
 
-  // const users = await usersCollection.find({}, { projection: { permissoes: 1, idGrupo: 1 } }).toArray()
+  // const users = await usersCollection.find({ _id: new ObjectId('6463ccaa8c5e3e227af54d89') })
+
+  await usersCollection.updateOne({ _id: new ObjectId('6463ccaa8c5e3e227af54d89') }, { $set: { 'teste.teste': 'AAAAA' } })
 
   // const bulkwriteArr = users.map((user) => {
   //   const newUserGroup = UserGroupEquivalents[user.idGrupo as keyof typeof UserGroupEquivalents]
@@ -140,7 +142,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // })
   // const bulkwriteResponse = await usersCollection.bulkWrite(bulkwriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.json('DESATIVADA')
+  return res.json('OK')
 }
 export default apiHandler({
   GET: migrate,

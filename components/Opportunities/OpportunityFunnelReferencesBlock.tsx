@@ -71,6 +71,7 @@ function OpportunityFunnelReferencesBlock({ opportunity, setOpportunity }: Oppor
     idOportunidade: opportunity._id,
     idFunil: '',
     idEstagioFunil: '',
+    estagios: {},
     dataInsercao: new Date().toISOString(),
   })
   async function addNewFunnelReference(info: TFunnelReference) {

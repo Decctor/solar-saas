@@ -121,6 +121,7 @@ function NewOpportunity({ session, closeModal, opportunityCreators, funnels }: N
     idOportunidade: 'id-holder',
     idFunil: '',
     idEstagioFunil: '',
+    estagios: {},
     dataInsercao: new Date().toISOString(),
   })
 

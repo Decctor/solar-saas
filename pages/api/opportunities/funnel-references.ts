@@ -51,10 +51,22 @@ const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
   const newStageId = updates.idEstagioFunil
   if (!newStageId) throw new createHttpError.BadRequest('Novo estágio de funil não informado.')
 
+  const reference = await getFunnelReferenceById({ collection: funnelReferencesCollection, id: id, query: {} })
+  if (!reference) throw new createHttpError.NotFound('Referência de funil não encontrada.')
+
+  // In case there new stage id is equal to the current stage id, there is no need to update the reference
+  if (reference.idEstagioFunil == newStageId)
+    return res.status(201).json({ data: 'Atualização feita com sucesso!', message: 'Atualização feita com sucesso !' })
+
+  const additionalUpdates = {
+    [`estagios.${reference.idEstagioFunil}.saida`]: new Date().toISOString(),
+    [`estagios.${newStageId}.entrada`]: new Date().toISOString(),
+  }
   const updateResponse = await updateFunnelReference({
     collection: funnelReferencesCollection,
     funnelReferenceId: id,
     newStageId: newStageId,
+    additionalUpdates,
     // query: partnerQuery,
   })
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na atualização da referência de funil.')

@@ -67,7 +67,11 @@ const createClientOpportunityAndFunnelReferences: NextApiHandler<PostResponse> =
     // Creating funnel reference referencing the inserted opportunity id
     const insertFunnelReferenceResponse = await insertFunnelReference({
       collection: funnelReferencesCollection,
-      info: { ...funnelReference, idOportunidade: insertedOpportunityId },
+      info: {
+        ...funnelReference,
+        idOportunidade: insertedOpportunityId,
+        estagios: { [`${funnelReference.idEstagioFunil}`]: { entrada: new Date().toISOString() } },
+      },
       partnerId: partnerId || '',
     })
     if (!insertFunnelReferenceResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao criar oportunidade.')
@@ -103,7 +107,11 @@ const createClientOpportunityAndFunnelReferences: NextApiHandler<PostResponse> =
   console.log('ID DA OPORTUNIDADE', insertedOpportunityId)
   const insertFunnelReferenceResponse = await insertFunnelReference({
     collection: funnelReferencesCollection,
-    info: { ...funnelReference, idOportunidade: insertedOpportunityId },
+    info: {
+      ...funnelReference,
+      idOportunidade: insertedOpportunityId,
+      estagios: { [`${funnelReference.idEstagioFunil}`]: { entrada: new Date().toISOString() } },
+    },
     partnerId: partnerId || '',
   })
   if (!insertFunnelReferenceResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao criar oportunidade.')

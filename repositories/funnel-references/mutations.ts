@@ -9,7 +9,14 @@ type CreateFunnelReferenceParams = {
 
 export async function insertFunnelReference({ collection, info, partnerId }: CreateFunnelReferenceParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId || '', dataInsercao: new Date().toISOString() })
+    const insertResponse = await collection.insertOne({
+      ...info,
+      estagios: {
+        [`${info.idEstagioFunil}`]: { entrada: new Date().toISOString() },
+      },
+      idParceiro: partnerId || '',
+      dataInsercao: new Date().toISOString(),
+    })
     return insertResponse
   } catch (error) {
     throw error
@@ -20,12 +27,13 @@ type UpdateFunnelReferenceParams = {
   collection: Collection<TFunnelReference>
   funnelReferenceId: string
   newStageId: string | number
+  additionalUpdates: { [key: string]: any }
   // query: Filter<TFunnelReference>
 }
 
-export async function updateFunnelReference({ collection, funnelReferenceId, newStageId }: UpdateFunnelReferenceParams) {
+export async function updateFunnelReference({ collection, funnelReferenceId, newStageId, additionalUpdates }: UpdateFunnelReferenceParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(funnelReferenceId) }, { $set: { idEstagioFunil: newStageId } })
+    const updateResponse = await collection.updateOne({ _id: new ObjectId(funnelReferenceId) }, { $set: { idEstagioFunil: newStageId, ...additionalUpdates } })
     return updateResponse
   } catch (error) {
     throw error

@@ -17,7 +17,7 @@ import { updateClient } from '@/utils/mutations/clients'
 
 import OpportunityResponsiblesBlock from './OpportunityResponsiblesBlock'
 import { stateCities } from '@/utils/estados_cidades'
-import { ElectricalInstallationGroups } from '@/utils/select-options'
+import { ConsumerUnitHolderType, ElectricalInstallationGroups } from '@/utils/select-options'
 import SelectWithImages from '../Inputs/SelectWithImages'
 import { usePartnersSimplified } from '@/utils/queries/partners'
 import OpportunityFunnelReferencesBlock from './OpportunityFunnelReferencesBlock'
@@ -725,18 +725,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                 label="TIPO DO TITULAR"
                 value={infoHolder?.instalacao.tipoTitular}
                 // editable={session?.user.id == infoHolder?.responsavel?.id || session?.user.permissoes.projetos.editar}
-                options={[
-                  {
-                    id: 1,
-                    label: 'PESSOA FISICA',
-                    value: 'PESSOA FISICA',
-                  },
-                  {
-                    id: 2,
-                    label: 'PESSOA JURIDICA',
-                    value: 'PESSOA JURIDICA',
-                  },
-                ]}
+                options={ConsumerUnitHolderType}
                 handleChange={(value) => {
                   if (infoHolder)
                     setInfoHolder((prev) => ({
