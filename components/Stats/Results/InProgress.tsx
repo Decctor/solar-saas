@@ -1,39 +1,55 @@
+import { TByFunnelResults } from '@/pages/api/stats/comercial-results/sales-funnels'
 import { formatToMoney } from '@/utils/methods'
 import { useFunnels } from '@/utils/queries/funnels'
 import { useInProgressResults } from '@/utils/queries/stats/in-progress'
 import React from 'react'
 import { BsFillBookmarkFill, BsFunnelFill } from 'react-icons/bs'
+import FunnelStageStatsCard from '../Utils/FunnelStageStatsCard'
 
 type GetFunnelStageData = {
   funnelName: string
   stageName: string
-  stats?: any
+  stats: TByFunnelResults | undefined
 }
-function getFunnelStageData({ funnelName, stageName, stats }: GetFunnelStageData): { projetos: number; valor: number } {
-  const baseReturn = { projetos: 0, valor: 0 }
-  if (!stats) return baseReturn
-  const funnelStats = stats[funnelName]
-  if (!funnelStats) return baseReturn
-  const stageStats = funnelStats[stageName]
-  const projects = stageStats.projetos ? Number(Number(stageStats.projetos).toFixed(2)) : 0
-  const value = stageStats.valor ? Number(Number(stageStats.valor).toFixed(2)) : 0
-  return {
-    projetos: projects,
-    valor: value,
-  }
-}
+// function getFunnelStageData({ funnelName, stageName, stats }: GetFunnelStageData): { projetos: number; valor: number } {
+//   const baseReturn = { projetos: 0, valor: 0 }
+//   if (!stats) return baseReturn
+//   const funnelStats = stats[funnelName]
+//   if (!funnelStats) return baseReturn
+//   const stageStats = funnelStats[stageName]
+//   const projects = stageStats.projetos ? Number(Number(stageStats.projetos).toFixed(2)) : 0
+//   const value = stageStats.valor ? Number(Number(stageStats.valor).toFixed(2)) : 0
+//   return {
+//     projetos: projects,
+//     valor: value,
+//   }
+// }
 type InProgressResultsProps = {
+  after: string
+  before: string
   responsibles: string[] | null
   partners: string[] | null
 }
-function InProgressResults({ responsibles, partners }: InProgressResultsProps) {
-  const { data: funnels } = useFunnels()
-  const { data: stats } = useInProgressResults({ responsibles, partners })
+function InProgressResults({ after, before, responsibles, partners }: InProgressResultsProps) {
+  const { data: stats } = useInProgressResults({ after, before, responsibles, partners })
   return (
     <div className="flex w-full flex-col">
       <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">EM ANDAMENTO</h1>
       <div className="mt-2 flex w-full flex-col items-start gap-6">
-        {funnels?.map((funnel, funnelIndex) => (
+        {stats?.map((stat, index) => (
+          <div key={index} className="flex w-full flex-col ">
+            <div className="mb-4 flex w-full items-center justify-center gap-2 rounded-sm bg-[#fead41] text-white">
+              <h1 className="text-lg font-medium uppercase tracking-tight">{stat.funnel}</h1>
+              <BsFunnelFill />
+            </div>
+            <div className="flex w-full flex-wrap items-start justify-around gap-4">
+              {stat.stages.map((stage, stageIndex) => (
+                <FunnelStageStatsCard key={stageIndex} stage={stage} />
+              ))}
+            </div>
+          </div>
+        ))}
+        {/* {funnels?.map((funnel, funnelIndex) => (
           <div key={funnelIndex} className="flex w-full flex-col ">
             <div className="mb-4 flex w-full items-center justify-center gap-2 rounded-sm bg-[#fead41] text-white">
               <h1 className="text-lg font-medium uppercase tracking-tight">{funnel.nome}</h1>
@@ -59,7 +75,7 @@ function InProgressResults({ responsibles, partners }: InProgressResultsProps) {
               ))}
             </div>
           </div>
-        ))}
+        ))} */}
       </div>
     </div>
   )

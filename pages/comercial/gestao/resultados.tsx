@@ -152,7 +152,7 @@ function ComercialResults() {
           </div>
         </div>
         <OverallResults after={period.after} before={period.before} responsibles={users} partners={partners} />
-        <InProgressResults responsibles={users} partners={partners} />
+        <InProgressResults after={period.after} before={period.before} responsibles={users} partners={partners} />
         <SalesTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} partners={partners} />
         <SDRTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} partners={partners} />
         <h1 className="mt-4 font-Raleway text-xl font-black text-black">CONTROLE DE EQUIPE</h1>

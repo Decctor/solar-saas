@@ -1,3 +1,4 @@
+import { getHoursDiff } from '@/lib/methods/dates'
 import { getPartnerFunnels } from '@/repositories/funnels/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthorization } from '@/utils/api'
@@ -9,14 +10,12 @@ import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { ResponsiblesBodySchema } from '@/utils/schemas/stats.schema'
+import dayjs from 'dayjs'
 import createHttpError from 'http-errors'
 
 import { Collection, Filter, WithId } from 'mongodb'
 import { NextApiHandler } from 'next'
-
-type GetResponse = {
-  data: TInProgressResults
-}
+import { z } from 'zod'
 
 export type TInProgressResults = {
   [key: string]: {
@@ -26,6 +25,42 @@ export type TInProgressResults = {
     }
   }
 }
+
+export type TByFunnelResults = {
+  funnel: string
+  stages: {
+    stage: string
+    emAndamento: number
+    valor: number
+    entradas: number
+    saidas: number
+    tempoTotal: number
+    tempoMedio: number
+    perdas: {
+      total: number
+      perdasPorMotivo: {
+        [key: string]: number
+      }
+    }
+  }[]
+}[]
+type GetResponse = {
+  data: TByFunnelResults
+}
+const QueryDatesSchema = z.object({
+  after: z
+    .string({
+      required_error: 'Parâmetros de período não fornecidos ou inválidos.',
+      invalid_type_error: 'Parâmetros de período não fornecidos ou inválidos.',
+    })
+    .datetime({ message: 'Tipo inválido para parâmetro de período.' }),
+  before: z
+    .string({
+      required_error: 'Parâmetros de período não fornecidos ou inválidos.',
+      invalid_type_error: 'Parâmetros de período não fornecidos ou inválidos.',
+    })
+    .datetime({ message: 'Tipo inválido para parâmetro de período.' }),
+})
 const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'resultados', 'visualizarComercial', true)
   const partnerId = session.user.idParceiro
@@ -33,6 +68,7 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
 
   const userId = session.user.id
   const userScope = session.user.permissoes.resultados.escopo
+  const { after, before } = QueryDatesSchema.parse(req.query)
   const { responsibles, partners } = ResponsiblesBodySchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
@@ -56,6 +92,9 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
   const responsiblesQuery: Filter<TOpportunity> = responsibles ? { 'responsaveis.id': { $in: responsibles } } : {}
   const partnerQuery = partners ? { idParceiro: { $in: [...partners, null] } } : {}
 
+  const afterDate = dayjs(after).startOf('day').subtract(3, 'hour').toDate()
+  const beforeDate = dayjs(before).endOf('day').subtract(3, 'hour').toDate()
+
   const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const funnelsCollection: Collection<TFunnel> = db.collection('funnels')
@@ -71,23 +110,22 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
     },
   })
 
-  const funnelsReduced = funnels.reduce((acc: { [key: string]: { [key: string]: { projetos: number; valor: number } } }, current: TFunnel) => {
-    const funnelName = current.nome
-    if (!acc[funnelName]) {
-      var obj: { [key: string]: { projetos: number; valor: number } } = {}
-      current.etapas.forEach((stage, index: any) => {
-        obj[stage.nome] = {
-          projetos: 0,
-          valor: 0,
-        }
-      })
-      acc[funnelName] = obj
-    }
-    return acc
-  }, {})
+  const funnelsReduced = getFunnelsReduced({ funnels })
+  // em progresso: todos as oportunidades em andamento no estágio
+  // entradas: número de oportunidades que entraram o estágio no período
+  // saidas: número de oportunidades que saída do estágio no período
+  // tempo total: tempo total das oportunidades no estágio
+  // tempo médio: tempo total/saidas
+  // perdas: número de oportunidades perdidas no estágio dentro do período
+  //
+
   const inProgressResults = projects.reduce((acc, current) => {
     const currentProjectFunnels = funnelsReferences.filter((f) => f.idOportunidade == current._id)
     const proposeValue = current.valorProposta
+    const isInProgress = !current.dataPerda
+
+    const lossDate = current.dataPerda ? new Date(current.dataPerda) : null
+    const lossReason = !!current.dataPerda ? current.motivoPerda : null
     currentProjectFunnels?.forEach((funnel, index: number) => {
       const funnelStageId = funnel.idEstagioFunil
       const existingFunnel = funnels.find((f) => f._id.toString() == funnel.idFunil)
@@ -95,19 +133,115 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
       const existingStage = existingFunnel.etapas.find((stage) => stage.id == funnelStageId)
       if (!existingStage) return acc
       const funnelName = existingFunnel.nome
+      const stageId = existingStage.id
       const stageName = existingStage.nome
-      acc[funnelName][stageName].projetos += 1
-      acc[funnelName][stageName].valor += proposeValue
+      const stageHistory = funnel.estagios[stageId]
+
+      const arrivalDate = stageHistory?.entrada ? new Date(stageHistory.entrada) : null
+      const exitDate = stageHistory?.saida ? new Date(stageHistory.saida) : null
+      const diff = !!arrivalDate && !!exitDate ? getHoursDiff({ start: arrivalDate.toISOString(), finish: exitDate.toISOString() }) : 0
+
+      const hasArrivedInCurrentPeriod = !!arrivalDate && arrivalDate >= afterDate && arrivalDate <= beforeDate
+      const hasExitedInCurrentPeriod = !!exitDate && exitDate >= afterDate && exitDate <= beforeDate
+      const wasLostInCurrentPeriod = !!lossDate && lossDate >= afterDate && lossDate <= beforeDate
+      if (isInProgress) acc[funnelName][stageName].emAndamento += 1
+      if (isInProgress) acc[funnelName][stageName].valor += proposeValue
+      if (hasArrivedInCurrentPeriod) acc[funnelName][stageName].entradas += 1
+      if (hasExitedInCurrentPeriod) acc[funnelName][stageName].saidas += 1
+
+      if (wasLostInCurrentPeriod) {
+        acc[funnelName][stageName].perdas.total += 1
+        if (!acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || '']) acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || ''] = 0
+        acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || ''] += 1
+      }
+      acc[funnelName][stageName].tempoTotal += diff
     })
     return acc
   }, funnelsReduced)
 
-  return res.status(200).json({ data: inProgressResults })
+  const inprogress = Object.entries(inProgressResults).map(([key, value]) => {
+    const stages = Object.entries(value).map(([key, value]) => ({
+      stage: key,
+      emAndamento: value.emAndamento,
+      valor: value.valor,
+      entradas: value.entradas,
+      saidas: value.saidas,
+      tempoTotal: value.tempoTotal,
+      tempoMedio: value.tempoTotal / value.saidas,
+      perdas: value.perdas,
+    }))
+    return {
+      funnel: key,
+      stages,
+    }
+  })
+  return res.status(200).json({ data: inprogress })
 }
 
 export default apiHandler({
   POST: getInProgressResults,
 })
+type GetFunnelsReduceParams = {
+  funnels: WithId<TFunnel>[]
+}
+type TFunnelReduced = {
+  [key: string]: {
+    [key: string]: {
+      emAndamento: number
+      entradas: number
+      saidas: number
+      tempoTotal: number
+      tempoMedio: number
+      perdas: {
+        total: number
+        perdasPorMotivo: {
+          [key: string]: number
+        }
+      }
+      valor: number
+    }
+  }
+}
+function getFunnelsReduced({ funnels }: GetFunnelsReduceParams) {
+  const funnelsReduced = funnels.reduce((acc: TFunnelReduced, current: TFunnel) => {
+    const funnelName = current.nome
+    if (!acc[funnelName]) {
+      var obj: {
+        [key: string]: {
+          emAndamento: number
+          valor: number
+          entradas: number
+          saidas: number
+          tempoTotal: number
+          tempoMedio: number
+          perdas: {
+            total: number
+            perdasPorMotivo: {
+              [key: string]: number
+            }
+          }
+        }
+      } = {}
+      current.etapas.forEach((stage, index: any) => {
+        obj[stage.nome] = {
+          emAndamento: 0,
+          valor: 0,
+          entradas: 0,
+          saidas: 0,
+          tempoTotal: 0,
+          tempoMedio: 0,
+          perdas: {
+            total: 0,
+            perdasPorMotivo: {},
+          },
+        }
+      })
+      acc[funnelName] = obj
+    }
+    return acc
+  }, {})
+  return funnelsReduced
+}
 type GetProjetsParams = {
   opportunitiesCollection: Collection<TOpportunity>
   responsiblesQuery: { 'responsaveis.id': { $in: string[] } } | {}
@@ -124,18 +258,25 @@ type GetProjetsParams = {
 type TInProgressResultsProject = {
   _id: string
   valorProposta: TProposal['valor']
+  motivoPerda: TOpportunity['perda']['descricaoMotivo']
+  dataPerda: TOpportunity['perda']['data']
 }
 async function getOpportunities({ opportunitiesCollection, responsiblesQuery, partnerQuery }: GetProjetsParams) {
   try {
-    const match = { ...responsiblesQuery, ...partnerQuery, 'ganho.data': null, 'perda.data': null }
+    const match = { ...responsiblesQuery, ...partnerQuery, 'ganho.data': null }
     const addFields = { activeProposeObjectID: { $toObjectId: '$idPropostaAtiva' } }
     const proposeLookup = { from: 'proposals', localField: 'activeProposeObjectID', foreignField: '_id', as: 'proposta' }
-    const projection = { 'proposta.valor': 1 }
+    const projection = { 'proposta.valor': 1, 'perda.descricaoMotivo': 1, 'perda.data': 1 }
     const result = await opportunitiesCollection
       .aggregate([{ $match: match }, { $addFields: addFields }, { $lookup: proposeLookup }, { $project: projection }])
       .toArray()
 
-    const projects = result.map((r) => ({ _id: r._id.toString(), valorProposta: r.proposta[0] ? r.proposta[0].valor : 0 })) as TInProgressResultsProject[]
+    const projects = result.map((r) => ({
+      _id: r._id.toString(),
+      valorProposta: r.proposta[0] ? r.proposta[0].valor : 0,
+      motivoPerda: r.perda.descricaoMotivo,
+      dataPerda: r.perda.data,
+    })) as TInProgressResultsProject[]
     return projects
   } catch (error) {
     throw error

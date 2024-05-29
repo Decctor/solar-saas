@@ -39,9 +39,9 @@ function GoalTrackingBar({ valueGoal, valueHit, goalText, barHeigth, barBgColor 
           ></div>
         </div>
       </div>
-      <div className="flex w-fit flex-col items-end justify-end lg:min-w-[100px]">
+      <div className="flex min-w-[70px] flex-col items-end justify-end lg:min-w-[100px]">
         <p className="text-xs font-medium uppercase tracking-tight lg:text-sm">{getPercentage({ goal: valueGoal, hit: valueHit })}</p>
-        <p className="text-[0.4rem] italic text-gray-500 lg:text-[0.65rem]">
+        <p className="text-[0.5rem] italic text-gray-500 lg:text-[0.65rem]">
           <strong>{valueHit?.toLocaleString('pt-br', { maximumFractionDigits: 2 }) || 0}</strong> de{' '}
           <strong>{valueGoal?.toLocaleString('pt-br', { maximumFractionDigits: 2 }) || 0}</strong>{' '}
         </p>

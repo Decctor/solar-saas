@@ -3,13 +3,14 @@ import React from 'react'
 import { FaCity, FaHourglass, FaHourglassHalf, FaUser } from 'react-icons/fa'
 import { FaDiamond, FaLocationDot } from 'react-icons/fa6'
 import { IoMdAlert } from 'react-icons/io'
-import { MdCategory } from 'react-icons/md'
+import { MdCategory, MdTimer } from 'react-icons/md'
 
 import { BsCalendarCheck, BsCalendarFill, BsCalendarPlus, BsCode, BsFillCalendarCheckFill } from 'react-icons/bs'
 import { TTechnicalAnalysisDTO, TTechnicalAnalysisDTOSimplified } from '@/utils/schemas/technical-analysis.schema'
 import Avatar from '../utils/Avatar'
-import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
+import { formatDateAsLocale, formatDecimalPlaces, formatNameAsInitials } from '@/lib/methods/formatting'
 import { TbAtom, TbWorld } from 'react-icons/tb'
+import { getHoursDiff } from '@/lib/methods/dates'
 
 const StatusColors = {
   CONCLUIDO: 'bg-green-500',
@@ -111,11 +112,19 @@ function TechnicalAnalysisCard({ analysis, handleClick, userHasEditPermission }:
           </div> */}
         </div>
         <div className="lg:0 mt-2 flex w-full flex-col-reverse items-center justify-between gap-1 lg:flex-row lg:gap-2">
-          <div className="flex items-center gap-1">
+          <div className="flex items-center gap-2">
             {analysis.dataEfetivacao ? (
               <>
-                <BsCalendarCheck color="rgb(34,197,94)" />
-                <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
+                <div className="flex items-center gap-1">
+                  <BsCalendarCheck color="rgb(34,197,94)" />
+                  <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
+                </div>
+                <div className="flex items-center gap-1">
+                  <MdTimer color="rgb(37,99,235)" />
+                  <p className="text-[0.55rem] text-gray-500">
+                    {formatDecimalPlaces(getHoursDiff({ start: analysis.dataInsercao, finish: analysis.dataEfetivacao }), 0, 2)}h
+                  </p>
+                </div>
               </>
             ) : null}
           </div>

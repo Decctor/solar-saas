@@ -24,9 +24,9 @@ function LossesByReason({ stats }: LossesByReasonProps) {
         <h1 className="text-sm font-medium uppercase tracking-tight">RAZÕES DE PERDA</h1>
         <FaAlignJustify />
       </div>
-      <div className="mt-4 flex w-full flex-col flex-wrap items-center justify-between gap-2 md:flex-row">
+      <div className="mt-4 flex w-full flex-col flex-wrap items-start justify-between gap-2 md:flex-row">
         {getListOrdenated(stats).map((reasonStat, index) => (
-          <div key={index} className="flex min-h-[70px] w-full items-center justify-between gap-1 rounded border border-[#F31559] md:w-[200px]">
+          <div key={index} className="flex min-h-[70px] w-full items-center justify-between gap-1 rounded border border-[#F31559] md:w-[250px]">
             <div className="flex h-full min-h-[70px] w-[30px] min-w-[30px] items-center justify-center bg-[#F31559] font-bold text-white">{index + 1}º</div>
             <div className="flex h-full min-h-[70px] grow flex-col items-center justify-between gap-1 p-2">
               <h1 className="text-center text-xs font-medium leading-none tracking-tight">{reasonStat.motivo.toUpperCase()}</h1>

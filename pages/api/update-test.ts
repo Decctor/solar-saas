@@ -31,12 +31,43 @@ const UserGroupEquivalents = {
   '4': '66562a2a812707dbf9f04833',
 }
 
+const LossReasonsEquivalents = {
+  'NÃO QUER O PRODUTO/SERVIÇO': 'NÃO QUER O PRODUTO/SERVIÇO',
+  'RESCISÃO CONTRATUAL': 'RESCISÃO CONTRATUAL',
+  'COMPROU COM OUTRA EMPRESA': 'FECHOU COM OUTRA EMPRESA (GERAL)',
+  'CLIENTE NÃO RESPONDE': 'CLIENTE NÃO RESPONDE',
+  'OPTOU POR NÃO REALIZAR O PROJETO': 'NÃO QUER O PRODUTO/SERVIÇO',
+  'DEMORA NO ATENDIMENTO': 'DEMORA NO ATENDIMENTO',
+  'FECHOU COM OUTRA EMPRESA (GERAL)': 'FECHOU COM OUTRA EMPRESA (GERAL)',
+  'NÃO GOSTOU DO PORTIFÓLIO (PRODUTOS/SERVIÇOS)': 'NÃO GOSTOU DO PORTIFÓLIO (PRODUTOS/SERVIÇOS)',
+  'ACHOU O PREÇO ALTO': 'ACHOU O PREÇO ALTO',
+  'PROBLEMAS COM LIBERAÇÃO DE CRÉDITO': 'PROBLEMAS COM LIBERAÇÃO DE CRÉDITO',
+}
 type Reduced = { [key: string]: string[] }
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
 
   // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  // const opportunitiesCollection: Collection<TOpportunity> = crmDb.collection('opportunities')
+
+  // const opportunities = await opportunitiesCollection.find({}, { projection: { perda: 1 } }).toArray()
+
+  // const bulkWriteArr = opportunities.map((opportunity) => {
+  //   const lossReason = opportunity.perda.descricaoMotivo
+  //     ? LossReasonsEquivalents[opportunity.perda.descricaoMotivo as keyof typeof LossReasonsEquivalents]
+  //     : null
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(opportunity._id) },
+  //       update: {
+  //         $set: {
+  //           'perda.descricaoMotivo': lossReason,
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
   // const funnelReferencesCollection: Collection<TFunnelReference> = crmDb.collection('funnel-references')
 
   // const references = await funnelReferencesCollection.find({}).toArray()
@@ -158,9 +189,9 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  // const bulkwriteResponse = await funnelReferencesCollection.bulkWrite(bulkwriteArr)
+  // const bulkwriteResponse = await opportunitiesCollection.bulkWrite(bulkWriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.json('desativada')
+  return res.json('DESATIVADA')
 }
 export default apiHandler({
   GET: migrate,
