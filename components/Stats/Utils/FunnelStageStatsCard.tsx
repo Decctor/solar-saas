@@ -23,7 +23,7 @@ function FunnelStageStatsCard({ stage }: FunnelStageStatsCardProps) {
         <h1 className="text-center text-2xl font-bold text-green-800">{formatToMoney(stage.valor)}</h1>
       </div>
       <div className="mt-2 flex w-full flex-col">
-        <h1 className="text-xs tracking-tight text-gray-500">MÉTRICAS</h1>
+        <h1 className="text-xs tracking-tight text-gray-500">MÉTRICAS DO PERÍODO</h1>
         <div className="flex w-full items-center justify-between gap-2">
           <div className="flex items-center gap-1">
             <TbDownload color="rgb(22,163,74)" />
@@ -44,7 +44,7 @@ function FunnelStageStatsCard({ stage }: FunnelStageStatsCardProps) {
         </div>
       </div>
       <div className="mt-2 flex w-full flex-col">
-        <h1 className="text-xs tracking-tight text-gray-500">PERDAS POR MOTIVO</h1>
+        <h1 className="text-[0.55rem] tracking-tight text-gray-500">PERDAS POR MOTIVO</h1>
         <div className="flex w-full flex-wrap items-start justify-start gap-2">
           {Object.entries(stage.perdas.perdasPorMotivo)
             .sort(([aKey, aValue], [bKey, bValue]) => bValue - aValue)

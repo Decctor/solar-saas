@@ -94,7 +94,7 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
 
   const afterDate = dayjs(after).startOf('day').subtract(3, 'hour').toDate()
   const beforeDate = dayjs(before).endOf('day').subtract(3, 'hour').toDate()
-
+  // console.log(afterDate, beforeDate)
   const db = await connectToDatabase(process.env.MONGODB_URI, 'main')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const funnelsCollection: Collection<TFunnel> = db.collection('funnels')
@@ -135,26 +135,26 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
       const funnelName = existingFunnel.nome
       const stageId = existingStage.id
       const stageName = existingStage.nome
-      const stageHistory = funnel.estagios[stageId]
-
-      const arrivalDate = stageHistory?.entrada ? new Date(stageHistory.entrada) : null
-      const exitDate = stageHistory?.saida ? new Date(stageHistory.saida) : null
-      const diff = !!arrivalDate && !!exitDate ? getHoursDiff({ start: arrivalDate.toISOString(), finish: exitDate.toISOString() }) : 0
-
-      const hasArrivedInCurrentPeriod = !!arrivalDate && arrivalDate >= afterDate && arrivalDate <= beforeDate
-      const hasExitedInCurrentPeriod = !!exitDate && exitDate >= afterDate && exitDate <= beforeDate
       const wasLostInCurrentPeriod = !!lossDate && lossDate >= afterDate && lossDate <= beforeDate
       if (isInProgress) acc[funnelName][stageName].emAndamento += 1
       if (isInProgress) acc[funnelName][stageName].valor += proposeValue
-      if (hasArrivedInCurrentPeriod) acc[funnelName][stageName].entradas += 1
-      if (hasExitedInCurrentPeriod) acc[funnelName][stageName].saidas += 1
+
+      Object.entries(funnel.estagios).forEach(([key, stage]) => {
+        const arrivalDate = stage?.entrada ? new Date(stage.entrada) : null
+        const exitDate = stage?.saida ? new Date(stage.saida) : null
+        const diff = !!arrivalDate && !!exitDate ? getHoursDiff({ start: arrivalDate.toISOString(), finish: exitDate.toISOString() }) : 0
+        const hasArrivedInCurrentPeriod = !!arrivalDate && arrivalDate >= afterDate && arrivalDate <= beforeDate
+        const hasExitedInCurrentPeriod = !!exitDate && exitDate >= afterDate && exitDate <= beforeDate
+        if (hasArrivedInCurrentPeriod) acc[funnelName][stageName].entradas += 1
+        if (hasExitedInCurrentPeriod) acc[funnelName][stageName].saidas += 1
+        acc[funnelName][stageName].tempoTotal += diff
+      })
 
       if (wasLostInCurrentPeriod) {
         acc[funnelName][stageName].perdas.total += 1
         if (!acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || '']) acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || ''] = 0
         acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || ''] += 1
       }
-      acc[funnelName][stageName].tempoTotal += diff
     })
     return acc
   }, funnelsReduced)
