@@ -99,7 +99,7 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const funnelsCollection: Collection<TFunnel> = db.collection('funnels')
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
-  const projects = await getOpportunities({ opportunitiesCollection, responsiblesQuery, partnerQuery })
+  const projects = await getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate, partnerQuery })
   const funnels = await getPartnerFunnels({ collection: funnelsCollection, query: partnerQuery })
   const funnelsReferences = await getFunnelReferences({
     funnelReferencesCollection,
@@ -110,22 +110,19 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
     },
   })
 
+  // Getting the basic structure of data to work on top of
   const funnelsReduced = getFunnelsReduced({ funnels })
-  // em progresso: todos as oportunidades em andamento no estágio
-  // entradas: número de oportunidades que entraram o estágio no período
-  // saidas: número de oportunidades que saída do estágio no período
-  // tempo total: tempo total das oportunidades no estágio
-  // tempo médio: tempo total/saidas
-  // perdas: número de oportunidades perdidas no estágio dentro do período
-  //
 
+  // Iterating through the opportunities and updating the structure based on validations
   const inProgressResults = projects.reduce((acc, current) => {
+    // Getting the funnel references that refer to the iterrating opportunity
     const currentProjectFunnels = funnelsReferences.filter((f) => f.idOportunidade == current._id)
     const proposeValue = current.valorProposta
     const isInProgress = !current.dataPerda
 
     const lossDate = current.dataPerda ? new Date(current.dataPerda) : null
     const lossReason = !!current.dataPerda ? current.motivoPerda : null
+    // Itarating through the funnel references
     currentProjectFunnels?.forEach((funnel, index: number) => {
       const funnelStageId = funnel.idEstagioFunil
       const existingFunnel = funnels.find((f) => f._id.toString() == funnel.idFunil)
@@ -136,25 +133,33 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
       const stageId = existingStage.id
       const stageName = existingStage.nome
       const wasLostInCurrentPeriod = !!lossDate && lossDate >= afterDate && lossDate <= beforeDate
+
+      // In case there is not a loss date (and no win data, filtered before), then the opportunity is still in progress
+      // So, updating the number of emAndamento and the total value of active proposals in hand
       if (isInProgress) acc[funnelName][stageName].emAndamento += 1
       if (isInProgress) acc[funnelName][stageName].valor += proposeValue
 
-      Object.entries(funnel.estagios).forEach(([key, stage]) => {
-        const arrivalDate = stage?.entrada ? new Date(stage.entrada) : null
-        const exitDate = stage?.saida ? new Date(stage.saida) : null
-        const diff = !!arrivalDate && !!exitDate ? getHoursDiff({ start: arrivalDate.toISOString(), finish: exitDate.toISOString() }) : 0
-        const hasArrivedInCurrentPeriod = !!arrivalDate && arrivalDate >= afterDate && arrivalDate <= beforeDate
-        const hasExitedInCurrentPeriod = !!exitDate && exitDate >= afterDate && exitDate <= beforeDate
-        if (hasArrivedInCurrentPeriod) acc[funnelName][stageName].entradas += 1
-        if (hasExitedInCurrentPeriod) acc[funnelName][stageName].saidas += 1
-        acc[funnelName][stageName].tempoTotal += diff
-      })
-
+      // In case the opportunity was lost within the current period of query, them, updating the information regarding number o losses and losses by reason
       if (wasLostInCurrentPeriod) {
         acc[funnelName][stageName].perdas.total += 1
         if (!acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || '']) acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || ''] = 0
         acc[funnelName][stageName].perdas.perdasPorMotivo[lossReason || ''] += 1
       }
+
+      // Iterating over the stages information
+      Object.entries(funnel.estagios).forEach(([key, stage]) => {
+        const historyStageName = existingFunnel.etapas.find((e) => e.id.toString() == key.toString())?.nome || 'NÃO DEFINIDO'
+        const arrivalDate = stage?.entrada ? new Date(stage.entrada) : null
+        const exitDate = stage?.saida ? new Date(stage.saida) : null
+        const diff = !!arrivalDate && !!exitDate ? getHoursDiff({ start: arrivalDate.toISOString(), finish: exitDate.toISOString() }) : 0
+        const hasArrivedInCurrentPeriod = !!arrivalDate && arrivalDate >= afterDate && arrivalDate <= beforeDate
+        const hasExitedInCurrentPeriod = !!exitDate && exitDate >= afterDate && exitDate <= beforeDate
+        // Updating the entradas number based on the arrival of the opportunity in the iterrating funnel stage
+        if (hasArrivedInCurrentPeriod) acc[funnelName][historyStageName].entradas += 1
+        // Upating th saidas number based on the exit of the opportunity from the iterrating funnel stage
+        if (hasExitedInCurrentPeriod) acc[funnelName][historyStageName].saidas += 1
+        acc[funnelName][historyStageName].tempoTotal += diff
+      })
     })
     return acc
   }, funnelsReduced)
@@ -245,6 +250,8 @@ function getFunnelsReduced({ funnels }: GetFunnelsReduceParams) {
 type GetProjetsParams = {
   opportunitiesCollection: Collection<TOpportunity>
   responsiblesQuery: { 'responsaveis.id': { $in: string[] } } | {}
+  afterDate: Date
+  beforeDate: Date
   partnerQuery:
     | {
         idParceiro: {
@@ -261,9 +268,15 @@ type TInProgressResultsProject = {
   motivoPerda: TOpportunity['perda']['descricaoMotivo']
   dataPerda: TOpportunity['perda']['data']
 }
-async function getOpportunities({ opportunitiesCollection, responsiblesQuery, partnerQuery }: GetProjetsParams) {
+async function getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate, partnerQuery }: GetProjetsParams) {
   try {
-    const match = { ...responsiblesQuery, ...partnerQuery, 'ganho.data': null }
+    const afterDateStr = afterDate.toISOString()
+    const beforeDateStr = beforeDate.toISOString()
+    const match = {
+      ...responsiblesQuery,
+      ...partnerQuery,
+      $or: [{ 'ganho.data': null, 'perda.data': null }, { $and: [{ 'perda.data': { $gte: afterDateStr } }, { 'perda.data': { $lte: beforeDateStr } }] }],
+    }
     const addFields = { activeProposeObjectID: { $toObjectId: '$idPropostaAtiva' } }
     const proposeLookup = { from: 'proposals', localField: 'activeProposeObjectID', foreignField: '_id', as: 'proposta' }
     const projection = { 'proposta.valor': 1, 'perda.descricaoMotivo': 1, 'perda.data': 1 }
