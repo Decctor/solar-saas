@@ -12,6 +12,7 @@ import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { useQueryClient } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import toast from 'react-hot-toast'
+import OpportunityFunnelReference from '../Cards/OpportunityFunnelReference'
 
 type GetFunnelInfoParams = {
   funnelId: TFunnelReferenceDTO['idFunil']
@@ -120,72 +121,16 @@ function OpportunityFunnelReferencesBlock({ opportunity, setOpportunity }: Oppor
     <div className=" flex w-full flex-col gap-2">
       <h1 className="w-full rounded-md bg-[#fead41] p-1 text-center text-sm font-medium text-white">FUNIS</h1>
       <div className="flex flex-col gap-2">
-        {opportunity.referenciasFunil.map((funnelReference, index) => {
-          const { funnelLabel, stageOptions } = getFunnelInfo({
-            funnelId: funnelReference.idFunil,
-            funnels,
-          })
-          return (
-            <div className="flex w-full flex-col rounded-md border border-gray-200 p-3">
-              <div className="flex w-full items-center gap-2">
-                <div className="flex items-center gap-2">
-                  <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
-                    <BsFunnelFill />
-                  </div>
-                  <h1 className="font-sans font-bold  text-[#353432]">{funnelLabel || 'CARREGANDO...'}</h1>
-                </div>
-                <div className="flex grow items-center justify-end gap-2">
-                  <button
-                    onClick={() =>
-                      // @ts-ignore
-                      handleRemoveFunnelReference({ funnelReferenceToRemoveIndex: index, opportunityFunnelReferences: opportunity.referenciasFunil })
-                    }
-                    type="button"
-                    className="flex items-center justify-center gap-2 rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
-                  >
-                    <MdDelete style={{ color: 'red' }} size={15} />
-                  </button>
-                  <button
-                    disabled={isPending}
-                    onClick={() =>
-                      // @ts-ignore
-                      handleUpdateOpportunityFunnelReference({ id: funnelReference._id, newStageId: funnelReference.idEstagioFunil })
-                    }
-                    className="flex items-end justify-center text-green-200 duration-300 ease-in-out disabled:text-gray-500 enabled:hover:text-green-500"
-                  >
-                    <AiOutlineCheck
-                      style={{
-                        fontSize: '18px',
-                        // color: infoHolder.responsaveis[index].papel != info.responsaveis[index].papel ? 'rgb(34,197,94)' : 'rgb(156,163,175)',
-                        color: 'rgb(34,197,94)',
-                      }}
-                    />
-                  </button>
-                </div>
-              </div>
-              <div className="mt-1 flex grow">
-                <SelectInput
-                  label="ESTÁGIO"
-                  showLabel={false}
-                  value={funnelReference.idEstagioFunil}
-                  options={stageOptions}
-                  handleChange={(value) => {
-                    const references = [...opportunity.referenciasFunil]
-                    references[index].idEstagioFunil = value
-                    setOpportunity((prev) => ({ ...prev, referenciasFunil: references }))
-                  }}
-                  selectedItemLabel="NÃO DEFINIDO"
-                  onReset={() => {
-                    const references = [...opportunity.referenciasFunil]
-                    references[index].idEstagioFunil = opportunity.referenciasFunil[index].idEstagioFunil
-                    setOpportunity((prev) => ({ ...prev, referenciasFunil: references }))
-                  }}
-                  width="100%"
-                />
-              </div>
-            </div>
-          )
-        })}
+        {opportunity.referenciasFunil.map((funnelReference, index) => (
+          <OpportunityFunnelReference
+            key={funnelReference._id}
+            reference={funnelReference}
+            referenceIndex={index}
+            funnels={funnels}
+            opportunity={opportunity}
+            setOpportunity={setOpportunity}
+          />
+        ))}
       </div>
       {!!newFunnelReferencesOptions ? (
         <>
