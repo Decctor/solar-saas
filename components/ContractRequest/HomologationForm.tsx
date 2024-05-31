@@ -24,6 +24,7 @@ import { storage } from '@/services/firebase/storage-config'
 import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
 import { createContractRequest } from '@/utils/mutations/contract-request'
 import HomologationInfo from './SolarSystem/HomologationInfo'
+import PersonalizedSystemInfo from './OeM/PersonalizedSystemInfo'
 
 type HomologationFormProps = {
   requestInfo: TContractRequest
@@ -126,18 +127,15 @@ function HomologationForm({ requestInfo, setRequestInfo, proposeInfo, client, se
           />
         ) : null}
         {stage == 3 ? (
-          <HomologationInfo
+          <PersonalizedSystemInfo
             requestInfo={requestInfo}
             setRequestInfo={setRequestInfo}
             goToPreviousStage={() => setStage((prev) => prev - 1)}
             goToNextStage={() => setStage((prev) => prev + 1)}
-            opportunity={proposeInfo.oportunidadeDados}
-            client={client}
-            session={session}
           />
         ) : null}
         {stage == 4 ? (
-          <PAInfo
+          <HomologationInfo
             requestInfo={requestInfo}
             setRequestInfo={setRequestInfo}
             goToPreviousStage={() => setStage((prev) => prev - 1)}
@@ -145,7 +143,7 @@ function HomologationForm({ requestInfo, setRequestInfo, proposeInfo, client, se
           />
         ) : null}
         {stage == 5 ? (
-          <PaymentInfo
+          <PAInfo
             requestInfo={requestInfo}
             setRequestInfo={setRequestInfo}
             goToPreviousStage={() => setStage((prev) => prev - 1)}
@@ -153,6 +151,14 @@ function HomologationForm({ requestInfo, setRequestInfo, proposeInfo, client, se
           />
         ) : null}
         {stage == 6 ? (
+          <PaymentInfo
+            requestInfo={requestInfo}
+            setRequestInfo={setRequestInfo}
+            goToPreviousStage={() => setStage((prev) => prev - 1)}
+            goToNextStage={() => setStage((prev) => prev + 1)}
+          />
+        ) : null}
+        {stage == 7 ? (
           <DocumentationInfo
             requestInfo={requestInfo}
             setRequestInfo={setRequestInfo}

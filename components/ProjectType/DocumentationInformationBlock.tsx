@@ -7,6 +7,7 @@ import SelectInput from '../Inputs/SelectInput'
 import { conditionsAlias, getConditionOptions, TDocumentationConditionData } from '@/utils/project-documentation/helpers'
 
 function DocumentationInformationBlock() {
+  const [newDocumentMenuIsOpen, setNewDocumentMenuIsOpen] = useState<boolean>(false)
   const [newDocumentationHolder, setNewDocumentationHolder] = useState<TProjectType['documentacao'][number]>({
     obrigatorio: false,
     titulo: '',
