@@ -61,6 +61,15 @@ const GeneralProjectSchema = z.object({
   nome: z.string(),
   idParceiro: z.string(),
   identificador: z.string(),
+  tipo: z.object({
+    id: z
+      .string({
+        required_error: 'ID de referência do tipo de projeto não encontrado.',
+        invalid_type_error: 'Tipo não válido para o ID de referência do tipo de projeto.',
+      })
+      .min(12, 'Tipo inválido para ID de tipo deprojeto.'),
+    titulo: z.string({ required_error: 'Titulo do tipo de projeto não encontrado.', invalid_type_error: 'Tipo não válido para o titulo do tipo de projeto.' }),
+  }),
   venda: SaleSchema,
   responsaveis: z.array(
     z.object({

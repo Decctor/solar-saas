@@ -12,8 +12,9 @@ type DocumentFileInputProps = {
   value: File | string | null
   handleChange: (file: File | null | string) => void
   fileReferences?: TFileReferenceDTO[]
+  multiple?: boolean
 }
-function DocumentFileInput({ label, value, handleChange, fileReferences }: DocumentFileInputProps) {
+function DocumentFileInput({ label, value, handleChange, fileReferences, multiple = false }: DocumentFileInputProps) {
   const ref = useRef(null)
   const inputIdentifier = label.toLowerCase().replace(' ', '_')
   const [showMenu, setShowMenu] = useState<boolean>(false)
@@ -61,6 +62,7 @@ function DocumentFileInput({ label, value, handleChange, fileReferences }: Docum
             id="dropzone-file"
             type="file"
             className="absolute h-full w-full opacity-0"
+            multiple={multiple}
           />
         </label>
       </div>

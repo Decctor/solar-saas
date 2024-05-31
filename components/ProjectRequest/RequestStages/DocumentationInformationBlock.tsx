@@ -1,0 +1,51 @@
+import { TDocumentationConditionData } from '@/utils/project-documentation/helpers'
+import { useProjectTypeById } from '@/utils/queries/project-types'
+import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import { TProject } from '@/utils/schemas/project.schema'
+import React from 'react'
+import { TDocumentationHolder } from '../NewProjectRequest'
+import { handleDocumentationDefinition } from '@/utils/project-documentation/methods'
+import { useFileReferencesByOpportunityId } from '@/utils/queries/file-references'
+import DocumentFileInput from '@/components/Inputs/DocumentFileInput'
+
+type DocumentationInformationBlockProps = {
+  infoHolder: TProject
+  setInfoHolder: React.Dispatch<React.SetStateAction<TProject>>
+  documentationHolder: TDocumentationHolder
+  setDocumentationHolder: React.Dispatch<React.SetStateAction<TDocumentationHolder>>
+}
+function DocumentationInformationBlock({ infoHolder, setInfoHolder, documentationHolder, setDocumentationHolder }: DocumentationInformationBlockProps) {
+  const { data: fileReferences } = useFileReferencesByOpportunityId({ opportunityId: infoHolder?.oportunidade.id || '' })
+
+  const projectTypeId = infoHolder.tipo.id
+  const { data: projectType } = useProjectTypeById({ id: projectTypeId })
+  const requiredDocuments = handleDocumentationDefinition({
+    projectTypeDocumentation: projectType?.documentacao || [],
+    conditionData: documentationHolder.conditionData,
+  })
+  return (
+    <div className="flex w-full grow flex-col gap-2">
+      <h1 className="w-full rounded bg-gray-800 p-1 text-center font-bold text-white">DOCUMENTAÇÃO</h1>
+      <h1 className="my-2 w-full text-center font-medium tracking-tight">Anexe aqui os documentos necessários para solicitação de projeto.</h1>
+      <h1 className="my-2 w-full text-center font-medium tracking-tight">
+        Se existirem arquivos vinculados a oportunidade, você pode utilizá-los clicando em <strong className="text-blue-800">MOSTRAR OPÇÕES</strong> e
+        escolhendo o arquivo desejado.
+      </h1>
+      <div className="flex w-full grow flex-wrap items-start justify-center gap-2">
+        {requiredDocuments.map((document, index) => (
+          <div key={index} className="w-full lg:w-[600px]">
+            <DocumentFileInput
+              label={document.titulo}
+              value={documentationHolder.filesHolder[document.titulo]}
+              handleChange={(value) => setDocumentationHolder((prev) => ({ ...prev, filesHolder: { [document.titulo]: value } }))}
+              fileReferences={fileReferences}
+              multiple={document.multiplo}
+            />
+          </div>
+        ))}
+      </div>
+    </div>
+  )
+}
+
+export default DocumentationInformationBlock

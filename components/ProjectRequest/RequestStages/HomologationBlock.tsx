@@ -6,21 +6,43 @@ import { Session } from 'next-auth'
 import React from 'react'
 import SelectableHomologation from './Utils/SelectableHomologation'
 import ActiveHomologation from './Utils/ActiveHomologation'
+import { TDocumentationHolder } from '../NewProjectRequest'
 
 type HomologationBlockProps = {
   infoHolder: TProject
   setInfoHolder: React.Dispatch<React.SetStateAction<TProject>>
+  documentationHolder: TDocumentationHolder
+  setDocumentationHolder: React.Dispatch<React.SetStateAction<TDocumentationHolder>>
   moveToNextStage: () => void
   moveToPreviousStage: () => void
   session: Session
 }
-function HomologationBlock({ infoHolder, setInfoHolder, moveToNextStage, moveToPreviousStage, session }: HomologationBlockProps) {
+function HomologationBlock({
+  infoHolder,
+  setInfoHolder,
+  documentationHolder,
+  setDocumentationHolder,
+  moveToNextStage,
+  moveToPreviousStage,
+  session,
+}: HomologationBlockProps) {
   const opportunityId = infoHolder.oportunidade.id
   const { data: homologations, isLoading, isError, isSuccess } = useOpportunityHomologations({ opportunityId })
 
   const activeHomologation = infoHolder.idHomologacao ? homologations?.find((h) => h._id == infoHolder.idHomologacao) : null
   const selectableHomologations = homologations?.filter((h) => h._id != infoHolder.idHomologacao)
   function validateAndProceed() {
+    if (activeHomologation) {
+      // In case there is an active documentation, using is information to update the documentation holder condition data
+      setDocumentationHolder((prev) => ({
+        ...prev,
+        conditionData: {
+          ...prev.conditionData,
+          grupoInstalacao: activeHomologation.instalacao.grupo,
+          tipoTitular: activeHomologation.titular.identificador.length == 18 ? 'PESSOA JURÍDICA' : 'PESSOA FÍSICA',
+        },
+      }))
+    }
     moveToNextStage()
   }
   return (

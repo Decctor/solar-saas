@@ -10,9 +10,9 @@ const Cities = Object.entries(stateCities)
 export type TDocumentationConditionData = {
   uf: string
   cidade: string
-  tipoLigacao: TElectricalInstallationLigationTypes
-  grupoInstalacao: TElectricalInstallationGroups
-  tipoTitular: TElectricalInstallationOwnerTypes
+  tipoLigacao: TElectricalInstallationLigationTypes | null
+  grupoInstalacao: TElectricalInstallationGroups | null
+  tipoTitular: TElectricalInstallationOwnerTypes | null
 }
 
 export const conditionsAlias = [

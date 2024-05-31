@@ -10,9 +10,16 @@ import HomologationBlock from './RequestStages/HomologationBlock'
 import TechnicalAnalysisBlock from './RequestStages/TechnicalAnalysisBlock'
 import SaleCompositionBlock from './RequestStages/SaleCompositionBlock'
 import PaymentInformationBlock from './RequestStages/PaymentInformationBlock'
+import { TDocumentationConditionData } from '@/utils/project-documentation/helpers'
+import { TFileHolder } from '@/utils/schemas/file-reference.schema'
+import DocumentationInformationBlock from './RequestStages/DocumentationInformationBlock'
 
-type Stages = 'general' | 'client' | 'homologation' | 'technical-analysis' | 'products-and-services' | 'payment'
+export type TDocumentationHolder = {
+  conditionData: TDocumentationConditionData
+  filesHolder: TFileHolder
+}
 
+type Stages = 'general' | 'client' | 'homologation' | 'technical-analysis' | 'products-and-services' | 'payment' | 'documentation'
 type NewProjectRequestProps = {
   opportunity: TOpportunityDTOWithClient
   proposal: TProposalDTO
@@ -31,6 +38,10 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
     nome: '',
     idParceiro: opportunity.idParceiro,
     identificador: opportunity.identificador,
+    tipo: {
+      id: opportunity.tipo.id,
+      titulo: opportunity.tipo.titulo,
+    },
     venda: sale,
     responsaveis: opportunity.responsaveis,
     oportunidade: {
@@ -103,6 +114,16 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
     },
     dataInsercao: new Date().toISOString(),
   })
+  const [documentationHolder, setDocumentationHolder] = useState<TDocumentationHolder>({
+    conditionData: {
+      uf: infoHolder.localizacao.uf,
+      cidade: infoHolder.localizacao.cidade,
+      grupoInstalacao: opportunity.instalacao.grupo || null,
+      tipoLigacao: opportunity.instalacao.tipoLigacao || null,
+      tipoTitular: opportunity.instalacao.tipoTitular || null,
+    },
+    filesHolder: {},
+  })
   return (
     <div id="new-project-request" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="fixed left-[50%] top-[50%] z-[100] h-[80%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:w-[70%]">
@@ -136,6 +157,8 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
               <HomologationBlock
                 infoHolder={infoHolder}
                 setInfoHolder={setInfoHolder}
+                documentationHolder={documentationHolder}
+                setDocumentationHolder={setDocumentationHolder}
                 session={session}
                 moveToNextStage={() => setStage('technical-analysis')}
                 moveToPreviousStage={() => setStage('client')}
@@ -167,6 +190,14 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
                 moveToNextStage={() => setStage('payment')}
                 moveToPreviousStage={() => setStage('products-and-services')}
                 client={opportunity.cliente}
+              />
+            ) : null}
+            {stage == 'documentation' ? (
+              <DocumentationInformationBlock
+                infoHolder={infoHolder}
+                setInfoHolder={setInfoHolder}
+                documentationHolder={documentationHolder}
+                setDocumentationHolder={setDocumentationHolder}
               />
             ) : null}
           </div>
