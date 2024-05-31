@@ -200,8 +200,8 @@ const editOpportunity: NextApiHandler<PutResponse> = async (req, res) => {
   const hasEditAuthorizationForOpportunity = !userScope || opportunity.responsaveis.some((opResp) => opResp.id == userId || userScope.includes(opResp.id))
   if (!hasEditAuthorizationForOpportunity) throw new createHttpError.Unauthorized('Você não possui permissão para alterar informações dessa oportunidade.')
 
-  // const updatesMade = identifyChanges({ previousData: opportunity, newData: changes })
-  // console.log('UPDATES MADE', updatesMade)
+  const updatesMade = identifyChanges({ previousData: opportunity, newData: changes })
+  console.log('UPDATES MADE', updatesMade)
   const updateResponse = await updateOpportunity({ id: id, collection: opportunitiesCollection, changes: changes, query: partnerQuery })
 
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na atualização da oportunidade.')
