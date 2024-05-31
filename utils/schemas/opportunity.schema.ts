@@ -11,6 +11,15 @@ export const ElectricalInstallationGroupsSchema = z.union([z.literal('RESIDENCIA
   invalid_type_error: 'Tipo não válido para grupo da instalação elétrica.',
 })
 export type TElectricalInstallationGroups = z.infer<typeof ElectricalInstallationGroupsSchema>
+
+const ElectricalInstallationLigationTypesSchema = z.union([z.literal('NOVA'), z.literal('EXISTENTE')], {
+  required_error: 'Tipo da ligação da instalação não informado.',
+  invalid_type_error: 'Tipo não válido para o tipo da ligação da instalação.',
+})
+
+const ElectricalInstallationOwnerTypeSchema = z.union([z.literal('PESSOA FÍSICA'), z.literal('PESSOA JURÍDICA')])
+export type TElectricalInstallationOwnerTypes = z.infer<typeof ElectricalInstallationOwnerTypeSchema>
+export type TElectricalInstallationLigationTypes = z.infer<typeof ElectricalInstallationLigationTypesSchema>
 export const SaleCategorySchema = z.enum(['KIT', 'PLANO', 'PRODUTOS', 'SERVIÇOS'], {
   required_error: 'Categoria de venda não fornecida.',
   invalid_type_error: 'Tipo não válido para categoria de venda.',
@@ -75,10 +84,7 @@ export const GeneralOpportunitySchema = z.object({
     concessionaria: z.string().optional().nullable(),
     numero: z.string().optional().nullable(),
     grupo: ElectricalInstallationGroupsSchema.optional().nullable(),
-    tipoLigacao: z
-      .union([z.literal('EXISTENTE'), z.literal('NOVA')])
-      .optional()
-      .nullable(),
+    tipoLigacao: ElectricalInstallationLigationTypesSchema.optional().nullable(),
     tipoTitular: z
       .union([z.literal('PESSOA FÍSICA'), z.literal('PESSOA JURÍDICA')])
       .optional()
@@ -175,10 +181,7 @@ export const InsertOpportunitySchema = z.object({
     concessionaria: z.string().optional().nullable(),
     numero: z.string().optional().nullable(),
     grupo: ElectricalInstallationGroupsSchema.optional().nullable(),
-    tipoLigacao: z
-      .union([z.literal('EXISTENTE'), z.literal('NOVA')])
-      .optional()
-      .nullable(),
+    tipoLigacao: ElectricalInstallationLigationTypesSchema.optional().nullable(),
     tipoTitular: z
       .union([z.literal('PESSOA FÍSICA'), z.literal('PESSOA JURÍDICA')])
       .optional()
@@ -290,10 +293,7 @@ export const UpdateOpportunitySchema = z.object({
     concessionaria: z.string().optional().nullable(),
     numero: z.string().optional().nullable(),
     grupo: ElectricalInstallationGroupsSchema.optional().nullable(),
-    tipoLigacao: z
-      .union([z.literal('EXISTENTE'), z.literal('NOVA')])
-      .optional()
-      .nullable(),
+    tipoLigacao: ElectricalInstallationLigationTypesSchema.optional().nullable(),
     tipoTitular: z
       .union([z.literal('PESSOA FÍSICA'), z.literal('PESSOA JURÍDICA')])
       .optional()
@@ -406,10 +406,7 @@ export const OpportunityWithClientSchema = z.object({
     concessionaria: z.string().optional().nullable(),
     numero: z.string().optional().nullable(),
     grupo: ElectricalInstallationGroupsSchema.optional().nullable(),
-    tipoLigacao: z
-      .union([z.literal('EXISTENTE'), z.literal('NOVA')])
-      .optional()
-      .nullable(),
+    tipoLigacao: ElectricalInstallationLigationTypesSchema.optional().nullable(),
     tipoTitular: z
       .union([z.literal('PESSOA FÍSICA'), z.literal('PESSOA JURÍDICA')])
       .optional()

@@ -24,40 +24,46 @@ function identifyChanges({ previousData, newData }) {
   const changes = Object.entries(newFlat).reduce((acc, [key, newValue]) => {
     const oldValue = previousFlat[key]
 
-    if (Array.isArray(newValue)) {
-      // Handling arrays
-      const oldArray = oldValue || []
-      const newArray = newValue
+    // if (Array.isArray(newValue)) {
+    //   // Handling arrays
+    //   const oldArray = oldValue || []
+    //   const newArray = newValue
 
-      const add = newArray.filter((item) => !oldArray.some((oldItem) => JSON.stringify(oldItem) === JSON.stringify(item)))
-      const remove = oldArray.filter((item) => !newArray.some((newItem) => JSON.stringify(newItem) === JSON.stringify(item)))
-      const modify = newArray.reduce((modAcc, item, index) => {
-        if (index < oldArray.length && JSON.stringify(oldArray[index]) !== JSON.stringify(item)) {
-          modAcc.push({
-            index,
-            old_value: oldArray[index],
-            new_value: item,
-          })
-        }
-        return modAcc
-      }, [])
+    //   const add = newArray.filter((item) => !oldArray.some((oldItem) => JSON.stringify(oldItem) === JSON.stringify(item)))
+    //   const remove = oldArray.filter((item) => !newArray.some((newItem) => JSON.stringify(newItem) === JSON.stringify(item)))
+    //   const modify = newArray.reduce((modAcc, item, index) => {
+    //     if (index < oldArray.length && JSON.stringify(oldArray[index]) !== JSON.stringify(item)) {
+    //       modAcc.push({
+    //         index,
+    //         old_value: oldArray[index],
+    //         new_value: item,
+    //       })
+    //     }
+    //     return modAcc
+    //   }, [])
 
-      if (add.length || remove.length || modify.length) {
-        acc[key] = {}
-        if (add.length) acc[key].add = add
-        if (remove.length) acc[key].remove = remove
-        if (modify.length) acc[key].modify = modify
-      }
-    } else {
-      if (oldValue === undefined) {
-        // New information
-        acc[key] = { oldValue: null, newValue }
-      } else if (oldValue !== newValue) {
-        // Changed information
-        acc[key] = { oldValue, newValue }
-      }
+    //   if (add.length || remove.length || modify.length) {
+    //     acc[key] = {}
+    //     if (add.length) acc[key].add = add
+    //     if (remove.length) acc[key].remove = remove
+    //     if (modify.length) acc[key].modify = modify
+    //   }
+    // } else {
+    //   if (oldValue === undefined) {
+    //     // New information
+    //     acc[key] = { oldValue: null, newValue }
+    //   } else if (oldValue !== newValue) {
+    //     // Changed information
+    //     acc[key] = { oldValue, newValue }
+    //   }
+    // }
+    if (oldValue === undefined) {
+      // New information
+      acc[key] = { oldValue: null, newValue }
+    } else if (oldValue !== newValue) {
+      // Changed information
+      acc[key] = { oldValue, newValue }
     }
-
     return acc
   }, {})
 
@@ -195,7 +201,7 @@ const newData = {
   dataInsercao: '2023-07-11T19:38:24.962Z',
 }
 const changes = identifyChanges({ previousData: previousData, newData: newData })
-console.log('CHANGES', changes.responsaveis.modify)
+console.log('CHANGES', changes)
 
 const responsaveis = {
   add: [

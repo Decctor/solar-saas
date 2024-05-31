@@ -374,6 +374,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
             client={proposal.clienteDados}
             proposeInfo={proposal}
             closeModal={() => setNewContractRequestIsOpen(false)}
+            session={session}
           />
         ) : null}
       </div>

@@ -49,6 +49,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const { id } = req.query
 
   // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+
   // const opportunitiesCollection: Collection<TOpportunity> = crmDb.collection('opportunities')
 
   // const opportunities = await opportunitiesCollection.find({}, { projection: { perda: 1 } }).toArray()
@@ -189,7 +190,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  // const bulkwriteResponse = await opportunitiesCollection.bulkWrite(bulkWriteArr)
+  // const bulkwriteResponse = await projectTypesCollection.bulkWrite(bulkwriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
   return res.json('DESATIVADA')
 }

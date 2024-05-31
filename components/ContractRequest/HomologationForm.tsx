@@ -6,8 +6,6 @@ import JourneyInfo from './SolarSystem/JourneyInfo'
 
 import PAInfo from './SolarSystem/PAInfo'
 import PaymentInfo from './SolarSystem/PaymentInfo'
-import HomologationInfo from './Homologation/HomologationInfo'
-
 import { Session } from 'next-auth'
 import DocumentationInfo from './Homologation/DocumentationInfo'
 import { UploadResult, getDownloadURL, getMetadata, ref, uploadBytes } from 'firebase/storage'
@@ -25,6 +23,7 @@ import { TClientDTO } from '@/utils/schemas/client.schema'
 import { storage } from '@/services/firebase/storage-config'
 import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
 import { createContractRequest } from '@/utils/mutations/contract-request'
+import HomologationInfo from './SolarSystem/HomologationInfo'
 
 type HomologationFormProps = {
   requestInfo: TContractRequest

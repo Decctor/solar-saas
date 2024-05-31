@@ -10,6 +10,7 @@ import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contra
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import { TProposalDTO, TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
 import { TUserDTOSimplified } from '@/utils/schemas/user.schema'
+import { Session } from 'next-auth'
 import React, { useEffect, useState } from 'react'
 import { VscChromeClose } from 'react-icons/vsc'
 
@@ -166,9 +167,10 @@ type ContractRequestProps = {
   proposeInfo: TProposalDTOWithOpportunity
   client: TClientDTO
   responsible: TUserDTOSimplified
+  session: Session
   closeModal: () => void
 }
-function NewContractRequest({ closeModal, proposeInfo, client, responsible }: ContractRequestProps) {
+function NewContractRequest({ closeModal, proposeInfo, client, session, responsible }: ContractRequestProps) {
   const { data: responsibles } = useOpportunityCreators()
   // Data for contract request
   const [requestInfo, setRequestInfo] = useState<TContractRequest>(
@@ -184,7 +186,7 @@ function NewContractRequest({ closeModal, proposeInfo, client, responsible }: Co
       <div className="fixed left-[50%] top-[50%] z-[100] h-[80%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:w-[70%]">
         <div className="flex h-full flex-col">
           <div className="flex flex-col items-center justify-between border-b border-gray-200 px-2 pb-2 text-lg lg:flex-row">
-            <h3 className="text-xl font-bold text-[#353432] dark:text-white ">SOLICITAÇÃO DE CONTRATO DE SISTEMA FOTOVOLTAICO</h3>
+            <h3 className="text-xl font-bold text-[#353432] dark:text-white ">SOLICITAÇÃO DE CONTRATO</h3>
             <button
               onClick={closeModal}
               type="button"
