@@ -23,6 +23,12 @@ export const conditionsAlias = [
   { label: 'TIPO DO TITULAR', value: 'tipoTitular' },
 ]
 
+export function formatCondition(value: string) {
+  const condition = conditionsAlias.find((c) => c.value == value)
+  if (!condition) return 'NÃO DEFINIDO'
+  return condition.label
+}
+
 type GetConditionOptionsParams = {
   variable: keyof TDocumentationConditionData
 }

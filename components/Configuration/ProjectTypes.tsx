@@ -16,6 +16,7 @@ type ProjectTypesProps = {
   session: Session
 }
 function ProjectTypes({ session }: ProjectTypesProps) {
+  const userHasProjectTypeEditingPermission = session.user.permissoes.configuracoes.tiposProjeto
   const [newProjectTypeModalIsOpen, setNewProjectTypeModalIsOpen] = useState<boolean>(false)
   const { data: types, isSuccess, isLoading, isError } = useProjectTypes()
   const [editModal, setEditModal] = useState<{ id: string | null; isOpen: boolean }>({ id: null, isOpen: false })
@@ -45,7 +46,7 @@ function ProjectTypes({ session }: ProjectTypesProps) {
                     <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
                       <MdDashboard size={13} />
                     </div>
-                    {!FixedProjectTypes.includes(type._id) ? (
+                    {userHasProjectTypeEditingPermission ? (
                       <p
                         onClick={() => setEditModal({ id: type._id, isOpen: true })}
                         className="cursor-pointer text-sm font-medium leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500"
@@ -56,6 +57,9 @@ function ProjectTypes({ session }: ProjectTypesProps) {
                       <p className="text-sm font-medium leading-none tracking-tight">{type.nome}</p>
                     )}
                   </div>
+                  {FixedProjectTypes.includes(type._id) ? (
+                    <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">FIXO</h1>
+                  ) : null}
                 </div>
 
                 <h1 className='"w-full mt-2 text-start text-xs font-medium'>SEÇÕES DE DIMENSIONAMENTO</h1>
@@ -67,20 +71,16 @@ function ProjectTypes({ session }: ProjectTypesProps) {
                   ))}
                 </div>
                 <div className="mt-2 flex w-full items-center justify-end gap-2">
-                  {type.idParceiro ? (
-                    <>
-                      <div className={`flex items-center gap-2`}>
-                        <div className="ites-center flex gap-1">
-                          <BsCalendarPlus />
-                          <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(type.dataInsercao, true)}</p>
-                        </div>
-                      </div>
-                      <div className="flex items-center justify-center gap-1">
-                        <Avatar fallback={'U'} height={20} width={20} url={type.autor?.avatar_url || undefined} />
-                        <p className="text-xs font-medium text-gray-500">{type.autor?.nome}</p>
-                      </div>
-                    </>
-                  ) : null}
+                  <div className={`flex items-center gap-2`}>
+                    <div className="ites-center flex gap-1">
+                      <BsCalendarPlus />
+                      <p className={`text-xs font-medium text-gray-500`}>{formatDateAsLocale(type.dataInsercao, true)}</p>
+                    </div>
+                  </div>
+                  <div className="flex items-center justify-center gap-1">
+                    <Avatar fallback={'U'} height={20} width={20} url={type.autor?.avatar_url || undefined} />
+                    <p className="text-xs font-medium text-gray-500">{type.autor?.nome}</p>
+                  </div>
                 </div>
               </div>
             ))

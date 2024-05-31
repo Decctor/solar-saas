@@ -1,3 +1,4 @@
+import DocumentationInformationBlock from '@/components/ProjectType/DocumentationInformationBlock'
 import GeneralInformationBlock from '@/components/ProjectType/GeneralInformationBlock'
 import ProposalTemplatesInformationBlock from '@/components/ProjectType/ProposalTemplatesInformationBlock'
 import SizingInformationBlock from '@/components/ProjectType/SizingInformationBlock'
@@ -66,6 +67,7 @@ function EditProjectType({ projectTypeId, session, closeModal }: EditProjectType
             <GeneralInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
             <SizingInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
             <ProposalTemplatesInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+            <DocumentationInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
           </div>
           <div className="flex w-full items-center justify-end p-2">
             <button
