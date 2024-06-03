@@ -3,7 +3,7 @@ import { apiHandler, validateAuthorization } from '@/utils/api'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 
 import { TProposal } from '@/utils/schemas/proposal.schema'
-import { ResponsiblesBodySchema } from '@/utils/schemas/stats.schema'
+import { GeneralStatsFiltersSchema, ResponsiblesBodySchema } from '@/utils/schemas/stats.schema'
 
 import { TUser } from '@/utils/schemas/user.schema'
 import dayjs from 'dayjs'
@@ -67,7 +67,7 @@ const getOverallResults: NextApiHandler<GetResponse> = async (req, res) => {
   const userId = session.user.id
   const userScope = session.user.permissoes.resultados.escopo
   const { after, before } = QueryDatesSchema.parse(req.query)
-  const { responsibles, partners } = ResponsiblesBodySchema.parse(req.body)
+  const { responsibles, partners, projectTypes } = GeneralStatsFiltersSchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
   // to access a overall visualiation, which he/she isnt allowed
@@ -89,6 +89,7 @@ const getOverallResults: NextApiHandler<GetResponse> = async (req, res) => {
 
   const responsiblesQuery: Filter<TOpportunity> = responsibles ? { 'responsaveis.id': { $in: responsibles } } : {}
   const partnerQuery = partners ? { idParceiro: { $in: [...partners, null] } } : {}
+  const projectTypesQuery: Filter<TOpportunity> = projectTypes ? { 'tipo.id': { $in: [...projectTypes] } } : {}
 
   const afterDate = dayjs(after).startOf('day').subtract(3, 'hour').toDate()
   const beforeDate = dayjs(before).endOf('day').subtract(3, 'hour').toDate()
@@ -96,7 +97,7 @@ const getOverallResults: NextApiHandler<GetResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
 
-  const projects = await getOpportunities({ opportunitiesCollection, responsiblesQuery, partnerQuery, afterDate, beforeDate })
+  const projects = await getOpportunities({ opportunitiesCollection, responsiblesQuery, partnerQuery, projectTypesQuery, afterDate, beforeDate })
 
   const condensedResults = projects.reduce(
     (acc: TOverallResults, current) => {
@@ -197,6 +198,7 @@ type GetProjectsParams = {
   opportunitiesCollection: Collection<TOpportunity>
   responsiblesQuery: { 'responsaveis.id': { $in: string[] } } | {}
   partnerQuery: { idParceiro: { $in: string[] } } | {}
+  projectTypesQuery: { 'tipo.id': { $in: string[] } } | {}
   afterDate: Date
   beforeDate: Date
 }
@@ -209,13 +211,14 @@ type TOverallResultsProject = {
   dataPerda: TOpportunity['perda']['data']
   dataInsercao: TOpportunity['dataInsercao']
 }
-async function getOpportunities({ opportunitiesCollection, partnerQuery, responsiblesQuery, afterDate, beforeDate }: GetProjectsParams) {
+async function getOpportunities({ opportunitiesCollection, partnerQuery, responsiblesQuery, projectTypesQuery, afterDate, beforeDate }: GetProjectsParams) {
   try {
     const afterDateStr = afterDate.toISOString()
     const beforeDateStr = beforeDate.toISOString()
     const match = {
       ...partnerQuery,
       ...responsiblesQuery,
+      ...projectTypesQuery,
       $or: [
         { $and: [{ dataInsercao: { $gte: afterDateStr } }, { dataInsercao: { $lte: beforeDateStr } }] },
         { $and: [{ 'perda.data': { $gte: afterDateStr } }, { 'perda.data': { $lte: beforeDateStr } }] },

@@ -12,6 +12,8 @@ type GetResponse = {
 const getPartnerSimplified: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
 
   const { id } = req.query
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -24,7 +26,7 @@ const getPartnerSimplified: NextApiHandler<GetResponse> = async (req, res) => {
     if (!partner) throw new createHttpError.NotFound('Parceiro não encontrado.')
     res.json({ data: partner })
   }
-  const partners = await getPartnersSimplified({ collection: partnersCollection })
+  const partners = await getPartnersSimplified({ collection: partnersCollection, query: partnerQuery })
 
   return res.status(200).json({ data: partners })
 }

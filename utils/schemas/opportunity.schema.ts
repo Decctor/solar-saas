@@ -77,7 +77,7 @@ export const GeneralOpportunitySchema = z.object({
     idProposta: z.string().optional().nullable(),
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime().optional().nullable(),
-    idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    idSolicitacao: z.string().optional().nullable(),
     dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de solicitação de contrato.' }).optional().nullable(),
   }),
   instalacao: z.object({
@@ -174,7 +174,7 @@ export const InsertOpportunitySchema = z.object({
     idProposta: z.string().optional().nullable(),
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
-    idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    idSolicitacao: z.string().optional().nullable(),
     dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de solicitação de contrato.' }).optional().nullable(),
   }),
   instalacao: z.object({
@@ -286,7 +286,7 @@ export const UpdateOpportunitySchema = z.object({
     idProposta: z.string().optional().nullable(),
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
-    idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    idSolicitacao: z.string().optional().nullable(),
     dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de solicitação de contrato.' }).optional().nullable(),
   }),
   instalacao: z.object({
@@ -399,7 +399,7 @@ export const OpportunityWithClientSchema = z.object({
     idProposta: z.string().optional().nullable(),
     idProjeto: z.string().optional().nullable(),
     data: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
-    idSolicitacao: z.string().datetime({ message: 'Formato inválido para data de ganho.' }).optional().nullable(),
+    idSolicitacao: z.string().optional().nullable(),
     dataSolicitacao: z.string().datetime({ message: 'Formato inválido para data de solicitação de contrato.' }).optional().nullable(),
   }),
   instalacao: z.object({

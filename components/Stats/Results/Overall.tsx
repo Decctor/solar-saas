@@ -11,9 +11,10 @@ type OverallResultsProps = {
   before: string
   responsibles: string[] | null
   partners: string[] | null
+  projectTypes: string[] | null
 }
-function OverallResults({ after, before, responsibles, partners }: OverallResultsProps) {
-  const { data: stats } = useOverallSalesResults({ after, before, responsibles, partners })
+function OverallResults({ after, before, responsibles, partners, projectTypes }: OverallResultsProps) {
+  const { data: stats } = useOverallSalesResults({ after, before, responsibles, partners, projectTypes })
 
   return (
     <div className="flex w-full flex-col">

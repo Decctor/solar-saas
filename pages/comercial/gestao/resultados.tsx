@@ -33,6 +33,7 @@ import { useSalePromoters } from '@/utils/queries/users'
 import { TUserDTOWithSaleGoals } from '@/utils/schemas/user.schema'
 import { fetchResultsExports } from '@/utils/queries/stats/exports'
 import { usePartnersSimplified } from '@/utils/queries/partners'
+import { useComercialResultsQueryOptions } from '@/utils/queries/stats'
 
 const currentDate = new Date()
 const periodStr = dayjs(currentDate).format('MM/YYYY')
@@ -49,9 +50,22 @@ function getSaleGoals(promoter: TUserDTOWithSaleGoals) {
   return currentPeriodSaleGoals.metas
 }
 
+type TQueryFilters = {
+  period: { after: string; before: string }
+  responsibles: string[] | null
+  partners: string[] | null
+  projectTypes: string[] | null
+}
+
 function ComercialResults() {
   const { data: session, status } = useSession({ required: true })
 
+  const [queryFilters, setQueryFilters] = useState<TQueryFilters>({
+    period: { after: firstDayOfMonth, before: lastDayOfMonth },
+    responsibles: null,
+    partners: null,
+    projectTypes: null,
+  })
   const [period, setPeriod] = useState({ after: firstDayOfMonth, before: lastDayOfMonth })
   const [users, setUsers] = useState<string[] | null>(null)
   const [partners, setPartners] = useState<string[] | null>(null)
@@ -60,14 +74,12 @@ function ComercialResults() {
     isOpen: false,
     promoter: null,
   })
-
-  const { data: promoters, isLoading: promotersLoading, isSuccess: promotersSuccess } = useSalePromoters()
-  const { data: partnersSimplified } = usePartnersSimplified()
+  const { data: queryOptions, isSuccess: queryOptionsSuccess } = useComercialResultsQueryOptions()
   async function handleDataExport() {
     const loadingToastId = toast.loading('Carregando...')
     try {
       const results = await fetchResultsExports({ after: period.after, before: period.before, responsibles: users, partners: partners })
-      getExcelFromJSON(results, 'RELATORIO_VENDAS')
+      getExcelFromJSON(results, 'RESULTADOS_COMERCIAIS')
       toast.dismiss(loadingToastId)
       return toast.success('Exportação feita com sucesso !')
     } catch (error) {
@@ -99,11 +111,11 @@ function ComercialResults() {
                   <DateInput
                     showLabel={false}
                     label="PERÍODO"
-                    value={formatDate(period.after)}
+                    value={formatDate(queryFilters.period.after)}
                     handleChange={(value) =>
-                      setPeriod((prev) => ({
+                      setQueryFilters((prev) => ({
                         ...prev,
-                        after: formatDateInputChange(value) || firstDayOfMonth,
+                        period: { ...prev.period, after: formatDateInputChange(value) || firstDayOfMonth },
                       }))
                     }
                     width="100%"
@@ -113,11 +125,11 @@ function ComercialResults() {
                   <DateInput
                     showLabel={false}
                     label="PERÍODO"
-                    value={formatDate(period.before)}
+                    value={formatDate(queryFilters.period.before)}
                     handleChange={(value) =>
-                      setPeriod((prev) => ({
+                      setQueryFilters((prev) => ({
                         ...prev,
-                        before: formatDateInputChange(value) || lastDayOfMonth,
+                        period: { ...prev.period, before: formatDateInputChange(value) || lastDayOfMonth },
                       }))
                     }
                     width="100%"
@@ -129,11 +141,11 @@ function ComercialResults() {
               <MultipleSelectInput
                 label="USUÁRIOS"
                 showLabel={false}
-                options={promoters?.map((promoter) => ({ id: promoter._id || '', label: promoter.nome, value: promoter._id })) || null}
-                selected={users}
-                handleChange={(value) => setUsers(value as string[])}
+                options={queryOptions?.salePromoters?.map((promoter) => ({ id: promoter._id || '', label: promoter.nome, value: promoter._id })) || null}
+                selected={queryFilters.responsibles}
+                handleChange={(value) => setQueryFilters((prev) => ({ ...prev, responsibles: value as string[] }))}
                 selectedItemLabel="TODOS"
-                onReset={() => setUsers(null)}
+                onReset={() => setQueryFilters((prev) => ({ ...prev, responsibles: null }))}
                 width="100%"
               />
             </div>
@@ -141,24 +153,61 @@ function ComercialResults() {
               <MultipleSelectInput
                 label="PARCEIROS"
                 showLabel={false}
-                options={partnersSimplified?.map((promoter) => ({ id: promoter._id || '', label: promoter.nome, value: promoter._id })) || null}
-                selected={partners}
-                handleChange={(value) => setPartners(value as string[])}
+                options={queryOptions?.partners?.map((partner) => ({ id: partner._id || '', label: partner.nome, value: partner._id })) || null}
+                selected={queryFilters.partners}
+                handleChange={(value) => setQueryFilters((prev) => ({ ...prev, partners: value as string[] }))}
                 selectedItemLabel="TODOS"
-                onReset={() => setPartners(null)}
+                onReset={() => setQueryFilters((prev) => ({ ...prev, partners: null }))}
+                width="100%"
+              />
+            </div>
+            <div className="w-full lg:w-[300px]">
+              <MultipleSelectInput
+                selectedItemLabel="TODOS OS PROJETOS"
+                selected={queryFilters.projectTypes}
+                options={queryOptions?.projectTypes?.map((resp) => ({ id: resp._id || '', label: resp.nome || '', value: resp._id || '' })) || null}
+                handleChange={(value) => setQueryFilters((prev) => ({ ...prev, projectTypes: value as string[] }))}
+                onReset={() => setQueryFilters((prev) => ({ ...prev, projectTypes: null }))}
+                showLabel={false}
+                label="TIPOS DE PROJETO"
                 width="100%"
               />
             </div>
           </div>
         </div>
-        <OverallResults after={period.after} before={period.before} responsibles={users} partners={partners} />
-        <InProgressResults after={period.after} before={period.before} responsibles={users} partners={partners} />
-        <SalesTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} partners={partners} />
-        <SDRTeamResults after={period.after} before={period.before} responsibles={users} promoters={promoters} partners={partners} />
+        <OverallResults
+          after={period.after}
+          before={period.before}
+          responsibles={queryFilters.responsibles}
+          partners={queryFilters.partners}
+          projectTypes={queryFilters.projectTypes}
+        />
+        <InProgressResults
+          after={period.after}
+          before={period.before}
+          responsibles={queryFilters.responsibles}
+          partners={queryFilters.partners}
+          projectTypes={queryFilters.projectTypes}
+        />
+        <SalesTeamResults
+          after={period.after}
+          before={period.before}
+          responsibles={queryFilters.responsibles}
+          promoters={queryOptions?.salePromoters}
+          partners={queryFilters.partners}
+          projectTypes={queryFilters.projectTypes}
+        />
+        <SDRTeamResults
+          after={period.after}
+          before={period.before}
+          responsibles={queryFilters.responsibles}
+          promoters={queryOptions?.salePromoters}
+          partners={queryFilters.partners}
+        />
         <h1 className="mt-4 font-Raleway text-xl font-black text-black">CONTROLE DE EQUIPE</h1>
         <div className="flex grow flex-col flex-wrap justify-around gap-2 py-2 lg:flex-row">
-          {promotersSuccess ? (
-            promoters?.map((responsible, index) => (
+          {queryOptionsSuccess ? (
+            queryOptions.salePromoters?.map((responsible, index) => (
               <div
                 key={index}
                 className="relative flex min-h-[100px] w-full flex-col items-center gap-4 rounded-sm border border-gray-300 bg-[#fff] p-6 shadow-md lg:w-[650px]"

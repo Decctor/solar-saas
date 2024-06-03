@@ -43,8 +43,8 @@ const getTechnicalAnalysisStats: NextApiHandler<GetResponse> = async (req, res) 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const analysisCollection: Collection<TTechnicalAnalysis> = db.collection('technical-analysis')
 
-  const afterDateStr = formatDateQuery(after, 'start')
-  const beforeDateStr = formatDateQuery(before, 'end')
+  const afterDateStr = formatDateQuery(after, 'start', 'string') as string
+  const beforeDateStr = formatDateQuery(before, 'end', 'string') as string
   const analysis = await getAnalysis({ analysisCollection, afterDateStr, beforeDateStr })
 
   const condensed = getCondensedStats({ analysis, afterDateStr, beforeDateStr })

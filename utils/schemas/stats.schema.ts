@@ -2,9 +2,54 @@ import { z } from 'zod'
 import { TActivityDTO } from './activities.schema'
 
 export const ResponsiblesBodySchema = z.object({
-  responsibles: z.array(z.string({ required_error: 'Responsáveis não informados ou inválidos.', invalid_type_error: 'Responsáveis inválidos.' })).nullable(),
-  partners: z.array(z.string({ required_error: 'Parceiros não informados ou inválidos.', invalid_type_error: 'Parceiros inválidos.' })).nullable(),
+  responsibles: z
+    .array(z.string({ required_error: 'Responsáveis não informados ou inválidos.', invalid_type_error: 'Responsáveis inválidos.' }), {
+      required_error: 'Lista de responsáveis não informada.',
+      invalid_type_error: 'Tipo não válido para a lista de responsáveis.',
+    })
+    .nullable(),
+  partners: z
+    .array(z.string({ required_error: 'Parceiros não informados ou inválidos.', invalid_type_error: 'Parceiros inválidos.' }), {
+      required_error: 'Lista de parceiros não informada.',
+      invalid_type_error: 'Tipo não válido para a lista de parceiros.',
+    })
+    .nullable(),
 })
+export const QueryDatesSchema = z.object({
+  after: z
+    .string({
+      required_error: 'Parâmetros de período não fornecidos ou inválidos.',
+      invalid_type_error: 'Parâmetros de período não fornecidos ou inválidos.',
+    })
+    .datetime({ message: 'Tipo inválido para parâmetro de período.' }),
+  before: z
+    .string({
+      required_error: 'Parâmetros de período não fornecidos ou inválidos.',
+      invalid_type_error: 'Parâmetros de período não fornecidos ou inválidos.',
+    })
+    .datetime({ message: 'Tipo inválido para parâmetro de período.' }),
+})
+export const GeneralStatsFiltersSchema = z.object({
+  responsibles: z
+    .array(z.string({ required_error: 'Responsáveis não informados ou inválidos.', invalid_type_error: 'Responsáveis inválidos.' }), {
+      required_error: 'Lista de responsáveis não informada.',
+      invalid_type_error: 'Tipo não válido para a lista de responsáveis.',
+    })
+    .nullable(),
+  partners: z
+    .array(z.string({ required_error: 'Parceiros não informados ou inválidos.', invalid_type_error: 'Parceiros inválidos.' }), {
+      required_error: 'Lista de parceiros não informada.',
+      invalid_type_error: 'Tipo não válido para a lista de parceiros.',
+    })
+    .nullable(),
+  projectTypes: z
+    .array(z.string({ required_error: 'Tipos de projeto não informados ou inválidos.', invalid_type_error: 'Tipos de projeto inválidos.' }), {
+      required_error: 'Lista de tipos de projetos não informada.',
+      invalid_type_error: 'Tipo não válido para a lista de tipos de projetos.',
+    })
+    .nullable(),
+})
+
 export type TGeneralStats = {
   simplificado: {
     ANTERIOR: {

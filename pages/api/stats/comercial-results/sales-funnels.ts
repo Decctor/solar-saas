@@ -9,7 +9,7 @@ import { TFunnel } from '@/utils/schemas/funnel.schema'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 
 import { TProposal } from '@/utils/schemas/proposal.schema'
-import { ResponsiblesBodySchema } from '@/utils/schemas/stats.schema'
+import { GeneralStatsFiltersSchema, ResponsiblesBodySchema } from '@/utils/schemas/stats.schema'
 import dayjs from 'dayjs'
 import createHttpError from 'http-errors'
 
@@ -69,7 +69,7 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
   const userId = session.user.id
   const userScope = session.user.permissoes.resultados.escopo
   const { after, before } = QueryDatesSchema.parse(req.query)
-  const { responsibles, partners } = ResponsiblesBodySchema.parse(req.body)
+  const { responsibles, partners, projectTypes } = GeneralStatsFiltersSchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
   // to access a overall visualiation, which he/she isnt allowed
@@ -91,6 +91,7 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
 
   const responsiblesQuery: Filter<TOpportunity> = responsibles ? { 'responsaveis.id': { $in: responsibles } } : {}
   const partnerQuery = partners ? { idParceiro: { $in: [...partners, null] } } : {}
+  const projectTypesQuery: Filter<TOpportunity> = projectTypes ? { 'tipo.id': { $in: [...projectTypes] } } : {}
 
   const afterDate = dayjs(after).startOf('day').subtract(3, 'hour').toDate()
   const beforeDate = dayjs(before).endOf('day').subtract(3, 'hour').toDate()
@@ -99,7 +100,7 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
   const funnelsCollection: Collection<TFunnel> = db.collection('funnels')
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
-  const projects = await getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate, partnerQuery })
+  const projects = await getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate, partnerQuery, projectTypesQuery })
   const funnels = await getPartnerFunnels({ collection: funnelsCollection, query: partnerQuery })
   const funnelsReferences = await getFunnelReferences({
     funnelReferencesCollection,
@@ -250,17 +251,10 @@ function getFunnelsReduced({ funnels }: GetFunnelsReduceParams) {
 type GetProjetsParams = {
   opportunitiesCollection: Collection<TOpportunity>
   responsiblesQuery: { 'responsaveis.id': { $in: string[] } } | {}
+  projectTypesQuery: { 'tipo.id': { $in: string[] } } | {}
   afterDate: Date
   beforeDate: Date
-  partnerQuery:
-    | {
-        idParceiro: {
-          $in: (string | null)[]
-        }
-      }
-    | {
-        idParceiro?: undefined
-      }
+  partnerQuery: { idParceiro: { $in: (string | null)[] } } | {}
 }
 type TInProgressResultsProject = {
   _id: string
@@ -268,13 +262,14 @@ type TInProgressResultsProject = {
   motivoPerda: TOpportunity['perda']['descricaoMotivo']
   dataPerda: TOpportunity['perda']['data']
 }
-async function getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate, partnerQuery }: GetProjetsParams) {
+async function getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate, partnerQuery, projectTypesQuery }: GetProjetsParams) {
   try {
     const afterDateStr = afterDate.toISOString()
     const beforeDateStr = beforeDate.toISOString()
     const match = {
       ...responsiblesQuery,
       ...partnerQuery,
+      ...projectTypesQuery,
       $or: [{ 'ganho.data': null, 'perda.data': null }, { $and: [{ 'perda.data': { $gte: afterDateStr } }, { 'perda.data': { $lte: beforeDateStr } }] }],
     }
     const addFields = { activeProposeObjectID: { $toObjectId: '$idPropostaAtiva' } }

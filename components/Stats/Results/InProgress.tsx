@@ -29,9 +29,10 @@ type InProgressResultsProps = {
   before: string
   responsibles: string[] | null
   partners: string[] | null
+  projectTypes: string[] | null
 }
-function InProgressResults({ after, before, responsibles, partners }: InProgressResultsProps) {
-  const { data: stats } = useInProgressResults({ after, before, responsibles, partners })
+function InProgressResults({ after, before, responsibles, partners, projectTypes }: InProgressResultsProps) {
+  const { data: stats } = useInProgressResults({ after, before, responsibles, partners, projectTypes })
   return (
     <div className="flex w-full flex-col">
       <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">EM ANDAMENTO</h1>

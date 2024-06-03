@@ -376,6 +376,7 @@ export type TUserDTOWithSaleGoals = TUserDTO & { metas: TSaleGoalDTO[] }
 
 export type TUserEntity = TUser & { _id: ObjectId }
 
+export type TUserSimplified = Pick<TUser, 'nome' | 'email' | 'telefone' | 'avatar_url'>
 export type TUserDTOSimplified = Pick<TUserDTO, '_id' | 'nome' | 'email' | 'telefone' | 'avatar_url'>
 
 export type TSessionUser = Pick<TUser, 'administrador' | 'nome' | 'telefone' | 'email' | 'nome' | 'avatar_url' | 'idParceiro' | 'idGrupo' | 'permissoes'> & {

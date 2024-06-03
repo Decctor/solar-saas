@@ -1,5 +1,5 @@
-import { TProjectType } from '@/utils/schemas/project-types.schema'
-import { Collection, Filter, ObjectId } from 'mongodb'
+import { ProjectTypeSimplifiedProjection, TProjectType, TProjectTypeSimplified } from '@/utils/schemas/project-types.schema'
+import { Collection, Filter, ObjectId, WithId } from 'mongodb'
 
 type GetProjectTypesParams = {
   collection: Collection<TProjectType>
@@ -7,10 +7,22 @@ type GetProjectTypesParams = {
 }
 export async function getProjectTypes({ collection, query }: GetProjectTypesParams) {
   try {
-    // @ts-ignore
     const types = await collection.find({ ...query }, { sort: { dataInsercao: 1 } }).toArray()
 
     return types
+  } catch (error) {
+    throw error
+  }
+}
+type GetProjectTypesSimplifiedParams = {
+  collection: Collection<TProjectType>
+  query: Filter<TProjectType>
+}
+export async function getProjectTypesSimplified({ collection, query }: GetProjectTypesSimplifiedParams) {
+  try {
+    const types = await collection.find({ ...query }, { sort: { dataInsercao: 1 }, projection: ProjectTypeSimplifiedProjection }).toArray()
+
+    return types as WithId<TProjectTypeSimplified>[]
   } catch (error) {
     throw error
   }

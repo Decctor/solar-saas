@@ -1,50 +1,92 @@
+import { formatDateQuery } from '@/lib/methods/formatting'
+import { getPartnersSimplified } from '@/repositories/partner-simplified/query'
+import { getProjectTypes, getProjectTypesSimplified } from '@/repositories/project-type/queries'
+import { getOpportunityCreators } from '@/repositories/users/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
-import { apiHandler, validateAuthorization } from '@/utils/api'
+import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { ISession } from '@/utils/models'
 import { TActivity, TActivityDTO } from '@/utils/schemas/activities.schema'
 import { TOpportunityHistory } from '@/utils/schemas/opportunity-history.schema'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import { TPartner, TPartnerSimplifiedDTO } from '@/utils/schemas/partner.schema'
+import { TProjectType, TProjectTypeDTOSimplified } from '@/utils/schemas/project-types.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
-import { TGeneralStats } from '@/utils/schemas/stats.schema'
-import { TUser } from '@/utils/schemas/user.schema'
+import { GeneralStatsFiltersSchema, QueryDatesSchema, TGeneralStats } from '@/utils/schemas/stats.schema'
+import { TUser, TUserDTOSimplified } from '@/utils/schemas/user.schema'
 import dayjs from 'dayjs'
 import createHttpError from 'http-errors'
 import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
-type GetResponse = { data: TGeneralStats }
-const getStats: NextApiHandler<GetResponse> = async (req, res) => {
+export type TGeneralStatsQueryFiltersOptions = {
+  responsibles: TUserDTOSimplified[]
+  partners: TPartnerSimplifiedDTO[]
+  projectTypes: TProjectTypeDTOSimplified[]
+}
+
+type GetResponse = {
+  data: TGeneralStatsQueryFiltersOptions
+}
+
+const getQueryFiltersOptions: NextApiHandler<GetResponse> = async (req, res) => {
+  const session = await validateAuthenticationWithSession(req, res)
+  const parterScope = session.user.permissoes.parceiros.escopo
+  const partnerQuery = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+
+  const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
+  const usersCollection: Collection<TUser> = db.collection('users')
+  const partnersCollection: Collection<TPartner> = db.collection('partners')
+  const projectTypesCollection: Collection<TProjectType> = db.collection('project-types')
+
+  const responsibles = await getOpportunityCreators({ collection: usersCollection, query: partnerQuery as Filter<TUser> })
+  const partners = await getPartnersSimplified({ collection: partnersCollection, query: partnerQuery as Filter<TPartner> })
+  const projectTypes = await getProjectTypesSimplified({ collection: projectTypesCollection, query: partnerQuery })
+
+  const options = {
+    responsibles: responsibles.map((u) => ({ ...u, _id: u._id.toString() })),
+    partners: partners.map((u) => ({ ...u, _id: u._id.toString() })),
+    projectTypes: projectTypes.map((u) => ({ ...u, _id: u._id.toString() })),
+  }
+  return res.status(200).json({ data: options })
+}
+
+type PostResponse = { data: TGeneralStats }
+const getStats: NextApiHandler<PostResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'visualizar', true)
-  const partnerId = session.user.idParceiro
   const partnerScope = session.user.permissoes.parceiros.escopo
   const opportunityVisibilityScope = session.user.permissoes.oportunidades.escopo
 
-  const { after, before, responsible, partner } = req.query
-
+  const { after, before } = QueryDatesSchema.parse(req.query)
+  const { responsibles, partners, projectTypes } = GeneralStatsFiltersSchema.parse(req.body)
   if (typeof after != 'string' || typeof before != 'string') throw new createHttpError.BadRequest('Parâmetros de período inválidos.')
 
-  // Validating existence of responsible in query and its type
-  if (!responsible || typeof responsible != 'string') throw new createHttpError.BadRequest('ID de responsável inválido.')
-  // Validating existence of partner in query and its type
-  if (!partner || typeof partner != 'string') throw new createHttpError.BadRequest('ID do parceiro inválido.')
+  // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
+  // to access a overall visualiation, which he/she isnt allowed
+  if (!!opportunityVisibilityScope && !responsibles)
+    throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
-  // If responsible was sent as null, which means all users, validating if user has global scope
-  if (responsible == 'null' && !!opportunityVisibilityScope) throw new createHttpError.BadRequest('Seu usuário não possui permissão de visualização geral.')
-  // If partner was sent as null, which means all partner, validating if user has global scope
-  if (partner == 'null' && !!partnerScope) throw new createHttpError.BadRequest('Seu usuário não possui permissão de visualização geral.')
+  // If user has a scope defined and in the request there isnt a partners arr defined, then user is trying
+  // to access a overall visualiation, which he/she isnt allowed
+  if (!!partnerScope && !partners) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
-  // Validing user scope visibility
-  if (!!opportunityVisibilityScope && !opportunityVisibilityScope.includes(responsible))
-    throw new createHttpError.BadRequest('Seu escopo de visibilidade não contempla esse usuário.')
-  // Validing parter scope visibility
-  if (!!partnerScope && !partnerScope.includes(partner)) throw new createHttpError.BadRequest('Seu escopo de visibilidade não contempla esse parceiro.')
+  // If user has a scope defined and in the responsible arr request there is a single responsible that is not in hes/shes scope
+  // then user is trying to access a visualization he/she isnt allowed
+  if (!!opportunityVisibilityScope && responsibles?.some((r) => !opportunityVisibilityScope.includes(r)))
+    throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
-  const queryResponsible: Filter<TOpportunity> = responsible != 'null' ? { 'responsaveis.id': responsible } : {}
-  const queryPartner: Filter<TOpportunity> = partner != 'null' ? { idParceiro: partner } : {}
-  const query = { ...queryResponsible, ...queryPartner }
+  // If user has a scope defined and in the partner arr request there is a single partner that is not in hes/shes scope
+  // then user is trying to access a visualization he/she isnt allowed
+  if (!!partnerScope && partners?.some((r) => !partnerScope.includes(r)))
+    throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
-  const afterDate = dayjs(after).set('hour', -3).toDate()
-  const beforeDate = dayjs(before).set('hour', 20).toDate()
+  const responsiblesQuery: Filter<TOpportunity> = responsibles ? { 'responsaveis.id': { $in: responsibles } } : {}
+  const partnerQuery: Filter<TOpportunity> = partners ? { idParceiro: { $in: [...partners] } } : {}
+  const projectTypeQuery: Filter<TOpportunity> = projectTypes ? { 'tipo.id': { $in: [...projectTypes] } } : {}
+
+  const query: Filter<TOpportunity> = { ...responsiblesQuery, ...partnerQuery, ...projectTypeQuery }
+
+  const afterDate = formatDateQuery(after, 'start', 'date') as Date
+  const beforeDate = formatDateQuery(before, 'end', 'date') as Date
   const afterWithMarginDate = new Date(dayjs(after).subtract(1, 'month').toISOString())
   const beforeWithMarginDate = new Date(dayjs(before).subtract(1, 'month').set('hour', 22).toISOString())
 
@@ -55,7 +97,7 @@ const getStats: NextApiHandler<GetResponse> = async (req, res) => {
   const condensedInfo = await getSimplifiedInfo({ opportunitiesCollection, query, afterDate, beforeDate, afterWithMarginDate, beforeWithMarginDate })
   const wonOpportunities = await getWonOpportunities({ opportunitiesCollection, query, afterDate, beforeDate })
   const pendingWins = await getPendingWins({ opportunitiesCollection, query })
-  const activities = await getActivities({ collection: activitiesCollection, query: query as Filter<TActivity> })
+  const activities = await getActivities({ collection: activitiesCollection, query: { ...responsiblesQuery, ...partnerQuery } as Filter<TActivity> })
 
   res.status(200).json({
     data: {
@@ -68,7 +110,8 @@ const getStats: NextApiHandler<GetResponse> = async (req, res) => {
 }
 
 export default apiHandler({
-  GET: getStats,
+  GET: getQueryFiltersOptions,
+  POST: getStats,
 })
 // SIMPLIFIED
 type TOpportunitySimplifiedResult = {

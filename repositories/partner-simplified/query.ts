@@ -1,5 +1,5 @@
 import { PartnerSimplifiedProject, TPartner, TPartnerSimplified } from '@/utils/schemas/partner.schema'
-import { Collection, ObjectId, WithId } from 'mongodb'
+import { Collection, Filter, ObjectId, WithId } from 'mongodb'
 
 type GetPartnerOwnInformationParams = {
   collection: Collection<TPartner>
@@ -15,10 +15,11 @@ export async function getPartnerOwnInformation({ collection, id }: GetPartnerOwn
 }
 type GetPartnersSimplifiedParams = {
   collection: Collection<TPartner>
+  query: Filter<TPartner>
 }
-export async function getPartnersSimplified({ collection }: GetPartnersSimplifiedParams) {
+export async function getPartnersSimplified({ collection, query }: GetPartnersSimplifiedParams) {
   try {
-    const parters = await collection.find({}, { projection: PartnerSimplifiedProject }).toArray()
+    const parters = await collection.find({ ...query }, { projection: PartnerSimplifiedProject }).toArray()
     return parters as WithId<TPartnerSimplified>[]
   } catch (error) {
     throw error

@@ -98,3 +98,15 @@ export const InsertProjectTypeSchema = z.object({
 
 export type TProjectType = z.infer<typeof GeneralProjectTypeSchema>
 export type TProjectTypeDTO = TProjectType & { _id: string }
+
+export type TProjectTypeSimplified = Pick<TProjectType, 'nome' | 'idParceiro' | 'autor' | 'dataInsercao'>
+
+export type TProjectTypeDTOSimplified = TProjectTypeSimplified & { _id: string }
+
+export const ProjectTypeSimplifiedProjection = {
+  _id: 1,
+  nome: 1,
+  idParceiro: 1,
+  autor: 1,
+  dataInsercao: 1,
+}

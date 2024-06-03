@@ -1,4 +1,4 @@
-import { TUser, TUserEntity, simplifiedProjection } from '@/utils/schemas/user.schema'
+import { TUser, TUserDTOWithSaleGoals, TUserEntity, TUserSimplified, simplifiedProjection } from '@/utils/schemas/user.schema'
 import { Collection, Filter, ObjectId, WithId } from 'mongodb'
 import { Session } from 'next-auth'
 
@@ -48,7 +48,7 @@ export async function getOpportunityCreators({ collection, query }: GetOpportuni
       .find({ 'permissoes.oportunidades.criar': true, ...query }, { sort: { nome: 1 } })
       .project(simplifiedProjection)
       .toArray()
-    return creators as WithId<TUser>[]
+    return creators as WithId<TUserSimplified>[]
   } catch (error) {
     throw error
   }
@@ -81,6 +81,53 @@ export async function getLeadReceivers({ collection, query }: GetLeadReceiversPa
       .project(simplifiedProjection)
       .toArray()
     return receivers as WithId<TUser>[]
+  } catch (error) {
+    throw error
+  }
+}
+
+type GetSalePromotersParams = {
+  collection: Collection<TUser>
+  query: Filter<TUser>
+}
+
+export async function getSalePromoters({ collection, query }: GetSalePromotersParams) {
+  try {
+    const salePromoters = await collection
+      .aggregate([
+        {
+          $match: {
+            ativo: true,
+            idGrupo: { $in: ['66562a2a812707dbf9f04832', '66562a2a812707dbf9f04833'] },
+            ...query,
+          },
+        },
+        {
+          $project: {
+            senha: 0,
+          },
+        },
+        {
+          $addFields: {
+            userIdString: { $toString: '$_id' },
+          },
+        },
+        {
+          $lookup: {
+            from: 'sale-goals',
+            localField: 'userIdString',
+            foreignField: 'usuario.id',
+            as: 'metas',
+          },
+        },
+        {
+          $sort: {
+            nome: 1,
+          },
+        },
+      ])
+      .toArray()
+    return salePromoters as TUserDTOWithSaleGoals[]
   } catch (error) {
     throw error
   }
