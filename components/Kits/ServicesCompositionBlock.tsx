@@ -8,6 +8,7 @@ import toast from 'react-hot-toast'
 import { TNewKit } from '../Modals/Kit/NewKit'
 import { MdDelete, MdOutlineMiscellaneousServices } from 'react-icons/md'
 import { AiOutlineSafety } from 'react-icons/ai'
+import { CommonServicesByProjectType } from '@/utils/constants'
 
 type ServicesCompositionBlockProps = {
   infoHolder: TKit
@@ -69,6 +70,20 @@ function ServicesCompositionBlock({ infoHolder, setInfoHolder }: ServicesComposi
           >
             ADICIONAR SERVIÇO
           </button>
+        </div>
+      </div>
+      <div className="flex w-full flex-col gap-1">
+        <h1 className="text-start font-Inter text-xs font-medium leading-none tracking-tight">SERVIÇOS COMUNS</h1>
+        <div className="flex w-full flex-wrap items-start justify-start gap-2">
+          {CommonServicesByProjectType.map((type, index) => (
+            <button
+              onClick={() => setInfoHolder((prev) => ({ ...prev, servicos: type.servicos }))}
+              key={index}
+              className={`rounded-lg px-2 py-1 text-xs font-medium bg-[${type.cores.texto}] text-[${type.cores.fundo}]  w-fit`}
+            >
+              {type.nome}
+            </button>
+          ))}
         </div>
       </div>
       <div className="mt-2 flex min-h-[150px] w-full flex-col rounded-md border border-gray-500 p-3 shadow-sm">

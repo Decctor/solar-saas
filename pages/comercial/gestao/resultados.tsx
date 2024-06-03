@@ -59,16 +59,12 @@ type TQueryFilters = {
 
 function ComercialResults() {
   const { data: session, status } = useSession({ required: true })
-
   const [queryFilters, setQueryFilters] = useState<TQueryFilters>({
     period: { after: firstDayOfMonth, before: lastDayOfMonth },
     responsibles: null,
     partners: null,
     projectTypes: null,
   })
-  const [period, setPeriod] = useState({ after: firstDayOfMonth, before: lastDayOfMonth })
-  const [users, setUsers] = useState<string[] | null>(null)
-  const [partners, setPartners] = useState<string[] | null>(null)
 
   const [editModal, setEditModal] = useState<{ isOpen: boolean; promoter: TUserDTOWithSaleGoals | null }>({
     isOpen: false,
@@ -78,7 +74,13 @@ function ComercialResults() {
   async function handleDataExport() {
     const loadingToastId = toast.loading('Carregando...')
     try {
-      const results = await fetchResultsExports({ after: period.after, before: period.before, responsibles: users, partners: partners })
+      const results = await fetchResultsExports({
+        after: queryFilters.period.after,
+        before: queryFilters.period.before,
+        responsibles: queryFilters.responsibles,
+        partners: queryFilters.partners,
+        projectTypes: queryFilters.projectTypes,
+      })
       getExcelFromJSON(results, 'RESULTADOS_COMERCIAIS')
       toast.dismiss(loadingToastId)
       return toast.success('Exportação feita com sucesso !')
@@ -176,33 +178,34 @@ function ComercialResults() {
           </div>
         </div>
         <OverallResults
-          after={period.after}
-          before={period.before}
+          after={queryFilters.period.after}
+          before={queryFilters.period.before}
           responsibles={queryFilters.responsibles}
           partners={queryFilters.partners}
           projectTypes={queryFilters.projectTypes}
         />
         <InProgressResults
-          after={period.after}
-          before={period.before}
+          after={queryFilters.period.after}
+          before={queryFilters.period.before}
           responsibles={queryFilters.responsibles}
           partners={queryFilters.partners}
           projectTypes={queryFilters.projectTypes}
         />
         <SalesTeamResults
-          after={period.after}
-          before={period.before}
+          after={queryFilters.period.after}
+          before={queryFilters.period.before}
           responsibles={queryFilters.responsibles}
           promoters={queryOptions?.salePromoters}
           partners={queryFilters.partners}
           projectTypes={queryFilters.projectTypes}
         />
         <SDRTeamResults
-          after={period.after}
-          before={period.before}
+          after={queryFilters.period.after}
+          before={queryFilters.period.before}
           responsibles={queryFilters.responsibles}
           promoters={queryOptions?.salePromoters}
           partners={queryFilters.partners}
+          projectTypes={queryFilters.projectTypes}
         />
         <h1 className="mt-4 font-Raleway text-xl font-black text-black">CONTROLE DE EQUIPE</h1>
         <div className="flex grow flex-col flex-wrap justify-around gap-2 py-2 lg:flex-row">

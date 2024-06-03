@@ -5,7 +5,7 @@ import { TClient } from '@/utils/schemas/client.schema'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import { TProposal } from '@/utils/schemas/proposal.schema'
 import { TSaleGoal } from '@/utils/schemas/sale-goal.schema'
-import { ResponsiblesBodySchema } from '@/utils/schemas/stats.schema'
+import { GeneralStatsFiltersSchema, ResponsiblesBodySchema } from '@/utils/schemas/stats.schema'
 
 import { TUser } from '@/utils/schemas/user.schema'
 import dayjs from 'dayjs'
@@ -88,7 +88,7 @@ const getSDRTeamResults: NextApiHandler<GetResponse> = async (req, res) => {
   const userId = session.user.id
   const userScope = session.user.permissoes.resultados.escopo
   const { after, before } = QueryDatesSchema.parse(req.query)
-  const { responsibles, partners } = ResponsiblesBodySchema.parse(req.body)
+  const { responsibles, partners, projectTypes } = GeneralStatsFiltersSchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
   // to access a overall visualiation, which he/she isnt allowed
@@ -110,6 +110,8 @@ const getSDRTeamResults: NextApiHandler<GetResponse> = async (req, res) => {
 
   const responsiblesQuery: Filter<TOpportunity> = responsibles ? { 'responsaveis.id': { $in: responsibles } } : {}
   const partnerQuery = partners ? { idParceiro: { $in: [...partners, null] } } : {}
+  const projectTypesQuery: Filter<TOpportunity> = projectTypes ? { 'tipo.id': { $in: [...projectTypes] } } : {}
+
   const userSaleGoalQuery: Filter<TSaleGoal> = responsibles ? { 'usuario.id': { $in: responsibles } } : {}
 
   const afterDate = dayjs(after).startOf('day').subtract(3, 'hour').toDate()
@@ -124,7 +126,7 @@ const getSDRTeamResults: NextApiHandler<GetResponse> = async (req, res) => {
   const saleGoalsCollection: Collection<TSaleGoal> = db.collection('sale-goals')
 
   const saleGoals = await getSaleGoals({ saleGoalsCollection, currentPeriod, userSaleGoalQuery, partnerQuery })
-  const projects = await getOpportunities({ opportunitiesCollection, afterDate, beforeDate, responsiblesQuery, partnerQuery })
+  const projects = await getOpportunities({ opportunitiesCollection, afterDate, beforeDate, responsiblesQuery, partnerQuery, projectTypesQuery })
 
   const sdrResults = projects.reduce((acc: TSDRTeamResults, current) => {
     // Insertion related checkings
@@ -268,6 +270,7 @@ type GetProjectsParams = {
   opportunitiesCollection: Collection<TOpportunity>
   responsiblesQuery: { 'responsaveis.id': { $in: string[] } } | {}
   partnerQuery: { idParceiro: { $in: string[] } } | {}
+  projectTypesQuery: { 'tipo.id': { $in: string[] } } | {}
   afterDate: Date
   beforeDate: Date
 }
@@ -280,7 +283,7 @@ type TSDRResultsProject = {
   canalAquisicao: TClient['canalAquisicao']
   dataInsercao: string
 }
-async function getOpportunities({ opportunitiesCollection, responsiblesQuery, partnerQuery, afterDate, beforeDate }: GetProjectsParams) {
+async function getOpportunities({ opportunitiesCollection, responsiblesQuery, partnerQuery, projectTypesQuery, afterDate, beforeDate }: GetProjectsParams) {
   try {
     const afterDateStr = afterDate.toISOString()
     const beforeDateStr = beforeDate.toISOString()

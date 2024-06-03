@@ -61,6 +61,31 @@ export const ProjectTypes: TProjectTypes[] = [
   },
 ]
 
+export const CommonServicesByProjectType = [
+  {
+    id: '6615785ddcb7a6e66ede9785',
+    nome: 'SISTEMA FOTOVOLTAICO',
+    servicos: [
+      {
+        descricao: 'HOMOLOGAÇÃO COMPLETA',
+        observacoes: 'Homologação junto a concessionária de energia, com projeto, vistoria e afins.',
+        garantia: 999,
+      },
+      {
+        descricao: 'INSTALAÇÃO',
+        observacoes: 'Instalação/montagem dos equipamentos.',
+        garantia: 1,
+      },
+      {
+        descricao: 'COMISSIONAMENTO',
+        observacoes: 'Comissionamento do sistema, com ativação e testes de performance e configuração do software de acompanhamento.',
+        garantia: 1,
+      },
+    ],
+    cores: { texto: '#fead41', fundo: '#15599a' },
+  },
+]
+
 export const GeneralVisibleHiddenExitMotionVariants = {
   hidden: {
     opacity: 0.2,

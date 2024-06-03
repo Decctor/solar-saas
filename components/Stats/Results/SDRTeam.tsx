@@ -13,10 +13,11 @@ type SDRTeamResultsProps = {
   before: string
   responsibles: string[] | null
   partners: string[] | null
+  projectTypes: string[] | null
   promoters: TUserDTOWithSaleGoals[] | undefined
 }
-function SDRTeamResults({ after, before, responsibles, partners, promoters }: SDRTeamResultsProps) {
-  const { data: stats, isLoading } = useSDRTeamResults({ after, before, responsibles, partners })
+function SDRTeamResults({ after, before, responsibles, partners, projectTypes, promoters }: SDRTeamResultsProps) {
+  const { data: stats, isLoading } = useSDRTeamResults({ after, before, responsibles, partners, projectTypes })
   return (
     <div className="flex w-full flex-col">
       <h1 className="mt-4 rounded-md bg-[#15599a] text-center text-xl font-black text-white">TIME DE SDR</h1>

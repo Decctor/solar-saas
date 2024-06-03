@@ -12,7 +12,7 @@ type GetTemplateDataParams = {
   proposal: TProposalDTO
 }
 export function getSimpleTemplate2023Data({ opportunity, proposal }: GetTemplateDataParams) {
-  const paInformation = !!proposal.precificacao.find((p) => p.descricao.includes('PADRÃO')) ? 'ADEQUAÇÕES DE PADRÃO' : ''
+  const paInformation = !!proposal.precificacao.find((p) => p.descricao.includes('PADRÃO') && p.valorFinal > 10) ? 'ADEQUAÇÕES DE PADRÃO' : ''
   const seller = opportunity.responsaveis.find((r) => r.papel == 'VENDEDOR')
   const sdr = opportunity.responsaveis.find((r) => r.papel == 'SDR')
   // Getting the progression array of billing prices, payback, and other stuff
