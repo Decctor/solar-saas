@@ -320,7 +320,7 @@ function EditPricingUnit({
               </div>
             </div>
 
-            <div className="flex  grow flex-wrap items-center justify-center gap-1 p-1">
+            <div className="flex grow flex-wrap items-center justify-center gap-1 p-1">
               {result.formulaArr.map((y, index2) => (
                 <p key={index2} className={`text-[0.7rem] ${y.includes('[') ? 'rounded bg-blue-500 p-1 text-white' : ''}`}>
                   {formatFormulaItem(y)}

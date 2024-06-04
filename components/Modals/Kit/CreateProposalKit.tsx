@@ -70,11 +70,11 @@ function CreateProposalKit({ proposal, setProposal, opportunity, closeModal, ses
     const variableData: TPricingVariableData = {
       kit: price,
       numModulos: moduleQty,
+      plan: 0,
       product: 0,
       service: 0,
       potenciaPico: modulePeakPower,
       distancia: proposal.premissas.distancia || 0,
-      plan: 0,
       numInversores: inverterQty,
       valorReferencia: proposal.premissas.valorReferencia || 0,
       consumoEnergiaMensal: proposal.premissas.consumoEnergiaMensal || 0,

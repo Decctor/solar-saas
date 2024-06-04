@@ -5,7 +5,7 @@ import { AiFillEdit } from 'react-icons/ai'
 
 import { getPricingTotals, handlePartialPricingReCalculation, TPricingConditionData, TPricingVariableData } from '@/utils/pricing/methods'
 import EditPriceItem from './EditPriceItem'
-import { TbPercentage } from 'react-icons/tb'
+import { TbMathFunction, TbPercentage } from 'react-icons/tb'
 import { formatDecimalPlaces } from '@/lib/methods/formatting'
 import { MdSignalCellularAlt } from 'react-icons/md'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
@@ -15,6 +15,7 @@ import { TPricingMethodDTO } from '@/utils/schemas/pricing-method.schema'
 import { usePricingMethodById } from '@/utils/queries/pricing-methods'
 import { cumulativeVariablesValues } from '@/utils/pricing/helpers'
 import toast from 'react-hot-toast'
+import PricingTableEditableItem from './PricingTableEditableItem'
 
 type TEditPriceModal = {
   isOpen: boolean
@@ -119,42 +120,58 @@ function PricingTable({ pricing, setPricing, proposal, opportunity, userHasPrici
               <h1 className="font-bold text-white">VENDA</h1>
             </div>
           </div>
-          {pricing.map((priceItem, index) => {
+          {pricing.map((pricingItem, index) => (
+            <PricingTableEditableItem
+              pricingItem={pricingItem}
+              showOnlyNonZero={showOnlyNonZero}
+              userHasPricingEditPermission={userHasPricingEditPermission}
+              editPricingItem={() => setEditPriceModal({ isOpen: true, priceItemIndex: index })}
+            />
+          ))}
+          {/* {pricing.map((priceItem, index) => {
             const { descricao, custoCalculado, faturavel, custoFinal, margemLucro, valorCalculado, valorFinal } = priceItem
             const profitMarginPercentage = margemLucro / 100
             if (showOnlyNonZero && valorFinal == 0) return null
             return (
-              <div className={`flex w-full items-center rounded ${Math.abs(valorFinal - valorCalculado) > 1 ? 'bg-orange-200' : ''}`} key={index}>
-                <div className="flex w-6/12 flex-col items-center justify-center p-1">
-                  <h1 className="text-gray-500">{descricao}</h1>
-                  <div className="flex w-full items-center justify-center gap-2">
-                    <div className="flex items-center gap-1">
-                      <TbPercentage color="rgb(34,197,94)" />
-                      <p className="text-[0.55rem] tracking-tight text-gray-500">MARGEM DE {formatDecimalPlaces(margemLucro)}%</p>
-                    </div>
-                    <div className="flex items-center gap-1">
-                      <MdSignalCellularAlt color={'#fead41'} />
-                      <p className="text-[0.55rem] tracking-tight text-gray-500">{faturavel ? 'FATURÁVEL' : 'NÃO FATURÁVEL'}</p>
+              <div className="flex w-full flex-col">
+                <div className={`flex w-full items-center rounded ${Math.abs(valorFinal - valorCalculado) > 1 ? 'bg-orange-200' : ''}`} key={index}>
+                  <div className="flex w-6/12 flex-col items-center justify-center p-1">
+                    <h1 className="text-gray-500">{descricao}</h1>
+                    <div className="flex w-full items-center justify-center gap-2">
+                      <div className="flex items-center gap-1 px-1 py-0.5">
+                        <TbPercentage color="rgb(34,197,94)" />
+                        <p className="text-[0.55rem] tracking-tight text-gray-500">MARGEM DE {formatDecimalPlaces(margemLucro)}%</p>
+                      </div>
+                      <div className="flex items-center gap-1 px-1 py-0.5">
+                        <MdSignalCellularAlt color={'#fead41'} />
+                        <p className="text-[0.55rem] tracking-tight text-gray-500">{faturavel ? 'FATURÁVEL' : 'NÃO FATURÁVEL'}</p>
+                      </div>
+                      {priceItem.formulaArr ? (
+                        <button className="group flex items-center gap-1 rounded px-1 py-0.5 duration-300 hover:bg-cyan-50">
+                          <TbMathFunction color={'rgb(6,182,212)'} />
+                          <p className="text-[0.55rem] tracking-tight text-gray-500 duration-300 group-hover:text-cyan-500">FÓRMULA</p>
+                        </button>
+                      ) : null}
                     </div>
                   </div>
-                </div>
-                <div className="flex w-2/12 items-center justify-center p-1">
-                  <h1 className="text-gray-500">{formatToMoney(custoFinal)}</h1>
-                </div>
-                <div className="flex w-2/12 items-center justify-center p-1">
-                  <h1 className="text-gray-500">{formatToMoney(valorFinal * profitMarginPercentage)}</h1>
-                </div>
-                <div className="flex w-2/12 items-center justify-center gap-4 p-1">
-                  <h1 className="w-full text-center text-gray-500 lg:w-1/2">{formatToMoney(valorFinal)}</h1>
-                  {userHasPricingEditPermission ? (
-                    <button onClick={() => setEditPriceModal({ isOpen: true, priceItemIndex: index })} className="text-md text-gray-400 hover:text-[#fead61]">
-                      <AiFillEdit />
-                    </button>
-                  ) : null}
+                  <div className="flex w-2/12 items-center justify-center p-1">
+                    <h1 className="text-gray-500">{formatToMoney(custoFinal)}</h1>
+                  </div>
+                  <div className="flex w-2/12 items-center justify-center p-1">
+                    <h1 className="text-gray-500">{formatToMoney(valorFinal * profitMarginPercentage)}</h1>
+                  </div>
+                  <div className="flex w-2/12 items-center justify-center gap-4 p-1">
+                    <h1 className="w-full text-center text-gray-500 lg:w-1/2">{formatToMoney(valorFinal)}</h1>
+                    {userHasPricingEditPermission ? (
+                      <button onClick={() => setEditPriceModal({ isOpen: true, priceItemIndex: index })} className="text-md text-gray-400 hover:text-[#fead61]">
+                        <AiFillEdit />
+                      </button>
+                    ) : null}
+                  </div>
                 </div>
               </div>
             )
-          })}
+          })} */}
           <div className="flex w-full items-center rounded border-t border-gray-200 py-1">
             <div className="flex w-6/12 items-center justify-center p-1">
               <h1 className="font-bold text-gray-800">TOTAIS</h1>
@@ -177,7 +194,15 @@ function PricingTable({ pricing, setPricing, proposal, opportunity, userHasPrici
               <h1 className="font-bold text-white">PRECIFICAÇÃO</h1>
             </div>
           </div>
-          {pricing.map((priceItem, index) => {
+          {pricing.map((pricingItem, index) => (
+            <PricingTableEditableItem
+              pricingItem={pricingItem}
+              showOnlyNonZero={showOnlyNonZero}
+              userHasPricingEditPermission={userHasPricingEditPermission}
+              editPricingItem={() => setEditPriceModal({ isOpen: true, priceItemIndex: index })}
+            />
+          ))}
+          {/* {pricing.map((priceItem, index) => {
             const { descricao, custoCalculado, faturavel, custoFinal, margemLucro, valorCalculado, valorFinal } = priceItem
             const profitMarginPercentage = margemLucro / 100
             return (
@@ -219,7 +244,7 @@ function PricingTable({ pricing, setPricing, proposal, opportunity, userHasPrici
                 </div>
               </div>
             )
-          })}
+          })} */}
           <div className="flex w-full items-center justify-center rounded bg-gray-800 p-1">
             <h1 className="text-xs font-bold text-white">TOTAIS</h1>
           </div>
