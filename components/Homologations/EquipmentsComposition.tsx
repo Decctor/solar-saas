@@ -14,11 +14,13 @@ import { MdDelete } from 'react-icons/md'
 import { renderCategoryIcon } from '@/lib/methods/rendering'
 import { getInverterPeakPowerByProducts, getModulesPeakPotByProducts } from '@/lib/methods/extracting'
 import { TProduct } from '@/utils/schemas/products.schema'
+import UseActiveProposalProducts from './Utils/UseActiveProposalProducts'
 type EquipmentsCompositionProps = {
   infoHolder: THomologation
   setInfoHolder: React.Dispatch<React.SetStateAction<THomologation>>
+  activeProposalId: string | null | undefined
 }
-function EquipmentsComposition({ infoHolder, setInfoHolder }: EquipmentsCompositionProps) {
+function EquipmentsComposition({ infoHolder, setInfoHolder, activeProposalId }: EquipmentsCompositionProps) {
   const [inverterHolder, setInverterHolder] = useState<TInverter>({
     id: '',
     fabricante: '',
@@ -342,6 +344,13 @@ function EquipmentsComposition({ infoHolder, setInfoHolder }: EquipmentsComposit
           </button>
         </div>
       </div>
+      {activeProposalId ? (
+        <UseActiveProposalProducts
+          activeProposalId={activeProposalId}
+          getProducts={(equipments) => setInfoHolder((prev) => ({ ...prev, equipamentos: equipments }))}
+        />
+      ) : null}
+
       <div className="mt-2 flex w-full items-center justify-between gap-2">
         <h1 className="mb-2 text-start font-Inter font-bold leading-none tracking-tight">EQUIPAMENTOS A SEREM HOMOLOGADOS</h1>
         <div className="flex items-center gap-2">

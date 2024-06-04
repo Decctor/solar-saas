@@ -27,11 +27,17 @@ function DocumentFileInput({ label, value, handleChange, fileReferences, multipl
         </label>
         {fileReferences ? (
           !showMenu ? (
-            <button onClick={() => setShowMenu(true)} className="rounded-md bg-blue-800 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-blue-600">
+            <button
+              onClick={() => setShowMenu(true)}
+              className="min-w-fit rounded-md bg-blue-800 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-blue-600"
+            >
               MOSTRAR OPÇÕES
             </button>
           ) : (
-            <button onClick={() => setShowMenu(false)} className="rounded-md bg-red-600 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-red-500">
+            <button
+              onClick={() => setShowMenu(false)}
+              className="min-w-fit rounded-md bg-red-600 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-red-500"
+            >
               FECHAR OPÇÕES
             </button>
           )

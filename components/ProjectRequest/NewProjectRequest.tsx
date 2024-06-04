@@ -16,7 +16,7 @@ import DocumentationInformationBlock from './RequestStages/DocumentationInformat
 
 export type TDocumentationHolder = {
   conditionData: TDocumentationConditionData
-  filesHolder: TFileHolder
+  filesHolder: { [key: string]: FileList | string | null }
 }
 
 type Stages = 'general' | 'client' | 'homologation' | 'technical-analysis' | 'products-and-services' | 'payment' | 'documentation'
@@ -124,6 +124,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
     },
     filesHolder: {},
   })
+  console.log(documentationHolder)
   return (
     <div id="new-project-request" className="fixed bottom-0 left-0 right-0 top-0 z-[100] bg-[rgba(0,0,0,.85)]">
       <div className="fixed left-[50%] top-[50%] z-[100] h-[80%] w-[90%] translate-x-[-50%] translate-y-[-50%] rounded-md bg-[#fff] p-[10px] lg:w-[70%]">
@@ -187,7 +188,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
                 infoHolder={infoHolder}
                 setInfoHolder={setInfoHolder}
                 session={session}
-                moveToNextStage={() => setStage('payment')}
+                moveToNextStage={() => setStage('documentation')}
                 moveToPreviousStage={() => setStage('products-and-services')}
                 client={opportunity.cliente}
               />
@@ -198,6 +199,8 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
                 setInfoHolder={setInfoHolder}
                 documentationHolder={documentationHolder}
                 setDocumentationHolder={setDocumentationHolder}
+                moveToNextStage={() => setStage('documentation')}
+                moveToPreviousStage={() => setStage('payment')}
               />
             ) : null}
           </div>

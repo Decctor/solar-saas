@@ -27,7 +27,7 @@ const SupplySchema = z.object({
 })
 
 const ProjectObservationSchema = z.object({
-  assunto: z.enum(['SERVIÇOS', 'PRODUTOS', 'NEGOCIAÇÃO', 'EXECUÇÃO']),
+  assunto: z.enum(['SERVIÇOS', 'PRODUTOS', 'NEGOCIAÇÃO', 'SUPRIMENTAÇÃO', 'EXECUÇÃO']),
   descricao: z.string({ required_error: 'Descrição de observação não informada.', invalid_type_error: 'Tipo não válido para a descrição da observação.' }),
   data: z
     .string({ required_error: 'Data de inserção da observação não informada.', invalid_type_error: 'Tipo não válido para a data de inserção da observação.' })

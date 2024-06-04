@@ -23,7 +23,9 @@ type PaymentInformationBlockProps = {
 }
 function PaymentInformationBlock({ infoHolder, setInfoHolder, client, moveToNextStage, moveToPreviousStage, session }: PaymentInformationBlockProps) {
   const { data: methods, isLoading, isError, isSuccess } = usePaymentMethods()
-  function validateAndProceed() {}
+  function validateAndProceed() {
+    moveToNextStage()
+  }
   function useClientData(client: TClientDTO) {
     setInfoHolder((prev) => ({
       ...prev,

@@ -8,6 +8,8 @@ import Avatar from '../utils/Avatar'
 import { formatDateAsLocale, formatDecimalPlaces, formatNameAsInitials } from '@/lib/methods/formatting'
 import { FaSolarPanel } from 'react-icons/fa'
 import { FaBolt } from 'react-icons/fa6'
+import { MdEditDocument } from 'react-icons/md'
+import Link from 'next/link'
 
 function getTagColor(status: string) {
   if (status == 'PENDENTE') return 'bg-gray-800'
@@ -82,7 +84,14 @@ function OpportunityHomologationCard({ homologation }: OpportunityHomologationCa
             </div>
           ) : null}
         </div>
-        <div className="mt-2 flex w-full flex-col items-center justify-center gap-2 lg:flex-row lg:justify-end">
+        <div className="mt-2 flex w-full flex-col items-center justify-center gap-2 lg:flex-row lg:justify-between">
+          <Link href={`/operacional/homologacoes/procuracao/${homologation._id}`}>
+            <button className="flex items-center gap-1 rounded border border-gray-500 bg-gray-50 px-2 py-1 text-gray-500 duration-300 ease-in-out hover:bg-gray-100">
+              <MdEditDocument />
+              <p className="text-[0.6rem]">PROCURAÇÃO</p>
+            </button>
+          </Link>
+
           <div className="flex flex-col items-center gap-2 lg:flex-row">
             <div className="flex items-center gap-1">
               <BsCalendarPlus />

@@ -599,7 +599,7 @@ export const PaymentMethods = [
   { id: 7, label: 'FINANCIAMENTO', value: 'FINANCIAMENTO', apportionment: true, modality: 'COMPOSTOS' },
 ]
 
-export const ProjectObservationTopics: TProject['observacoes'][number]['assunto'][] = ['SERVIÇOS', 'PRODUTOS', 'NEGOCIAÇÃO', 'EXECUÇÃO']
+export const ProjectObservationTopics: TProject['observacoes'][number]['assunto'][] = ['SERVIÇOS', 'PRODUTOS', 'NEGOCIAÇÃO', 'SUPRIMENTAÇÃO', 'EXECUÇÃO']
 
 export const OpportunityLossReasons = [
   { id: 1, label: 'CLIENTE NÃO RESPONDE', value: 'CLIENTE NÃO RESPONDE' },

@@ -219,7 +219,7 @@ function NewHomologation({ opportunity, session, closeModal }: NewHomologationPr
                 <HolderInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <InstallationInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <LocationInformation infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
-                <EquipmentsComposition infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+                <EquipmentsComposition infoHolder={infoHolder} setInfoHolder={setInfoHolder} activeProposalId={opportunity.idPropostaAtiva} />
                 <AttachFiles opportunityId={opportunity._id} files={files} setFiles={setFiles} />
               </div>
               <div className="flex w-full items-center justify-end p-2">

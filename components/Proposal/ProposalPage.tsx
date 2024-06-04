@@ -1,38 +1,42 @@
-import { useProposalById } from '@/utils/queries/proposals'
-import { Session } from 'next-auth'
 import React, { useState } from 'react'
+import { Session } from 'next-auth'
+import Link from 'next/link'
+import { useQueryClient } from '@tanstack/react-query'
+
+import { RxDashboard } from 'react-icons/rx'
+import { TbDownload } from 'react-icons/tb'
+import { FaExternalLinkAlt, FaIndustry, FaUser } from 'react-icons/fa'
+import { AiFillEdit, AiFillStar, AiOutlineSafety } from 'react-icons/ai'
+import { MdContentCopy, MdOutlineMiscellaneousServices } from 'react-icons/md'
+import { ImPower } from 'react-icons/im'
+
+import { useProposalById } from '@/utils/queries/proposals'
+
+import Avatar from '../utils/Avatar'
 import { Sidebar } from '../Sidebar'
+import WinBlock from './WinBlock'
 import LoadingComponent from '../utils/LoadingComponent'
 import ErrorComponent from '../utils/ErrorComponent'
-import Link from 'next/link'
-import { RxDashboard } from 'react-icons/rx'
-import { FaExternalLinkAlt, FaIndustry, FaUser } from 'react-icons/fa'
-import Avatar from '../utils/Avatar'
-import { formatDecimalPlaces, formatInverterStr, formatModuleStr, formatNameAsInitials, formatProductStr } from '@/lib/methods/formatting'
-import { ImPower, ImPriceTag } from 'react-icons/im'
-import { formatToMoney, getEstimatedGen } from '@/utils/methods'
-import { TbDownload, TbPercentage } from 'react-icons/tb'
-import { copyToClipboard } from '@/lib/hooks'
-import { MdContentCopy, MdMiscellaneousServices, MdOutlineMiscellaneousServices, MdSignalCellularAlt } from 'react-icons/md'
-import { AiFillEdit, AiFillStar, AiOutlineSafety } from 'react-icons/ai'
-import { getPricingTotals } from '@/utils/pricing/methods'
+import ProposalViewPricingBlock from './Blocks/ProposalViewPricingBlock'
+import ProposalViewPlansBlock from './Blocks/ProposalViewPlansBlock'
+import NewProjectRequest from '../ProjectRequest/NewProjectRequest'
+import NewContractRequest from '../Modals/ContractRequest/NewContractRequest'
+import EditProposal from '../Modals/Proposal/EditProposal'
 
-import { useClientById } from '@/utils/queries/clients'
+import ProposalUpdateRecords from './ProposalUpdateRecords'
+
+import { formatDecimalPlaces, formatNameAsInitials } from '@/lib/methods/formatting'
+
+import { formatToMoney, getEstimatedGen } from '@/utils/methods'
+
 import { renderCategoryIcon } from '@/lib/methods/rendering'
 import { usePricingMethods } from '@/utils/queries/pricing-methods'
 import { TPricingMethodDTO } from '@/utils/schemas/pricing-method.schema'
-import { usePartnerById } from '@/utils/queries/partners'
-import WinBlock from './WinBlock'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { setOpportunityActiveProposal } from '@/utils/mutations/opportunities'
-import { useQueryClient } from '@tanstack/react-query'
-import ProposalViewPricingBlock from './Blocks/ProposalViewPricingBlock'
-import ProposalViewPlansBlock from './Blocks/ProposalViewPlansBlock'
-import EditProposal from '../Modals/Proposal/EditProposal'
-import ProposalUpdateRecords from './ProposalUpdateRecords'
-import NewContractRequest from '../Modals/ContractRequest/NewContractRequest'
+
+import { copyToClipboard } from '@/lib/hooks'
 import { handleDownload } from '@/lib/methods/download'
-import NewProjectRequest from '../ProjectRequest/NewProjectRequest'
 
 function getPricingMethodById({ methods, id }: { methods?: TPricingMethodDTO[]; id: string }) {
   if (!methods) return 'NÃO DEFINIDO'
@@ -102,13 +106,16 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
                 </div>
               </div>
             </div>
-            {/* <button
-              // @ts-ignore
-              onClick={() => setTestRequestIsOpen(true)}
-              className="rounded border border-cyan-600 px-4 py-2 text-sm font-bold text-cyan-600 duration-300 ease-in-out hover:bg-cyan-600 hover:text-white"
-            >
-              TESTAR GANHO
-            </button> */}
+            {session.user.permissoes.resultados.visualizarOperacional ? (
+              <button
+                // @ts-ignore
+                onClick={() => setTestRequestIsOpen(true)}
+                className="rounded border border-cyan-600 px-4 py-2 text-sm font-bold text-cyan-600 duration-300 ease-in-out hover:bg-cyan-600 hover:text-white"
+              >
+                TESTAR GANHO
+              </button>
+            ) : null}
+
             <WinBlock
               opportunityId={proposal.oportunidade.id}
               proposalId={proposalId}

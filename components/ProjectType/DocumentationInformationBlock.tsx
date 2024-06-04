@@ -58,24 +58,6 @@ function DocumentationInformationBlock({ infoHolder, setInfoHolder }: Documentat
                     </div>
                     <p className="text-sm font-medium leading-none tracking-tight">{document.titulo}</p>
                   </div>
-                  {/* {document.obrigatorio ? (
-                    <div className="flex items-center gap-1 rounded-full border-red-600 bg-red-50 px-2 py-1 text-red-600">
-                      <BsLockFill size={12} />
-                      <p className="text-[0.65rem]">OBRIGATÓRIO</p>
-                    </div>
-                  ) : null}
-                  {document.condicao.aplicavel ? (
-                    <div className="flex items-center gap-1 rounded-full border-orange-600 bg-orange-50 px-2 py-1 text-orange-600">
-                      <FaEquals size={12} />
-                      <p className="text-[0.65rem]">CONDICIONAL</p>
-                    </div>
-                  ) : null}
-                  {document.multiplo ? (
-                    <div className="flex items-center gap-1 rounded-full border-blue-600 bg-blue-50 px-2 py-1 text-blue-600">
-                      <TbBoxMultiple size={12} />
-                      <p className="text-[0.65rem]">MÚLTIPLO</p>
-                    </div>
-                  ) : null} */}
                 </div>
                 <button
                   onClick={() => removeDocument(index)}
