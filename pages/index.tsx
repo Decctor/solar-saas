@@ -13,7 +13,6 @@ const lastDayOfMonth = getLastDayOfMonth(currentDate.getFullYear(), currentDate.
 function EstatisticaPrincipal() {
   const { data: session, status } = useSession({ required: true })
 
-  console.log('SESSION', session)
   if (status != 'authenticated') return <LoadingPage />
   return <MainDashboardPage session={session} />
 }

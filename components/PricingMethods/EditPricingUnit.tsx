@@ -9,9 +9,18 @@ import { VscChromeClose } from 'react-icons/vsc'
 import { MdContentCopy, MdDelete } from 'react-icons/md'
 import { TPricingMethod, TPricingMethodItemResultItem } from '@/utils/schemas/pricing-method.schema'
 import { StructureTypes } from '@/utils/select-options'
-import { conditionsAlias, formatCondition, formatConditionValue, formatFormulaItem, getConditionOptions, variablesAlias } from '@/utils/pricing/helpers'
+import {
+  conditionsAlias,
+  formatCondition,
+  formatConditionValue,
+  formatFormulaItem,
+  getConditionOptions,
+  renderConditionPhrase,
+  variablesAlias,
+} from '@/utils/pricing/helpers'
 import { usePartnersSimplified } from '@/utils/queries/partners'
 import { TPricingConditionData } from '@/utils/pricing/methods'
+import ConditionMenu from './ConditionMenu'
 
 const options = {
   uf: Object.keys(stateCities),
@@ -48,7 +57,21 @@ function EditPricingUnit({
   function addResultFormula() {
     if (resultHolder.condicao.aplicavel) {
       if (!resultHolder.condicao.variavel) return toast.error('Selecione uma variável para condição.')
-      if (!resultHolder.condicao.igual) return toast.error('Selecione o resultado para comparação da condição.')
+      if (resultHolder.condicao.tipo == 'IGUAL_TEXTO' && !resultHolder.condicao.igual) return toast.error('Selecione o resultado para comparação da condição.')
+      if (resultHolder.condicao.tipo == 'IGUAL_NÚMERICO' && (resultHolder.condicao.igual == null || resultHolder.condicao.igual == undefined))
+        return toast.error('Preencha o resultado para comparação da condição.')
+      if (resultHolder.condicao.tipo == 'MAIOR_QUE_NÚMERICO' && (resultHolder.condicao.maiorQue == null || resultHolder.condicao.maiorQue == undefined))
+        return toast.error('Preencha o valor para comparação.')
+      if (resultHolder.condicao.tipo == 'MENOR_QUE_NÚMERICO' && (resultHolder.condicao.menorQue == null || resultHolder.condicao.menorQue == undefined))
+        return toast.error('Preencha o valor para comparação.')
+      if (
+        resultHolder.condicao.tipo == 'INTERVALO_NÚMERICO' &&
+        (resultHolder.condicao.entre?.minimo == null || resultHolder.condicao.entre?.minimo == undefined) &&
+        (resultHolder.condicao.entre?.maximo == null || resultHolder.condicao.entre?.maximo == undefined)
+      )
+        return toast.error('Preencha os valores para comparação.')
+      if (resultHolder.condicao.tipo == 'INCLUI_LISTA' && (!resultHolder.condicao.inclui || resultHolder.condicao.inclui.length == 0))
+        return toast.error('Preencha a list para comparação.')
     }
     if (resultHolder.margemLucro < 0) return toast.error('Preencha uma margem de lucro válida.')
 
@@ -258,7 +281,8 @@ function EditPricingUnit({
           />
         </div>
       </div>
-      {resultHolder.condicao.aplicavel ? (
+      {resultHolder.condicao.aplicavel ? <ConditionMenu resultHolder={resultHolder} setResultHolder={setResultHolder} partners={partners} /> : null}
+      {/* {resultHolder.condicao.aplicavel ? (
         <div className="flex w-full flex-col">
           <div className="my-2 flex flex-wrap items-center gap-2">
             {conditionsAlias.map((va, index) => (
@@ -283,7 +307,7 @@ function EditPricingUnit({
             width="100%"
           />
         </div>
-      ) : null}
+      ) : null} */}
       <div className="my-2 flex items-center justify-end gap-2">
         <button
           className="rounded bg-black p-1 px-4 text-xs font-medium text-white duration-300 ease-in-out disabled:bg-gray-400 disabled:text-black enabled:hover:bg-gray-600"
@@ -297,7 +321,8 @@ function EditPricingUnit({
         pricingHolder.resultados.map((result, index) => (
           <div key={index} className="mb-1 flex w-full flex-col items-center gap-2 rounded-md border border-[#A0E9FF] p-1 md:flex-row">
             <div className="flex flex-col">
-              <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
+              {renderConditionPhrase({ condition: result.condicao, partners: partners || [] })}
+              {/* <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
                 {!result.condicao.aplicavel
                   ? 'FÓRMULA GERAL:'
                   : `SE ${formatCondition(result.condicao.variavel || '')} FOR IGUAL A ${formatConditionValue({
@@ -307,7 +332,7 @@ function EditPricingUnit({
                         partners: partners || [],
                       },
                     })}:`}
-              </h1>
+              </h1> */}
               <div className="flex items-center gap-2 font-Inter">
                 <div className="flex items-center gap-1">
                   <p className="text-xs text-gray-500">MARGEM: </p>

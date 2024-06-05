@@ -1,5 +1,5 @@
 import { TElectricalInstallationGroups } from '../schemas/opportunity.schema'
-import { TPricingMethodDTO } from '../schemas/pricing-method.schema'
+import { TPricingMethodDTO, TPricingMethodItemResultItem } from '../schemas/pricing-method.schema'
 import { TEletricalPhases, TPricingItem, TProposal } from '../schemas/proposal.schema'
 
 type getSalePriceParams = {
@@ -38,6 +38,11 @@ export type TPricingConditionData = {
   grupoInstalacao: TElectricalInstallationGroups
   faseamentoEletrico: TEletricalPhases
   idParceiro: string
+  numModulos: number
+  numInversores: number
+  potenciaPico: number
+  distancia: number
+  valorReferencia: number
 }
 export type TPricingVariableData = {
   kit: number // automatic
@@ -61,6 +66,65 @@ export type TPricingVariableData = {
   totalFaturavelCustos?: number
   totalNaoFaturavelCustos?: number
 }
+
+type HandleConditionValidationParams = {
+  resultCondition: TPricingMethodItemResultItem['condicao']
+  conditionData: TPricingConditionData
+}
+function handleConditionValidation({ resultCondition, conditionData }: HandleConditionValidationParams) {
+  if (!resultCondition.tipo || resultCondition.tipo == 'IGUAL_TEXTO' || resultCondition.tipo == 'IGUAL_NÚMERICO') {
+    // If there's a condition, extracting the conditionns comparators and the condition data to compare
+    const conditionVariable = resultCondition.variavel
+    const conditionValue = resultCondition.igual
+    const condition = conditionData[conditionVariable as keyof typeof conditionData]
+    // If condition is matched, then returning true
+    if (condition == conditionValue) return true
+    // If not, false
+    return false
+  }
+  if (resultCondition.tipo == 'MAIOR_QUE_NÚMERICO') {
+    // If there's a condition, extracting the conditionns comparators and the condition data to compare
+    const conditionVariable = resultCondition.variavel
+    const conditionValue = resultCondition.maiorQue || 0
+    const condition = conditionData[conditionVariable as keyof typeof conditionData]
+    // If condition is matched, then returning true
+    if (Number(condition) > conditionValue) return true
+    // If not, false
+    return false
+  }
+  if (resultCondition.tipo == 'MENOR_QUE_NÚMERICO') {
+    // If there's a condition, extracting the conditionns comparators and the condition data to compare
+    const conditionVariable = resultCondition.variavel
+    const conditionValue = resultCondition.maiorQue || 0
+    const condition = conditionData[conditionVariable as keyof typeof conditionData]
+    // If condition is matched, then returning true
+    if (Number(condition) < conditionValue) return true
+    // If not, false
+    return false
+  }
+  if (resultCondition.tipo == 'INTERVALO_NÚMERICO') {
+    // If there's a condition, extracting the conditionns comparators and the condition data to compare
+    const conditionVariable = resultCondition.variavel
+    const conditionValueMin = resultCondition.entre?.minimo || 0
+    const conditionValueMax = resultCondition.entre?.maximo || 0
+    const condition = conditionData[conditionVariable as keyof typeof conditionData]
+    // If condition is matched, then returning true
+    if (Number(condition) >= conditionValueMin && Number(condition) <= conditionValueMax) return true
+    // If not, false
+    return false
+  }
+  if (resultCondition.tipo == 'INCLUI_LISTA') {
+    // If there's a condition, extracting the conditionns comparators and the condition data to compare
+    const conditionVariable = resultCondition.variavel
+    const conditionValues = resultCondition.inclui || []
+    const condition = conditionData[conditionVariable as keyof typeof conditionData]
+    // If condition is matched, then returning true
+    if (conditionValues.includes(condition.toString())) return true
+    // If not, false
+    return false
+  }
+}
+
 type HandlePricingCalculationParams = {
   methodology: TPricingMethodDTO
   kit?: {
@@ -96,10 +160,14 @@ export function handlePricingCalculation({ methodology, kit, variableData, condi
       // Ordering possible results so that general result formulas are find last
       const orderedPossibleResults = cost.resultados.sort((a, b) => (a.condicao.aplicavel === b.condicao.aplicavel ? 0 : a.condicao.aplicavel ? -1 : 1))
       const activeResult = orderedPossibleResults.find((r) => {
-        const conditional = r.condicao.aplicavel
+        const resultCondition = r.condicao
+        const conditional = resultCondition.aplicavel
         // If there's no condition, then it is a general formula, so returning true
         if (!conditional) return true
+
         // If there's a condition, extracting the conditionns comparators and the condition data to compare
+        const conditionValidationResult = handleConditionValidation({ resultCondition, conditionData })
+        return conditionValidationResult
         const conditionVariable = r.condicao.variavel
         const conditionValue = r.condicao.igual
         const condition = conditionData[conditionVariable as keyof typeof conditionData]

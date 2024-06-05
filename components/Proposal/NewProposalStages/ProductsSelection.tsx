@@ -72,6 +72,11 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
       faseamentoEletrico: infoHolder.premissas.faseamentoEletrico || 'MONOFÁSICO',
       idParceiro: opportunity.idParceiro,
+      numModulos: infoHolder.premissas.numModulos || 0,
+      numInversores: infoHolder.premissas.numInversores || 0,
+      potenciaPico: infoHolder.premissas.potenciaPico || 0,
+      distancia: infoHolder.premissas.distancia || 0,
+      valorReferencia: infoHolder.premissas.valorReferencia || 0,
     }
     const variableData: TPricingVariableData = {
       kit: 0,
@@ -185,6 +190,11 @@ function ProductsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
       faseamentoEletrico: infoHolder.premissas.faseamentoEletrico || 'MONOFÁSICO',
       idParceiro: opportunity.idParceiro,
+      numModulos: moduleQty,
+      numInversores: inverterQty,
+      potenciaPico: modulePeakPower,
+      distancia: infoHolder.premissas.distancia || 0,
+      valorReferencia: infoHolder.premissas.valorReferencia || 0,
     }
     const variableData: TPricingVariableData = {
       kit: 0,

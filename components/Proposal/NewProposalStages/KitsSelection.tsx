@@ -149,6 +149,11 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       grupoInstalacao: infoHolder.premissas.grupoInstalacao || 'RESIDENCIAL',
       faseamentoEletrico: infoHolder.premissas.faseamentoEletrico || 'MONOFÁSICO',
       idParceiro: opportunity.idParceiro,
+      numModulos: moduleQty,
+      numInversores: inverterQty,
+      potenciaPico: modulePeakPower,
+      distancia: infoHolder.premissas.distancia || 0,
+      valorReferencia: infoHolder.premissas.valorReferencia || 0,
     }
     const variableData: TPricingVariableData = {
       kit: kitPrice,
@@ -291,6 +296,11 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       tipoEstrutura: infoHolder.premissas.tipoEstrutura || 'Fibrocimento',
       faseamentoEletrico: infoHolder.premissas.faseamentoEletrico || 'MONOFÁSICO',
       idParceiro: opportunity.idParceiro,
+      numModulos: moduleQty,
+      numInversores: inverterQty,
+      potenciaPico: modulePeakPower,
+      distancia: infoHolder.premissas.distancia || 0,
+      valorReferencia: infoHolder.premissas.valorReferencia || 0,
     }
     const variableData: TPricingVariableData = {
       kit: price,

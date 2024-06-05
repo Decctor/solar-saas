@@ -3,7 +3,7 @@ import { TPricingItem, TProposal } from '@/utils/schemas/proposal.schema'
 import React, { useState } from 'react'
 import { AiFillEdit } from 'react-icons/ai'
 
-import { getPricingTotals, handlePartialPricingReCalculation, TPricingConditionData, TPricingVariableData } from '@/utils/pricing/methods'
+import { getPricingTotals, handlePartialPricingReCalculation, TPricingVariableData } from '@/utils/pricing/methods'
 import EditPriceItem from './EditPriceItem'
 import { TbMathFunction, TbPercentage } from 'react-icons/tb'
 import { formatDecimalPlaces } from '@/lib/methods/formatting'

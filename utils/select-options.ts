@@ -20,6 +20,7 @@ import { TSaleCategory } from './schemas/opportunity.schema'
 import { TSignaturePlanDTO } from './schemas/signature-plans.schema'
 import { TProject } from './schemas/project.schema'
 import { TTechnicalAnalysisPendencyCategory } from './schemas/technical-analysis.schema'
+import { TPricingMethodConditionType } from './schemas/pricing-method.schema'
 
 export const AllSellers = [
   {
@@ -631,6 +632,21 @@ export const EletricalPhasesTypes: { id: number; label: string; value: TEletrica
   { id: 2, label: 'BIFÁSICO', value: 'BIFÁSICO' },
   { id: 3, label: 'TRIFÁSICO', value: 'TRIFÁSICO' },
 ]
+
+type TPricingMethodConditionTypeOption = {
+  id: number
+  label: string
+  value: TPricingMethodConditionType
+}
+export const PricingMethodConditionTypeOptions: TPricingMethodConditionTypeOption[] = [
+  { id: 1, label: 'IGUALDADE DE TEXTO', value: 'IGUAL_TEXTO' },
+  { id: 2, label: 'IGUALDADE NÚMERICA', value: 'IGUAL_NÚMERICO' },
+  { id: 3, label: 'MAIOR QUE', value: 'MAIOR_QUE_NÚMERICO' },
+  { id: 4, label: 'MENOR QUE', value: 'MENOR_QUE_NÚMERICO' },
+  { id: 5, label: 'INVERVALO NÚMERICO', value: 'INTERVALO_NÚMERICO' },
+  { id: 6, label: 'INCLUSO EM LISTA', value: 'INCLUI_LISTA' },
+]
+
 type TUserGroup = {
   id: string
   grupo: string

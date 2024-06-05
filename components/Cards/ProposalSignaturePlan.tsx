@@ -54,6 +54,11 @@ function ProposalSignaturePlan({
     tipoEstrutura: proposal.premissas.tipoEstrutura || 'Fibrocimento',
     faseamentoEletrico: proposal.premissas.faseamentoEletrico || 'MONOFÁSICO',
     idParceiro: opportunity.idParceiro,
+    numModulos: proposal.premissas.numModulos || 0,
+    numInversores: proposal.premissas.numInversores || 0,
+    potenciaPico: proposal.premissas.potenciaPico || 0,
+    distancia: proposal.premissas.distancia || 0,
+    valorReferencia: proposal.premissas.valorReferencia || 0,
   }
   const variableData: TPricingVariableData = {
     kit: 0,

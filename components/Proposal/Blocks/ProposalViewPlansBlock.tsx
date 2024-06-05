@@ -6,15 +6,7 @@ import { BsCheckCircleFill } from 'react-icons/bs'
 import ProposalPlan from './ProposalPlan'
 import { fetchSignaturePlanById } from '@/utils/queries/signature-plans'
 import { TOpportunityDTO } from '@/utils/schemas/opportunity.schema'
-import {
-  getPricingSuggestedTotal,
-  getPricingTotal,
-  getPricingTotals,
-  handleFinalPriceCorrection,
-  handlePricingCalculation,
-  TPricingConditionData,
-  TPricingVariableData,
-} from '@/utils/pricing/methods'
+
 import { editProposal } from '@/utils/mutations/proposals'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { useQueryClient } from '@tanstack/react-query'

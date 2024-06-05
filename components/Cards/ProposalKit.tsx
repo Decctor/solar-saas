@@ -35,6 +35,11 @@ function ProposalKit({ kit, proposal, opportunity, handleClick, userHasPricingVi
     tipoEstrutura: proposal.premissas.tipoEstrutura || 'Fibrocimento',
     faseamentoEletrico: proposal.premissas.faseamentoEletrico || 'MONOFÁSICO',
     idParceiro: opportunity.idParceiro,
+    numModulos: getModulesQty(kit.produtos),
+    numInversores: getInverterQty(kit.produtos),
+    potenciaPico: getModulesPeakPotByProducts(kit.produtos),
+    distancia: proposal.premissas.distancia || 0,
+    valorReferencia: proposal.premissas.valorReferencia || 0,
   }
   const variableData: TPricingVariableData = {
     kit: kit.preco,

@@ -1,5 +1,6 @@
 import { stateCities } from '../estados_cidades'
 import { TPartnerSimplifiedDTO } from '../schemas/partner.schema'
+import { TPricingMethodConditionType, TPricingMethodItemResultItem } from '../schemas/pricing-method.schema'
 import { ElectricalInstallationGroups, EletricalPhasesTypes, StructureTypes } from '../select-options'
 import { TPricingConditionData, TPricingVariableData } from './methods'
 
@@ -27,15 +28,24 @@ export const variablesAlias: TVariablesAlias[] = [
   { label: 'TOTAL DE CUSTOS NÃO FATURÁVEIS', value: 'totalNaoFaturavelCustos', type: 'cumulative' },
 ]
 export const cumulativeVariablesValues = variablesAlias.filter((v) => v.type == 'cumulative').map((v) => v.value) as string[]
-type TConditionsAlias = { label: string; value: keyof TPricingConditionData }
+type TConditionsAlias = {
+  label: string
+  value: keyof TPricingConditionData
+  types: TPricingMethodConditionType[]
+}
 export const conditionsAlias: TConditionsAlias[] = [
-  { label: 'ESTADO', value: 'uf' },
-  { label: 'CIDADE', value: 'cidade' },
-  { label: 'TOPOLOGIA', value: 'topologia' },
-  { label: 'TIPO DE ESTRUTURA', value: 'tipoEstrutura' },
-  { label: 'GRUPO DA INSTALAÇÃO', value: 'grupoInstalacao' },
-  { label: 'TIPO DE CONEXÃO ELÉTRICA', value: 'faseamentoEletrico' },
-  { label: 'PARCEIRO', value: 'idParceiro' },
+  { label: 'ESTADO', value: 'uf', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
+  { label: 'CIDADE', value: 'cidade', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
+  { label: 'TOPOLOGIA', value: 'topologia', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
+  { label: 'TIPO DE ESTRUTURA', value: 'tipoEstrutura', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
+  { label: 'GRUPO DA INSTALAÇÃO', value: 'grupoInstalacao', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
+  { label: 'TIPO DE CONEXÃO ELÉTRICA', value: 'faseamentoEletrico', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
+  { label: 'PARCEIRO', value: 'idParceiro', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
+  { label: 'Nº DE MÓDULOS', value: 'numModulos', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
+  { label: 'Nº DE INVERSORES', value: 'numInversores', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
+  { label: 'POTÊNCIA PICO', value: 'potenciaPico', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
+  { label: 'DISTÂNCIA', value: 'distancia', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
+  { label: 'VALOR DE REFERÊNCIA', value: 'valorReferencia', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
 ]
 
 export function formatFormulaItem(value: string) {
@@ -97,7 +107,61 @@ export function formatConditionValue({ conditionVariable, conditionValue, additi
     const partnerLabel = additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id })).find((p) => p.value == conditionValue)?.label
     return partnerLabel
   }
+  if (conditionVariable == 'numModulos') return conditionValue.toString()
+  if (conditionVariable == 'numInversores') return conditionValue.toString()
+  if (conditionVariable == 'potenciaPico') return conditionValue.toString()
+  if (conditionVariable == 'distancia') return conditionValue.toString()
+  if (conditionVariable == 'valorReferencia') return conditionValue.toString()
 }
+
+type RenderConditionPhraseParams = {
+  condition: TPricingMethodItemResultItem['condicao']
+  partners: TPartnerSimplifiedDTO[]
+}
+export function renderConditionPhrase({ condition, partners }: RenderConditionPhraseParams) {
+  const isConditionAplicable = condition.aplicavel
+  const conditionType = condition.tipo
+  const conditionAlias = formatCondition(condition.variavel || '')
+  if (!isConditionAplicable) return <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">FÓRMULA GERAL:</h1>
+  if (!conditionType || conditionType == 'IGUAL_TEXTO' || conditionType == 'IGUAL_NÚMERICO')
+    return (
+      <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
+        {`SE ${formatCondition(condition.variavel || '')} FOR IGUAL A ${formatConditionValue({
+          conditionVariable: condition.variavel as keyof TPricingConditionData,
+          conditionValue: condition.igual || '',
+          additional: {
+            partners: partners || [],
+          },
+        })}:`}
+      </h1>
+    )
+  if (conditionType == 'MAIOR_QUE_NÚMERICO')
+    return (
+      <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
+        {`SE ${formatCondition(condition.variavel || '')} FOR MAIOR QUE ${condition.maiorQue || 0}:`}
+      </h1>
+    )
+  if (conditionType == 'MENOR_QUE_NÚMERICO')
+    return (
+      <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
+        {`SE ${formatCondition(condition.variavel || '')} FOR MENOR QUE ${condition.menorQue || 0}:`}
+      </h1>
+    )
+  if (conditionType == 'INTERVALO_NÚMERICO')
+    return (
+      <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
+        {`SE ${formatCondition(condition.variavel || '')} ESTIVER ENTRE ${condition.entre?.minimo || 0} E ${condition.entre?.maximo || 0}:`}
+      </h1>
+    )
+  const conditionValues = condition.inclui ? condition.inclui.join(', ') : ''
+  if (conditionType == 'INCLUI_LISTA')
+    return (
+      <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
+        {`SE ${formatCondition(condition.variavel || '')} FOR UMA DAS OPÇÕES A SEGUIR ${conditionValues}:`}
+      </h1>
+    )
+}
+
 type GetConditionOptions = {
   variable: keyof TPricingConditionData
   additional: {

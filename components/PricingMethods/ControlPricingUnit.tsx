@@ -5,7 +5,7 @@ import { MdContentCopy, MdDelete, MdEdit } from 'react-icons/md'
 import toast from 'react-hot-toast'
 
 import EditPricingUnit from './EditPricingUnit'
-import { formatCondition, formatFormulaItem } from '@/utils/pricing/helpers'
+import { formatCondition, formatFormulaItem, renderConditionPhrase } from '@/utils/pricing/helpers'
 
 type ControlPricingUnitProps = {
   methodology: TPricingMethod
@@ -102,11 +102,12 @@ function ControlPricingUnit({ methodology, setMethodology }: ControlPricingUnitP
               {item.resultados.map((result, index2) => (
                 <div key={index2} className="mb-1 flex w-full items-center gap-2 rounded-md border border-[#A0E9FF] p-1">
                   <div className="flex flex-col">
-                    <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
+                    {renderConditionPhrase({ condition: result.condicao, partners: [] })}
+                    {/* <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
                       {!result.condicao.aplicavel
                         ? 'FÓRMULA GERAL:'
                         : `SE ${formatCondition(result.condicao.variavel || '')} FOR IGUAL A ${result.condicao.igual}:`}
-                    </h1>
+                    </h1> */}
                     <div className="flex items-center gap-2 font-Inter">
                       <div className="flex items-center gap-1">
                         <p className="text-xs text-gray-500">MARGEM: </p>
