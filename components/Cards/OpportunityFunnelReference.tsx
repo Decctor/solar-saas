@@ -170,7 +170,7 @@ function OpportunityFunnelReference({ reference, referenceIndex, funnels, opport
         <SelectInput
           label="ESTÁGIO"
           showLabel={false}
-          value={reference.idEstagioFunil}
+          value={reference.idEstagioFunil.toString()}
           options={stageOptions}
           handleChange={(value) => {
             const references = [...opportunity.referenciasFunil]
