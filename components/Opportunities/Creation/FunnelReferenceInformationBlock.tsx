@@ -49,7 +49,7 @@ function FunnelReferenceInformationBlock({ funnelReference, setFunnelReference, 
           selectedItemLabel="ETAPA NÃO DEFINIDA"
           options={funnelReference.idFunil ? getCurrentActiveFunnelOptions(funnelReference.idFunil, funnels) : null}
           value={funnelReference.idEstagioFunil || null}
-          onChange={(selected) => setFunnelReference((prev) => ({ ...prev, idEstagioFunil: selected.value }))}
+          onChange={(selected) => setFunnelReference((prev) => ({ ...prev, idEstagioFunil: selected.value.toString() }))}
           onReset={() => setFunnelReference((prev) => ({ ...prev, idEstagioFunil: '' }))}
           width="100%"
         />

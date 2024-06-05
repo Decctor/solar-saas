@@ -48,7 +48,7 @@ const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
 
   // Validing payload, checking if there is new stage id reference
   const updates = InsertFunnelReferenceSchema.partial().parse(req.body)
-  const newStageId = updates.idEstagioFunil
+  const newStageId = updates.idEstagioFunil?.toString()
   if (!newStageId) throw new createHttpError.BadRequest('Novo estágio de funil não informado.')
 
   const reference = await getFunnelReferenceById({ collection: funnelReferencesCollection, id: id, query: {} })

@@ -174,7 +174,7 @@ function OpportunityFunnelReference({ reference, referenceIndex, funnels, opport
           options={stageOptions}
           handleChange={(value) => {
             const references = [...opportunity.referenciasFunil]
-            references[referenceIndex].idEstagioFunil = value
+            references[referenceIndex].idEstagioFunil = value.toString()
             setOpportunity((prev) => ({ ...prev, referenciasFunil: references }))
           }}
           selectedItemLabel="NÃO DEFINIDO"

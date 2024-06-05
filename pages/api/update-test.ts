@@ -43,13 +43,42 @@ const LossReasonsEquivalents = {
   'ACHOU O PREÇO ALTO': 'ACHOU O PREÇO ALTO',
   'PROBLEMAS COM LIBERAÇÃO DE CRÉDITO': 'PROBLEMAS COM LIBERAÇÃO DE CRÉDITO',
 }
+
+const PlansEquivalents = {
+  'MANUTENÇÃO SIMPLES': '661d828de3446bbfeff1bcf4',
+  'PLANO SOL': '660efd7cb535065ae08d459f',
+  'PLANO SOL PLUS': '660ff9f61285da49d6dc201e',
+}
+
 type Reduced = { [key: string]: string[] }
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
 
   // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  // const proposalsCollection: Collection<TProposal> = crmDb.collection('proposals')
 
+  // const proposalsToFix = await proposalsCollection.find({ 'planos.id': '' }).toArray()
+
+  // const bulkWriteArr = proposalsToFix.map((proposal) => {
+  //   const plans = proposal.planos
+  //   const plansFixed = plans.map((p) => {
+  //     const equivalentId = PlansEquivalents[p.nome as keyof typeof PlansEquivalents]
+  //     console.log(equivalentId, p.nome)
+  //     return { ...p, id: equivalentId }
+  //   })
+
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(proposal._id) },
+  //       update: {
+  //         $set: {
+  //           planos: plansFixed,
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
   // const opportunitiesCollection: Collection<TOpportunity> = crmDb.collection('opportunities')
 
   // const opportunities = await opportunitiesCollection.find({}, { projection: { perda: 1 } }).toArray()
@@ -190,7 +219,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  // const bulkwriteResponse = await projectTypesCollection.bulkWrite(bulkwriteArr)
+  // const bulkwriteResponse = await proposalsCollection.bulkWrite(bulkWriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
   return res.json('DESATIVADA')
 }

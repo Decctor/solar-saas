@@ -171,7 +171,7 @@ function OpportunityFunnelReferencesBlock({ opportunity, setOpportunity }: Oppor
                     label="ETAPA"
                     value={newFunnelReference.idEstagioFunil}
                     options={getFunnelInfo({ funnelId: newFunnelReference.idFunil, funnels: funnels }).stageOptions}
-                    handleChange={(value) => setNewFunnelReference((prev) => ({ ...prev, idEstagioFunil: value }))}
+                    handleChange={(value) => setNewFunnelReference((prev) => ({ ...prev, idEstagioFunil: value.toString() }))}
                     selectedItemLabel="NÃO DEFINIDO"
                     onReset={() => setNewFunnelReference((prev) => ({ ...prev, idEstagioFunil: '' }))}
                     width="100%"

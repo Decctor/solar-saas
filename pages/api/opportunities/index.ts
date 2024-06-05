@@ -160,7 +160,7 @@ const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
         funil: {
           id: opportunityFunnelReference._id.toString(),
           idFunil: opportunityFunnelReference.idFunil,
-          idEstagio: opportunityFunnelReference.idEstagioFunil,
+          idEstagio: opportunityFunnelReference.idEstagioFunil.toString(),
         },
         statusAtividades: activitiesStatus,
       }
