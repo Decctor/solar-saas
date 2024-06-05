@@ -14,6 +14,8 @@ import ProposalWithPlans from './ProposalsCreationByCategory/ProposeWithPlans'
 import ProposalWithProducts from './ProposalsCreationByCategory/ProposeWithProducts'
 import ProposalWithServices from './ProposalsCreationByCategory/ProposeWithServices'
 import { useOpportunityTechnicalAnalysis } from '@/utils/queries/technical-analysis'
+import { FaStepBackward } from 'react-icons/fa'
+import Link from 'next/link'
 type NewProposalPageprops = {
   session: Session
   opportunityId: string
@@ -76,12 +78,21 @@ function NewProposalPage({ session, opportunityId }: NewProposalPageprops) {
       <div className="flex h-full flex-col md:flex-row">
         <Sidebar session={session} />
         <div className="flex w-full max-w-full grow flex-col overflow-x-hidden bg-[#f8f9fa]">
-          <div className="flex h-[70px] w-full items-center justify-around bg-black">
-            <div className="flex flex-col items-center">
+          <div className="flex h-[70px] w-full items-center bg-black px-2">
+            <div className="flex w-1/3 items-center justify-center">
+              <Link href={`/comercial/oportunidades/id/${opportunityId}`}>
+                <button className="flex items-center gap-1 text-xs text-white">
+                  <FaStepBackward />
+                  <p className="font-bold">VOLTAR À OPORTUNIDADE</p>
+                </button>
+              </Link>
+            </div>
+
+            <div className="flex w-1/3 flex-col items-center">
               <h1 className="text-sm text-gray-400">NOME DA OPORTUNIDADE</h1>
               <h1 className="font-bold text-white">{opportunity.nome}</h1>
             </div>
-            <div className="hidden flex-col items-center lg:flex">
+            <div className="flex w-1/3 flex-col items-center">
               <h1 className="text-sm text-gray-400">CÓD. DO PROJETO</h1>
               <h1 className="font-bold text-white"># {opportunity.identificador}</h1>
             </div>

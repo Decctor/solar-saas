@@ -58,7 +58,9 @@ function PricingMethods({ session }: PricingMethodsProps) {
                       <p className="text-sm font-medium leading-none tracking-tight">{method.nome}</p>
                     )}
                   </div>
-                  {method.idParceiro ? null : <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">FIXO</h1>}
+                  {FixedPricingMethod.includes(method._id) ? null : (
+                    <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">FIXO</h1>
+                  )}
                 </div>
 
                 <h1 className='"w-full mt-2 text-start text-xs font-medium'>UNIDADES DE PREÇO</h1>
@@ -70,7 +72,7 @@ function PricingMethods({ session }: PricingMethodsProps) {
                   ))}
                 </div>
                 <div className="mt-2 flex w-full items-center justify-end gap-2">
-                  {method.idParceiro ? (
+                  {!FixedPricingMethod.includes(method._id) ? (
                     <>
                       <div className={`flex items-center gap-2`}>
                         <div className="ites-center flex gap-1">
