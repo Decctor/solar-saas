@@ -26,6 +26,7 @@ function NewFileReference({ opportunityId, clientId, session, closeModal }: NewF
   const [infoHolder, setInfoHolder] = useState<TFileReference>({
     titulo: '',
     idParceiro: session.user.idParceiro || '',
+    idOportunidade: opportunityId,
     formato: '',
     url: '',
     autor: {

@@ -54,7 +54,7 @@ function ProposalWithPlanTemplate({ proposal, opportunity, partner }: ProposalWi
             </div>
             <p className="w-full text-start text-[0.65rem]  text-gray-500">{plan?.descricao || '...'}</p>
             <div className="my-4 flex w-full items-end justify-center gap-1">
-              <h1 className="text-2xl font-black">{formatToMoney(plan.valor)}</h1>
+              <h1 className="text-2xl font-black">{formatToMoney(plan.valor || 0)}</h1>
               <h1 className="text-xs font-light text-gray-500">/ {plan?.intervalo.tipo}</h1>
             </div>
 
