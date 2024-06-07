@@ -39,7 +39,7 @@ export function getOeMTemplateData2024({ opportunity, proposal }: GetTemplateDat
       simpleMaintenancePrice: formatToMoney(getPricing(proposal.planos).manutencaoSimples),
       sunPlusPlanPrice: formatToMoney(getPricing(proposal.planos).planoSolPlus),
       sunPlanPrice: formatToMoney(getPricing(proposal.planos).planoSol),
-      modules: `${proposal.premissas.numModulos || 0} MÓDULO`,
+      modules: `${proposal.premissas.numModulos || 0} MÓDULOS`,
       efficiency: proposal.premissas.eficienciaGeracao ? `${proposal.premissas.eficienciaGeracao}%` : '-',
     },
   }
