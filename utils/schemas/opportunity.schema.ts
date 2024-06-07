@@ -24,6 +24,29 @@ export const SaleCategorySchema = z.enum(['KIT', 'PLANO', 'PRODUTOS', 'SERVIÇOS
   required_error: 'Categoria de venda não fornecida.',
   invalid_type_error: 'Tipo não válido para categoria de venda.',
 })
+const OpportunityResponsibleSchema = z.object({
+  id: z.string({ required_error: 'ID do responsável da oportunidade não informado.', invalid_type_error: 'Tipo não válido para o ID do responsável.' }),
+  nome: z.string({ required_error: 'Nome do responsável da oportunidade não informado.', invalid_type_error: 'Tipo não válido para o nome do responsável.' }),
+  papel: z.string({
+    required_error: 'Papel do responsável da oportunidade não informado.',
+    invalid_type_error: 'Tipo não válido para o papel do responsável.',
+  }),
+  avatar_url: z
+    .string({ required_error: 'Avatar do responsável da oportunidade não informado.', invalid_type_error: 'Tipo não válido para o avatar do responsável.' })
+    .optional()
+    .nullable(),
+  telefone: z
+    .string({ required_error: 'Telefone do responsável da oportunidade não informado.', invalid_type_error: 'Tipo não válido para o Telefone do responsável.' })
+    .optional()
+    .nullable(),
+  dataInsercao: z
+    .string({
+      required_error: 'Data de inserção do responsável da oportunidade não informado.',
+      invalid_type_error: 'Tipo não válido para a data de inserção do responsável.',
+    })
+    .datetime(),
+})
+export type TOpportunityResponsible = z.infer<typeof OpportunityResponsibleSchema>
 export type TSaleCategory = z.infer<typeof SaleCategorySchema>
 
 export const GeneralOpportunitySchema = z.object({
@@ -41,15 +64,12 @@ export const GeneralOpportunitySchema = z.object({
   categoriaVenda: SaleCategorySchema,
   descricao: z.string(),
   identificador: z.string(),
-  responsaveis: z.array(
-    z.object({
-      id: z.string(),
-      nome: z.string(),
-      papel: z.string(),
-      avatar_url: z.string().optional().nullable(),
-      telefone: z.string().optional().nullable(),
+  responsaveis: z
+    .array(OpportunityResponsibleSchema, {
+      required_error: 'Responsável(is) da oportunidade não informados.',
+      invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.',
     })
-  ),
+    .min(1, 'É necessário ao menos 1 responsável.'),
   segmento: z
     .union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')])
     .optional()
@@ -127,16 +147,10 @@ export const InsertOpportunitySchema = z.object({
     invalid_type_error: 'Tipo inválido para identificador da oportunidade.',
   }),
   responsaveis: z
-    .array(
-      z.object({
-        id: z.string(),
-        nome: z.string(),
-        papel: z.string(),
-        avatar_url: z.string().optional().nullable(),
-        telefone: z.string().optional().nullable(),
-      }),
-      { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
-    )
+    .array(OpportunityResponsibleSchema, {
+      required_error: 'Responsável(is) da oportunidade não informados.',
+      invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.',
+    })
     .min(1, 'É necessário ao menos 1 responsável.'),
   segmento: z
     .union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')], {
@@ -239,16 +253,10 @@ export const UpdateOpportunitySchema = z.object({
     invalid_type_error: 'Tipo inválido para identificador da oportunidade.',
   }),
   responsaveis: z
-    .array(
-      z.object({
-        id: z.string(),
-        nome: z.string(),
-        papel: z.string(),
-        avatar_url: z.string().optional().nullable(),
-        telefone: z.string().optional().nullable(),
-      }),
-      { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
-    )
+    .array(OpportunityResponsibleSchema, {
+      required_error: 'Responsável(is) da oportunidade não informados.',
+      invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.',
+    })
     .min(1, 'É necessário ao menos 1 responsável.'),
   segmento: z
     .union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')], {
@@ -351,16 +359,10 @@ export const OpportunityWithClientSchema = z.object({
     invalid_type_error: 'Tipo inválido para identificador da oportunidade.',
   }),
   responsaveis: z
-    .array(
-      z.object({
-        id: z.string(),
-        nome: z.string(),
-        papel: z.string(),
-        avatar_url: z.string().optional().nullable(),
-        telefone: z.string().optional().nullable(),
-      }),
-      { required_error: 'Responsável(is) da oportunidade não informados.', invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.' }
-    )
+    .array(OpportunityResponsibleSchema, {
+      required_error: 'Responsável(is) da oportunidade não informados.',
+      invalid_type_error: 'Tipo não válido para responsáveis da oportunidade.',
+    })
     .min(1, 'É necessário ao menos 1 responsável.'),
   segmento: z
     .union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')], {

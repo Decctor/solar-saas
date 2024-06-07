@@ -56,6 +56,24 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const { id } = req.query
 
   // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  // const opportunitiesCollection: Collection<TOpportunity> = crmDb.collection('opportunities')
+
+  // const opportunities = await opportunitiesCollection.find({}, { projection: { nome: 1, responsaveis: 1, dataInsercao: 1 } }).toArray()
+
+  // const bulkWriteArr = opportunities.map((opportunity) => {
+  //   const insertDate = opportunity.dataInsercao
+  //   const responsibles = opportunity.responsaveis.map((resp) => ({ ...resp, dataInsercao: insertDate }))
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(opportunity._id) },
+  //       update: {
+  //         $set: {
+  //           responsaveis: responsibles,
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
   // const proposalsCollection: Collection<TProposal> = crmDb.collection('proposals')
 
   // const proposalsToFix = await proposalsCollection.find({ 'planos.id': '' }).toArray()
@@ -219,7 +237,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  // const bulkwriteResponse = await proposalsCollection.bulkWrite(bulkWriteArr)
+  // const bulkwriteResponse = await opportunitiesCollection.bulkWrite(bulkWriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
   return res.json('DESATIVADA')
 }

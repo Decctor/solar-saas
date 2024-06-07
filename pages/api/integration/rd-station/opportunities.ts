@@ -8,7 +8,7 @@ import { TClient } from '@/utils/schemas/client.schema'
 import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
 import { TIntegrationRDStation } from '@/utils/schemas/integration.schema'
 import { TNotification } from '@/utils/schemas/notification.schema'
-import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import { TOpportunity, TOpportunityResponsible } from '@/utils/schemas/opportunity.schema'
 import { TUser } from '@/utils/schemas/user.schema'
 import axios from 'axios'
 import createHttpError from 'http-errors'
@@ -316,7 +316,14 @@ async function getNewReceiver({ collection, users }: GetNewReceiverParam) {
     const lastReceiverIndex = users.findIndex((r) => r._id.toString() == lastReceiverId) || 0
     const newReceiverIndex = lastReceiverIndex + 1 == users.length ? 0 : lastReceiverIndex + 1
     const newReceiverUser = users[newReceiverIndex]
-    const newReceiver = { id: newReceiverUser._id.toString(), nome: newReceiverUser.nome, avatar_url: newReceiverUser.avatar_url }
+    const newReceiver: TOpportunityResponsible = {
+      id: newReceiverUser._id.toString(),
+      nome: newReceiverUser.nome,
+      papel: 'VENDEDOR',
+      avatar_url: newReceiverUser.avatar_url,
+      telefone: newReceiverUser.telefone,
+      dataInsercao: new Date().toISOString(),
+    }
     return newReceiver
   } catch (error) {
     throw error

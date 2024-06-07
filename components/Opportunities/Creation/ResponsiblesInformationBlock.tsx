@@ -1,7 +1,7 @@
 import SelectInput from '@/components/Inputs/SelectInput'
 import SelectWithImages from '@/components/Inputs/SelectWithImages'
 import Avatar from '@/components/utils/Avatar'
-import { TOpportunity } from '@/utils/schemas/opportunity.schema'
+import { TOpportunity, TOpportunityResponsible } from '@/utils/schemas/opportunity.schema'
 import { TUserDTOSimplified } from '@/utils/schemas/user.schema'
 import { OpportunityResponsibilityRoles } from '@/utils/select-options'
 import { Session } from 'next-auth'
@@ -16,14 +16,15 @@ type ResponsiblesInformationBlockProps = {
   opportunityCreators: TUserDTOSimplified[]
 }
 function ResponsiblesInformationBlock({ session, opportunity, setOpportunity, opportunityCreators }: ResponsiblesInformationBlockProps) {
-  const [responsibleHolder, setResponsibleHolder] = useState<TOpportunity['responsaveis'][number]>({
+  const [responsibleHolder, setResponsibleHolder] = useState<TOpportunityResponsible>({
     id: session.user.id,
     nome: session.user.nome,
     papel: OpportunityResponsibilityRoles[0].value,
     avatar_url: session.user.avatar_url,
     telefone: session.user.telefone,
+    dataInsercao: new Date().toISOString(),
   })
-  function addOpportunityResponsible(responsible: TOpportunity['responsaveis'][number]) {
+  function addOpportunityResponsible(responsible: TOpportunityResponsible) {
     if (responsible.id.trim().length < 20) return toast.error('Escolha um responsável válido.')
     const responsibles = [...opportunity.responsaveis]
     responsibles.push(responsible)
@@ -66,6 +67,7 @@ function ResponsiblesInformationBlock({ session, opportunity, setOpportunity, op
                 papel: '',
                 avatar_url: null,
                 telefone: '',
+                dataInsercao: new Date().toISOString(),
               })
             }
             width="100%"

@@ -1,4 +1,4 @@
-import { TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
+import { TOpportunityDTOWithClientAndPartnerAndFunnelReferences, TOpportunityResponsible } from '@/utils/schemas/opportunity.schema'
 import React, { useState } from 'react'
 import Avatar from '../utils/Avatar'
 import { formatNameAsInitials } from '@/lib/methods/formatting'
@@ -70,11 +70,12 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
     if (!responsibleToAdd.nome || !responsibleToAdd.id) return toast.error('Responsável inválido ou não preenchido.')
     if (!responsibleToAdd.papel) return toast.error('Papel de responsável inválido.')
     const opportunityResponsibles = [...responsibles]
-    const responsible = {
+    const responsible: TOpportunityResponsible = {
       nome: responsibleToAdd.nome,
       id: responsibleToAdd.id,
       papel: responsibleToAdd.papel,
       avatar_url: responsibleToAdd.avatar_url,
+      dataInsercao: new Date().toISOString(),
     }
     opportunityResponsibles.push(responsible)
     // @ts-ignore

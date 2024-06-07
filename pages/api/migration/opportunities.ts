@@ -65,6 +65,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
       papel: 'VENDEDOR',
       avatar_url: project.responsavel.avatar_url || sellerUser?.avatar_url,
       telefone: sellerUser?.telefone || '',
+      dataInsercao: new Date().toISOString(),
     }
     responsibles.push(seller)
     // In case there was an SDR
@@ -76,6 +77,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
         papel: 'SDR',
         avatar_url: project.representante.avatar_url || sdrUser?.avatar_url,
         telefone: sdrUser?.telefone || '',
+        dataInsercao: new Date().toISOString(),
       }
       responsibles.push(sdr)
     }
@@ -145,6 +147,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
         idFunil: '661eaeb6c387dfeddd9a23c9',
         idEstagioFunil: salesFunnel?.etapaId.toString() || '1',
         dataInsercao: opportunity.dataInsercao || new Date().toISOString(),
+        estagios: {},
       }
       references.push(salesReference)
     }
@@ -157,6 +160,7 @@ const migrate: NextApiHandler<any> = async (req, res) => {
         idFunil: '661eb0996dd818643c5334f5',
         idEstagioFunil: sdrFunnel?.etapaId.toString() || '1',
         dataInsercao: opportunity.dataInsercao || new Date().toISOString(),
+        estagios: {},
       }
       references.push(sdrReference)
     }
