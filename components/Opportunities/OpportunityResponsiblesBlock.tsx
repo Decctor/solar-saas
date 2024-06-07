@@ -1,7 +1,7 @@
 import { TOpportunityDTOWithClientAndPartnerAndFunnelReferences, TOpportunityResponsible } from '@/utils/schemas/opportunity.schema'
 import React, { useState } from 'react'
 import Avatar from '../utils/Avatar'
-import { formatNameAsInitials } from '@/lib/methods/formatting'
+import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
 import { UseMutateFunction } from '@tanstack/react-query'
 import toast from 'react-hot-toast'
 import { MdDelete } from 'react-icons/md'
@@ -13,6 +13,7 @@ import { Session } from 'next-auth'
 import { useOpportunityCreators } from '@/utils/queries/users'
 import { TNotification } from '@/utils/schemas/notification.schema'
 import { createNotification } from '@/utils/mutations/notifications'
+import { BsCalendarPlus } from 'react-icons/bs'
 type OpportunityResponsiblesBlockProps = {
   infoHolder: TOpportunityDTOWithClientAndPartnerAndFunnelReferences
   setInfoHolder: React.Dispatch<React.SetStateAction<TOpportunityDTOWithClientAndPartnerAndFunnelReferences>>
@@ -101,7 +102,7 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
       <h1 className="w-full rounded-md bg-[#fead41] p-1 text-center text-sm font-medium text-white">RESPONSÁVEIS DA OPORTUNIDADE</h1>
       <div className="flex flex-col gap-2">
         {infoHolder.responsaveis.map((resp, index) => (
-          <div className="flex w-full flex-col rounded-md border border-gray-200 p-3">
+          <div key={index} className="flex w-full flex-col rounded-md border border-gray-200 p-3">
             <div className="flex w-full items-center gap-2">
               <div className="flex items-center gap-2">
                 <Avatar url={resp.avatar_url || undefined} height={20} width={20} fallback={formatNameAsInitials(resp.nome)} />
@@ -151,6 +152,12 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
                 onReset={() => console.log()}
                 width="100%"
               />
+            </div>
+            <div className="mt-2 flex w-full items-center justify-end">
+              <div className={`flex items-center gap-1`}>
+                <BsCalendarPlus />
+                <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(resp.dataInsercao, true)}</p>
+              </div>
             </div>
           </div>
         ))}

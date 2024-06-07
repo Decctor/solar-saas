@@ -157,6 +157,9 @@ const getSDRTeamResults: NextApiHandler<GetResponse> = async (req, res) => {
 
     if (!insider) return acc
 
+    const transferDate = seller?.dataInsercao ? new Date(seller.dataInsercao) : null
+    const wasTransferedWithinCurrentPeriod = transferDate && transferDate >= afterDate && transferDate < beforeDate
+
     const isInbound = !!current.idMarketing
     if (!acc[sdr.nome]) {
       acc[sdr.nome] = {
@@ -218,16 +221,17 @@ const getSDRTeamResults: NextApiHandler<GetResponse> = async (req, res) => {
       acc[sdr.nome].projetosEnviados.objetivo = sdrSaleGoals.metas.projetosEnviados || 0
     }
     if (wasInsertedWithinCurrentPeriod) {
-      if (isTransfer) acc[sdr.nome]['POR VENDEDOR'][seller.nome] += 1
-      if (isTransfer) acc[sdr.nome].projetosEnviados.atingido += 1
       acc[sdr.nome].projetosCriados.atingido += 1
 
-      if (isTransfer && isInbound) acc[sdr.nome].projetosEnviados.origem['INBOUND'] += 1
-      if (isTransfer && !isInbound) acc[sdr.nome].projetosEnviados.origem['OUTBOUND'] += 1
       if (isInbound) acc[sdr.nome].projetosCriados.origem['INBOUND'] += 1
       if (!isInbound) acc[sdr.nome].projetosCriados.origem['OUTBOUND'] += 1
     }
-
+    if (wasTransferedWithinCurrentPeriod) {
+      if (isTransfer) acc[sdr.nome].projetosEnviados.atingido += 1
+      if (isTransfer) acc[sdr.nome]['POR VENDEDOR'][seller.nome] += 1
+      if (isTransfer && isInbound) acc[sdr.nome].projetosEnviados.origem['INBOUND'] += 1
+      if (isTransfer && !isInbound) acc[sdr.nome].projetosEnviados.origem['OUTBOUND'] += 1
+    }
     if (wasSignedWithinCurrentPeriod) {
       acc[sdr.nome].potenciaPico.atingido += proposePeakPower
       acc[sdr.nome].valorVendido.atingido += proposeValue
@@ -291,6 +295,7 @@ async function getOpportunities({ opportunitiesCollection, responsiblesQuery, pa
       ...partnerQuery,
       ...responsiblesQuery,
       $or: [
+        { $and: [{ 'responsaveis.dataInsercao': { $gte: afterDateStr } }, { 'responsaveis.dataInsercao': { $lte: beforeDateStr } }] },
         { $and: [{ dataInsercao: { $gte: afterDateStr } }, { dataInsercao: { $lte: beforeDateStr } }] },
         { $and: [{ 'ganho.data': { $gte: afterDateStr } }, { 'ganho.data': { $lte: beforeDateStr } }] },
       ],
