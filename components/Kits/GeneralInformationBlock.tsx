@@ -101,7 +101,7 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, pricingMethods }: 
           <div className="w-full lg:w-1/2">
             <MultipleSelectInput
               label="ESTRUTURAS COMPATÍVEIS"
-              selected={infoHolder.estruturasCompativeis.length > 0 ? infoHolder.estruturasCompativeis.map((structure) => structure) : null}
+              selected={infoHolder.estruturasCompativeis}
               options={StructureTypes.map((type, index) => ({
                 ...type,
                 id: index + 1,

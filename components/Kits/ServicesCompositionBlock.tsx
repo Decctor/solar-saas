@@ -9,6 +9,7 @@ import { TNewKit } from '../Modals/Kit/NewKit'
 import { MdDelete, MdOutlineMiscellaneousServices } from 'react-icons/md'
 import { AiOutlineSafety } from 'react-icons/ai'
 import { CommonServicesByProjectType } from '@/utils/constants'
+import TextareaInput from '../Inputs/TextareaInput'
 
 type ServicesCompositionBlockProps = {
   infoHolder: TKit
@@ -63,6 +64,12 @@ function ServicesCompositionBlock({ infoHolder, setInfoHolder }: ServicesComposi
             />
           </div>
         </div>
+        <TextareaInput
+          label="OBSERVAÇÕES DO SERVIÇO"
+          value={serviceHolder.observacoes}
+          handleChange={(value) => setServiceHolder((prev) => ({ ...prev, observacoes: value }))}
+          placeholder="Preencha aqui uma descrição acerca do serviço..."
+        />
         <div className="flex items-center justify-end">
           <button
             className="rounded bg-black p-1 px-4 text-sm font-medium text-white duration-300 ease-in-out hover:bg-gray-700"
@@ -110,7 +117,9 @@ function ServicesCompositionBlock({ infoHolder, setInfoHolder }: ServicesComposi
                 <div className="mt-1 flex w-full items-center justify-end gap-2 pl-2">
                   <div className="flex items-center gap-1">
                     <AiOutlineSafety size={12} />
-                    <p className="text-[0.6rem] font-light text-gray-500 lg:text-xs">{service.garantia} ANOS</p>
+                    <p className="text-[0.6rem] font-light text-gray-500 lg:text-xs">
+                      {service.garantia} {service.garantia > 0 ? 'ANOS' : 'ANO'}
+                    </p>
                   </div>
                 </div>
               </div>

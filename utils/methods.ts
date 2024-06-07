@@ -220,7 +220,7 @@ export function useKitQueryPipelines(type: 'TODOS OS KITS' | 'KITS POR PREMISSA'
           $match: {
             ativo: true,
             $or: [{ dataValidade: null }, { dataValidade: { $gt: currentDate } }],
-            estruturasCompativeis: payload.structure,
+            estruturasCompativeis: payload.structure ? payload.structure : [],
             ...partnerQuery,
           },
         },
@@ -249,7 +249,7 @@ export function useKitQueryPipelines(type: 'TODOS OS KITS' | 'KITS POR PREMISSA'
           $match: {
             ativo: true,
             $or: [{ dataValidade: null }, { dataValidade: { $gt: currentDate } }],
-            estruturasCompativeis: payload.structure,
+            estruturasCompativeis: payload.structure ? payload.structure : [],
             $and: [{ potenciaPico: { $gte: payload.min } }, { potenciaPico: { $lte: payload.max } }],
             ...partnerQuery,
           },

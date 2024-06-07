@@ -6,7 +6,8 @@ import { ImPower, ImPriceTag } from 'react-icons/im'
 
 import TextInput from '../../Inputs/TextInput'
 
-import ProposalWithKitTemplate from '../Templates/ProposalWithKitUFVTemplate'
+import ProposalWithKitUFVTemplate from '../Templates/ProposalWithKitUFVTemplate'
+import ProposalWithKitTemplate from '../Templates/ProposalWithKitTemplate'
 import Services from '../Blocks/Services'
 import Products from '../Blocks/Products'
 
@@ -42,6 +43,8 @@ function renderProposalPreview({
   opportunity: TOpportunityDTOWithClient
   partner: TPartnerSimplifiedDTO
 }) {
+  const isSolarSystemSale = opportunity.tipo.titulo == 'SISTEMA FOTOVOLTAICO' && opportunity.categoriaVenda == 'KIT'
+  const isGeneralKitSale = opportunity.categoriaVenda == 'KIT' && opportunity.tipo.titulo != 'SISTEMA FOTOVOLTAICO'
   if (proposal.idModeloAnvil)
     return (
       <div className="relative flex h-fit w-full flex-col items-center justify-center overflow-hidden bg-white lg:h-[297mm] lg:w-[210mm]">
@@ -50,7 +53,12 @@ function renderProposalPreview({
         </p>
       </div>
     )
-  if (opportunity.categoriaVenda == 'KIT') return <ProposalWithKitTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
+  if (opportunity.categoriaVenda == 'KIT' && isSolarSystemSale)
+    return <ProposalWithKitUFVTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
+
+  if (opportunity.categoriaVenda == 'KIT' && isGeneralKitSale)
+    return <ProposalWithKitTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
+
   if (opportunity.categoriaVenda == 'PLANO') return <ProposalWithPlanTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
   if (opportunity.categoriaVenda == 'PRODUTOS') return <ProposalWithProductsTemplate proposal={proposal} opportunity={opportunity} partner={partner} />
   if (opportunity.categoriaVenda == 'SERVIÇOS') return <ProposalWithServicesTemplate proposal={proposal} opportunity={opportunity} partner={partner} />

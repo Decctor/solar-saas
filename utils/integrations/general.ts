@@ -10,6 +10,7 @@ import { getComplexTemplate2024Data } from './anvil/complex-template-2024'
 import { getDisassemblyAndAssemblyTemplateData } from './anvil/disassembly-and-assembly-template-2024'
 
 import { getOeMTemplateData } from './anvil/oem-template'
+import { getOeMTemplateData2024 } from './anvil/oem-template-2024'
 import { getSimpleTemplate2023Data } from './anvil/simple-template-2023'
 import { getSimpleTemplate2024Data } from './anvil/simple-template-2024'
 
@@ -50,11 +51,18 @@ export const ProposalTemplates = [
     createProposeObj: getBYDTemplateData, //
   },
   {
-    active: true,
+    active: false,
     label: 'TEMPLATE O&M',
     value: 'TEMPLATE O&M',
     idAnvil: 'Cf2vPPIkSi7XEpuXV8Xv',
     createProposeObj: getOeMTemplateData,
+  },
+  {
+    active: true,
+    label: 'TEMPLATE O&M 2024',
+    value: 'TEMPLATE O&M 2024',
+    idAnvil: 'JQlMZkYEhfso06KQylBl',
+    createProposeObj: getOeMTemplateData2024,
   },
   {
     active: true,
@@ -71,6 +79,7 @@ export const ProposeTemplateOptions = [
   'TEMPLATE COMPLEXO 2024',
   'TEMPLATE PARCEIRA BYD',
   'TEMPLATE O&M',
+  'TEMPLATE O&M 2024',
   'TEMPLATE DESMONTAGEM E MONTAGEM',
 ] as const
 
@@ -93,6 +102,8 @@ export function getTemplateData({ opportunity, proposal, template }: GetTemplate
   if (template == 'TEMPLATE O&M') return getOeMTemplateData({ opportunity, proposal })
 
   if (template == 'TEMPLATE DESMONTAGEM E MONTAGEM') return getDisassemblyAndAssemblyTemplateData({ opportunity, proposal })
+
+  if (template == 'TEMPLATE O&M 2024') return getOeMTemplateData2024({ opportunity, proposal })
 
   return getSimpleTemplate2024Data({ opportunity, proposal })
 }

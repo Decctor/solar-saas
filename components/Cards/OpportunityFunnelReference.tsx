@@ -141,7 +141,7 @@ function OpportunityFunnelReference({ reference, referenceIndex, funnels, opport
           <button
             onClick={() =>
               // @ts-ignore
-              handleRemoveFunnelReference({ funnelReferenceToRemoveIndex: index, opportunityFunnelReferences: opportunity.referenciasFunil })
+              handleRemoveFunnelReference({ funnelReferenceToRemoveIndex: referenceIndex, opportunityFunnelReferences: opportunity.referenciasFunil })
             }
             type="button"
             className="flex items-center justify-center gap-2 rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"

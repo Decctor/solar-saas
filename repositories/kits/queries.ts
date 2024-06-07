@@ -7,7 +7,7 @@ type GetKitsParams = {
 }
 export async function getPartnerKits({ collection, query }: GetKitsParams) {
   try {
-    const kits = await collection.find({ ...query }).toArray()
+    const kits = await collection.find({ ...query }, { sort: { _id: -1 } }).toArray()
     return kits
   } catch (error) {
     throw error
@@ -16,7 +16,7 @@ export async function getPartnerKits({ collection, query }: GetKitsParams) {
 
 export async function getPartnerActiveKits({ collection, query }: GetKitsParams) {
   try {
-    const kits = await collection.find({ ...query, ativo: true }).toArray()
+    const kits = await collection.find({ ...query, ativo: true }, { sort: { _id: -1 } }).toArray()
     return kits
   } catch (error) {
     throw error

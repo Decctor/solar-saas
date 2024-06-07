@@ -77,15 +77,15 @@ function ModalNewKit({ session, kitId, closeModal }: ModalNewKitProps) {
           <div className="flex grow flex-col gap-y-2 overflow-y-auto overscroll-y-auto px-2 py-1 scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
             {isLoading ? <LoadingComponent /> : null}
             {isError ? <ErrorComponent msg="Erro ao buscar informações do kit." /> : null}
-            {isSuccess && infoHolder ? (
+            {isSuccess ? (
               <>
                 <GeneralInformationBlock
                   infoHolder={infoHolder}
-                  setInfoHolder={setInfoHolder as Dispatch<React.SetStateAction<TKitDTO | TNewKit>>}
+                  setInfoHolder={setInfoHolder as Dispatch<React.SetStateAction<TKit>>}
                   pricingMethods={pricingMethods || []}
                 />
-                <ProductCompositionBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as Dispatch<React.SetStateAction<TKitDTO | TNewKit>>} />
-                <ServicesCompositionBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as Dispatch<React.SetStateAction<TKitDTO | TNewKit>>} />
+                <ProductCompositionBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as Dispatch<React.SetStateAction<TKit>>} />
+                <ServicesCompositionBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as Dispatch<React.SetStateAction<TKit>>} />
                 <div className="flex w-full items-center justify-end p-2">
                   <button
                     onClick={() => {
