@@ -149,6 +149,14 @@ export const Sidebar = ({ session }: SidebarProps) => {
               </div>
             ) : null}
             <NotificationBlock sidebarExtended={sidebarExtended} session={session} />
+            <Link href={'/configuracoes'}>
+              <button
+                onClick={() => setSidebarExtended((prev) => !prev)}
+                className={`flex w-fit cursor-pointer items-center justify-center self-center rounded p-2 text-[#264653]  duration-300 ease-in hover:scale-105 hover:bg-blue-100`}
+              >
+                <IoMdSettings />
+              </button>
+            </Link>
           </div>
           <div className="col-span-1 flex items-center justify-center">
             <div className="flex h-[37px] w-full items-start justify-center">

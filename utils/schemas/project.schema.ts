@@ -56,7 +56,7 @@ const SaleSchema = z.union([
     espacamento: z.number().default(1),
   }),
 ])
-const GeneralProjectSchema = z.object({
+export const GeneralProjectSchema = z.object({
   indexador: z.number({}),
   nome: z.string(),
   idParceiro: z.string(),
@@ -115,10 +115,15 @@ const GeneralProjectSchema = z.object({
     latitude: z.string().optional().nullable(),
     longitude: z.string().optional().nullable(),
   }),
-
   segmento: z.union([z.literal('RESIDENCIAL'), z.literal('RURAL'), z.literal('COMERCIAL'), z.literal('INDUSTRIAL')]),
   contrato: z.object({
-    status: z.union([z.literal('SOLICITADO'), z.literal('AGUARDANDO ASSINATURA'), z.literal('ASSINADO'), z.literal('RESCISÃO')]),
+    status: z.union([
+      z.literal('AGUARDANDO APROVAÇÃO'),
+      z.literal('SOLICITADO'),
+      z.literal('AGUARDANDO ASSINATURA'),
+      z.literal('ASSINADO'),
+      z.literal('RESCISÃO'),
+    ]),
     dataSolicitacao: z.string(),
     dataLiberacao: z.string().optional().nullable(),
     dataAssinatura: z.string().optional().nullable(),
@@ -182,6 +187,14 @@ const GeneralProjectSchema = z.object({
   potenciaPico: z.number(),
   valor: z.number(),
   nps: z.number().optional().nullable(),
+  aprovacao: z.object({
+    dadosGerais: z.boolean().optional().nullable(),
+    dadosVenda: z.boolean().optional().nullable(),
+    dadosFinanceiros: z.boolean().optional().nullable(),
+    documentacoes: z.boolean().optional().nullable(),
+    dataAprovacao: z.boolean().optional().nullable(),
+    autor: AuthorSchema.optional().nullable(),
+  }),
   autor: AuthorSchema,
   dataInsercao: z.string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' }).datetime(),
 })

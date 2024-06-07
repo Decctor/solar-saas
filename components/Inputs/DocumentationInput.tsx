@@ -10,7 +10,12 @@ import { VscChromeClose } from 'react-icons/vsc'
 type DocumentationInputProps = {
   label: string
   value: FileList | string | null
-  handleChange: (file: FileList | null | string) => void
+  handleChange: (
+    file: {
+      type: 'FILE-REFERENCE' | 'FILE-LIST'
+      value: FileList | string
+    } | null
+  ) => void
   description: string
   obligatory: boolean
   multiple: boolean
@@ -55,7 +60,7 @@ function DocumentationInput({ label, value, handleChange, description, obligator
           <div className="flex w-full items-center gap-2">
             {value ? (
               <p className="grow text-center text-xs leading-none tracking-tight text-gray-500 lg:text-base">
-                {typeof value != 'string' ? (value.length > 1 ? `${value[0].name}, outros...` : value[0].name) : formatLongString(value, 30)}
+                {typeof value != 'string' ? (value.length > 1 ? `${value[0].name}, outros...` : value[0].name) : 'ARQUIVO DE REFERÊNCIA'}
               </p>
             ) : (
               <p className="grow text-center text-xs leading-none tracking-tight text-gray-500 lg:text-base">
@@ -66,7 +71,11 @@ function DocumentationInput({ label, value, handleChange, description, obligator
           </div>
           <input
             onChange={(e) => {
-              if (e.target.files) return handleChange(e.target.files)
+              if (e.target.files)
+                return handleChange({
+                  type: 'FILE-LIST',
+                  value: e.target.files,
+                })
               else return handleChange(null)
             }}
             id={inputIdentifier}
@@ -115,7 +124,10 @@ function DocumentationInput({ label, value, handleChange, description, obligator
                     ) : (
                       <button
                         onClick={() => {
-                          handleChange(reference.url)
+                          handleChange({
+                            type: 'FILE-REFERENCE',
+                            value: reference._id,
+                          })
                           setShowReferencesMenu(false)
                         }}
                         className="rounded-md bg-cyan-600 px-2 py-1 text-[0.55rem] font-medium text-white hover:bg-cyan-500"

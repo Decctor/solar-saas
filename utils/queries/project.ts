@@ -1,5 +1,4 @@
 import axios from 'axios'
-import { IProject } from '../models'
 import { useQuery } from '@tanstack/react-query'
 
 async function fetchProjectById(id: string) {
@@ -7,7 +6,7 @@ async function fetchProjectById(id: string) {
   if (!id) throw new Error('ID inválido.')
   try {
     const { data } = await axios.get(`/api/projects?id=${id}`)
-    return data.data as IProject
+    return data.data as []
   } catch (error) {
     throw error
   }

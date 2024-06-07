@@ -226,6 +226,33 @@ export const PermissionsSchema = z.object({
       invalid_type_error: 'Tipo não válido para permissão de criação de clientes.',
     }),
   }),
+  projetos: z.object({
+    escopo: z
+      .array(
+        z.string({
+          required_error: 'Item do escopo de visualização de projetos não informado.',
+          invalid_type_error: 'Tipo não válido para item do escopo de visualização de projetos.',
+        }),
+        {
+          required_error: 'Escopo de visualização de projetos não fornecido.',
+          invalid_type_error: 'Tipo não válido para escopo de visualização de projetos.',
+        }
+      )
+      .optional()
+      .nullable(), // refere-se ao escopo de atuação
+    visualizar: z.boolean({
+      required_error: 'Permissão de visualização de projetos não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de visualização de projetos.',
+    }),
+    editar: z.boolean({
+      required_error: 'Permissão de edição de projetos não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de edição de projetos.',
+    }),
+    criar: z.boolean({
+      required_error: 'Permissão de criação de projetos não informada.',
+      invalid_type_error: 'Tipo não válido para permissão de criação de projetos.',
+    }),
+  }),
   parceiros: z.object({
     escopo: z
       .array(
@@ -319,7 +346,7 @@ export const PermissionsSchema = z.object({
     }),
   }),
 })
-
+export type TUserPermissions = z.infer<typeof PermissionsSchema>
 const GeneralUserSchema = z.object({
   nome: z.string(),
   administrador: z.boolean(),

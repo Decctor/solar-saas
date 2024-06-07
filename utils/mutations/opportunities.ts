@@ -78,15 +78,3 @@ export async function setOpportunityActiveProposal({ proposalId, opportunityId }
     throw error
   }
 }
-// export async function handleProjectUpdate({ id, changes }: HandleProjectUpdateParams) {
-//   try {
-//     console.log('FUI CHAMADO')
-//     const { data } = await axios.put(`/api/projects?id=${id}`, {
-//       changes: changes,
-//     })
-//     if (typeof data.data == 'string') return data.data as string
-//     else return 'Projeto atualizado com sucesso !'
-//   } catch (error) {
-//     throw error
-//   }
-// }

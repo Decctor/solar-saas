@@ -13,13 +13,23 @@ import PaymentInformationBlock from './RequestStages/PaymentInformationBlock'
 import { TDocumentationConditionData } from '@/utils/project-documentation/helpers'
 import { TFileHolder } from '@/utils/schemas/file-reference.schema'
 import DocumentationInformationBlock from './RequestStages/DocumentationInformationBlock'
+import axios from 'axios'
+import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
+import { useQueryClient } from '@tanstack/react-query'
+import ReviewInformationBlock from './RequestStages/ReviewInformationBlock'
+
+type TFilesHolder = {
+  [key: string]: {
+    type: 'FILE-REFERENCE' | 'FILE-LIST'
+    value: FileList | string
+  } | null
+}
 
 export type TDocumentationHolder = {
   conditionData: TDocumentationConditionData
-  filesHolder: { [key: string]: FileList | string | null }
+  filesHolder: TFilesHolder
 }
-
-type Stages = 'general' | 'client' | 'homologation' | 'technical-analysis' | 'products-and-services' | 'payment' | 'documentation'
+type Stages = 'general' | 'client' | 'homologation' | 'technical-analysis' | 'products-and-services' | 'payment' | 'documentation' | 'review'
 type NewProjectRequestProps = {
   opportunity: TOpportunityDTOWithClient
   proposal: TProposalDTO
@@ -27,6 +37,7 @@ type NewProjectRequestProps = {
   session: Session
 }
 function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewProjectRequestProps) {
+  const queryClient = useQueryClient()
   const sale: TProject['venda'] =
     opportunity.categoriaVenda == 'KIT'
       ? { tipo: 'ÚNICA' }
@@ -107,6 +118,7 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
     servicos: proposal.servicos,
     valor: proposal.valor || 0,
     potenciaPico: proposal.potenciaPico || 0,
+    aprovacao: {},
     autor: {
       id: session.user.id,
       nome: session.user.nome,
@@ -123,6 +135,26 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
       tipoTitular: opportunity.instalacao.tipoTitular || null,
     },
     filesHolder: {},
+  })
+  async function createProject(info: TProject) {
+    try {
+      const { data } = await axios.post('/api/projects', info)
+
+      return data.message
+    } catch (error) {
+      throw error
+    }
+  }
+  const {
+    mutate: handleCreateProject,
+    isPending,
+    isError,
+    isSuccess,
+  } = useMutationWithFeedback({
+    mutationKey: ['create-new-project'],
+    mutationFn: createProject,
+    queryClient: queryClient,
+    affectedQueryKey: [''],
   })
   console.log(documentationHolder)
   return (
@@ -199,8 +231,19 @@ function NewProjectRequest({ opportunity, proposal, session, closeModal }: NewPr
                 setInfoHolder={setInfoHolder}
                 documentationHolder={documentationHolder}
                 setDocumentationHolder={setDocumentationHolder}
-                moveToNextStage={() => setStage('documentation')}
+                moveToNextStage={() => setStage('review')}
                 moveToPreviousStage={() => setStage('payment')}
+              />
+            ) : null}
+            {stage == 'review' ? (
+              <ReviewInformationBlock
+                client={opportunity.cliente}
+                session={session}
+                infoHolder={infoHolder}
+                setInfoHolder={setInfoHolder}
+                requestPending={isPending}
+                // @ts-ignore
+                requestNewProject={() => handleCreateProject(infoHolder)}
               />
             ) : null}
           </div>

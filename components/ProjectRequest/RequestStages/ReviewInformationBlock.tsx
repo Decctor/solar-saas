@@ -26,50 +26,12 @@ import ReviewSaleCompositionBlock from './Utils/ReviewSaleCompositionBlock'
 type ReviewInformationBlockProps = {
   infoHolder: TProject
   setInfoHolder: React.Dispatch<React.SetStateAction<TProject>>
+  requestPending: boolean
+  requestNewProject: () => void
   client: TClientDTO
   session: Session
 }
-function ReviewInformationBlock({ infoHolder, setInfoHolder, session, client }: ReviewInformationBlockProps) {
-  async function setGeneralInformationAddressDataByCEP(cep: string) {
-    const addressInfo = await getCEPInfo(cep)
-    const toastID = toast.loading('Buscando informações sobre o CEP...', {
-      duration: 2000,
-    })
-    setTimeout(() => {
-      if (addressInfo) {
-        toast.dismiss(toastID)
-        toast.success('Dados do CEP buscados com sucesso.', {
-          duration: 1000,
-        })
-        setInfoHolder((prev) => ({
-          ...prev,
-          localizacao: {
-            ...prev.localizacao,
-            endereco: addressInfo.logradouro,
-            bairro: addressInfo.bairro,
-            uf: addressInfo.uf as keyof typeof stateCities,
-            cidade: addressInfo.localidade.toUpperCase(),
-          },
-        }))
-      }
-    }, 1000)
-  }
-  function useClientDataInPayment(client: TClientDTO) {
-    setInfoHolder((prev) => ({
-      ...prev,
-      pagamento: {
-        ...prev.pagamento,
-        pagador: {
-          ...prev.pagamento.pagador,
-          nome: client.nome,
-          cpfCnpj: client.cpfCnpj || '',
-          email: client.email || '',
-          telefone: client.telefonePrimario,
-        },
-      },
-    }))
-  }
-  const isFinancing = infoHolder.pagamento.metodo.fracionamento.some((f) => f.metodo == 'FINANCIAMENTO')
+function ReviewInformationBlock({ infoHolder, setInfoHolder, requestPending, requestNewProject, session, client }: ReviewInformationBlockProps) {
   return (
     <div className="flex w-full grow flex-col gap-2">
       <h1 className="w-full rounded bg-green-800 p-1 text-center text-lg font-bold text-white">REVISÃO DE INFORMAÇÕES</h1>
@@ -93,7 +55,15 @@ function ReviewInformationBlock({ infoHolder, setInfoHolder, session, client }: 
         <ReviewSaleCompositionBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} session={session} />
         {/** PAYMENT INFORMATION */}
         <ReviewPaymentInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} client={client} />
-        {/** DOCUMENTATION INFORMATION */}
+        <div className="flex w-full items-center justify-end p-2">
+          <button
+            disabled={requestPending}
+            onClick={() => requestNewProject()}
+            className="h-9 whitespace-nowrap rounded bg-green-700 px-4 py-2 text-sm font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-green-600 enabled:hover:text-white"
+          >
+            REQUISITAR PROJETO
+          </button>
+        </div>
       </div>
     </div>
   )

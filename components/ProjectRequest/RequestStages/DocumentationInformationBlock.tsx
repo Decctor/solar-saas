@@ -33,7 +33,9 @@ function DocumentationInformationBlock({
     projectTypeDocumentation: projectType?.documentacao || [],
     conditionData: documentationHolder.conditionData,
   })
-  function validateAndProceed() {}
+  function validateAndProceed() {
+    moveToNextStage()
+  }
   return (
     <div className="flex w-full grow flex-col gap-2">
       <h1 className="w-full rounded bg-gray-800 p-1 text-center font-bold text-white">DOCUMENTAÇÃO</h1>
@@ -49,7 +51,7 @@ function DocumentationInformationBlock({
           <div key={index} className="w-full">
             <DocumentationInput
               label={document.titulo}
-              value={documentationHolder.filesHolder[document.titulo]}
+              value={documentationHolder.filesHolder[document.titulo]?.value || null}
               description={document.descricao}
               obligatory={true}
               handleChange={(value) => setDocumentationHolder((prev) => ({ ...prev, filesHolder: { ...prev.filesHolder, [document.titulo]: value } }))}
