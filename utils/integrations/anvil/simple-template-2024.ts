@@ -66,6 +66,7 @@ export function getSimpleTemplate2024Data({ opportunity, proposal }: GetTemplate
       investment: proposal.valor ? formatToMoney(proposal.valor) : 'R$ N/A',
       proposeId: `#${proposal._id}`,
       paInformation: paInformation,
+      opportunityIdentifier: opportunity.identificador,
     },
   }
 
