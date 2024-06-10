@@ -37,6 +37,7 @@ import { setOpportunityActiveProposal } from '@/utils/mutations/opportunities'
 
 import { copyToClipboard } from '@/lib/hooks'
 import { handleDownload } from '@/lib/methods/download'
+import EditProposalFile from '../Modals/Proposal/EditFile'
 
 function getPricingMethodById({ methods, id }: { methods?: TPricingMethodDTO[]; id: string }) {
   if (!methods) return 'NÃO DEFINIDO'
@@ -51,6 +52,7 @@ type ProposalPageProps = {
 function ProposalPage({ proposalId, session }: ProposalPageProps) {
   const queryClient = useQueryClient()
   const [editProposalModalIsOpen, setEditProposalModalIsOpen] = useState<boolean>(false)
+  const [editProposalFileModalIsOpen, setEditProposalFileModalIsOpen] = useState<boolean>(false)
   const [newContractRequestIsOpen, setNewContractRequestIsOpen] = useState<boolean>(false)
   const [testRequestIsOpen, setTestRequestIsOpen] = useState<boolean>(false)
   const { data: proposal, isLoading: proposalLoading, isError: proposalError, isSuccess: proposalSuccess } = useProposalById({ id: proposalId })
@@ -59,7 +61,12 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
   const userHasPricingViewPermission = session?.user.permissoes.precos.visualizar
   const userHasPricingEditPermission = session?.user.permissoes.precos.editar
 
-  const { mutate: handleSetActiveProposal } = useMutationWithFeedback({
+  const {
+    mutate: handleSetActiveProposal,
+    isPending,
+    isError,
+    isSuccess,
+  } = useMutationWithFeedback({
     mutationKey: ['set-active-proposal', proposalId],
     mutationFn: setOpportunityActiveProposal,
     queryClient: queryClient,
@@ -223,7 +230,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
 
                       {session?.user.permissoes.propostas.editar ? (
                         <button
-                          //   onClick={() => setNewFileModalIsOpen(true)}
+                          onClick={() => setEditProposalFileModalIsOpen(true)}
                           className="flex w-fit items-center gap-2 self-center rounded-lg border border-dashed border-black p-2 font-medium text-black"
                         >
                           <p>EDITAR ARQUIVO</p>
@@ -382,6 +389,14 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
             proposeInfo={proposal}
             closeModal={() => setNewContractRequestIsOpen(false)}
             session={session}
+          />
+        ) : null}
+        {editProposalFileModalIsOpen ? (
+          <EditProposalFile
+            proposalId={proposalId}
+            opportunityId={proposal.oportunidade.id}
+            proposalName={proposal.nome}
+            closeModal={() => setEditProposalFileModalIsOpen(false)}
           />
         ) : null}
       </div>
