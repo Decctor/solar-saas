@@ -113,7 +113,7 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
                 </div>
               </div>
             </div>
-            {session.user.permissoes.resultados.visualizarOperacional ? (
+            {session.user.permissoes.projetos.visualizar ? (
               <button
                 // @ts-ignore
                 onClick={() => setTestRequestIsOpen(true)}

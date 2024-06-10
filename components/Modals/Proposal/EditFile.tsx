@@ -95,7 +95,6 @@ function EditProposalFile({ proposalName, proposalId, opportunityId, closeModal 
               </label>
             </div>
           </div>
-
           <div className="mt-4 flex w-full items-center justify-end">
             {isError ? <p className="text-sm font-medium text-red-500">Oops, houve um erro ao vincular o novo arquivo.</p> : null}
             <button
