@@ -1,6 +1,7 @@
 import HomologationForm from '@/components/ContractRequest/HomologationForm'
 import OeMForm from '@/components/ContractRequest/OeMForm'
 import SolarSystemForm from '@/components/ContractRequest/SolarSystemForm'
+import SolarSystemInsuranceForm from '@/components/ContractRequest/SolarSystemInsuranceForm'
 import SelectInput from '@/components/Inputs/SelectInput'
 import TextInput from '@/components/Inputs/TextInput'
 import { formatToPhone } from '@/utils/methods'
@@ -246,6 +247,9 @@ function NewContractRequest({ closeModal, proposeInfo, client, session, responsi
                 session={session}
                 client={client}
               />
+            ) : null}
+            {proposeInfo.oportunidadeDados.tipo.titulo == 'SEGURO DE SISTEMA FOTOVOLTAICO' ? (
+              <SolarSystemInsuranceForm requestInfo={requestInfo} setRequestInfo={setRequestInfo} proposeInfo={proposeInfo} closeForm={() => closeModal()} />
             ) : null}
           </div>
         </div>

@@ -3,7 +3,7 @@ import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
 import { TPartner, TPartnerSimplified } from '@/utils/schemas/partner.schema'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
 type GetResponse = {
@@ -13,7 +13,7 @@ const getPartnerSimplified: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+  const partnerQuery: Filter<TPartner> = parterScope ? { _id: { $in: [...parterScope.map((i) => new ObjectId(i))] } } : {}
 
   const { id } = req.query
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')

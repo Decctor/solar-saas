@@ -55,7 +55,22 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
 
-  // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  const userGroupsCollection: Collection<TUserGroup> = crmDb.collection('user-groups')
+
+  const updateResponse = await userGroupsCollection.updateMany(
+    {},
+    {
+      $set: {
+        'permissoes.projetos': {
+          escopo: null,
+          visualizar: false,
+          criar: false,
+          editar: false,
+        },
+      },
+    }
+  )
   // const opportunitiesCollection: Collection<TOpportunity> = crmDb.collection('opportunities')
 
   // const opportunities = await opportunitiesCollection.find({}, { projection: { nome: 1, responsaveis: 1, dataInsercao: 1 } }).toArray()
@@ -239,7 +254,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // })
   // const bulkwriteResponse = await opportunitiesCollection.bulkWrite(bulkWriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.json('DESATIVADA')
+  return res.json(updateResponse)
 }
 export default apiHandler({
   GET: migrate,
