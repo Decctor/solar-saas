@@ -3,6 +3,14 @@ import z from 'zod'
 import { TSaleGoalDTO } from './sale-goal.schema'
 import { TPartner } from './partner.schema'
 
+const ComissionScenarioConditionTypes = z.enum(
+  ['IGUAL_TEXTO', 'IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO', 'INCLUI_LISTA'],
+  {
+    required_error: 'Tipo de condicional não informado.',
+    invalid_type_error: 'Tipo não válido para tipo de condicional.',
+  }
+)
+export type TComissionScenarioConditionType = z.infer<typeof ComissionScenarioConditionTypes>
 export const AuthorSchema = z.object({
   id: z.string({ required_error: 'ID de referência do autor não fornecido.', invalid_type_error: 'Tipo não válido para o ID do autor.' }),
   nome: z.string({ required_error: 'Nome do autor não fornecido.', invalid_type_error: 'Tipo não válido para o nome do autor.' }),
@@ -347,6 +355,77 @@ export const PermissionsSchema = z.object({
   }),
 })
 export type TUserPermissions = z.infer<typeof PermissionsSchema>
+
+const ComissionSchema = z.object({
+  aplicavel: z.boolean({
+    required_error: 'Aplicabilidade de comissão ao usuário não informada.',
+    invalid_type_error: 'Tipo não válido para a aplicabilidade de comissão ao usuário.',
+  }),
+  resultados: z.array(
+    z.object({
+      condicao: z.object({
+        tipo: ComissionScenarioConditionTypes.optional().nullable(),
+        aplicavel: z.boolean({
+          required_error: 'Aplicabilidade de condição no resultado não informada.',
+          invalid_type_error: 'Tipo não válido para aplicabilidade de condição no resultado.',
+        }),
+        variavel: z
+          .string({
+            required_error: 'Variável de condição no resultado não informada.',
+            invalid_type_error: 'Tipo não válido para variável de condição no resultado.',
+          })
+          .optional()
+          .nullable(),
+        igual: z
+          .string({
+            required_error: 'Valor de comparação de igualdade da condição não informado.',
+            invalid_type_error: 'Tipo não válido para o valor de comparação de igualdade da condição.',
+          })
+          .optional()
+          .nullable(),
+        maiorQue: z
+          .number({
+            required_error: 'Valor de comparação de maior que não informado.',
+            invalid_type_error: 'Tipo não válido para valor de comparação de maior que.',
+          })
+          .optional()
+          .nullable(),
+        menorQue: z
+          .number({
+            required_error: 'Valor de comparação de menor que não informado.',
+            invalid_type_error: 'Tipo não válido para valor de comparação de menor que.',
+          })
+          .optional()
+          .nullable(),
+        entre: z
+          .object({
+            minimo: z.number({
+              required_error: 'Valor mínimo do intervalo de comparação númerico não informado.',
+              invalid_type_error: 'Tipo não válido para o valor mínimo do invervalo de comparação númerico.',
+            }),
+            maximo: z.number({
+              required_error: 'Valor máximo do intervalo de comparação númerico não informado.',
+              invalid_type_error: 'Tipo não válido para o valor máximo do invervalo de comparação númerico.',
+            }),
+          })
+          .optional()
+          .nullable(),
+        inclui: z
+          .array(
+            z.string({
+              required_error: 'Texto de comparação da lista de opções da condição não informado.',
+              invalid_type_error: 'Tipo não válido para texto de comparação da lista de opções da condição.',
+            }),
+            { required_error: 'Lista de opções de comparação não informada.', invalid_type_error: 'Tipo não válido para lista de opções de comparação.' }
+          )
+          .optional()
+          .nullable(),
+      }),
+      formulaArr: z.array(z.string({ required_error: 'Item da fórmula não informada.', invalid_type_error: 'Tipo não válido para item da fórmula.' })),
+    })
+  ),
+})
+export type TUserComission = z.infer<typeof ComissionSchema>
 const GeneralUserSchema = z.object({
   nome: z.string(),
   administrador: z.boolean(),

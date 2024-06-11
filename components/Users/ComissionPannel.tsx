@@ -6,6 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import RotativeIconButton from '../Buttons/RotativeIconButton'
 import { IoMdArrowDropdownCircle } from 'react-icons/io'
 import { GeneralVisibleHiddenExitMotionVariants } from '@/utils/constants'
+import { TUserComission } from '@/utils/schemas/user.schema'
 
 export type TComissionSpecs = {
   aplicavel: boolean
@@ -16,11 +17,11 @@ export type TComissionSpecs = {
 }
 function ComissionPannel() {
   const [pannelIsOpen, setPannelIsOpen] = useState<boolean>(true)
-  const [comission, setComission] = useState<TComissionSpecs>({
+  const [comission, setComission] = useState<TUserComission>({
     aplicavel: false,
     resultados: [],
   })
-  const [resultHolder, setResultHolder] = useState<TComissionSpecs['resultados'][number]>({
+  const [resultHolder, setResultHolder] = useState<TUserComission['resultados'][number]>({
     condicao: {
       aplicavel: false,
       variavel: null,

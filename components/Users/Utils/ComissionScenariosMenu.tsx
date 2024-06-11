@@ -5,14 +5,15 @@ import { operators } from '@/utils/pricing/helpers'
 import { FiDelete } from 'react-icons/fi'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import NewComissionScenario from './NewComissionScenario'
+import { TUserComission } from '@/utils/schemas/user.schema'
 
 const comissionVariablesAlias = [{ label: 'VALOR DA PROPOSTA', value: 'valorProposta' }, { label: 'POTÊNCIA PICO DA PROPOSTA' }]
 
 type ComissionScenariosMenuProps = {
-  comission: TComissionSpecs
-  setComission: React.Dispatch<React.SetStateAction<TComissionSpecs>>
-  resultHolder: TComissionSpecs['resultados'][number]
-  setResultHolder: React.Dispatch<React.SetStateAction<TComissionSpecs['resultados'][number]>>
+  comission: TUserComission
+  setComission: React.Dispatch<React.SetStateAction<TUserComission>>
+  resultHolder: TUserComission['resultados'][number]
+  setResultHolder: React.Dispatch<React.SetStateAction<TUserComission['resultados'][number]>>
 }
 function ComissionScenariosMenu({ comission, setComission, resultHolder, setResultHolder }: ComissionScenariosMenuProps) {
   const [newComissionScenarioMenuIsOpen, setNewComissionScenarioMenuIsOpen] = useState<boolean>(false)
@@ -20,7 +21,13 @@ function ComissionScenariosMenu({ comission, setComission, resultHolder, setResu
     <div className="flex w-full flex-col gap-y-2">
       <h1 className="mt-2 w-full rounded-md bg-gray-700 p-1 text-center text-sm font-bold text-white">CENÁRIOS DE COMISSIONAMENTO</h1>
       {newComissionScenarioMenuIsOpen ? (
-        <NewComissionScenario />
+        <NewComissionScenario
+          comission={comission}
+          setComission={setComission}
+          resultHolder={resultHolder}
+          setResultHolder={setResultHolder}
+          closeMenu={() => setNewComissionScenarioMenuIsOpen(false)}
+        />
       ) : (
         <div className="flex w-full items-center justify-end">
           <button

@@ -14,7 +14,7 @@ import {
 } from 'react-icons/md'
 import { BsCart, BsFillHouseFill } from 'react-icons/bs'
 import { TbTopologyFull } from 'react-icons/tb'
-import { TUserDTO } from './schemas/user.schema'
+import { TComissionScenarioConditionType, TUserDTO } from './schemas/user.schema'
 import { ElectricalPhasesSchema, TEletricalPhases, TProposalPremisses } from './schemas/proposal.schema'
 import { TSaleCategory } from './schemas/opportunity.schema'
 import { TSignaturePlanDTO } from './schemas/signature-plans.schema'
@@ -647,6 +647,19 @@ export const PricingMethodConditionTypeOptions: TPricingMethodConditionTypeOptio
   { id: 6, label: 'INCLUSO EM LISTA', value: 'INCLUI_LISTA' },
 ]
 
+type TComissionScenarioConditionTypeOption = {
+  id: number
+  label: string
+  value: TComissionScenarioConditionType
+}
+export const ConditionMethodConditionTypeOptions: TComissionScenarioConditionTypeOption[] = [
+  { id: 1, label: 'IGUALDADE DE TEXTO', value: 'IGUAL_TEXTO' },
+  { id: 2, label: 'IGUALDADE NÚMERICA', value: 'IGUAL_NÚMERICO' },
+  { id: 3, label: 'MAIOR QUE', value: 'MAIOR_QUE_NÚMERICO' },
+  { id: 4, label: 'MENOR QUE', value: 'MENOR_QUE_NÚMERICO' },
+  { id: 5, label: 'INVERVALO NÚMERICO', value: 'INTERVALO_NÚMERICO' },
+  { id: 6, label: 'INCLUSO EM LISTA', value: 'INCLUI_LISTA' },
+]
 type TUserGroup = {
   id: string
   grupo: string
