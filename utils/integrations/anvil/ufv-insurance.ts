@@ -11,6 +11,13 @@ type GetTemplateDataParams = {
 export function getInsuranceTemplateData({ opportunity, proposal }: GetTemplateDataParams) {
   const seller = opportunity.responsaveis.find((r) => r.papel == 'VENDEDOR')
   const sdr = opportunity.responsaveis.find((r) => r.papel == 'SDR')
+  function getInstallmentsText(value: number) {
+    const FIX_UNIQUE_INSTALLMENT_VALUE = 200
+    const maxInstallments = Math.floor(value / FIX_UNIQUE_INSTALLMENT_VALUE)
+    const maxInstallmentsValue = value / maxInstallments
+
+    return `EM ATÉ ${maxInstallments}x DE ${formatToMoney(maxInstallmentsValue)}`
+  }
   return {
     title: opportunity.nome,
     fontSize: 10,
@@ -26,6 +33,7 @@ export function getInsuranceTemplateData({ opportunity, proposal }: GetTemplateD
       proposalDate: dayjs().format('DD [de] MMMM [de] YYYY'),
       referenceValue: formatToMoney(proposal.premissas.valorReferencia || 0),
       investment: `${formatToMoney(proposal.valor)}/ ANO`,
+      installments: getInstallmentsText(proposal.valor),
     },
   }
 }
