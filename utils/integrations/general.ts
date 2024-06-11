@@ -13,6 +13,7 @@ import { getOeMTemplateData } from './anvil/oem-template'
 import { getOeMTemplateData2024 } from './anvil/oem-template-2024'
 import { getSimpleTemplate2023Data } from './anvil/simple-template-2023'
 import { getSimpleTemplate2024Data } from './anvil/simple-template-2024'
+import { getInsuranceTemplateData } from './anvil/ufv-insurance'
 
 export const ProposalTemplates = [
   {
@@ -66,6 +67,13 @@ export const ProposalTemplates = [
   },
   {
     active: true,
+    label: 'TEMPLATE SEGURO FOTOVOLTAICO',
+    value: 'TEMPLATE SEGURO FOTOVOLTAICO',
+    idAnvil: 'TjjatEmTwEK6jx7uj5WU',
+    createProposeObj: getOeMTemplateData2024,
+  },
+  {
+    active: true,
     label: 'TEMPLATE DESMONTAGEM E MONTAGEM',
     value: 'TEMPLATE DESMONTAGEM E MONTAGEM',
     idAnvil: 'QiAjovgEpAt2RCJx5Am7',
@@ -81,6 +89,7 @@ export const ProposeTemplateOptions = [
   'TEMPLATE O&M',
   'TEMPLATE O&M 2024',
   'TEMPLATE DESMONTAGEM E MONTAGEM',
+  'TEMPLATE SEGURO FOTOVOLTAICO',
 ] as const
 
 type GetTemplateDataParams = {
@@ -104,6 +113,8 @@ export function getTemplateData({ opportunity, proposal, template }: GetTemplate
   if (template == 'TEMPLATE DESMONTAGEM E MONTAGEM') return getDisassemblyAndAssemblyTemplateData({ opportunity, proposal })
 
   if (template == 'TEMPLATE O&M 2024') return getOeMTemplateData2024({ opportunity, proposal })
+
+  if (template == 'TEMPLATE SEGURO FOTOVOLTAICO') return getInsuranceTemplateData({ opportunity, proposal })
 
   return getSimpleTemplate2024Data({ opportunity, proposal })
 }

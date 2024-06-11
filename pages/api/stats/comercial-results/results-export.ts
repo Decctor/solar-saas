@@ -111,6 +111,8 @@ const exportData: NextApiHandler<PostResponse> = async (req, res) => {
     const isLead = isTransfer && isFromInsider
     const isSDROwn = !isTransfer && isFromInsider
 
+    const transferDate = isTransfer && seller?.dataInsercao ? new Date(seller.dataInsercao).toISOString() : null
+
     const isOutboundSDR = !isInbound && (isLead || isSDROwn)
     const isOutboundSeller = !isInbound && !isOutboundSDR
 
@@ -134,6 +136,7 @@ const exportData: NextApiHandler<PostResponse> = async (req, res) => {
       UF: uf,
       CIDADE: city,
       CLASSIFICAÇÃO: classification || 'NÃO DEFINIDO',
+      'DATA DE ENVIO': isTransfer ? formatDateAsLocale(transferDate || undefined) : 'N/A',
       'DATA DE CRIAÇÃO': formatDateAsLocale(project.dataInsercao || undefined),
     } as TResultsExportsItem
   })
@@ -176,6 +179,7 @@ async function getOpportunities({ opportunitiesCollection, partnerQuery, respons
       ...responsiblesQuery,
       ...projectTypesQuery,
       $or: [
+        { $and: [{ 'responsaveis.dataInsercao': { $gte: afterDateStr } }, { 'responsaveis.dataInsercao': { $lte: beforeDateStr } }] },
         { $and: [{ dataInsercao: { $gte: afterDateStr } }, { dataInsercao: { $lte: beforeDateStr } }] },
         { $and: [{ 'perda.data': { $gte: afterDateStr } }, { 'perda.data': { $lte: beforeDateStr } }] },
         { $and: [{ 'ganho.data': { $gte: afterDateStr } }, { 'ganho.data': { $lte: beforeDateStr } }] },

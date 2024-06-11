@@ -27,6 +27,7 @@ import { usePartnersSimplified } from '@/utils/queries/partners'
 import SelectWithImages from '@/components/Inputs/SelectWithImages'
 import { useUserGroups } from '@/utils/queries/user-groups'
 import SelectInput from '@/components/Inputs/SelectInput'
+import ComissionPannel from '@/components/Users/ComissionPannel'
 type EditUserProps = {
   users?: TUserDTO[]
   closeModal: () => void
@@ -105,6 +106,12 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
         criar: true,
       },
       clientes: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      projetos: {
         escopo: null,
         visualizar: true,
         editar: true,
@@ -303,7 +310,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                   />
                 </div>
                 <div className="flex w-full flex-col gap-1">
-                  <div className="flex w-full items-center gap-2">
+                  {/* <div className="flex w-full items-center gap-2">
                     <div className="w-[50%]">
                       <NumberInput
                         label="COMISSÃO SEM SDR"
@@ -338,7 +345,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                         width="100%"
                       />
                     </div>
-                  </div>
+                  </div> */}
                   <div className="flex w-full items-center">
                     <SelectWithImages
                       label="PARCEIRO"
@@ -456,6 +463,14 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                           editar: session.user.permissoes.clientes.editar ? group.permissoes.clientes.editar : session.user.permissoes.clientes.editar,
                           criar: session.user.permissoes.clientes.criar ? group.permissoes.clientes.criar : session.user.permissoes.clientes.criar,
                         },
+                        projetos: {
+                          escopo: [userId],
+                          visualizar: session.user.permissoes.projetos.visualizar
+                            ? group.permissoes.projetos.visualizar
+                            : session.user.permissoes.projetos.visualizar,
+                          editar: session.user.permissoes.projetos.editar ? group.permissoes.projetos.editar : session.user.permissoes.projetos.editar,
+                          criar: session.user.permissoes.projetos.criar ? group.permissoes.projetos.criar : session.user.permissoes.projetos.criar,
+                        },
                         parceiros: {
                           escopo: session.user.idParceiro ? [session.user.idParceiro] : null,
                           visualizar: session.user.permissoes.parceiros.visualizar
@@ -508,164 +523,6 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                     onReset={() => setUserInfo((prev) => ({ ...prev, idGrupo: '' }))}
                     width="100%"
                   />
-                  {/* <div className="flex w-full flex-col gap-1">
-                    <label className="font-sans font-bold  text-[#353432]">GRUPO DE PERMISSÃO</label>
-                    <DropdownSelect
-                      selectedItemLabel="A SELECIONAR"
-                      categoryName="GRUPO DE PERMISSÃO"
-                      value={userInfo.idGrupo || null}
-                      options={
-                        groups?.map((group) => {
-                          return {
-                            id: group._id,
-                            label: group.titulo,
-                            value: group.permissoes,
-                          }
-                        }) || []
-                      }
-                      width="100%"
-                      onChange={(value) => {
-                        const permissions: TUser['permissoes'] = {
-                          usuarios: {
-                            visualizar: session.user.permissoes.usuarios.visualizar
-                              ? value.value.usuarios.visualizar
-                              : session.user.permissoes.usuarios.visualizar,
-                            criar: session.user.permissoes.usuarios.criar ? value.value.usuarios.criar : session.user.permissoes.usuarios.criar,
-                            editar: session.user.permissoes.usuarios.editar ? value.value.usuarios.editar : session.user.permissoes.usuarios.editar,
-                          },
-                          comissoes: {
-                            visualizar: session.user.permissoes.comissoes.visualizar
-                              ? value.value.comissoes.visualizar
-                              : session.user.permissoes.comissoes.visualizar,
-                            editar: session.user.permissoes.comissoes.editar ? value.value.comissoes.editar : session.user.permissoes.comissoes.editar,
-                          },
-                          kits: {
-                            visualizar: session.user.permissoes.kits.visualizar ? value.value.kits.visualizar : session.user.permissoes.kits.visualizar,
-                            editar: session.user.permissoes.kits.editar ? value.value.kits.editar : session.user.permissoes.kits.editar,
-                            criar: session.user.permissoes.kits.criar ? value.value.kits.criar : session.user.permissoes.kits.criar,
-                          },
-                          produtos: {
-                            visualizar: session.user.permissoes.produtos.visualizar
-                              ? value.value.produtos.visualizar
-                              : session.user.permissoes.produtos.visualizar,
-                            editar: session.user.permissoes.produtos.editar ? value.value.produtos.editar : session.user.permissoes.produtos.editar,
-                            criar: session.user.permissoes.produtos.criar ? value.value.produtos.criar : session.user.permissoes.produtos.visualizar,
-                          },
-                          servicos: {
-                            visualizar: session.user.permissoes.servicos.visualizar
-                              ? value.value.servicos.visualizar
-                              : session.user.permissoes.servicos.visualizar,
-                            editar: session.user.permissoes.servicos.editar ? value.value.servicos.editar : session.user.permissoes.servicos.editar,
-                            criar: session.user.permissoes.servicos.criar ? value.value.servicos.criar : session.user.permissoes.servicos.criar,
-                          },
-                          planos: {
-                            visualizar: session.user.permissoes.planos.visualizar ? value.value.planos.visualizar : session.user.permissoes.planos.visualizar,
-                            editar: session.user.permissoes.planos.editar ? value.value.planos.editar : session.user.permissoes.planos.editar,
-                            criar: session.user.permissoes.planos.criar ? value.value.planos.criar : session.user.permissoes.planos.criar,
-                          },
-                          propostas: {
-                            escopo: [userId],
-                            visualizar: session.user.permissoes.propostas.visualizar
-                              ? value.value.propostas.visualizar
-                              : session.user.permissoes.propostas.visualizar,
-                            editar: session.user.permissoes.propostas.editar ? value.value.propostas.editar : session.user.permissoes.propostas.editar,
-                            criar: session.user.permissoes.propostas.criar ? value.value.propostas.criar : session.user.permissoes.propostas.criar,
-                          },
-                          oportunidades: {
-                            escopo: [userId], // refere-se ao escopo de atuação
-                            visualizar: session.user.permissoes.oportunidades.visualizar
-                              ? value.value.oportunidades.visualizar
-                              : session.user.permissoes.oportunidades.visualizar,
-                            editar: session.user.permissoes.oportunidades.editar
-                              ? value.value.oportunidades.editar
-                              : session.user.permissoes.oportunidades.editar,
-                            criar: session.user.permissoes.oportunidades.criar ? value.value.oportunidades.criar : session.user.permissoes.oportunidades.criar,
-                          },
-                          analisesTecnicas: {
-                            escopo: [userId], // refere-se ao escopo de atuação
-                            visualizar: session.user.permissoes.analisesTecnicas.visualizar
-                              ? value.value.analisesTecnicas.visualizar
-                              : session.user.permissoes.analisesTecnicas.visualizar,
-                            editar: session.user.permissoes.analisesTecnicas.editar
-                              ? value.value.analisesTecnicas.editar
-                              : session.user.permissoes.analisesTecnicas.editar,
-                            criar: session.user.permissoes.analisesTecnicas.criar
-                              ? value.value.analisesTecnicas.criar
-                              : session.user.permissoes.analisesTecnicas.criar,
-                          },
-                          homologacoes: {
-                            escopo: [userId], // refere-se ao escopo de atuação
-                            visualizar: session.user.permissoes.homologacoes.visualizar
-                              ? value.value.homologacoes.visualizar
-                              : session.user.permissoes.homologacoes.visualizar,
-                            editar: session.user.permissoes.homologacoes.editar ? value.value.homologacoes.editar : session.user.permissoes.homologacoes.editar,
-                            criar: session.user.permissoes.homologacoes.criar ? value.value.homologacoes.criar : session.user.permissoes.homologacoes.criar,
-                          },
-                          clientes: {
-                            escopo: [userId],
-                            visualizar: session.user.permissoes.clientes.visualizar
-                              ? value.value.clientes.visualizar
-                              : session.user.permissoes.clientes.visualizar,
-                            editar: session.user.permissoes.clientes.editar ? value.value.clientes.editar : session.user.permissoes.clientes.editar,
-                            criar: session.user.permissoes.clientes.criar ? value.value.clientes.criar : session.user.permissoes.clientes.criar,
-                          },
-                          parceiros: {
-                            escopo: session.user.idParceiro ? [session.user.idParceiro] : null,
-                            visualizar: session.user.permissoes.parceiros.visualizar
-                              ? value.value.parceiros.visualizar
-                              : session.user.permissoes.parceiros.visualizar,
-                            editar: session.user.permissoes.parceiros.editar ? value.value.parceiros.editar : session.user.permissoes.parceiros.editar,
-                            criar: session.user.permissoes.parceiros.criar ? value.value.parceiros.criar : session.user.permissoes.parceiros.criar,
-                          },
-                          precos: {
-                            visualizar: session.user.permissoes.precos.visualizar ? value.value.precos.visualizar : session.user.permissoes.precos.visualizar,
-                            editar: session.user.permissoes.precos.editar ? value.value.precos.editar : session.user.permissoes.precos.editar,
-                          },
-                          resultados: {
-                            escopo: [userId], // refere-se ao escopo de atuação
-                            visualizarComercial: session.user.permissoes.resultados.visualizarComercial
-                              ? value.value.resultados.visualizarComercial
-                              : session.user.permissoes.resultados.visualizarComercial,
-                            visualizarOperacional: session.user.permissoes.resultados.visualizarOperacional
-                              ? value.value.resultados.visualizarOperacional
-                              : session.user.permissoes.resultados.visualizarOperacional,
-                          },
-                          configuracoes: {
-                            funis: session.user.permissoes.configuracoes.funis ? value.value.configuracoes.funis : session.user.permissoes.configuracoes.funis,
-                            parceiro: session.user.permissoes.configuracoes.parceiro
-                              ? value.value.configuracoes.parceiro
-                              : session.user.permissoes.configuracoes.parceiro,
-                            precificacao: session.user.permissoes.configuracoes.precificacao
-                              ? value.value.configuracoes.precificacao
-                              : session.user.permissoes.configuracoes.precificacao,
-                            metodosPagamento: session.user.permissoes.configuracoes.metodosPagamento
-                              ? value.value.configuracoes.metodosPagamento
-                              : session.user.permissoes.configuracoes.metodosPagamento,
-                            tiposProjeto: session.user.permissoes.configuracoes.tiposProjeto
-                              ? value.value.configuracoes.tiposProjeto
-                              : session.user.permissoes.configuracoes.tiposProjeto,
-                            gruposUsuarios: session.user.permissoes.configuracoes.gruposUsuarios
-                              ? value.value.configuracoes.gruposUsuarios
-                              : session.user.permissoes.configuracoes.gruposUsuarios,
-                          },
-                          integracoes: {
-                            receberLeads: value.value.integracoes.receberLeads,
-                          },
-                        }
-                        setUserInfo((prev) => ({
-                          ...prev,
-                          idGrupo: value.id.toString(),
-                          permissoes: permissions,
-                        }))
-                      }}
-                      onReset={() =>
-                        setUserInfo((prev) => ({
-                          ...prev,
-                          idGrupo: '',
-                        }))
-                      }
-                    />
-                  </div> */}
                 </div>
 
                 <PermissionsPannel
@@ -675,6 +532,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                   users={users}
                   session={session}
                 />
+                <ComissionPannel />
               </div>
               <div className="mt-1 flex w-full items-end justify-end">
                 <button
