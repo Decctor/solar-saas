@@ -6,5 +6,5 @@ export type TComissionVariableData = {
 export type TComissionConditionData = {
   valorProposta: number
   potenciaPico: number
-  corresponsaveis: string[]
+  combinacaoResponsaveis: string
 }

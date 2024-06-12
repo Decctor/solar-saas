@@ -6,7 +6,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import RotativeIconButton from '../Buttons/RotativeIconButton'
 import { IoMdArrowDropdownCircle } from 'react-icons/io'
 import { GeneralVisibleHiddenExitMotionVariants } from '@/utils/constants'
-import { TUserComission } from '@/utils/schemas/user.schema'
+import { TUser, TUserComission } from '@/utils/schemas/user.schema'
 
 export type TComissionSpecs = {
   aplicavel: boolean
@@ -15,12 +15,13 @@ export type TComissionSpecs = {
     formulaArr: string[]
   }[]
 }
-function ComissionPannel() {
+
+type ComissionPannelProps = {
+  infoHolder: TUser
+  setInfoHolder: React.Dispatch<React.SetStateAction<TUser>>
+}
+function ComissionPannel({ infoHolder, setInfoHolder }: ComissionPannelProps) {
   const [pannelIsOpen, setPannelIsOpen] = useState<boolean>(true)
-  const [comission, setComission] = useState<TUserComission>({
-    aplicavel: false,
-    resultados: [],
-  })
   const [resultHolder, setResultHolder] = useState<TUserComission['resultados'][number]>({
     condicao: {
       aplicavel: false,
@@ -33,7 +34,7 @@ function ComissionPannel() {
     <div className="flex w-full flex-col gap-2 rounded border border-orange-500">
       <AnimatePresence>
         <div className="flex w-full items-center justify-center gap-1 rounded bg-orange-500 p-2 text-white">
-          <h1 className="text-sm font-medium text-white">PAINEL DE COMISSÃO</h1>
+          <h1 className="text-sm font-medium text-white">(EM TESTES) PAINEL DE COMISSÃO</h1>
           <RotativeIconButton active={pannelIsOpen} setActive={setPannelIsOpen} icon={<IoMdArrowDropdownCircle size={20} />} />
         </div>
         {pannelIsOpen ? (
@@ -50,13 +51,13 @@ function ComissionPannel() {
                 <CheckboxInput
                   labelFalse="USUÁRIO COMISSIONADO"
                   labelTrue="USUÁRIO COMISSIONADO"
-                  checked={comission.aplicavel}
-                  handleChange={(value) => setComission((prev) => ({ ...prev, aplicavel: value }))}
+                  checked={infoHolder.comissionamento.aplicavel}
+                  handleChange={(value) => setInfoHolder((prev) => ({ ...prev, comissionamento: { ...prev.comissionamento, aplicavel: value } }))}
                 />
               </div>
             </div>
-            {comission.aplicavel ? (
-              <ComissionScenariosMenu comission={comission} setComission={setComission} resultHolder={resultHolder} setResultHolder={setResultHolder} />
+            {infoHolder.comissionamento.aplicavel ? (
+              <ComissionScenariosMenu infoHolder={infoHolder} setInfoHolder={setInfoHolder} resultHolder={resultHolder} setResultHolder={setResultHolder} />
             ) : null}
           </motion.div>
         ) : null}

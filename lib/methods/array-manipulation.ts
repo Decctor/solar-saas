@@ -96,3 +96,26 @@ export function combineUniqueServices(products: TServiceItem[]): TServiceItem[] 
     }
   })
 }
+
+export function getAllValueCombinations(list: string[]) {
+  // Recursive function to get all subsets
+  function getSubsets(arr: string[], index: number): string[][] {
+    if (index === arr.length) {
+      // Base case: return an array with an empty subset
+      return [[]]
+    } else {
+      // Recursive case: get subsets for the rest of the elements
+      const subsets = getSubsets(arr, index + 1)
+      const element = arr[index]
+      const moreSubsets = subsets.map((subset) => [element, ...subset])
+      // Combine the current element subsets with the existing ones
+      return subsets.concat(moreSubsets)
+    }
+  }
+
+  // Generate all subsets
+  const allSubsets = getSubsets(list, 0)
+
+  // Filter out the empty subset and return the result
+  return allSubsets.filter((subset) => subset.length > 0).sort((a, b) => a.length - b.length)
+}

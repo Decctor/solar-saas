@@ -21,6 +21,7 @@ import { TSignaturePlanDTO } from './schemas/signature-plans.schema'
 import { TProject } from './schemas/project.schema'
 import { TTechnicalAnalysisPendencyCategory } from './schemas/technical-analysis.schema'
 import { TPricingMethodConditionType } from './schemas/pricing-method.schema'
+import { getAllValueCombinations } from '@/lib/methods/array-manipulation'
 
 export const AllSellers = [
   {
@@ -1051,7 +1052,7 @@ export const OpportunityResponsibilityRoles = [
     value: 'SDR',
   },
 ]
-
+export const OpportunityResponsibilityRolesCombinations = getAllValueCombinations(OpportunityResponsibilityRoles.map((r) => r.value)).map((c) => c.join(' + '))
 export const EnergyDistributorsOptions = [
   { id: 1, label: 'AME', value: 'AME' },
   { id: 2, label: 'BOA VISTA', value: 'BOA VISTA' },

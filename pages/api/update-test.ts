@@ -56,21 +56,44 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const { id } = req.query
 
   const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
-  const userGroupsCollection: Collection<TUserGroup> = crmDb.collection('user-groups')
+  const usersCollection: Collection<TUser> = crmDb.collection('users')
 
-  const updateResponse = await userGroupsCollection.updateMany(
-    {},
-    {
-      $set: {
-        'permissoes.projetos': {
-          escopo: null,
-          visualizar: false,
-          criar: false,
-          editar: false,
+  const users = await usersCollection.find({}).toArray()
+
+  const bulkwriteArr = users.map((u) => {
+    const comissionemnt = {
+      aplicavel: true,
+      resultados: [
+        {
+          condicao: {
+            aplicavel: true,
+            variavel: 'combinacaoResponsaveis',
+            igual: 'VENDEDOR + SDR',
+            tipo: 'IGUAL_TEXTO',
+          },
+          formulaArr: ['(', `${u.comissoes.comSDR || 0}`, '/', '100', ')', '*', '[valorProposta]'],
+        },
+        {
+          condicao: {
+            aplicavel: false,
+            variavel: null,
+            igual: null,
+          },
+          formulaArr: ['(', `${u.comissoes.semSDR || 0}`, '/', '100', ')', '*', '[valorProposta]'],
+        },
+      ],
+    }
+    return {
+      updateOne: {
+        filter: { _id: new ObjectId(u._id) },
+        update: {
+          $set: {
+            comissionamento: comissionemnt,
+          },
         },
       },
     }
-  )
+  })
   // const opportunitiesCollection: Collection<TOpportunity> = crmDb.collection('opportunities')
 
   // const opportunities = await opportunitiesCollection.find({}, { projection: { nome: 1, responsaveis: 1, dataInsercao: 1 } }).toArray()
@@ -252,9 +275,9 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  // const bulkwriteResponse = await opportunitiesCollection.bulkWrite(bulkWriteArr)
+  const bulkwriteResponse = await usersCollection.bulkWrite(bulkwriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.json(updateResponse)
+  return res.json(bulkwriteResponse)
 }
 export default apiHandler({
   GET: migrate,

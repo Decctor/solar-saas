@@ -1,23 +1,23 @@
-import NumberInput from '@/components/Inputs/NumberInput'
-import React, { useState } from 'react'
-import { VscChromeClose } from 'react-icons/vsc'
-import { TComissionSpecs } from '../ComissionPannel'
-import { operators } from '@/utils/pricing/helpers'
-import { FiDelete } from 'react-icons/fi'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
-import { TUser, TUserComission } from '@/utils/schemas/user.schema'
+import NumberInput from '@/components/Inputs/NumberInput'
 import { comissionVariablesAlias, formatComissionFormulaItem } from '@/utils/comissions/helpers'
+import { operators } from '@/utils/pricing/helpers'
+import { TUser, TUserComission } from '@/utils/schemas/user.schema'
+import React, { useState } from 'react'
+import { FiDelete } from 'react-icons/fi'
+import { VscChromeClose } from 'react-icons/vsc'
 import ConditionMenu from './ConditionMenu'
 import toast from 'react-hot-toast'
 
-type NewComissionScenarioProps = {
+type EditComissionScenarioProps = {
+  index: number
   infoHolder: TUser
   setInfoHolder: React.Dispatch<React.SetStateAction<TUser>>
   resultHolder: TUserComission['resultados'][number]
   setResultHolder: React.Dispatch<React.SetStateAction<TUserComission['resultados'][number]>>
   closeMenu: () => void
 }
-function NewComissionScenario({ infoHolder, setInfoHolder, resultHolder, setResultHolder, closeMenu }: NewComissionScenarioProps) {
+function EditComissionScenario({ index, infoHolder, setInfoHolder, resultHolder, setResultHolder, closeMenu }: EditComissionScenarioProps) {
   const [numberHolder, setNumberHolder] = useState(0)
   function addToUnitPricingItems(x: string) {
     const currentList = [...resultHolder.formulaArr]
@@ -30,7 +30,7 @@ function NewComissionScenario({ infoHolder, setInfoHolder, resultHolder, setResu
     currentList.pop()
     setResultHolder((prev) => ({ ...prev, formulaArr: currentList }))
   }
-  function addResultFormula(result: TUserComission['resultados'][number]) {
+  function updateScenario(result: TUserComission['resultados'][number], index: number) {
     if (result.condicao.aplicavel) {
       if (!result.condicao.variavel) return toast.error('Selecione uma variável para condição.')
       if (result.condicao.tipo == 'IGUAL_TEXTO' && !result.condicao.igual) return toast.error('Selecione o resultado para comparação da condição.')
@@ -50,28 +50,21 @@ function NewComissionScenario({ infoHolder, setInfoHolder, resultHolder, setResu
         return toast.error('Preencha a list para comparação.')
     }
     if (result.formulaArr.length == 0) return toast.error('Preencha uma fórmula válida.')
-    const currentResultFormulas = [...infoHolder.comissionamento.resultados]
+    const scenarios = [...infoHolder.comissionamento.resultados]
 
     // Validating existence of general formula in results array
-    const hasGeneralFormula = currentResultFormulas.some((r) => !r.condicao.aplicavel)
+    const hasGeneralFormula = scenarios.filter((s, sIndex) => sIndex != index).some((r) => !r.condicao.aplicavel)
     if (hasGeneralFormula && !result.condicao.aplicavel) return toast.error('Não é possível cadastrar duas fórmulas gerais.')
-    currentResultFormulas.push(result)
-    const newResultFormulas = currentResultFormulas.sort((a, b) => (a.condicao.aplicavel === b.condicao.aplicavel ? 0 : a.condicao.aplicavel ? -1 : 1))
-    setInfoHolder((prev) => ({ ...prev, comissionamento: { ...prev.comissionamento, resultados: newResultFormulas } }))
-    setResultHolder({
-      condicao: {
-        aplicavel: false,
-        variavel: null,
-        igual: null,
-      },
-      formulaArr: [],
-    })
-    return toast.success('Fórmula cadastrada com sucesso !')
+    scenarios[index] = result
+    const newScenarios = scenarios.sort((a, b) => (a.condicao.aplicavel === b.condicao.aplicavel ? 0 : a.condicao.aplicavel ? -1 : 1))
+    setInfoHolder((prev) => ({ ...prev, comissionamento: { ...prev.comissionamento, resultados: newScenarios } }))
+    closeMenu()
+    return toast.success('Cenário atualizado com sucesso !')
   }
   return (
     <div className="flex w-[80%] flex-col self-center rounded-md border border-gray-500 p-2 font-Inter">
       <div className="mb-4 flex w-full items-center justify-between">
-        <h1 className="font-Inter font-black">NOVO CENÁRIO</h1>
+        <h1 className="font-Inter font-black">EDITAR CENÁRIO</h1>
         <button
           onClick={() => closeMenu()}
           type="button"
@@ -158,13 +151,13 @@ function NewComissionScenario({ infoHolder, setInfoHolder, resultHolder, setResu
       <div className="my-2 flex items-center justify-end gap-2">
         <button
           className="rounded bg-black p-1 px-4 text-xs font-medium text-white duration-300 ease-in-out disabled:bg-gray-400 disabled:text-black enabled:hover:bg-gray-600"
-          onClick={() => addResultFormula(resultHolder)}
+          onClick={() => updateScenario(resultHolder, index)}
         >
-          ADICIONAR CENÁRIO
+          ATUALIZAR CENÁRIO
         </button>
       </div>
     </div>
   )
 }
 
-export default NewComissionScenario
+export default EditComissionScenario

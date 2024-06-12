@@ -5,25 +5,38 @@ import { operators } from '@/utils/pricing/helpers'
 import { FiDelete } from 'react-icons/fi'
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import NewComissionScenario from './NewComissionScenario'
-import { TUserComission } from '@/utils/schemas/user.schema'
+import { TUser, TUserComission } from '@/utils/schemas/user.schema'
+import { formatComissionFormulaItem, renderComissionScenarioConditionPhrase } from '@/utils/comissions/helpers'
+import { MdContentCopy, MdDelete, MdEdit } from 'react-icons/md'
+import toast from 'react-hot-toast'
+import EditComissionScenario from './EditComissionScenario'
 
 const comissionVariablesAlias = [{ label: 'VALOR DA PROPOSTA', value: 'valorProposta' }, { label: 'POTÊNCIA PICO DA PROPOSTA' }]
 
 type ComissionScenariosMenuProps = {
-  comission: TUserComission
-  setComission: React.Dispatch<React.SetStateAction<TUserComission>>
+  infoHolder: TUser
+  setInfoHolder: React.Dispatch<React.SetStateAction<TUser>>
   resultHolder: TUserComission['resultados'][number]
   setResultHolder: React.Dispatch<React.SetStateAction<TUserComission['resultados'][number]>>
 }
-function ComissionScenariosMenu({ comission, setComission, resultHolder, setResultHolder }: ComissionScenariosMenuProps) {
+function ComissionScenariosMenu({ infoHolder, setInfoHolder, resultHolder, setResultHolder }: ComissionScenariosMenuProps) {
   const [newComissionScenarioMenuIsOpen, setNewComissionScenarioMenuIsOpen] = useState<boolean>(false)
+  const [editComissionScenarioMenu, setEditComissionScenarioMenu] = useState<{ info: TUserComission['resultados'][number] | null; index: number | null }>({
+    info: null,
+    index: null,
+  })
+  function deleteScenario(index: number) {
+    const scenarios = [...infoHolder.comissionamento.resultados]
+    scenarios.splice(index, 1)
+    setInfoHolder((prev) => ({ ...prev, comissionamento: { ...prev.comissionamento, resultados: scenarios } }))
+  }
   return (
     <div className="flex w-full flex-col gap-y-2">
       <h1 className="mt-2 w-full rounded-md bg-gray-700 p-1 text-center text-sm font-bold text-white">CENÁRIOS DE COMISSIONAMENTO</h1>
       {newComissionScenarioMenuIsOpen ? (
         <NewComissionScenario
-          comission={comission}
-          setComission={setComission}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
           resultHolder={resultHolder}
           setResultHolder={setResultHolder}
           closeMenu={() => setNewComissionScenarioMenuIsOpen(false)}
@@ -38,38 +51,47 @@ function ComissionScenariosMenu({ comission, setComission, resultHolder, setResu
           </button>
         </div>
       )}
-      <h1 className="my-4 text-sm font-bold leading-none tracking-tight text-[#E25E3E]">LISTA DE UNIDADES DE PREÇO</h1>
+      {editComissionScenarioMenu.index != null ? (
+        <EditComissionScenario
+          index={editComissionScenarioMenu.index}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder}
+          resultHolder={resultHolder}
+          setResultHolder={setResultHolder}
+          closeMenu={() => setEditComissionScenarioMenu({ index: null, info: null })}
+        />
+      ) : null}
+      <h1 className="my-4 text-sm font-bold leading-none tracking-tight text-[#E25E3E]">LISTA DE CENÁRIOS</h1>
       <div className="flex flex-col">
-        {comission.resultados.map((result, index2) => (
-          <div key={index2} className="mb-1 flex w-full items-center gap-2 rounded-md border border-[#A0E9FF] p-1">
-            {/* <div className="flex flex-col">
-              {renderConditionPhrase({ condition: result.condicao, partners: [] })}
-              <div className="flex items-center gap-2 font-Inter">
-                <div className="flex items-center gap-1">
-                  <p className="text-xs text-gray-500">MARGEM: </p>
-                  <p className="text-xs font-bold text-[#FFBB5C]">{result.margemLucro}%</p>
-                </div>
-                <div className="flex items-center gap-1">
-                  <p className="text-xs text-gray-500">FATURÁVEL: </p>
-                  <p className="text-xs font-bold text-[#FFBB5C]">{result.faturavel ? 'SIM' : 'NÃO'}</p>
-                </div>
+        {infoHolder.comissionamento.resultados.map((result, index) => (
+          <div key={index} className="mb-1 flex w-full flex-col gap-2 rounded-md border border-[#A0E9FF] p-1">
+            <div className="flex w-full items-center justify-between gap-2">
+              {renderComissionScenarioConditionPhrase({ condition: result.condicao })}
+              <div className="flex items-center gap-1">
+                <button
+                  onClick={() => {
+                    setNewComissionScenarioMenuIsOpen(false)
+                    setEditComissionScenarioMenu({ index: index, info: result })
+                    setResultHolder(result)
+                  }}
+                  className="flex items-center justify-center rounded-lg p-1 text-orange-500 duration-300 ease-linear hover:scale-105 hover:bg-orange-200"
+                >
+                  <MdEdit />
+                </button>
+                <button
+                  onClick={() => deleteScenario(index)}
+                  type="button"
+                  className="flex items-center justify-center rounded-lg p-1 text-red-500 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
+                >
+                  <MdDelete style={{ color: 'red' }} />
+                </button>
               </div>
-              <button
-                onClick={() => {
-                  setResultHolder((prev) => ({ ...prev, formulaArr: [...prev.formulaArr, ...result.formulaArr] }))
-                  return toast.success('Formula adicionada a área de trabalho')
-                }}
-                className="flex w-fit items-center gap-1 rounded-md bg-gray-900 px-2 py-1 text-white hover:bg-gray-800"
-              >
-                <MdContentCopy size={15} />
-                <p className="text-[0.6rem] tracking-tight">COPIAR PARA ÁREA DE TRABALHO</p>
-              </button>
             </div>
             <div className="flex  grow flex-wrap items-center justify-center gap-1 p-1">
               {result.formulaArr.map((y) => (
-                <p className={`text-[0.7rem] ${y.includes('[') ? 'rounded bg-blue-500 p-1 text-white' : ''}`}>{formatFormulaItem(y)}</p>
+                <p className={`text-[0.7rem] ${y.includes('[') ? 'rounded bg-blue-500 p-1 text-white' : ''}`}>{formatComissionFormulaItem(y)}</p>
               ))}
-            </div> */}
+            </div>
           </div>
         ))}
       </div>
