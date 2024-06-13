@@ -1,5 +1,6 @@
 import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import TextInput from '@/components/Inputs/TextInput'
+import AddPricingItem from '@/components/Proposal/Blocks/AddPricingItem'
 import EditFinalPrice from '@/components/Proposal/Blocks/EditFinalPrice'
 import PricingTable from '@/components/Proposal/Blocks/PricingTable'
 import { handleDownload } from '@/lib/methods/download'
@@ -16,6 +17,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import { Session } from 'next-auth'
 import React, { useState } from 'react'
 import { AiFillEdit } from 'react-icons/ai'
+import { MdAdd } from 'react-icons/md'
 import { VscChromeClose } from 'react-icons/vsc'
 
 type EditProposalProps = {
@@ -36,6 +38,7 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
   const [proposalName, setProposalName] = useState(info.nome)
   const [regenerateFile, setRegenerateFile] = useState<boolean>(false)
   const [pricing, setPricing] = useState<TPricingItem[]>(info.precificacao)
+  const [addNewPriceItemModalIsOpen, setAddNewPriceItemModalIsOpen] = useState<boolean>(false)
   const [editFinalPriceModalIsOpen, setEditFinalPriceModalIsOpen] = useState<boolean>(false)
   const pricingTotal = getPricingTotal({ pricing: pricing })
 
@@ -137,9 +140,21 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
             userHasPricingEditPermission={userHasPricingEditPermission}
             userHasPricingViewPermission={userHasPricingViewPermission}
           />
+          {userHasPricingEditPermission ? (
+            <div className="flex w-full items-center justify-center">
+              <button
+                onClick={() => setAddNewPriceItemModalIsOpen(true)}
+                className="flex items-center gap-2 rounded bg-orange-600 px-4 py-2 text-white duration-100 ease-in-out hover:bg-orange-700"
+              >
+                <MdAdd />
+                <h1 className="text-xs font-bold">NOVO CUSTO</h1>
+              </button>
+            </div>
+          ) : null}
           <div className="flex w-full items-center justify-center gap-2 py-1">
             <div className="flex gap-2 rounded border border-gray-600 px-2 py-1 font-medium text-gray-600">
               <p>{formatToMoney(pricingTotal)}</p>
+
               {userHasPricingEditPermission ? (
                 <button onClick={() => setEditFinalPriceModalIsOpen((prev) => !prev)} className="text-md text-gray-400 hover:text-[#fead61]">
                   <AiFillEdit />
@@ -169,6 +184,9 @@ function EditProposal({ closeModal, info, userHasPricingViewPermission, userHasP
           </div>
         </div>
       </div>
+      {addNewPriceItemModalIsOpen ? (
+        <AddPricingItem pricing={pricing} setPricing={setPricing} proposal={info} closeModal={() => setAddNewPriceItemModalIsOpen(false)} />
+      ) : null}
       {editFinalPriceModalIsOpen ? (
         <EditFinalPrice pricing={pricing} setPricing={setPricing} alterationLimit={alterationLimit} closeModal={() => setEditFinalPriceModalIsOpen(false)} />
       ) : null}
