@@ -22,6 +22,7 @@ import {
 import { usePartnersSimplified } from '@/utils/queries/partners'
 import { TPricingConditionData } from '@/utils/pricing/methods'
 import ConditionMenu from './ConditionMenu'
+import { TPartnerSimplifiedDTO } from '@/utils/schemas/partner.schema'
 
 type NewPricingUnitProps = {
   pricingHolder: TPricingMethod['itens'][number]
@@ -30,11 +31,20 @@ type NewPricingUnitProps = {
   setResultHolder: React.Dispatch<React.SetStateAction<TPricingMethodItemResultItem>>
   methodology: TPricingMethod
   setMethodology: React.Dispatch<React.SetStateAction<TPricingMethod>>
+  partners: TPartnerSimplifiedDTO[] | undefined
   closeMenu: () => void
 }
 
-function NewPricingUnit({ pricingHolder, setPricingHolder, resultHolder, setResultHolder, methodology, setMethodology, closeMenu }: NewPricingUnitProps) {
-  const { data: partners } = usePartnersSimplified()
+function NewPricingUnit({
+  pricingHolder,
+  setPricingHolder,
+  resultHolder,
+  setResultHolder,
+  methodology,
+  setMethodology,
+  partners,
+  closeMenu,
+}: NewPricingUnitProps) {
   function addResultFormula() {
     if (resultHolder.condicao.aplicavel) {
       if (!resultHolder.condicao.variavel) return toast.error('Selecione uma variável para condição.')
