@@ -44,7 +44,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
                 ...prev,
                 possuiOeM: 'SIM',
                 planoOeM: plan.nome as TContractRequest['planoOeM'],
-                valorContrato: (proposal.valor || 0) + plan.valorTotal,
+                valorOeMOuSeguro: plan.valorTotal,
               }))
               goToNextStage()
             }}
@@ -282,6 +282,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
         </button>
         <button
           onClick={() => {
+            setRequestInfo((prev) => ({ ...prev, possuiOeM: 'NÃO', planoOeM: 'NÃO SE APLICA' }))
             goToNextStage()
           }}
           className="rounded p-2 font-bold hover:bg-black hover:text-white"

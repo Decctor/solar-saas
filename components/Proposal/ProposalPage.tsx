@@ -38,6 +38,7 @@ import { setOpportunityActiveProposal } from '@/utils/mutations/opportunities'
 import { copyToClipboard } from '@/lib/hooks'
 import { handleDownload } from '@/lib/methods/download'
 import EditProposalFile from '../Modals/Proposal/EditFile'
+import toast from 'react-hot-toast'
 
 function getPricingMethodById({ methods, id }: { methods?: TPricingMethodDTO[]; id: string }) {
   if (!methods) return 'NÃO DEFINIDO'
@@ -133,7 +134,11 @@ function ProposalPage({ proposalId, session }: ProposalPageProps) {
               proposalValue={proposal.valor}
               idMarketing={proposal.oportunidadeDados.idMarketing}
               opportunityEmail={proposal.clienteDados?.email}
-              handleWin={() => setNewContractRequestIsOpen(true)}
+              handleWin={() => {
+                if (proposal.oportunidadeDados.categoriaVenda == 'PLANO' && proposal.planos.length > 1)
+                  return toast.error('Defina o plano a ser vendido para prosseguir com o ganho.')
+                setNewContractRequestIsOpen(true)
+              }}
             />
           </div>
           <div className="flex w-full grow flex-col py-2">

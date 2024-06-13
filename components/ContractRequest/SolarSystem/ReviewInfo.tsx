@@ -1,3 +1,4 @@
+import CheckboxInput from '@/components/Inputs/CheckboxInput'
 import DateInput from '@/components/Inputs/DateInput'
 import NumberInput from '@/components/Inputs/NumberInput'
 import SelectInput from '@/components/Inputs/SelectInput'
@@ -7,7 +8,7 @@ import { renderCategoryIcon } from '@/lib/methods/rendering'
 import { structureTypes } from '@/utils/constants'
 
 import { stateCities } from '@/utils/estados_cidades'
-import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getPeakPotByModules } from '@/utils/methods'
+import { formatDate, formatToCEP, formatToCPForCNPJ, formatToMoney, formatToPhone, getPeakPotByModules } from '@/utils/methods'
 
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { getOeMPrices } from '@/utils/pricing/oem/methods'
@@ -21,7 +22,7 @@ import { useQueryClient } from '@tanstack/react-query'
 import React, { useState } from 'react'
 
 import { AiFillCloseCircle, AiOutlineSafety } from 'react-icons/ai'
-import { BsPatchCheckFill } from 'react-icons/bs'
+import { BsBookmarksFill, BsPatchCheckFill } from 'react-icons/bs'
 import { FaIndustry, FaSolarPanel } from 'react-icons/fa'
 import { ImAttachment, ImPower, ImPriceTag } from 'react-icons/im'
 import { MdAttachFile, MdAttachMoney, MdOutlineMiscellaneousServices } from 'react-icons/md'
@@ -1065,7 +1066,7 @@ function ReviewInfo({
                 onReset={() => {
                   setRequestInfo((prev) => ({
                     ...prev,
-                    estruturaAmpere: undefined,
+                    estruturaAmpere: 'NÃO',
                   }))
                 }}
                 width="100%"
@@ -1101,7 +1102,7 @@ function ReviewInfo({
                 onReset={() =>
                   setRequestInfo((prev) => ({
                     ...prev,
-                    responsavelEstrutura: undefined,
+                    responsavelEstrutura: 'NÃO SE APLICA',
                   }))
                 }
                 width="100%"
@@ -1431,224 +1432,65 @@ function ReviewInfo({
         <div className="flex w-full flex-col bg-[#fff] pb-2">
           <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">PLANO INTEGRADO DE OPERAÇÃO E MANUTENÇÃO</span>
           <p className="text-center text-sm italic text-gray-500">Escolha, se houver, o plano de Operação & Manutenção incluso no projeto.</p>
-          <div className="flex grow flex-wrap items-start justify-around gap-2 py-2">
-            <div
-              onClick={() => {
-                setRequestInfo((prev) => ({
-                  ...prev,
-                  possuiOeM: 'SIM',
-                  planoOeM: 'MANUTENÇÃO SIMPLES',
-                  valorOeMOuSeguro: pricing.manutencaoSimples.vendaFinal,
-                }))
-              }}
-              className={`flex h-fit min-h-[450px] ${
-                activePlanId == 1 || requestInfo.planoOeM == 'MANUTENÇÃO SIMPLES' ? 'bg-green-200' : ''
-              }  w-[350px] cursor-pointer flex-col gap-2 rounded border border-gray-300 p-3 shadow-lg duration-300 ease-in-out hover:scale-[1.02] hover:bg-blue-50`}
-            >
-              <h1 className="text-center text-lg font-medium text-gray-800">MANUTENÇÃO SIMPLES</h1>
-              <div className="flex grow flex-col gap-4">
-                <h1 className="text-center text-xs font-medium text-[#fead61]">ITENS DO PLANO</h1>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">MANUTENÇÃO ELÉTRICA INVERSORES + QUADROS ELÉTRICOS</h1>
+          <div className="flex w-full items-center justify-center p-2">
+            {requestInfo.possuiOeM == 'SIM' ? (
+              <div className="flex w-[350px] flex-col items-center rounded border border-gray-500 p-3">
+                <div className="flex w-full items-center gap-2">
+                  <div className="flex h-[25px] min-h-[25px] w-[25px] min-w-[25px] items-center justify-center rounded-full border border-black p-1">
+                    <BsBookmarksFill />
                   </div>
-                  <div className="flex w-[20%] items-center justify-end text-red-500">
-                    <AiFillCloseCircle />
-                  </div>
+                  <h1 className="text-sm font-black leading-none tracking-tight">{requestInfo.planoOeM}</h1>
                 </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">REAPERTO CONEXÕES ELÉTRICAS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-red-500">
-                    <AiFillCloseCircle />
-                  </div>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">ANÁLISE E CONFERÊNCIA DE GRANDEZAS ELÉTRICAS DOS EQUIPAMENTOS ELÉTRICOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-red-500">
-                    <AiFillCloseCircle />
-                  </div>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">LIMPEZA NOS MÓDULOS FOTOVOLTAICOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">DISTRIBUIÇÃO DE CRÉDITOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-red-500">
-                    <AiFillCloseCircle />
-                  </div>
+                <div className="flex w-full items-center justify-end">
+                  <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">
+                    {formatToMoney(requestInfo.valorOeMOuSeguro || 0)}
+                  </h1>
                 </div>
               </div>
-              <div className="flex w-full flex-col items-center gap-1">
-                <h1 className="text-xs font-thin text-gray-800">VALOR DO SERVIÇO</h1>
-                <div className="flex items-center justify-center gap-1 rounded border border-green-500 p-1">
-                  <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
-                  <p className="text-lg font-medium text-gray-600">
-                    R${' '}
-                    {pricing?.manutencaoSimples.vendaFinal.toLocaleString('pt-br', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </p>
-                </div>
+            ) : (
+              <p className="text-sm tracking-tight text-gray-500">PLANO NÃO DEFINIDO</p>
+            )}
+          </div>
+        </div>
+        <div className="flex w-full grow flex-col bg-[#fff] pb-2">
+          <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">SEGURO</span>
+          <div className="flex grow flex-col gap-2 p-2">
+            <div className="flex w-full items-center justify-center">
+              <div className="w-fit">
+                <CheckboxInput
+                  labelFalse="CLIENTE SEGURADO"
+                  labelTrue="CLIENTE SEGURO"
+                  checked={requestInfo.clienteSegurado == 'SIM'}
+                  handleChange={(value) => setRequestInfo((prev) => ({ ...prev, clienteSegurado: !!value ? 'SIM' : 'NÃO' }))}
+                />
               </div>
             </div>
-            <div
-              onClick={() => {
-                setRequestInfo((prev) => ({
-                  ...prev,
-                  possuiOeM: 'SIM',
-                  planoOeM: 'PLANO SOL',
-                  valorOeMOuSeguro: pricing.planoSol.vendaFinal,
-                }))
-              }}
-              className={`flex h-fit min-h-[450px] ${
-                activePlanId == 2 || requestInfo.planoOeM == 'PLANO SOL' ? 'bg-green-200' : ''
-              }  w-[350px] cursor-pointer flex-col gap-2 rounded border border-gray-300 p-3 shadow-lg duration-300 ease-in-out hover:scale-[1.02] hover:bg-blue-50`}
-            >
-              <h1 className="text-center text-lg font-medium text-gray-800">PLANO SOL</h1>
-              <div className="flex grow flex-col gap-4">
-                <h1 className="text-center text-xs font-medium text-[#fead61]">ITENS DO PLANO</h1>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">MANUTENÇÃO ELÉTRICA INVERSORES + QUADROS ELÉTRICOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
+            {requestInfo.clienteSegurado == 'SIM' ? (
+              <div className="flex w-[70%] flex-col items-center gap-2 self-center lg:flex-row">
+                <div className="w-[50%] lg:w-full">
+                  <NumberInput
+                    label="VALOR DO SEGURO"
+                    value={requestInfo.valorSeguro}
+                    placeholder="Preencha o valor do seguro..."
+                    handleChange={(value) => setRequestInfo((prev) => ({ ...prev, valorSeguro: value }))}
+                    width="100%"
+                  />
                 </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">REAPERTO CONEXÕES ELÉTRICAS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">ANÁLISE E CONFERÊNCIA DE GRANDEZAS ELÉTRICAS DOS EQUIPAMENTOS ELÉTRICOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">LIMPEZA NOS MÓDULOS FOTOVOLTAICOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
-                </div>
-                <div className="flex w-full items-center justify-center">
-                  <h1 className="text-center text-xs font-medium text-blue-700">MANUTENÇÃO ADICIONAL DURANTE O PLANO POR 50% DO VALOR DO CONTRATO</h1>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">DISTRIBUIÇÃO DE CRÉDITOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end gap-2 text-green-500">
-                    2x <BsPatchCheckFill />
-                  </div>
+                <div className="w-[50%] lg:w-full">
+                  <SelectInput
+                    label="TEMPO SEGURADO"
+                    value={requestInfo.tempoSegurado}
+                    options={[
+                      { id: 1, value: '1 ANO', label: '1 ANO' },
+                      { id: 2, value: 'NÃO SE APLICA', label: 'NÃO SE APLICA' },
+                    ]}
+                    handleChange={(value) => setRequestInfo((prev) => ({ ...prev, tempoSegurado: value }))}
+                    selectedItemLabel="NÃO DEFINIDO"
+                    onReset={() => setRequestInfo((prev) => ({ ...prev, tempoSegurado: 'NÃO SE APLICA' }))}
+                  />
                 </div>
               </div>
-              <div className="flex w-full flex-col items-center gap-1">
-                <h1 className="text-xs font-thin text-gray-800">VALOR DO SERVIÇO</h1>
-                <div className="flex items-center justify-center gap-1 rounded border border-green-500 p-1">
-                  <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
-                  <p className="text-lg font-medium text-gray-600">
-                    R${' '}
-                    {pricing?.planoSol.vendaFinal.toLocaleString('pt-br', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </p>
-                </div>
-              </div>
-            </div>
-            <div
-              onClick={() => {
-                setRequestInfo((prev) => ({
-                  ...prev,
-                  possuiOeM: 'SIM',
-                  planoOeM: 'PLANO SOL +',
-                  valorOeMOuSeguro: pricing.planoSolPlus.vendaFinal,
-                }))
-              }}
-              className={`flex h-fit min-h-[450px] ${
-                activePlanId == 3 || requestInfo.planoOeM == 'PLANO SOL +' ? 'bg-green-200' : ''
-              }  w-[350px] cursor-pointer flex-col gap-2 rounded border border-gray-300 p-3 shadow-lg duration-300 ease-in-out hover:scale-[1.02] hover:bg-blue-50`}
-            >
-              <h1 className="text-center text-lg font-medium text-gray-800">PLANO SOL+</h1>
-              <div className="flex grow flex-col gap-4">
-                <h1 className="text-center text-xs font-medium text-[#fead61]">ITENS DO PLANO</h1>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">MANUTENÇÃO ELÉTRICA INVERSORES + QUADROS ELÉTRICOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">REAPERTO CONEXÕES ELÉTRICAS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">ANÁLISE E CONFERÊNCIA DE GRANDEZAS ELÉTRICAS DOS EQUIPAMENTOS ELÉTRICOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">LIMPEZA NOS MÓDULOS FOTOVOLTAICOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">
-                    <BsPatchCheckFill />
-                  </div>
-                </div>
-                <div className="flex w-full items-center justify-center">
-                  <h1 className="text-center text-xs font-medium text-blue-700">MANUTENÇÃO ADICIONAL DURANTE O PLANO POR 70% DO VALOR DO CONTRATO</h1>
-                </div>
-                <div className="flex w-full items-center">
-                  <div className="flex w-[80%] items-center justify-center">
-                    <h1 className="text-center text-xs font-medium text-gray-500">DISTRIBUIÇÃO DE CRÉDITOS</h1>
-                  </div>
-                  <div className="flex w-[20%] items-center justify-end text-green-500">ILIMITADO</div>
-                </div>
-              </div>
-              <div className="flex w-full flex-col items-center gap-1">
-                <h1 className="text-xs font-thin text-gray-800">VALOR DO SERVIÇO</h1>
-                <div className="flex items-center justify-center gap-1 rounded border border-green-500 p-1">
-                  <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
-                  <p className="text-lg font-medium text-gray-600">
-                    R${' '}
-                    {pricing?.planoSolPlus.vendaFinal.toLocaleString('pt-br', {
-                      minimumFractionDigits: 2,
-                      maximumFractionDigits: 2,
-                    })}
-                  </p>
-                </div>
-              </div>
-            </div>
+            ) : null}
           </div>
         </div>
         <div className="flex w-full flex-col bg-[#fff] pb-2">
@@ -1896,7 +1738,7 @@ function ReviewInfo({
                     width={'450px'}
                     label={'VALOR DO CONTRATO FOTOVOLTAICO(SEM CUSTOS ADICIONAIS)'}
                     editable={true}
-                    value={requestInfo.valorContrato}
+                    value={requestInfo.valorContrato || null}
                     placeholder={'Preencha aqui o valor do contrato (sem custos adicionais de estrutura/padrão/O&M, etc...'}
                     handleChange={(value) =>
                       setRequestInfo((prev) => ({
@@ -2036,7 +1878,7 @@ function ReviewInfo({
                     label={'SE CARTÃO OU CHEQUE, QUANTAS PARCELAS?'}
                     placeholder="Preencha aqui o número de parcelas."
                     editable={true}
-                    value={requestInfo.numParcelas}
+                    value={requestInfo.numParcelas || null}
                     handleChange={(value) =>
                       setRequestInfo({
                         ...requestInfo,
@@ -2052,7 +1894,7 @@ function ReviewInfo({
                     label={'VALOR DA PARCELA'}
                     placeholder="Preencha aqui o valor das parcelas."
                     editable={true}
-                    value={requestInfo.valorParcela}
+                    value={requestInfo.valorParcela || null}
                     handleChange={(value) =>
                       setRequestInfo({
                         ...requestInfo,

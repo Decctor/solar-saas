@@ -1,9 +1,10 @@
+import { formatToMoney } from '@/lib/methods/formatting'
 import { OeMPricing, getOeMPrices } from '@/utils/pricing/oem/methods'
 import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
 import { TProposalDTO } from '@/utils/schemas/proposal.schema'
 import React, { useState } from 'react'
 import { AiFillCloseCircle } from 'react-icons/ai'
-import { BsPatchCheckFill } from 'react-icons/bs'
+import { BsCheckCircleFill, BsPatchCheckFill } from 'react-icons/bs'
 import { MdAttachMoney } from 'react-icons/md'
 
 type OeMPlansInfoProps = {
@@ -13,245 +14,37 @@ type OeMPlansInfoProps = {
   goToNextStage: () => void
   modulesQty?: number
   distance?: number
-  propose: TProposalDTO
+  proposal: TProposalDTO
   activePlanId?: number
 }
 
-function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextStage, propose, activePlanId, modulesQty, distance }: OeMPlansInfoProps) {
-  // Nos casos em que houver um plano selecionado, captar nova escolha e atualizar informações da proposta.
-  function getPricing(plans: TProposalDTO['planos']) {
-    const manutencaoSimples = plans.find((p) => p.nome == 'MANUTENÇÃO SIMPLES')?.valor || 0
-    const planoSol = plans.find((p) => p.nome == 'PLANO SOL')?.valor || 0
-    const planoSolPlus = plans.find((p) => p.nome == 'PLANO SOL PLUS')?.valor || 0
-
-    return {
-      manutencaoSimples,
-      planoSol,
-      planoSolPlus,
-    }
-  }
+function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextStage, proposal, activePlanId, modulesQty, distance }: OeMPlansInfoProps) {
+  const plan = proposal.planos[0]
   return (
     <div className="flex w-full grow flex-col bg-[#fff] pb-2">
       <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">PLANO INTEGRADO DE OPERAÇÃO E MANUTENÇÃO</span>
       <p className="text-center text-sm italic text-gray-500">Escolha, se houver, o plano de Operação & Manutenção incluso no projeto.</p>
-      <div className="flex grow flex-wrap items-start justify-around gap-2 py-2">
-        <div
-          onClick={() => {
-            setRequestInfo((prev) => ({
-              ...prev,
-              possuiOeM: 'SIM',
-              planoOeM: 'MANUTENÇÃO SIMPLES',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.manutencaoSimples || 0),
-            }))
-            goToNextStage()
-          }}
-          className={`flex h-fit min-h-[450px] ${
-            activePlanId == 1 || requestInfo.planoOeM == 'MANUTENÇÃO SIMPLES' ? 'bg-green-200' : ''
-          }  w-[350px] cursor-pointer flex-col gap-2 rounded border border-gray-300 p-3 shadow-lg duration-300 ease-in-out hover:scale-[1.02] hover:bg-blue-50`}
-        >
-          <h1 className="text-center text-lg font-medium text-gray-800">MANUTENÇÃO SIMPLES</h1>
-          <div className="flex grow flex-col gap-4">
-            <h1 className="text-center text-xs font-medium text-[#fead61]">ITENS DO PLANO</h1>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">MANUTENÇÃO ELÉTRICA INVERSORES + QUADROS ELÉTRICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">REAPERTO CONEXÕES ELÉTRICAS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">ANÁLISE E CONFERÊNCIA DE GRANDEZAS ELÉTRICAS DOS EQUIPAMENTOS ELÉTRICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">LIMPEZA NOS MÓDULOS FOTOVOLTAICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">DISTRIBUIÇÃO DE CRÉDITOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-red-500">
-                <AiFillCloseCircle />
-              </div>
-            </div>
+      <div className="flex grow flex-wrap items-start justify-center gap-2 py-2">
+        <div className="flex w-[450px] flex-col rounded-lg border border-gray-500 bg-[#fff] p-6 shadow-lg">
+          <div className="flex w-full items-center justify-between gap-2">
+            <h1 className="font-black">{plan.nome}</h1>
           </div>
-          <div className="flex w-full flex-col items-center gap-1">
-            <h1 className="text-xs font-thin text-gray-800">VALOR DO SERVIÇO</h1>
-            <div className="flex items-center justify-center gap-1 rounded border border-green-500 p-1">
-              <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
-              <p className="text-lg font-medium text-gray-600">
-                R${' '}
-                {getPricing(propose.planos)?.manutencaoSimples.toLocaleString('pt-br', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </p>
-            </div>
+          <p className="w-full text-start text-sm text-gray-500">{plan?.descricao || '...'}</p>
+          <div className="my-4 flex w-full items-end justify-center gap-1">
+            <h1 className="text-4xl font-black">{formatToMoney(plan.valor || 0)}</h1>
+            <h1 className="text-xs font-light text-gray-500">/ {plan?.intervalo.tipo}</h1>
           </div>
-        </div>
-        <div
-          onClick={() => {
-            setRequestInfo((prev) => ({
-              ...prev,
-              possuiOeM: 'SIM',
-              planoOeM: 'PLANO SOL',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.planoSol || 0),
-            }))
-            goToNextStage()
-          }}
-          className={`flex h-fit min-h-[450px] ${
-            activePlanId == 2 || requestInfo.planoOeM == 'PLANO SOL' ? 'bg-green-200' : ''
-          }  w-[350px] cursor-pointer flex-col gap-2 rounded border border-gray-300 p-3 shadow-lg duration-300 ease-in-out hover:scale-[1.02] hover:bg-blue-50`}
-        >
-          <h1 className="text-center text-lg font-medium text-gray-800">PLANO SOL</h1>
-          <div className="flex grow flex-col gap-4">
-            <h1 className="text-center text-xs font-medium text-[#fead61]">ITENS DO PLANO</h1>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">MANUTENÇÃO ELÉTRICA INVERSORES + QUADROS ELÉTRICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">REAPERTO CONEXÕES ELÉTRICAS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">ANÁLISE E CONFERÊNCIA DE GRANDEZAS ELÉTRICAS DOS EQUIPAMENTOS ELÉTRICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">LIMPEZA NOS MÓDULOS FOTOVOLTAICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center justify-center">
-              <h1 className="text-center text-xs font-medium text-blue-700">MANUTENÇÃO ADICIONAL DURANTE O PLANO POR 50% DO VALOR DO CONTRATO</h1>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">DISTRIBUIÇÃO DE CRÉDITOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end gap-2 text-green-500">
-                2x <BsPatchCheckFill />
-              </div>
-            </div>
-          </div>
-          <div className="flex w-full flex-col items-center gap-1">
-            <h1 className="text-xs font-thin text-gray-800">VALOR DO SERVIÇO</h1>
-            <div className="flex items-center justify-center gap-1 rounded border border-green-500 p-1">
-              <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
-              <p className="text-lg font-medium text-gray-600">
-                R${' '}
-                {getPricing(propose.planos)?.planoSol.toLocaleString('pt-br', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </p>
-            </div>
-          </div>
-        </div>
-        <div
-          onClick={() => {
-            setRequestInfo((prev) => ({
-              ...prev,
-              possuiOeM: 'SIM',
-              planoOeM: 'PLANO SOL +',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.planoSolPlus || 0),
-            }))
-            goToNextStage()
-          }}
-          className={`flex h-fit min-h-[450px] ${
-            activePlanId == 3 || requestInfo.planoOeM == 'PLANO SOL +' ? 'bg-green-200' : ''
-          }  w-[350px] cursor-pointer flex-col gap-2 rounded border border-gray-300 p-3 shadow-lg duration-300 ease-in-out hover:scale-[1.02] hover:bg-blue-50`}
-        >
-          <h1 className="text-center text-lg font-medium text-gray-800">PLANO SOL+</h1>
-          <div className="flex grow flex-col gap-4">
-            <h1 className="text-center text-xs font-medium text-[#fead61]">ITENS DO PLANO</h1>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">MANUTENÇÃO ELÉTRICA INVERSORES + QUADROS ELÉTRICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">REAPERTO CONEXÕES ELÉTRICAS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">ANÁLISE E CONFERÊNCIA DE GRANDEZAS ELÉTRICAS DOS EQUIPAMENTOS ELÉTRICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">LIMPEZA NOS MÓDULOS FOTOVOLTAICOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">
-                <BsPatchCheckFill />
-              </div>
-            </div>
-            <div className="flex w-full items-center justify-center">
-              <h1 className="text-center text-xs font-medium text-blue-700">MANUTENÇÃO ADICIONAL DURANTE O PLANO POR 70% DO VALOR DO CONTRATO</h1>
-            </div>
-            <div className="flex w-full items-center">
-              <div className="flex w-[80%] items-center justify-center">
-                <h1 className="text-center text-xs font-medium text-gray-500">DISTRIBUIÇÃO DE CRÉDITOS</h1>
-              </div>
-              <div className="flex w-[20%] items-center justify-end text-green-500">ILIMITADO</div>
-            </div>
-          </div>
-          <div className="flex w-full flex-col items-center gap-1">
-            <h1 className="text-xs font-thin text-gray-800">VALOR DO SERVIÇO</h1>
-            <div className="flex items-center justify-center gap-1 rounded border border-green-500 p-1">
-              <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
-              <p className="text-lg font-medium text-gray-600">
-                R${' '}
-                {getPricing(propose.planos)?.planoSolPlus.toLocaleString('pt-br', {
-                  minimumFractionDigits: 2,
-                  maximumFractionDigits: 2,
-                })}
-              </p>
+          <div className="my-4 flex flex-grow flex-col gap-1">
+            <h1 className="text-[0.6rem] tracking-tight text-gray-500">DESCRITIVO</h1>
+            <div className="flex flex-grow flex-col gap-2">
+              {plan.descritivo.map((d, idx) => (
+                <div key={idx} className="flex items-center gap-1">
+                  <div className="w-fit">
+                    <BsCheckCircleFill color="rgb(21,128,61)" size={15} />
+                  </div>
+                  <p className="text-xs font-medium tracking-tight">{d.descricao}</p>
+                </div>
+              ))}
             </div>
           </div>
         </div>
@@ -268,10 +61,11 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
         <button
           onClick={() => {
             goToNextStage()
+            setRequestInfo((prev) => ({ ...prev, planoOeM: plan.nome as TContractRequest['planoOeM'] }))
           }}
           className="rounded p-2 font-bold hover:bg-black hover:text-white"
         >
-          Prosseguir sem plano
+          Prosseguir
         </button>
       </div>
     </div>

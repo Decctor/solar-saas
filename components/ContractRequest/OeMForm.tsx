@@ -5,7 +5,7 @@ import HomologationInfo from './SolarSystem/HomologationInfo'
 import SystemInfo from './SolarSystem/SystemInfo'
 import StructureInfo from './SolarSystem/StructureInfo'
 import PAInfo from './SolarSystem/PAInfo'
-import OeMPlansInfo from './SolarSystem/OeMPlansInfo'
+import OeMPlansInfo from './OeM/OeMPlansInfo'
 import PaymentInfo from './SolarSystem/PaymentInfo'
 import CreditDistributionInfo from './SolarSystem/CreditDistributionInfo'
 import DocumentAttachmentInfo from './OeM/DocumentAttachmentInfo'
@@ -140,7 +140,7 @@ function OeMForm({ requestInfo, setRequestInfo, proposeInfo }: OeMFormProps) {
           setRequestInfo={setRequestInfo}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
           goToNextStage={() => setStage((prev) => prev + 1)}
-          propose={proposeInfo}
+          proposal={proposeInfo}
           activePlanId={undefined}
         />
       ) : null}
