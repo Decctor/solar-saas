@@ -629,7 +629,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                     setInfoHolder((prev: any) => ({
                       ...prev,
                       instalacao: {
-                        ...prev,
+                        ...prev.instalacao,
                         grupo: value,
                       },
                     }))
@@ -639,7 +639,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                     setInfoHolder((prev: any) => ({
                       ...prev,
                       instalacao: {
-                        ...prev,
+                        ...prev.instalacao,
                         grupo: null,
                       },
                     }))
@@ -687,7 +687,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                     setInfoHolder((prev: any) => ({
                       ...prev,
                       instalacao: {
-                        ...prev,
+                        ...prev.instalacao,
                         tipoLigacao: value,
                       },
                     }))
@@ -695,7 +695,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                 onReset={() => {
                   if (infoHolder?.cliente)
                     setInfoHolder((prev: any) => ({
-                      ...prev,
+                      ...prev.instalacao,
                       tipoLigacao: null,
                     }))
                 }}
@@ -731,7 +731,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                     setInfoHolder((prev) => ({
                       ...prev,
                       instalacao: {
-                        ...prev,
+                        ...prev.instalacao,
                         tipoTitular: value,
                       },
                     }))
@@ -741,7 +741,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                     setInfoHolder((prev: any) => ({
                       ...prev,
                       instalacao: {
-                        ...prev,
+                        ...prev.instalacao,
                         tipoTitular: null,
                       },
                     }))
