@@ -13,6 +13,7 @@ export type TProjectTypes = {
   saleCategory: TSaleCategory
   sizing: { title: string; fields: (keyof TProposalPremisses)[] }[]
 }
+
 export const ProjectTypes: TProjectTypes[] = [
   {
     id: 1,
@@ -85,7 +86,7 @@ export const CommonServicesByProjectType = [
     cores: { texto: '#fead41', fundo: '#15599a' },
   },
 ]
-
+export const OeMIDs = ['661d828de3446bbfeff1bcf4', '660efd7cb535065ae08d459f', '660ff9f61285da49d6dc201e']
 export const GeneralVisibleHiddenExitMotionVariants = {
   hidden: {
     opacity: 0.2,

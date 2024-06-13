@@ -1,7 +1,7 @@
 import { stateCities } from '../estados_cidades'
 import { TPartnerSimplifiedDTO } from '../schemas/partner.schema'
 import { TPricingMethodConditionType, TPricingMethodItemResultItem } from '../schemas/pricing-method.schema'
-import { ElectricalInstallationGroups, EletricalPhasesTypes, StructureTypes } from '../select-options'
+import { ElectricalInstallationGroups, EletricalPhasesTypes, StructureTypes, YesOrNoOptons } from '../select-options'
 import { TPricingConditionData, TPricingVariableData } from './methods'
 
 type TVariablesAlias = { label: string; value: keyof TPricingVariableData; type: 'general' | 'technical-analysis' | 'cumulative' }
@@ -46,6 +46,7 @@ export const conditionsAlias: TConditionsAlias[] = [
   { label: 'POTÊNCIA PICO', value: 'potenciaPico', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
   { label: 'DISTÂNCIA', value: 'distancia', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
   { label: 'VALOR DE REFERÊNCIA', value: 'valorReferencia', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
+  { label: 'ATIVAÇÃO DE REFERÊNCIA', value: 'ativacaoReferencia', types: ['IGUAL_TEXTO'] },
 ]
 
 export function formatFormulaItem(value: string) {
@@ -112,6 +113,7 @@ export function formatConditionValue({ conditionVariable, conditionValue, additi
   if (conditionVariable == 'potenciaPico') return conditionValue.toString()
   if (conditionVariable == 'distancia') return conditionValue.toString()
   if (conditionVariable == 'valorReferencia') return conditionValue.toString()
+  if (conditionVariable == 'ativacaoReferencia') return conditionValue.toString()
 }
 
 type RenderConditionPhraseParams = {
@@ -181,6 +183,7 @@ export function getConditionOptions({ variable, additional }: GetConditionOption
   if (variable == 'grupoInstalacao') return ElectricalInstallationGroups
   if (variable == 'faseamentoEletrico') return EletricalPhasesTypes
   if (variable == 'idParceiro') return additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id }))
+  if (variable == 'ativacaoReferencia') return YesOrNoOptons
   return []
 }
 

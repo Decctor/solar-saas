@@ -3,7 +3,7 @@ import { AnimatePresence, motion } from 'framer-motion'
 import { MdDashboard, MdLogout, MdNotifications, MdNotificationsActive, MdOutlineMiscellaneousServices } from 'react-icons/md'
 import { FaProjectDiagram, FaTag, FaUser, FaUsers } from 'react-icons/fa'
 import { TfiAngleRight } from 'react-icons/tfi'
-import { BsBookmarksFill, BsCart, BsFillClipboardDataFill, BsFillGearFill, BsGraphUpArrow, BsPatchCheckFill } from 'react-icons/bs'
+import { BsBookmarksFill, BsCart, BsFillClipboardDataFill, BsFillFunnelFill, BsFillGearFill, BsGraphUpArrow, BsPatchCheckFill } from 'react-icons/bs'
 import SidebarItem from './SidebarItem'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
@@ -64,10 +64,10 @@ export const Sidebar = ({ session }: SidebarProps) => {
           {sidebarExtended ? <h2 className="h-[18px] text-xs text-gray-500">PRINCIPAL</h2> : <div className="h-[18px] w-full "></div>}
           <SidebarItem text="Dashboard" isOpen={sidebarExtended} url="/" icon={<BiStats style={{ fontSize: '15px', color: '#264653' }} />} />
           <SidebarItem
-            text="Projetos"
+            text="Oportunidades"
             isOpen={sidebarExtended}
             url="/comercial/oportunidades"
-            icon={<MdDashboard style={{ fontSize: '15px', color: '#264653' }} />}
+            icon={<BsFillFunnelFill style={{ fontSize: '15px', color: '#264653' }} />}
           />
           <SidebarItem text="Clientes" isOpen={sidebarExtended} url="/clientes" icon={<FaUser style={{ fontSize: '15px', color: '#264653' }} />} />
           {sidebarExtended ? <h2 className="mt-2 h-[18px] text-xs text-gray-500">COMPOSIÇÕES</h2> : <div className="mt-2 h-[18px]"></div>}
@@ -98,6 +98,16 @@ export const Sidebar = ({ session }: SidebarProps) => {
             url="/operacional/analises-tecnicas"
             icon={<BsFillClipboardDataFill style={{ fontSize: '15px', color: '#264653' }} />}
           />
+          {/* {session.user.permissoes.projetos.visualizar ? (
+            <SidebarItem
+              text="Projetos"
+              isOpen={sidebarExtended}
+              url="/operacional/setores/comercial"
+              icon={<MdDashboard style={{ fontSize: '15px', color: '#264653' }} />}
+            />
+          ) : (
+            false
+          )} */}
         </div>
         <NotificationBlock sidebarExtended={sidebarExtended} session={session} />
         {session?.user.avatar_url ? (

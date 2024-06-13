@@ -54,7 +54,7 @@ function GeneralSizing({ opportunity, projectTypes, session, infoHolder, setInfo
                 <h1 className="justify-center text-center text-sm font-bold text-[#15599a]">{category.titulo}</h1>
                 <div className="flex w-full flex-col flex-wrap items-center justify-center gap-2 lg:flex-row">
                   {category.campos.map((field) => (
-                    <div className="w-full lg:w-[48%]">
+                    <div className="flex w-full items-center justify-center lg:w-[48%]">
                       {renderProposalPremisseField({
                         field: field as keyof TProposalPremisses,
                         value: infoHolder.premissas[field as keyof TProposalPremisses],

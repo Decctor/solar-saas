@@ -31,7 +31,6 @@ function NewClient({ session, partnerId, closeModal }: NewClientModalProps) {
     nome: '',
     idParceiro: partnerId,
     cpfCnpj: '',
-
     telefonePrimario: '',
     telefoneSecundario: null,
     email: '',
@@ -45,7 +44,7 @@ function NewClient({ session, partnerId, closeModal }: NewClientModalProps) {
     dataNascimento: null,
     profissao: null,
     estadoCivil: null,
-    canalAquisicao: null,
+    canalAquisicao: '',
     idMarketing: null,
     indicador: {
       nome: '',
@@ -99,7 +98,7 @@ function NewClient({ session, partnerId, closeModal }: NewClientModalProps) {
       dataNascimento: null,
       profissao: null,
       estadoCivil: null,
-      canalAquisicao: null,
+      canalAquisicao: '',
       idMarketing: null,
       indicador: {
         nome: '',
@@ -227,7 +226,7 @@ function NewClient({ session, partnerId, closeModal }: NewClientModalProps) {
                   onReset={() =>
                     setClientInfo((prev) => ({
                       ...prev,
-                      canalAquisicao: null,
+                      canalAquisicao: '',
                     }))
                   }
                   selectedItemLabel="NÃO DEFINIDO"
@@ -313,9 +312,7 @@ function NewClient({ session, partnerId, closeModal }: NewClientModalProps) {
               <SelectInput
                 label="ESTADO"
                 value={clientInfo.uf}
-                handleChange={(value) =>
-                  setClientInfo((prev) => ({ ...prev, uf: value, cidade: stateCities[value as keyof typeof stateCities][0] as string }))
-                }
+                handleChange={(value) => setClientInfo((prev) => ({ ...prev, uf: value, cidade: stateCities[value as keyof typeof stateCities][0] as string }))}
                 selectedItemLabel="NÃO DEFINIDO"
                 onReset={() => setClientInfo((prev) => ({ ...prev, uf: '', cidade: '' }))}
                 options={Object.keys(stateCities).map((state, index) => ({

@@ -1,4 +1,4 @@
-import { TProject } from '@/utils/schemas/project.schema'
+import { TProject, TProjectWithClient } from '@/utils/schemas/project.schema'
 import { Collection, Document, Filter, ObjectId, WithId } from 'mongodb'
 
 type GetProjectsParams = {
@@ -20,8 +20,23 @@ type GetProjectByIdParams = {
 }
 export async function getProjectById({ id, collection, query }: GetProjectByIdParams) {
   try {
-    const project = await collection.findOne({ _id: new ObjectId(id), ...query })
-    return project
+    const addFields = { clientAsObjectId: { $toObjectId: '$cliente.id' } }
+    const clientLookup = { from: 'clients', localField: 'clientAsObjectId', foreignField: '_id', as: 'clienteDados' }
+    const projectArr = await collection
+      .aggregate([
+        {
+          $match: { _id: new ObjectId(id), ...query },
+        },
+        {
+          $addFields: addFields,
+        },
+        {
+          $lookup: clientLookup,
+        },
+      ])
+      .toArray()
+    const project = projectArr.map((p) => ({ ...p, clienteDados: p.clienteDados[0] }))
+    return project[0] as TProjectWithClient
   } catch (error) {
     throw error
   }

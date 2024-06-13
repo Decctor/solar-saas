@@ -1,3 +1,4 @@
+import CheckboxInput from './components/Inputs/CheckboxInput'
 import NumberInput from './components/Inputs/NumberInput'
 import SelectInput from './components/Inputs/SelectInput'
 import TextInput from './components/Inputs/TextInput'
@@ -205,6 +206,19 @@ export function renderProposalPremisseField<T extends keyof TProposalPremisses>(
         handleChange={handleChange as (value: number) => void}
         width="100%"
       />
+    )
+  }
+  if (field == 'ativacaoReferencia') {
+    return (
+      <div className="w-fit">
+        <CheckboxInput
+          labelFalse="ACIONAMENTO ATIVO"
+          labelTrue="ACIONAMENTO ATIVO"
+          // @ts-ignore
+          handleChange={(value) => handleChange((!!value ? 'SIM' : 'NÃO') as TProposalPremisses['ativacaoReferencia'])}
+          checked={(value == 'SIM') as boolean}
+        />
+      </div>
     )
   }
   if (field == 'faseamentoEletrico') {

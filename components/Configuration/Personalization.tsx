@@ -2,6 +2,7 @@ import React from 'react'
 import CreditorsBlock from '../Personalization/CreditorsBlock'
 import { Session } from 'next-auth'
 import EquipmentsBlock from '../Personalization/EquipmentsBlock'
+import ProjectJourneyTypesBlock from '../Personalization/ProjectJourneyTypesBlock'
 
 type PersonalizationProps = {
   session: Session
@@ -18,6 +19,7 @@ function Personalization({ session }: PersonalizationProps) {
       <div className="flex w-full flex-col gap-2 py-2">
         <CreditorsBlock session={session} />
         <EquipmentsBlock session={session} />
+        <ProjectJourneyTypesBlock session={session} />
       </div>
     </div>
   )

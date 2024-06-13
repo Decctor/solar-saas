@@ -1,14 +1,10 @@
-import { OeMIDs } from '@/utils/constants'
 import { OeMPricing, getOeMPrices } from '@/utils/pricing/oem/methods'
-import { useSignaturePlanWithPricingMethod } from '@/utils/queries/signature-plans'
 import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contract-request.schema'
-import { TProposalDTO, TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
-import { TSignaturePlanDTOWithPricingMethod } from '@/utils/schemas/signature-plans.schema'
+import { TProposalDTO } from '@/utils/schemas/proposal.schema'
 import React, { useState } from 'react'
 import { AiFillCloseCircle } from 'react-icons/ai'
 import { BsPatchCheckFill } from 'react-icons/bs'
 import { MdAttachMoney } from 'react-icons/md'
-import SignaturePlanOptionCard from '../Utils/SignaturePlanOptionCard'
 
 type OeMPlansInfoProps = {
   requestInfo: TContractRequest
@@ -17,46 +13,35 @@ type OeMPlansInfoProps = {
   goToNextStage: () => void
   modulesQty?: number
   distance?: number
-  proposal: TProposalDTOWithOpportunity
+  propose: TProposalDTO
   activePlanId?: number
 }
 
-function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextStage, proposal }: OeMPlansInfoProps) {
+function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNextStage, propose, activePlanId, modulesQty, distance }: OeMPlansInfoProps) {
   // Nos casos em que houver um plano selecionado, captar nova escolha e atualizar informações da proposta.
-  const { data: signaturePlans, isLoading, isError, isSuccess } = useSignaturePlanWithPricingMethod()
-  function getOeMPlans(plans: TSignaturePlanDTOWithPricingMethod[] | undefined) {
-    if (!plans) return []
-    return plans.filter((p) => OeMIDs.includes(p._id))
+  function getPricing(plans: TProposalDTO['planos']) {
+    const manutencaoSimples = plans.find((p) => p.nome == 'MANUTENÇÃO SIMPLES')?.valor || 0
+    const planoSol = plans.find((p) => p.nome == 'PLANO SOL')?.valor || 0
+    const planoSolPlus = plans.find((p) => p.nome == 'PLANO SOL PLUS')?.valor || 0
+
+    return {
+      manutencaoSimples,
+      planoSol,
+      planoSolPlus,
+    }
   }
   return (
     <div className="flex w-full grow flex-col bg-[#fff] pb-2">
       <span className="py-2 text-center text-lg font-bold uppercase text-[#15599a]">PLANO INTEGRADO DE OPERAÇÃO E MANUTENÇÃO</span>
       <p className="text-center text-sm italic text-gray-500">Escolha, se houver, o plano de Operação & Manutenção incluso no projeto.</p>
       <div className="flex grow flex-wrap items-start justify-around gap-2 py-2">
-        {getOeMPlans(signaturePlans).map((plan) => (
-          <SignaturePlanOptionCard
-            activePlanName={requestInfo.planoOeM}
-            plan={plan}
-            opportunity={proposal.oportunidadeDados}
-            proposal={proposal}
-            handleSelect={(plan) => {
-              setRequestInfo((prev) => ({
-                ...prev,
-                possuiOeM: 'SIM',
-                planoOeM: plan.nome as TContractRequest['planoOeM'],
-                valorContrato: (proposal.valor || 0) + plan.valorTotal,
-              }))
-              goToNextStage()
-            }}
-          />
-        ))}
-        {/* <div
+        <div
           onClick={() => {
             setRequestInfo((prev) => ({
               ...prev,
               possuiOeM: 'SIM',
               planoOeM: 'MANUTENÇÃO SIMPLES',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(proposal.planos)?.manutencaoSimples || 0),
+              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.manutencaoSimples || 0),
             }))
             goToNextStage()
           }}
@@ -114,7 +99,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
               <p className="text-lg font-medium text-gray-600">
                 R${' '}
-                {getPricing(proposal.planos)?.manutencaoSimples.toLocaleString('pt-br', {
+                {getPricing(propose.planos)?.manutencaoSimples.toLocaleString('pt-br', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -128,7 +113,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               ...prev,
               possuiOeM: 'SIM',
               planoOeM: 'PLANO SOL',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(proposal.planos)?.planoSol || 0),
+              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.planoSol || 0),
             }))
             goToNextStage()
           }}
@@ -189,7 +174,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
               <p className="text-lg font-medium text-gray-600">
                 R${' '}
-                {getPricing(proposal.planos)?.planoSol.toLocaleString('pt-br', {
+                {getPricing(propose.planos)?.planoSol.toLocaleString('pt-br', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
@@ -203,7 +188,7 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               ...prev,
               possuiOeM: 'SIM',
               planoOeM: 'PLANO SOL +',
-              valorContrato: (prev.valorContrato || 0) + (getPricing(proposal.planos)?.planoSolPlus || 0),
+              valorContrato: (prev.valorContrato || 0) + (getPricing(propose.planos)?.planoSolPlus || 0),
             }))
             goToNextStage()
           }}
@@ -262,14 +247,14 @@ function OeMPlansInfo({ requestInfo, setRequestInfo, goToPreviousStage, goToNext
               <MdAttachMoney style={{ color: 'rgb(34,197,94)', fontSize: '20px' }} />
               <p className="text-lg font-medium text-gray-600">
                 R${' '}
-                {getPricing(proposal.planos)?.planoSolPlus.toLocaleString('pt-br', {
+                {getPricing(propose.planos)?.planoSolPlus.toLocaleString('pt-br', {
                   minimumFractionDigits: 2,
                   maximumFractionDigits: 2,
                 })}
               </p>
             </div>
           </div>
-        </div> */}
+        </div>
       </div>
       <div className="mt-2 flex w-full flex-wrap justify-between  gap-2">
         <button

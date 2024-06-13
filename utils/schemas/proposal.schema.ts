@@ -96,6 +96,7 @@ const PremissesSchema = z.object({
   eficienciaGeracao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de eficiência de geração.' }).optional().nullable(),
   grupoInstalacao: ElectricalInstallationGroupsSchema.optional().nullable(),
   valorReferencia: z.number({ invalid_type_error: 'Tipo inválido para a premissa de valor de referência.' }).optional().nullable(),
+  ativacaoReferencia: z.enum(['SIM', 'NÃO'], { invalid_type_error: 'Tipo inválido para a premissa lógica de referência' }).optional().nullable(),
   faseamentoEletrico: ElectricalPhasesSchema.optional().nullable(),
   custosInstalacao: z.number({ invalid_type_error: 'Tipo inválido para a premissa de custo estimado de instalação.' }).optional().nullable(),
   custosPadraoEnergia: z.number({ invalid_type_error: 'Tipo inválido para a premissa de custo estimado de adequação de padrão.' }).optional().nullable(),

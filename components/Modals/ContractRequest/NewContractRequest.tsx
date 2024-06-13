@@ -128,6 +128,7 @@ function getRequestObjectByProjectType({ propose, projectType, responsible, clie
     possuiOeM: 'NÃO',
     planoOeM: 'NÃO SE APLICA',
     clienteSegurado: 'NÃO',
+    valorSeguro: 0,
     tempoSegurado: 'NÃO SE APLICA',
     formaPagamentoOeMOuSeguro: 'NÃO SE APLICA',
     valorOeMOuSeguro: null,

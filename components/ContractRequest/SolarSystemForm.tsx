@@ -23,6 +23,7 @@ import { TContractRequest } from '@/utils/schemas/integrations/app-ampere/contra
 import { TProposalDTOWithOpportunity } from '@/utils/schemas/proposal.schema'
 import { storage } from '@/services/firebase/storage-config'
 import { createContractRequest } from '@/utils/mutations/contract-request'
+import InsuranceInfo from './SolarSystem/InsuranceInfo'
 type SolarSystemFormProps = {
   requestInfo: TContractRequest
   setRequestInfo: React.Dispatch<React.SetStateAction<TContractRequest>>
@@ -145,11 +146,11 @@ function SolarSystemForm({ requestInfo, setRequestInfo, proposeInfo }: SolarSyst
           goToNextStage={() => setStage((prev) => prev + 1)}
           modulesQty={getModulesQty(proposeInfo.produtos)}
           distance={proposeInfo.premissas.distancia || 0}
-          propose={proposeInfo}
+          proposal={proposeInfo}
         />
       ) : null}
       {stage == 8 ? (
-        <PaymentInfo
+        <InsuranceInfo
           requestInfo={requestInfo}
           setRequestInfo={setRequestInfo}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
@@ -157,7 +158,7 @@ function SolarSystemForm({ requestInfo, setRequestInfo, proposeInfo }: SolarSyst
         />
       ) : null}
       {stage == 9 ? (
-        <CreditDistributionInfo
+        <PaymentInfo
           requestInfo={requestInfo}
           setRequestInfo={setRequestInfo}
           goToPreviousStage={() => setStage((prev) => prev - 1)}
@@ -165,6 +166,14 @@ function SolarSystemForm({ requestInfo, setRequestInfo, proposeInfo }: SolarSyst
         />
       ) : null}
       {stage == 10 ? (
+        <CreditDistributionInfo
+          requestInfo={requestInfo}
+          setRequestInfo={setRequestInfo}
+          goToPreviousStage={() => setStage((prev) => prev - 1)}
+          goToNextStage={() => setStage((prev) => prev + 1)}
+        />
+      ) : null}
+      {stage == 11 ? (
         <DocumentAttachment
           projectInfo={proposeInfo.oportunidadeDados}
           requestInfo={requestInfo}
@@ -177,7 +186,7 @@ function SolarSystemForm({ requestInfo, setRequestInfo, proposeInfo }: SolarSyst
           setDocumentsFile={setDocumentsFileHolder}
         />
       ) : null}
-      {stage == 11 ? (
+      {stage == 12 ? (
         <ReviewInfo
           requestInfo={requestInfo}
           setRequestInfo={setRequestInfo}

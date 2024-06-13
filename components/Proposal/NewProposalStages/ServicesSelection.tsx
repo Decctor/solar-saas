@@ -61,6 +61,7 @@ function ServicesSelection({ opportunity, infoHolder, setInfoHolder, moveToNextS
       potenciaPico: infoHolder.premissas.potenciaPico || 0,
       distancia: infoHolder.premissas.distancia || 0,
       valorReferencia: infoHolder.premissas.valorReferencia || 0,
+      ativacaoReferencia: infoHolder.premissas.ativacaoReferencia || 'NÃO',
     }
     const variableData: TPricingVariableData = {
       kit: 0,

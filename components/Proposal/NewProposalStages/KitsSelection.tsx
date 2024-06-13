@@ -154,6 +154,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       potenciaPico: modulePeakPower,
       distancia: infoHolder.premissas.distancia || 0,
       valorReferencia: infoHolder.premissas.valorReferencia || 0,
+      ativacaoReferencia: infoHolder.premissas.ativacaoReferencia || 'NÃO',
     }
     const variableData: TPricingVariableData = {
       kit: kitPrice,
@@ -301,6 +302,7 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
       potenciaPico: modulePeakPower,
       distancia: infoHolder.premissas.distancia || 0,
       valorReferencia: infoHolder.premissas.valorReferencia || 0,
+      ativacaoReferencia: infoHolder.premissas.ativacaoReferencia || 'NÃO',
     }
     const variableData: TPricingVariableData = {
       kit: price,
@@ -327,6 +329,12 @@ function KitsSelection({ opportunity, infoHolder, setInfoHolder, moveToNextStage
     })
     setInfoHolder((prev) => ({
       ...prev,
+      premissas: {
+        ...prev.premissas,
+        potenciaPico: modulePeakPower,
+        numModulos: moduleQty,
+        numInversores: inverterQty,
+      },
       idMetodologiaPrecificacao: methodologyId,
       kits: proposalKits,
       produtos: products,

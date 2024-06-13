@@ -570,7 +570,8 @@ export const PremissesFieldOptions: TPremissesFieldOptions[] = [
   { id: 14, value: 'eficienciaGeracao', label: 'EFICIÊNCIA DE GERAÇÃO' },
   { id: 15, value: 'grupoInstalacao', label: 'GRUPO DE INSTALAÇÃO' },
   { id: 16, value: 'valorReferencia', label: 'VALOR DE REFERÊNCIA' },
-  { id: 17, value: 'faseamentoEletrico', label: 'TIPO DE CONEXÃO ELÉTRICA' },
+  { id: 17, value: 'ativacaoReferencia', label: 'ATIVAÇÃO DE REFERÊNCIA' },
+  { id: 18, value: 'faseamentoEletrico', label: 'TIPO DE CONEXÃO ELÉTRICA' },
 ]
 
 type TAutomaticPremissesBySaleCategory = {
@@ -1492,6 +1493,10 @@ export const SupplyOptions = {
     grandeza: 'MESA',
   },
 }
+export const YesOrNoOptons = [
+  { id: 1, label: 'SIM', value: 'SIM' },
+  { id: 2, label: 'NÃO', value: 'NÃO' },
+]
 export const AdditionalServicesResponsibilityOptions = [
   { id: 1, label: 'NÃO', value: 'NÃO' },
   { id: 2, label: 'SIM - RESPONSABILIDADE DO CLIENTE', value: 'SIM - RESPONSABILIDADE DO CLIENTE' },

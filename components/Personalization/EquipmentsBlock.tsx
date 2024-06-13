@@ -15,8 +15,8 @@ function EquipmentsBlock({ session }: EquipmentsBlockProps) {
   const [newEquipmentMenuIsOpen, setNewEquipmentMenuIsOpen] = useState<boolean>(false)
   const { data: equipments, isLoading, isError, isSuccess } = useEquipments({ category: categoryFilter })
   return (
-    <div className="flex min-h-[450px] w-full flex-col rounded border border-blue-500">
-      <h1 className="w-full rounded-tl rounded-tr bg-blue-500 p-1 text-center text-sm font-bold text-white">EQUIPAMENTOS</h1>
+    <div className="flex min-h-[450px] w-full flex-col rounded border border-black">
+      <h1 className="w-full rounded-tl rounded-tr bg-black p-1 text-center text-sm font-bold text-white">EQUIPAMENTOS</h1>
       <div className="my-1 flex w-full flex-col">
         <p className="w-full text-center text-sm font-light tracking-tighter text-gray-700">
           Os equipamentos aqui cadastrados estarão disponíveis nas listas de equipamentos, como MÓDULOS E INVERSORES.

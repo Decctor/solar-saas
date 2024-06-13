@@ -157,7 +157,7 @@ function NewPricingUnit({ pricingHolder, setPricingHolder, resultHolder, setResu
         </div>
         <button
           onClick={() => {
-            if (numberHolder) addToUnitPricingItems(numberHolder?.toString())
+            addToUnitPricingItems(numberHolder?.toString())
           }}
           className="min-h-[46px] rounded-md bg-green-500 p-2 text-sm text-white hover:bg-green-600"
         >

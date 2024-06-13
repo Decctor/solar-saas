@@ -108,7 +108,7 @@ function NewEquipmentMenu({ session, affectQueryKey }: NewEquipmentMenuProps) {
           />
         </div>
       </div>
-      <div className="flex w-full items-center justify-end">
+      <div className="flex w-full items-center justify-end p-2">
         <button
           disabled={isPending}
           onClick={() => {

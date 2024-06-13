@@ -43,6 +43,7 @@ export type TPricingConditionData = {
   potenciaPico: number
   distancia: number
   valorReferencia: number
+  ativacaoReferencia: 'SIM' | 'NÃO'
 }
 export type TPricingVariableData = {
   kit: number // automatic

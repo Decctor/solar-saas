@@ -25,7 +25,7 @@ const getComercialProjects: NextApiHandler<GetResponse> = async (req, res) => {
   }
 
   const pendingApprovalQuery: Filter<TProject> = pendingApproval == 'true' ? { 'aprovacao.dataAprovacao': null } : {}
-  const comercialStageQuery: Filter<TProject> = { 'liberacoes.comercial': true, 'finalizacoes.comercial': false }
+  const comercialStageQuery: Filter<TProject> = { 'liberacoes.comercial': { $ne: null }, 'finalizacoes.comercial': null }
   const query = { ...comercialStageQuery, ...pendingApprovalQuery }
   const projects = await getProjects({ collection, query })
   return res.status(200).json({ data: projects })

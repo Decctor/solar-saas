@@ -59,6 +59,7 @@ function ProposalSignaturePlan({
     potenciaPico: proposal.premissas.potenciaPico || 0,
     distancia: proposal.premissas.distancia || 0,
     valorReferencia: proposal.premissas.valorReferencia || 0,
+    ativacaoReferencia: proposal.premissas.ativacaoReferencia || 'NÃO',
   }
   const variableData: TPricingVariableData = {
     kit: 0,
