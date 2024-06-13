@@ -61,10 +61,10 @@ function ContractInfo({ requestInfo, setRequestInfo, goToNextStage }: ContractIn
       toast.error('Por favor, preencha um CPF/CNPJ válido.')
       return false
     }
-    if (requestInfo.dataDeNascimento == null) {
-      toast.error('Por favor, preencha uma data de nascimento.')
-      return false
-    }
+    // if (requestInfo.dataDeNascimento == null) {
+    //   toast.error('Por favor, preencha uma data de nascimento.')
+    //   return false
+    // }
     if (!requestInfo.estadoCivil) {
       toast.error('Por favor, preencha o estado civil do cliente.')
       return false
@@ -73,10 +73,10 @@ function ContractInfo({ requestInfo, setRequestInfo, goToNextStage }: ContractIn
       toast.error('Por favor, preencha um email válido.')
       return false
     }
-    if (requestInfo.profissao.trim().length < 3) {
-      toast.error('Por favor, preencha uma profissão válida.')
-      return false
-    }
+    // if (requestInfo.profissao.trim().length < 3) {
+    //   toast.error('Por favor, preencha uma profissão válida.')
+    //   return false
+    // }
     if (requestInfo.cidade == 'NÃO DEFINIDO') {
       toast.error('Por favor, preencha uma cidade válida.')
       return false

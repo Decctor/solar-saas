@@ -128,7 +128,7 @@ function getRequestObjectByProjectType({ propose, projectType, responsible, clie
     possuiOeM: propose.oportunidadeDados.tipo.titulo == 'OPERAÇÃO E MANUTENÇÃO' ? 'SIM' : 'NÃO',
     planoOeM: propose.oportunidadeDados.tipo.titulo == 'OPERAÇÃO E MANUTENÇÃO' ? (propose.planos[0]?.nome as TContractRequest['planoOeM']) : 'NÃO SE APLICA',
     clienteSegurado: 'NÃO',
-    valorSeguro: 0,
+    valorSeguro: propose.precificacao.find((p) => p.descricao.toUpperCase().includes('SEGURO'))?.valorFinal || 0,
     tempoSegurado: 'NÃO SE APLICA',
     formaPagamentoOeMOuSeguro: 'NÃO SE APLICA',
     valorOeMOuSeguro: null,
