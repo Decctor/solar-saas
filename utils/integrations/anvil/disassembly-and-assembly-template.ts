@@ -3,7 +3,7 @@ import { formatToMoney } from '@/utils/methods'
 
 export function getDisassemblyAndAssemblyTemplateData(
   client: TClientDTO,
-  project: TProjectDTOWithClient,
+  project: TProjectDTOWithReferences,
   propose: IProposeDisassemblyAssemblyInfo,
   seller?: {
     name: string

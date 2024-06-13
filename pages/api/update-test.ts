@@ -22,6 +22,7 @@ import { TFunnelReference } from '@/utils/schemas/funnel-reference.schema'
 import { TUserGroup } from '@/utils/schemas/user-groups.schema'
 import UserGroup from '@/components/Cards/UserGroup'
 import { UserGroups } from '@/utils/select-options'
+import { getInverterQty, getModulesPeakPotByProducts, getModulesQty } from '@/lib/methods/extracting'
 type PostResponse = any
 
 const UserGroupEquivalents = {
@@ -55,45 +56,30 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
 
-  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
-  const usersCollection: Collection<TUser> = crmDb.collection('users')
+  // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  // const proposalsCollection: Collection<TProposal> = crmDb.collection('proposals')
 
-  const users = await usersCollection.find({}).toArray()
+  // const proposals = await proposalsCollection.find({ 'kits.0': { $exists: true } }).toArray()
 
-  const bulkwriteArr = users.map((u) => {
-    const comissionemnt = {
-      aplicavel: true,
-      resultados: [
-        {
-          condicao: {
-            aplicavel: true,
-            variavel: 'combinacaoResponsaveis',
-            igual: 'VENDEDOR + SDR',
-            tipo: 'IGUAL_TEXTO',
-          },
-          formulaArr: ['(', `${u.comissoes.comSDR || 0}`, '/', '100', ')', '*', '[valorProposta]'],
-        },
-        {
-          condicao: {
-            aplicavel: false,
-            variavel: null,
-            igual: null,
-          },
-          formulaArr: ['(', `${u.comissoes.semSDR || 0}`, '/', '100', ')', '*', '[valorProposta]'],
-        },
-      ],
-    }
-    return {
-      updateOne: {
-        filter: { _id: new ObjectId(u._id) },
-        update: {
-          $set: {
-            comissionamento: comissionemnt,
-          },
-        },
-      },
-    }
-  })
+  // const bulkWriteArr = proposals.map((proposal) => {
+  //   const products = proposal.produtos
+  //   const inverterQty = getInverterQty(products)
+  //   const moduleQty = getModulesQty(products)
+  //   const modulePeakPower = getModulesPeakPotByProducts(products)
+
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(proposal._id) },
+  //       update: {
+  //         $set: {
+  //           'premissas.numModulos': moduleQty,
+  //           'premissas.numInversores': inverterQty,
+  //           'premissas.potenciaPico': modulePeakPower,
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
   // const opportunitiesCollection: Collection<TOpportunity> = crmDb.collection('opportunities')
 
   // const opportunities = await opportunitiesCollection.find({}, { projection: { nome: 1, responsaveis: 1, dataInsercao: 1 } }).toArray()
@@ -275,9 +261,9 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  const bulkwriteResponse = await usersCollection.bulkWrite(bulkwriteArr)
+  // const bulkwriteResponse = await proposalsCollection.bulkWrite(bulkWriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.json(bulkwriteResponse)
+  return res.json('DESATIVADA')
 }
 export default apiHandler({
   GET: migrate,

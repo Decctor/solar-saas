@@ -39,7 +39,7 @@ type ActiveHomologationProps = {
 }
 function ActiveHomologation({ homologation }: ActiveHomologationProps) {
   return (
-    <div className="flex w-full items-center rounded-md border border-gray-200 p-3">
+    <div className="flex w-full items-center rounded-md border border-gray-200">
       <div className={`h-full w-[5px] rounded-bl-md rounded-tl-md ${getTagColor(homologation.status)}`}></div>
       <div className="flex grow flex-col p-3">
         <div className="flex w-full flex-col items-center justify-between lg:flex-row lg:items-start">

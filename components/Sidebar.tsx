@@ -98,7 +98,7 @@ export const Sidebar = ({ session }: SidebarProps) => {
             url="/operacional/analises-tecnicas"
             icon={<BsFillClipboardDataFill style={{ fontSize: '15px', color: '#264653' }} />}
           />
-          {/* {session.user.permissoes.projetos.visualizar ? (
+          {session.user.permissoes.projetos.visualizar ? (
             <SidebarItem
               text="Projetos"
               isOpen={sidebarExtended}
@@ -107,7 +107,7 @@ export const Sidebar = ({ session }: SidebarProps) => {
             />
           ) : (
             false
-          )} */}
+          )}
         </div>
         <NotificationBlock sidebarExtended={sidebarExtended} session={session} />
         {session?.user.avatar_url ? (

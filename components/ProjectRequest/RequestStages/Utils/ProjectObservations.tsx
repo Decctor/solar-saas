@@ -1,19 +1,22 @@
 import TextareaInput from '@/components/Inputs/TextareaInput'
 import Avatar from '@/components/utils/Avatar'
 import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatting'
-import { TProject } from '@/utils/schemas/project.schema'
+import { TChangesControl, TProject } from '@/utils/schemas/project.schema'
 import { ProjectObservationTopics } from '@/utils/select-options'
 import { Session } from 'next-auth'
 import React, { useState } from 'react'
+import toast from 'react-hot-toast'
 import { BsCalendarPlus } from 'react-icons/bs'
 import { MdDelete } from 'react-icons/md'
 
 type ProjectObservationsProps = {
   infoHolder: TProject
   setInfoHolder: React.Dispatch<React.SetStateAction<TProject>>
+  changes?: TChangesControl
+  setChanges?: React.Dispatch<React.SetStateAction<TChangesControl>>
   session: Session
 }
-function ProjectObservations({ infoHolder, setInfoHolder, session }: ProjectObservationsProps) {
+function ProjectObservations({ infoHolder, setInfoHolder, changes, setChanges, session }: ProjectObservationsProps) {
   const [observationHolder, setObservationHolder] = useState<TProject['observacoes'][number]>({
     assunto: 'SERVIÇOS',
     descricao: '',
@@ -26,9 +29,11 @@ function ProjectObservations({ infoHolder, setInfoHolder, session }: ProjectObse
   })
 
   function addObservation(info: TProject['observacoes'][number]) {
+    if (info.descricao.trim().length == 0) return toast.error('Preencha uma descrição válida para a observação.')
     const currentObs = [...infoHolder.observacoes]
     currentObs.push(info)
     setInfoHolder((prev) => ({ ...prev, observacoes: currentObs }))
+    if (!!setChanges) setChanges((prev) => ({ ...prev, project: { ...prev.project, observacoes: currentObs } }))
     setObservationHolder({
       assunto: 'SERVIÇOS',
       descricao: '',
@@ -44,6 +49,7 @@ function ProjectObservations({ infoHolder, setInfoHolder, session }: ProjectObse
     const currentObs = [...infoHolder.observacoes]
     currentObs.splice(index, 1)
     setInfoHolder((prev) => ({ ...prev, observacoes: currentObs }))
+    if (!!setChanges) setChanges((prev) => ({ ...prev, project: { ...prev.project, observacoes: currentObs } }))
   }
   return (
     <div className="flex w-full flex-col gap-1">

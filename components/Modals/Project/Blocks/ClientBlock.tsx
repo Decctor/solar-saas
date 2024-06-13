@@ -4,14 +4,14 @@ import TextInput from '@/components/Inputs/TextInput'
 import { formatDateInputChange } from '@/lib/methods/formatting'
 import { stateCities } from '@/utils/estados_cidades'
 import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getCEPInfo } from '@/utils/methods'
-import { TChangesControl, TProjectDTOWithClient } from '@/utils/schemas/project.schema'
+import { TChangesControl, TProjectDTOWithReferences } from '@/utils/schemas/project.schema'
 import { CustomersAcquisitionChannels, MaritalStatus } from '@/utils/select-options'
 import React from 'react'
 import toast from 'react-hot-toast'
 
 type ClientBlockProps = {
-  infoHolder: TProjectDTOWithClient
-  setInfoHolder: React.Dispatch<React.SetStateAction<TProjectDTOWithClient>>
+  infoHolder: TProjectDTOWithReferences
+  setInfoHolder: React.Dispatch<React.SetStateAction<TProjectDTOWithReferences>>
   changes: TChangesControl
   setChanges: React.Dispatch<React.SetStateAction<TChangesControl>>
   userHasClientEditPermission: boolean

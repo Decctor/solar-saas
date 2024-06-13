@@ -18,7 +18,7 @@ import UseActiveProposalProducts from './Utils/UseActiveProposalProducts'
 type EquipmentsCompositionProps = {
   infoHolder: THomologation
   setInfoHolder: React.Dispatch<React.SetStateAction<THomologation>>
-  activeProposalId: string | null | undefined
+  activeProposalId?: string | null
 }
 function EquipmentsComposition({ infoHolder, setInfoHolder, activeProposalId }: EquipmentsCompositionProps) {
   const [inverterHolder, setInverterHolder] = useState<TInverter>({

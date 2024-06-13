@@ -3,6 +3,8 @@ import { InverterSchema, ModuleSchema, ProductItemSchema, ServiceItemSchema } fr
 import { AuthorSchema } from './user.schema'
 import { PaymentMethodItemSchema } from './proposal.schema'
 import { TClientDTO } from './client.schema'
+import { THomologationDTO } from './homologation.schema'
+import { TTechnicalAnalysisDTO } from './technical-analysis.schema'
 
 const PurchaseItemsSchema = z.object({
   descricao: z.string(),
@@ -200,9 +202,13 @@ export const GeneralProjectSchema = z.object({
   dataInsercao: z.string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' }).datetime(),
 })
 export type TProject = z.infer<typeof GeneralProjectSchema>
-export type TProjectWithClient = TProject & { clienteDados: TClientDTO }
+export type TProjectWithReferences = TProject & { clienteDados: TClientDTO; homologacaoDados?: THomologationDTO; analiseTecnicaDados?: TTechnicalAnalysisDTO }
 export type TProjectDTO = TProject & { _id: string }
-export type TProjectDTOWithClient = TProjectDTO & { clienteDados: TClientDTO }
+export type TProjectDTOWithReferences = TProjectDTO & {
+  clienteDados: TClientDTO
+  homologacaoDados?: THomologationDTO
+  analiseTecnicaDados?: TTechnicalAnalysisDTO
+}
 
 export type TChangesControl = {
   project: { [key: string]: any }

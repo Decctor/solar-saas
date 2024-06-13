@@ -60,7 +60,7 @@ function ProposalTechnicalAnalysis({
           </div>
         </div>
         <h1 className="my-2 mb-0 text-[0.65rem] font-bold leading-none tracking-tight text-gray-500 lg:text-xs">CUSTOS ADICIONAIS</h1>
-        <div className="flex w-full flex-wrap items-center justify-around gap-2">
+        <div className="mt-1 flex w-full flex-wrap items-center justify-around gap-2">
           {analysis.custos.map((cost, index) => (
             <div key={index} className="flex items-center gap-2 rounded border border-gray-500 p-2">
               <h1 className="text-xs font-medium leading-none tracking-tight lg:text-sm">{cost.descricao}</h1>

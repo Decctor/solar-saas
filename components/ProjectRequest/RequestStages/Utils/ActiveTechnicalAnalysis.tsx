@@ -112,10 +112,21 @@ function ActiveTechnicalAnalysis({ analysis, userHasPricingViewPermission }: Act
         </div>
         <div className="mt-2 flex w-full flex-col items-center justify-end gap-2 lg:flex-row">
           {analysis.dataEfetivacao ? (
-            <div className={`flex items-center gap-1`}>
-              <BsCalendarCheck color="rgb(34,197,94)" />
-              <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
-            </div>
+            <>
+              <div className={`flex items-center gap-1`}>
+                <BsCalendarCheck color="rgb(34,197,94)" />
+                <p className="text-[0.65rem] font-medium text-gray-500">{formatDateAsLocale(analysis.dataEfetivacao, true)}</p>
+              </div>
+              <div className="flex items-center gap-1">
+                <Avatar
+                  fallback={formatNameAsInitials(analysis.analista?.nome || 'R')}
+                  url={analysis.analista?.avatar_url || undefined}
+                  height={20}
+                  width={20}
+                />
+                <p className="text-[0.65rem] font-medium text-gray-500">{analysis.analista?.nome || 'ANALISTA NÃO DEFINIDO'}</p>
+              </div>
+            </>
           ) : null}
           <div className={`flex items-center gap-1`}>
             <BsCalendarPlus />
@@ -123,7 +134,7 @@ function ActiveTechnicalAnalysis({ analysis, userHasPricingViewPermission }: Act
           </div>
           <div className="flex items-center gap-1">
             <Avatar fallback={formatNameAsInitials(analysis.requerente.nome || 'R')} url={analysis.requerente.avatar_url || undefined} height={20} width={20} />
-            <p className="text-[0.65rem] font-medium text-gray-500">{analysis.requerente.nome}</p>
+            <p className="text-[0.65rem] font-medium text-gray-500">{analysis.requerente.nome || 'REQUERENTE NÃO DEFINIDO'}</p>
           </div>
         </div>
       </div>

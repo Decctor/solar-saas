@@ -4,15 +4,15 @@ import TextInput from '@/components/Inputs/TextInput'
 import ProjectObservations from '@/components/ProjectRequest/RequestStages/Utils/ProjectObservations'
 import { stateCities } from '@/utils/estados_cidades'
 import { formatToCEP, formatToPhone, getCEPInfo } from '@/utils/methods'
-import { TChangesControl, TProject, TProjectDTOWithClient } from '@/utils/schemas/project.schema'
+import { TChangesControl, TProject, TProjectDTOWithReferences } from '@/utils/schemas/project.schema'
 import { ComercialSegments, SigningForms } from '@/utils/select-options'
 import { Session } from 'next-auth'
 import React from 'react'
 import toast from 'react-hot-toast'
 
 type GeneralInformationBlockProps = {
-  infoHolder: TProjectDTOWithClient
-  setInfoHolder: React.Dispatch<React.SetStateAction<TProjectDTOWithClient>>
+  infoHolder: TProjectDTOWithReferences
+  setInfoHolder: React.Dispatch<React.SetStateAction<TProjectDTOWithReferences>>
   changes: TChangesControl
   setChanges: React.Dispatch<React.SetStateAction<TChangesControl>>
   session: Session
@@ -52,7 +52,10 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="NOME DO PROJETO"
               value={infoHolder.nome}
               placeholder="Preencha aqui o nome do projeto."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, nome: value }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, nome: value }))
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, nome: value } }))
+              }}
               width="100%"
             />
           </div>
@@ -66,14 +69,16 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
                   ...prev,
                   segmento: value as TProject['segmento'],
                 }))
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, segmento: value } }))
               }}
               selectedItemLabel="NÃO DEFINIDO"
-              onReset={() =>
+              onReset={() => {
                 setInfoHolder((prev) => ({
                   ...prev,
                   segmento: 'RESIDENCIAL',
                 }))
-              }
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, segmento: 'RESIDENCIAL' } }))
+              }}
               width="100%"
             />
           </div>
@@ -84,7 +89,10 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="EMAIL"
               value={infoHolder.contatos.email}
               placeholder="Preencha aqui o email no contrato, comunicações oficiais, etc."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, email: value } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, email: value } }))
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, email: value } }))
+              }}
               width="100%"
             />
           </div>
@@ -94,23 +102,33 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               selectedItemLabel="NÃO DEFINIDO"
               options={SigningForms}
               value={infoHolder.contrato.formaAssinatura}
-              handleChange={(value) =>
+              handleChange={(value) => {
                 setInfoHolder((prev) => ({
                   ...prev,
                   contrato: { ...prev.contrato, formaAssinatura: value },
                 }))
-              }
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, 'contrato.formaAssinatura': value } }))
+              }}
               onReset={() => {
-                setInfoHolder((prev) => ({
-                  ...prev,
-                  contrato: { ...prev.contrato, formaAssinatura: 'FÍSICA' },
-                }))
+                {
+                  setInfoHolder((prev) => ({
+                    ...prev,
+                    contrato: { ...prev.contrato, formaAssinatura: 'FÍSICA' },
+                  }))
+                  setChanges((prev) => ({ ...prev, project: { ...prev.project, 'contrato.formaAssinatura': 'FÍSICA' } }))
+                }
               }}
               width="100%"
             />
           </div>
         </div>
-        <ProjectObservations session={session} infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+        <ProjectObservations
+          session={session}
+          infoHolder={infoHolder}
+          setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<TProject>>}
+          changes={changes}
+          setChanges={setChanges}
+        />
         <h1 className="w-full rounded-md bg-blue-500 p-1 text-center text-sm font-bold text-white">INFORMAÇÕES PARA CONTATO</h1>
         <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
           <div className="w-full lg:w-1/2">
@@ -118,7 +136,10 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="NOME DO CONTATO PRIMÁRIO"
               value={infoHolder.contatos.nomePrimario}
               placeholder="Preencha aqui o nome do contato primário."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, nomePrimario: value } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, nomePrimario: value } }))
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, 'contatos.nomePrimario': value } }))
+              }}
               width="100%"
             />
           </div>
@@ -127,7 +148,10 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="TELEFONE DO CONTATO PRIMÁRIO"
               value={infoHolder.contatos.telefonePrimario}
               placeholder="Preencha aqui o telefone do contato primário."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, telefonePrimario: formatToPhone(value) } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, telefonePrimario: formatToPhone(value) } }))
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, 'contatos.telefonePrimario': formatToPhone(value) } }))
+              }}
               width="100%"
             />
           </div>
@@ -138,7 +162,10 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="NOME DO CONTATO SECUNDÁRIO"
               value={infoHolder.contatos.nomeSecundario}
               placeholder="Preencha aqui o nome do contato secundário."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, nomeSecundario: value } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, nomeSecundario: value } }))
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, 'contatos.nomeSecundario': value } }))
+              }}
               width="100%"
             />
           </div>
@@ -147,7 +174,10 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="TELEFONE DO CONTATO SECUNDÁRIO"
               value={infoHolder.contatos.telefoneSecundario || ''}
               placeholder="Preencha aqui o telefone do contato secundário."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, telefoneSecundario: formatToPhone(value) } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, telefoneSecundario: formatToPhone(value) } }))
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, 'contatos.telefoneSecundario': formatToPhone(value) } }))
+              }}
               width="100%"
             />
           </div>
@@ -156,7 +186,10 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
           label="OBSERVAÇÕES PARA O CONTATO"
           placeholder="Preencha aqui informações relevantes em relação ao contato com o cliente. Melhores horários para contato, preferência por áudio ou texto, etc."
           value={infoHolder.contatos.observacoes || ''}
-          handleChange={(value) => setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, observacoes: value } }))}
+          handleChange={(value) => {
+            setInfoHolder((prev) => ({ ...prev, contatos: { ...prev.contatos, observacoes: value } }))
+            setChanges((prev) => ({ ...prev, project: { ...prev.project, 'contatos.observacoes': value } }))
+          }}
         />
         <h1 className="w-full rounded-md bg-blue-500 p-1 text-center text-sm font-bold text-white">LOCALIZAÇÃO DO PROJETO</h1>
         <div className="my-1 flex w-full flex-col">
@@ -182,6 +215,7 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
                     cep: formatToCEP(value),
                   },
                 }))
+                setChanges((prev) => ({ ...prev, project: { ...prev.project, 'localizacao.cep': value } }))
               }}
               width="100%"
             />
@@ -190,14 +224,24 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
             <SelectInput
               label="ESTADO"
               value={infoHolder.localizacao.uf}
-              handleChange={(value) =>
+              handleChange={(value) => {
                 setInfoHolder((prev) => ({
                   ...prev,
                   localizacao: { ...prev.localizacao, uf: value, cidade: stateCities[value as keyof typeof stateCities][0] as string },
                 }))
-              }
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.uf': value, 'localizacao.cidade': stateCities[value as keyof typeof stateCities][0] },
+                }))
+              }}
               selectedItemLabel="NÃO DEFINIDO"
-              onReset={() => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, uf: '', cidade: '' } }))}
+              onReset={() => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, uf: '', cidade: '' } }))
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.uf': '', 'localizacao.cidade': '' },
+                }))
+              }}
               options={Object.keys(stateCities).map((state, index) => ({
                 id: index + 1,
                 label: state,
@@ -210,7 +254,13 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
             <SelectInput
               label="CIDADE"
               value={infoHolder.localizacao.cidade}
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cidade: value } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cidade: value } }))
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.cidade': value },
+                }))
+              }}
               options={
                 infoHolder.localizacao.uf
                   ? stateCities[infoHolder.localizacao.uf as keyof typeof stateCities].map((city, index) => ({
@@ -221,7 +271,13 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
                   : null
               }
               selectedItemLabel="NÃO DEFINIDO"
-              onReset={() => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cidade: '' } }))}
+              onReset={() => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, cidade: '' } }))
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.cidade': '' },
+                }))
+              }}
               width="100%"
             />
           </div>
@@ -232,7 +288,13 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="BAIRRO"
               value={infoHolder.localizacao.bairro || ''}
               placeholder="Preencha aqui o bairro do instalação..."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, bairro: value } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, bairro: value } }))
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.bairro': value },
+                }))
+              }}
               width="100%"
             />
           </div>
@@ -241,7 +303,13 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="LOGRADOURO/RUA"
               value={infoHolder.localizacao.endereco || ''}
               placeholder="Preencha aqui o logradouro da instalação..."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, endereco: value } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, endereco: value } }))
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.endereco': value },
+                }))
+              }}
               width="100%"
             />
           </div>
@@ -252,12 +320,16 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="NÚMERO/IDENTIFICADOR"
               value={infoHolder.localizacao.numeroOuIdentificador || ''}
               placeholder="Preencha aqui o número ou identificador da residência da instalação..."
-              handleChange={(value) =>
+              handleChange={(value) => {
                 setInfoHolder((prev) => ({
                   ...prev,
                   localizacao: { ...prev.localizacao, numeroOuIdentificador: value },
                 }))
-              }
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.numeroOuIdentificador': value },
+                }))
+              }}
               width="100%"
             />
           </div>
@@ -266,12 +338,16 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="COMPLEMENTO"
               value={infoHolder.localizacao.complemento || ''}
               placeholder="Preencha aqui algum complemento do endereço..."
-              handleChange={(value) =>
+              handleChange={(value) => {
                 setInfoHolder((prev) => ({
                   ...prev,
                   localizacao: { ...prev.localizacao, complemento: value },
                 }))
-              }
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.complemento': value },
+                }))
+              }}
               width="100%"
             />
           </div>
@@ -282,7 +358,13 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="LATITUDE"
               value={infoHolder.localizacao.latitude || ''}
               placeholder="Preencha aqui a latitude da instalação..."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, latitude: value } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, latitude: value } }))
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.latitude': value },
+                }))
+              }}
               width="100%"
             />
           </div>
@@ -291,7 +373,13 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, changes, setChange
               label="LONGITUDE"
               value={infoHolder.localizacao.longitude || ''}
               placeholder="Preencha aqui a longitude da instalação..."
-              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, longitude: value } }))}
+              handleChange={(value) => {
+                setInfoHolder((prev) => ({ ...prev, localizacao: { ...prev.localizacao, longitude: value } }))
+                setChanges((prev) => ({
+                  ...prev,
+                  project: { ...prev.project, 'localizacao.longitude': value },
+                }))
+              }}
               width="100%"
             />
           </div>
