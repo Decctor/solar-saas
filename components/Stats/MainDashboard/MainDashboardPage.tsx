@@ -91,7 +91,7 @@ function MainDashboardPage({ session }: MainDashboardPageProps) {
                 width="100%"
               />
             </div>
-            <div className="w-full lg:w-[300px]">
+            {/* <div className="w-full lg:w-[300px]">
               <MultipleSelectInput
                 selectedItemLabel="TODOS OS PARCEIROS"
                 selected={queryFilters.partners}
@@ -102,7 +102,7 @@ function MainDashboardPage({ session }: MainDashboardPageProps) {
                 label="USUÁRIOS"
                 width="100%"
               />
-            </div>
+            </div> */}
             <div className="w-full lg:w-[300px]">
               <MultipleSelectInput
                 selectedItemLabel="TODOS OS PROJETOS"
@@ -217,21 +217,21 @@ function MainDashboardPage({ session }: MainDashboardPageProps) {
             </div>
           </div>
           <div className="mt-4 flex w-full flex-col items-center justify-around gap-2 lg:flex-row">
+            <div className="w-full lg:w-[20%]">
+              <OpenActivitiesBlock session={session} />
+            </div>
             <div className="w-full lg:w-[40%]">
               <PendingWinsBlock data={data?.ganhosPendentes || []} session={session} />
             </div>
-            <div className="w-full lg:w-[60%]">
+            <div className="w-full lg:w-[40%]">
               <WinsBlock data={data?.ganhos || []} session={session} />
             </div>
           </div>
-          <div className="mt-4 flex w-full flex-col items-center gap-2 lg:flex-row">
+          {/* <div className="mt-4 flex w-full flex-col items-center gap-2 lg:flex-row">
             <div className="w-full lg:w-[50%]">
               <PPSOpenCallsBlock session={session} />
             </div>
-            <div className="w-full lg:w-[50%]">
-              <OpenActivitiesBlock session={session} />
-            </div>
-          </div>
+          </div> */}
         </div>
       </div>
     </div>

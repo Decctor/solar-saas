@@ -7,7 +7,7 @@ import { BsBookmarksFill, BsCart, BsFillClipboardDataFill, BsFillFunnelFill, BsF
 import SidebarItem from './SidebarItem'
 import { useRouter } from 'next/router'
 import Image from 'next/image'
-import Logo from '../utils/images/ampere-logo-azul.png'
+import Logo from '../utils/images/logo.png'
 import { signOut } from 'next-auth/react'
 import Link from 'next/link'
 

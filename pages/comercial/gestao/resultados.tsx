@@ -151,7 +151,7 @@ function ComercialResults() {
                 width="100%"
               />
             </div>
-            <div className="w-full md:w-[250px]">
+            {/* <div className="w-full md:w-[250px]">
               <MultipleSelectInput
                 label="PARCEIROS"
                 showLabel={false}
@@ -162,7 +162,7 @@ function ComercialResults() {
                 onReset={() => setQueryFilters((prev) => ({ ...prev, partners: null }))}
                 width="100%"
               />
-            </div>
+            </div> */}
             <div className="w-full lg:w-[300px]">
               <MultipleSelectInput
                 selectedItemLabel="TODOS OS PROJETOS"

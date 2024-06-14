@@ -23,6 +23,7 @@ import { TUserGroup } from '@/utils/schemas/user-groups.schema'
 import UserGroup from '@/components/Cards/UserGroup'
 import { UserGroups } from '@/utils/select-options'
 import { getInverterQty, getModulesPeakPotByProducts, getModulesQty } from '@/lib/methods/extracting'
+import axios from 'axios'
 type PostResponse = any
 
 const UserGroupEquivalents = {
@@ -50,15 +51,91 @@ const PlansEquivalents = {
   'PLANO SOL': '660efd7cb535065ae08d459f',
   'PLANO SOL PLUS': '660ff9f61285da49d6dc201e',
 }
-
+function getRandomArbitrary(min: number, max: number) {
+  min = Math.ceil(min)
+  max = Math.floor(max)
+  return Math.floor(Math.random() * (max - min + 1)) + min
+}
+const letters = 'abcdefghijklmnopqrstuvwxyz'.split('')
 type Reduced = { [key: string]: string[] }
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
+  const { data } = await axios.get('https://randomuser.me/api/?results=5000&nat=br')
 
-  // const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
-  // const proposalsCollection: Collection<TProposal> = crmDb.collection('proposals')
+  const randomUsers = data.results
 
+  const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
+  const proposalsCollection = crmDb.collection('proposals')
+
+  const proposals = await proposalsCollection.find({}).toArray()
+
+  // const bulkWriteArr = opportunities.map((opportunity) => {
+  //   const responsibles: TOpportunity['responsaveis'] = opportunity.responsaveis.map((resp) => {
+  //     const equivUser = users.find((u) => u._id.toString() == resp.id)
+  //     return {
+  //       id: equivUser?._id.toString() || resp.id,
+  //       nome: equivUser?.nome || resp.nome,
+  //       papel: resp.papel,
+  //       avatar_url: equivUser?.avatar_url || null,
+  //       dataInsercao: resp.dataInsercao,
+  //     }
+  //   })
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(opportunity._id) },
+  //       update: {
+  //         $set: {
+  //           responsaveis: responsibles,
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
+  // const users = await usersCollection.find({ _id: { $ne: new ObjectId('6463ccaa8c5e3e227af54d89') } }).toArray()
+  // const bulkwriteArr = clients.map((u) => {
+  //   const author = users.find((x) => x._id.toString() == u.autor.id)
+  //   const newAuthor = {
+  //     id: author?._id.toString() || u.autor.id,
+  //     nome: author?.nome || u.autor.nome,
+  //     avatar_url: null,
+  //   }
+  //   const randomIndex = getRandomArbitrary(0, 4000)
+  //   const randomUser = randomUsers[randomIndex]
+  //   // console.log(randomUser)
+  //   const newName = `${randomUser.name.first} ${randomUser.name.last}`
+  //   const newEmail = randomUser.email
+  //   const newPhone = ''
+
+  //   return {
+  //     updateOne: {
+  //       filter: { _id: new ObjectId(u._id) },
+  //       update: {
+  //         $set: {
+  //           nome: newName,
+  //           email: newEmail,
+  //           telefone: newPhone,
+  //           cpfCnpj: '',
+  //           autor: newAuthor,
+  //         },
+  //       },
+  //     },
+  //   }
+  // })
+  const bulkwriteArr = proposals.map((u) => {
+    const randomIndex = getRandomArbitrary(0, 25)
+    const randomLetter = letters[randomIndex]
+    return {
+      updateOne: {
+        filter: { _id: new ObjectId(u._id) },
+        update: {
+          $set: {
+            nome: `PROPOSTA ${randomLetter.toUpperCase()}`,
+          },
+        },
+      },
+    }
+  })
   // const proposals = await proposalsCollection.find({ 'kits.0': { $exists: true } }).toArray()
 
   // const bulkWriteArr = proposals.map((proposal) => {
@@ -245,7 +322,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  // const bulkwriteResponse = await proposalsCollection.bulkWrite(bulkWriteArr)
+  const bulkwriteResponse = await proposalsCollection.bulkWrite(bulkwriteArr)
   // const usersCollection: Collection<TUser> = db.collection('users')
   // const users = await usersCollection.find({}).toArray()
 
@@ -261,9 +338,8 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  // const bulkwriteResponse = await proposalsCollection.bulkWrite(bulkWriteArr)
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.json('DESATIVADA')
+  return res.status(200).json(bulkwriteResponse)
 }
 export default apiHandler({
   GET: migrate,

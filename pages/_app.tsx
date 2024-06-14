@@ -14,7 +14,7 @@ export default function App({ Component, pageProps: { session, ...pageProps } }:
   return (
     <SessionProvider session={session}>
       <Head>
-        <title>CRM Ampère</title>
+        <title>CRM</title>
       </Head>
       <QueryClientProvider client={queryClient}>
         <FullScreenWrapper>
