@@ -1,7 +1,7 @@
 import React, { useState } from 'react'
 import Image from 'next/image'
 import WorkingIllustration from '../../utils/svgs/working.svg'
-import Logo from '../../utils/svgs/vertical-white-logo-with-text.svg'
+import Logo from '../../utils/images/logo.png'
 import { IMessage } from '@/utils/models'
 import { signIn } from 'next-auth/react'
 import { toast } from 'react-hot-toast'

@@ -61,14 +61,7 @@ type Reduced = { [key: string]: string[] }
 const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
-  const { data } = await axios.get('https://randomuser.me/api/?results=5000&nat=br')
-
-  const randomUsers = data.results
-
   const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
-  const proposalsCollection = crmDb.collection('proposals')
-
-  const proposals = await proposalsCollection.find({}).toArray()
 
   // const bulkWriteArr = opportunities.map((opportunity) => {
   //   const responsibles: TOpportunity['responsaveis'] = opportunity.responsaveis.map((resp) => {
@@ -122,20 +115,6 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  const bulkwriteArr = proposals.map((u) => {
-    const randomIndex = getRandomArbitrary(0, 25)
-    const randomLetter = letters[randomIndex]
-    return {
-      updateOne: {
-        filter: { _id: new ObjectId(u._id) },
-        update: {
-          $set: {
-            nome: `PROPOSTA ${randomLetter.toUpperCase()}`,
-          },
-        },
-      },
-    }
-  })
   // const proposals = await proposalsCollection.find({ 'kits.0': { $exists: true } }).toArray()
 
   // const bulkWriteArr = proposals.map((proposal) => {
@@ -322,7 +301,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //     },
   //   }
   // })
-  const bulkwriteResponse = await proposalsCollection.bulkWrite(bulkwriteArr)
+  // const bulkwriteResponse = await usersCollection.bulkWrite(bulkWriteArr)
   // const usersCollection: Collection<TUser> = db.collection('users')
   // const users = await usersCollection.find({}).toArray()
 
@@ -339,7 +318,7 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   //   }
   // })
   // const insertManyResponse = await userGroupsCollection.insertMany(insertUserGroups)
-  return res.status(200).json(bulkwriteResponse)
+  return res.status(200).json('DESATIVADA')
 }
 export default apiHandler({
   GET: migrate,

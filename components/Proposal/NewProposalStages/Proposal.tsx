@@ -194,7 +194,7 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
                   handleChange={(value) => setInfoHolder((prev) => ({ ...prev, nome: value }))}
                   width="100%"
                 />
-                {ProposalTemplateOptions ? (
+                {/* {ProposalTemplateOptions ? (
                   <SelectInput
                     label="TEMPLATE DA PROPOSTA"
                     value={infoHolder.idModeloAnvil || null}
@@ -204,7 +204,7 @@ function Proposal({ opportunity, projectTypes, infoHolder, setInfoHolder, moveTo
                     onReset={() => setInfoHolder((prev) => ({ ...prev, idModeloAnvil: undefined }))}
                     width="100%"
                   />
-                ) : null}
+                ) : null} */}
                 <div className="flex w-full items-center justify-center">
                   <div className="w-fit">
                     <CheckboxInput
