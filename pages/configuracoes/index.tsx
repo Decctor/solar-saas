@@ -127,7 +127,7 @@ function ConfigurationMain() {
                 Métodos de pagamento
               </button>
             ) : null}
-            {session.user.permissoes.parceiros.visualizar ? (
+            {/* {session.user.permissoes.parceiros.visualizar ? (
               <button
                 onClick={() => setMode('partners')}
                 className={`${
@@ -136,7 +136,7 @@ function ConfigurationMain() {
               >
                 Parceiros
               </button>
-            ) : null}
+            ) : null} */}
             {session.user.permissoes.configuracoes.parceiro ? (
               <button
                 onClick={() => setMode('integrations')}
@@ -147,7 +147,7 @@ function ConfigurationMain() {
                 Integrações
               </button>
             ) : null}
-            {session.user.permissoes.configuracoes.parceiro ? (
+            {/* {session.user.permissoes.configuracoes.parceiro ? (
               <button
                 onClick={() => setMode('personalization')}
                 className={`${
@@ -156,7 +156,7 @@ function ConfigurationMain() {
               >
                 Personalizações
               </button>
-            ) : null}
+            ) : null} */}
           </div>
           <div className="flex h-full w-full flex-col gap-1 px-2 py-2 lg:w-4/5">
             {mode == 'profile' ? <Profile session={session} /> : null}
