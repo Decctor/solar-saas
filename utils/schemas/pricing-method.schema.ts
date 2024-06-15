@@ -79,7 +79,7 @@ const PricingMethodItem = z.object({
 
 const GeneralPricingMethodSchema = z.object({
   nome: z.string(),
-  idParceiro: z.string().optional().nullable(),
+  idParceiro: z.string(),
   itens: z.array(PricingMethodItem),
   autor: z.object({
     id: z.string(),
@@ -96,13 +96,10 @@ export const InsertPricingMethodSchema = z.object({
       invalid_type_error: 'Tipo não válido para o nome da metodologia de precificação.',
     })
     .min(2, 'Por favor, preencha um nome de ao menos 2 letras para o metodologia.'),
-  idParceiro: z
-    .string({
-      required_error: 'Referência a parceiro não informado.',
-      invalid_type_error: 'Tipo não válido para a referência de parceiro.',
-    })
-    .optional()
-    .nullable(),
+  idParceiro: z.string({
+    required_error: 'Referência a parceiro não informado.',
+    invalid_type_error: 'Tipo não válido para a referência de parceiro.',
+  }),
   itens: z.array(PricingMethodItem).min(1, 'Defina ao menos um item de unidade de preço.'),
   autor: z.object({
     id: z.string({

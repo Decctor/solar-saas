@@ -97,12 +97,11 @@ type FetchClientsByPersonalizedFiltersParams = {
   before: string | null
   page: number
   authors: string[] | null
-  partners: string[] | null
   filters: Filter<TClient>
 }
-async function fetchClientsByPersonalizedFilters({ after, before, page, authors, partners, filters }: FetchClientsByPersonalizedFiltersParams) {
+async function fetchClientsByPersonalizedFilters({ after, before, page, authors, filters }: FetchClientsByPersonalizedFiltersParams) {
   try {
-    const { data } = await axios.post(`/api/clients/search?after=${after}&before=${before}&page=${page}`, { authors, partners, filters })
+    const { data } = await axios.post(`/api/clients/search?after=${after}&before=${before}&page=${page}`, { authors, filters })
 
     return data.data as TClientsByFilterResult
   } catch (error) {
@@ -115,10 +114,9 @@ type UseClientsByPersonalizedFiltersParams = {
   before: string | null
   page: number
   authors: string[] | null
-  partners: string[] | null
 }
 
-export function useClientsByPersonalizedFilters({ after, before, page, authors, partners }: UseClientsByPersonalizedFiltersParams) {
+export function useClientsByPersonalizedFilters({ after, before, page, authors }: UseClientsByPersonalizedFiltersParams) {
   const [filters, setFilters] = useState<TPersonalizedClientsFilter>({
     name: '',
     phone: '',
@@ -130,8 +128,8 @@ export function useClientsByPersonalizedFilters({ after, before, page, authors, 
   }
   return {
     ...useQuery({
-      queryKey: ['clients-by-personalized-filters', after, before, page, authors, partners, filters],
-      queryFn: async () => fetchClientsByPersonalizedFilters({ after, before, page, authors, partners, filters }),
+      queryKey: ['clients-by-personalized-filters', after, before, page, authors, filters],
+      queryFn: async () => fetchClientsByPersonalizedFilters({ after, before, page, authors, filters }),
     }),
     updateFilters,
   }

@@ -83,7 +83,7 @@ const createProposalPersonalized: NextApiHandler<PostResponse> = async (req, res
       id: opportunityWithClient._id,
       collection: opportunityCollection,
       changes: { idPropostaAtiva: insertedId },
-      query: {},
+      query: { idParceiro: partnerId },
     })
   return res.status(201).json({ data: { insertedId, fileUrl: undefined }, message: 'Proposta criada com sucesso !' })
 }

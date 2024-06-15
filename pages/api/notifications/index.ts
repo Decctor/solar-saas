@@ -46,21 +46,21 @@ const getNotifications: NextApiHandler<GetResponse> = async (req, res) => {
   if (id) {
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID de notificação inválido.')
 
-    const notification = await getNotificationById({ collection: collection, id: id })
+    const notification = await getNotificationById({ collection: collection, id: id, partnerId: partnerId })
     if (!notification) throw new createHttpError.NotFound('Notificação não encontrada.')
     return res.status(200).json({ data: notification })
   }
   if (recipientId) {
     if (typeof recipientId != 'string' || !ObjectId.isValid(recipientId)) throw new createHttpError.BadRequest('ID de destinatário inválido.')
 
-    const notifications = await getNotificationByRecipientId({ collection: collection, recipientId: recipientId })
+    const notifications = await getNotificationByRecipientId({ collection: collection, recipientId: recipientId, partnerId: partnerId })
 
     return res.status(200).json({ data: notifications })
   }
   if (opportunityId) {
     if (typeof opportunityId != 'string' || !ObjectId.isValid(opportunityId)) throw new createHttpError.BadRequest('ID de destinatário inválido.')
 
-    const notifications = await getNotificationByOpportunityId({ collection: collection, opportunityId: opportunityId })
+    const notifications = await getNotificationByOpportunityId({ collection: collection, opportunityId: opportunityId, partnerId: partnerId })
 
     return res.status(200).json({ data: notifications })
   }
@@ -84,7 +84,7 @@ const editNotification: NextApiHandler<PutResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TNotification> = db.collection('notifications')
 
-  const updateResponse = await updateNotification({ id: id, collection: collection, info: changes, query: {} })
+  const updateResponse = await updateNotification({ id: id, collection: collection, info: changes, query: { idParceiro: partnerId } })
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar notificação.')
   if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Notificação não encontrada.')
 

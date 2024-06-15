@@ -14,7 +14,6 @@ type GeneralInformationBlockProps = {
 }
 function GeneralInformationBlock({ infoHolder, setInfoHolder }: GeneralInformationBlockProps) {
   const { data: pricingMethods } = usePricingMethods()
-  const { data: partners } = usePartnersSimplified()
   return (
     <div className="flex w-full flex-col gap-y-2">
       <h1 className="w-full bg-gray-700  p-1 text-center font-medium text-white">INFORMAÇÕES GERAIS</h1>
@@ -75,27 +74,6 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder }: GeneralInformati
             }
             selectedItemLabel="NÃO DEFINIDO"
             options={pricingMethods?.map((method) => ({ id: method._id, label: method.nome, value: method._id })) || null}
-            width="100%"
-          />
-        </div>
-        <div className="w-full lg:w-1/3">
-          <SelectWithImages
-            label="VISIBILIDADE DE PARCEIRO"
-            value={infoHolder.idParceiro || null}
-            options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
-            selectedItemLabel="TODOS"
-            handleChange={(value) =>
-              setInfoHolder((prev) => ({
-                ...prev,
-                idParceiro: value,
-              }))
-            }
-            onReset={() =>
-              setInfoHolder((prev) => ({
-                ...prev,
-                idParceiro: null,
-              }))
-            }
             width="100%"
           />
         </div>

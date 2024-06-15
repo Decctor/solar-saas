@@ -12,6 +12,7 @@ type FunnelsProps = {
   session: Session
 }
 function Funnels({ session }: FunnelsProps) {
+  const userHasFunnelSettingsPermission = session.user.permissoes.configuracoes.funis
   const [newFunnelModalIsOpen, setNewFunnelModalIsOpen] = useState<boolean>(false)
   const [editModal, setEditModal] = useState<{ id: string | null; isOpen: boolean }>({ id: null, isOpen: false })
   const { data: funnels, isSuccess, isLoading, isError } = useFunnels()
@@ -40,7 +41,7 @@ function Funnels({ session }: FunnelsProps) {
                 <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
                   <BsFunnelFill />
                 </div>
-                {true ? (
+                {userHasFunnelSettingsPermission ? (
                   <p
                     onClick={() => setEditModal({ id: funnel._id, isOpen: true })}
                     className="cursor-pointer text-sm font-medium leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500"

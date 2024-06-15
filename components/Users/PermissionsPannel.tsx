@@ -573,69 +573,6 @@ function PermissionsPannel({ userInfo, setUserInfo, users, referenceId, session 
                 }))
               }
             />
-            {/**PARCEIROS */}
-            <div className="flex w-full items-center justify-between">
-              <h1 className="w-full text-start text-sm text-gray-500">PARCEIROS</h1>
-              <ScopeSelection
-                options={partners?.map((p) => ({ id: p._id, label: p.nome, image_url: p.logo_url })) || []}
-                referenceId={userInfo.idParceiro || null}
-                selected={userInfo.permissoes.parceiros.escopo}
-                handleScopeSelection={(selected) =>
-                  setUserInfo((prev) => ({
-                    ...prev,
-                    permissoes: { ...prev.permissoes, parceiros: { ...prev.permissoes.parceiros, escopo: selected } },
-                  }))
-                }
-              />
-            </div>
-            <CheckboxInput
-              labelFalse="APTO A VISUALIZAR PARCEIROS"
-              labelTrue="APTO A VISUALIZAR PARCEIROS"
-              checked={userInfo.permissoes.parceiros.visualizar}
-              editable={session.user.permissoes.parceiros.visualizar}
-              justify="justify-start"
-              handleChange={(value) =>
-                setUserInfo((prev) => ({
-                  ...prev,
-                  permissoes: {
-                    ...prev.permissoes,
-                    parceiros: { ...prev.permissoes.parceiros, visualizar: value },
-                  },
-                }))
-              }
-            />
-            <CheckboxInput
-              labelFalse="APTO A CRIAR PARCEIROS"
-              labelTrue="APTO A CRIAR PARCEIROS"
-              checked={userInfo.permissoes.parceiros.criar}
-              editable={session.user.permissoes.parceiros.criar}
-              justify="justify-start"
-              handleChange={(value) =>
-                setUserInfo((prev) => ({
-                  ...prev,
-                  permissoes: {
-                    ...prev.permissoes,
-                    parceiros: { ...prev.permissoes.parceiros, criar: value },
-                  },
-                }))
-              }
-            />
-            <CheckboxInput
-              labelFalse="APTO A EDITAR PARCEIROS"
-              labelTrue="APTO A EDITAR PARCEIROS"
-              checked={userInfo.permissoes.parceiros.editar}
-              editable={session.user.permissoes.parceiros.editar}
-              justify="justify-start"
-              handleChange={(value) =>
-                setUserInfo((prev) => ({
-                  ...prev,
-                  permissoes: {
-                    ...prev.permissoes,
-                    parceiros: { ...prev.permissoes.parceiros, editar: value },
-                  },
-                }))
-              }
-            />
             {/**PROPOSTAS */}
             <div className="flex w-full items-center justify-between">
               <h1 className="w-full text-start text-sm text-gray-500">PROPOSTAS</h1>

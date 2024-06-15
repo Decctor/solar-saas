@@ -69,27 +69,6 @@ function NewPricingMethod({ session, closeModal }: NewPricingMethodProps) {
                   width="100%"
                 />
               </div>
-              <div className="w-full lg:w-1/2">
-                <SelectWithImages
-                  label="VISIBILIDADE DE PARCEIRO"
-                  value={methodology.idParceiro || null}
-                  options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
-                  selectedItemLabel="TODOS"
-                  handleChange={(value) =>
-                    setMethodology((prev) => ({
-                      ...prev,
-                      idParceiro: value,
-                    }))
-                  }
-                  onReset={() =>
-                    setMethodology((prev) => ({
-                      ...prev,
-                      idParceiro: null,
-                    }))
-                  }
-                  width="100%"
-                />
-              </div>
             </div>
             <ControlPricingUnit methodology={methodology} setMethodology={setMethodology} />
             <div className="flex w-full items-center justify-end">

@@ -24,6 +24,7 @@ function EditUserGroup({ id, session, closeModal }: EditUserGroupProps) {
     _id: 'id-holder',
     titulo: '',
     descricao: '',
+    idParceiro: session.user.idParceiro,
     permissoes: {
       usuarios: {
         visualizar: false,
@@ -93,6 +94,12 @@ function EditUserGroup({ id, session, closeModal }: EditUserGroupProps) {
       precos: {
         visualizar: false,
         editar: false,
+      },
+      projetos: {
+        escopo: null,
+        visualizar: false,
+        editar: false,
+        criar: false,
       },
       resultados: {
         escopo: null,

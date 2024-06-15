@@ -62,7 +62,9 @@ const migrate: NextApiHandler<PostResponse> = async (req, res) => {
   // const session = await validateAuthenticationWithSession(req, res)
   // const { id } = req.query
   const crmDb = await connectToCRMDatabase(process.env.MONGODB_URI, 'crm')
-
+  const usersCollection = crmDb.collection('users')
+  const users = await usersCollection.find({}).toArray()
+  const bulkWriteArr = users.map((u) => {})
   // const bulkWriteArr = opportunities.map((opportunity) => {
   //   const responsibles: TOpportunity['responsaveis'] = opportunity.responsaveis.map((resp) => {
   //     const equivUser = users.find((u) => u._id.toString() == resp.id)

@@ -4,7 +4,7 @@ import { Collection, Filter, ObjectId } from 'mongodb'
 type CreateFunnelReferenceParams = {
   collection: Collection<TFunnelReference>
   info: TFunnelReference
-  partnerId?: string | null
+  partnerId: string
 }
 
 export async function insertFunnelReference({ collection, info, partnerId }: CreateFunnelReferenceParams) {
@@ -14,7 +14,7 @@ export async function insertFunnelReference({ collection, info, partnerId }: Cre
       estagios: {
         [`${info.idEstagioFunil}`]: { entrada: new Date().toISOString() },
       },
-      idParceiro: partnerId || '',
+      idParceiro: partnerId,
       dataInsercao: new Date().toISOString(),
     })
     return insertResponse
@@ -28,12 +28,15 @@ type UpdateFunnelReferenceParams = {
   funnelReferenceId: string
   newStageId: string | number
   additionalUpdates: { [key: string]: any }
-  // query: Filter<TFunnelReference>
+  query: Filter<TFunnelReference>
 }
 
-export async function updateFunnelReference({ collection, funnelReferenceId, newStageId, additionalUpdates }: UpdateFunnelReferenceParams) {
+export async function updateFunnelReference({ collection, funnelReferenceId, newStageId, additionalUpdates, query }: UpdateFunnelReferenceParams) {
   try {
-    const updateResponse = await collection.updateOne({ _id: new ObjectId(funnelReferenceId) }, { $set: { idEstagioFunil: newStageId, ...additionalUpdates } })
+    const updateResponse = await collection.updateOne(
+      { _id: new ObjectId(funnelReferenceId), ...query },
+      { $set: { idEstagioFunil: newStageId, ...additionalUpdates } }
+    )
     return updateResponse
   } catch (error) {
     throw error

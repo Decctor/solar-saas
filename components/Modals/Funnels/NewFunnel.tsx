@@ -19,7 +19,6 @@ type NewFunnelProps = {
 }
 function NewFunnel({ session, closeModal }: NewFunnelProps) {
   const queryClient = useQueryClient()
-  const { data: partners } = usePartnersSimplified()
   const [infoHolder, setInfoHolder] = useState<TFunnel>({
     nome: '',
     descricao: '',
@@ -98,27 +97,6 @@ function NewFunnel({ session, closeModal }: NewFunnelProps) {
                 placeholder="Preencha o descrição a ser dado ao funil..."
                 value={infoHolder.descricao}
                 handleChange={(value) => setInfoHolder((prev) => ({ ...prev, descricao: value }))}
-                width="100%"
-              />
-            </div>
-            <div className="w-full">
-              <SelectWithImages
-                label="VISIBILIDADE DE PARCEIRO"
-                value={infoHolder.idParceiro || null}
-                options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
-                selectedItemLabel="TODOS"
-                handleChange={(value) =>
-                  setInfoHolder((prev) => ({
-                    ...prev,
-                    idParceiro: value,
-                  }))
-                }
-                onReset={() =>
-                  setInfoHolder((prev) => ({
-                    ...prev,
-                    idParceiro: null,
-                  }))
-                }
                 width="100%"
               />
             </div>

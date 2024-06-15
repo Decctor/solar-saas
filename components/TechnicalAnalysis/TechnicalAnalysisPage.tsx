@@ -20,7 +20,7 @@ type TechnicalAnalysisPageParams = {
 function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
   const userHasOperationalResultsViewPermission = session.user.permissoes.resultados.visualizarOperacional
   const userAnalysisScope = session.user.permissoes.analisesTecnicas.escopo || null
-  const userPartnersScope = session.user.permissoes.parceiros.escopo || null
+
   const [filterMenuIsOpen, setFilterMenuIsOpen] = useState<boolean>(false)
   const [statsBlockIsOpen, setStatsBlockIsOpen] = useState<boolean>(false)
   const [editModal, setEditModal] = useState<{ id: string | null; isOpen: boolean }>({ id: null, isOpen: false })
@@ -29,7 +29,6 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
   const [period, setPeriod] = useState<{ after: string | null; before: string | null }>({ after: null, before: null })
   const [applicants, setApplicants] = useState<string[] | null>(userAnalysisScope)
   const [analysts, setAnalysts] = useState<string[] | null>(null)
-  const [partners, setPartners] = useState<string[] | null>(userPartnersScope)
 
   const { data: applicantOptions } = useUsers()
   const { data: analystsOptions } = useTechnicalAnalysts()
@@ -39,7 +38,6 @@ function TechnicalAnalysisPage({ session }: TechnicalAnalysisPageParams) {
     before: period.before,
     applicants: applicants,
     analysts: null,
-    partners: partners,
     page: page,
   })
   const analysis = data?.analysis

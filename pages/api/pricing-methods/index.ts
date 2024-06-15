@@ -35,8 +35,8 @@ type GetResponse = {
 const getPricingMethods: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'editar', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TPricingMethod> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  //@ts-ignore
+  const partnerQuery: Filter<TPricingMethod> = { $or: [{ idParceiro: partnerId }, { idParceiro: null }] }
 
   const { id } = req.query
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -61,8 +61,7 @@ type PutResponse = {
 const editPricingMethod: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'configuracoes', 'precificacao', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TPricingMethod> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TPricingMethod> = { idParceiro: partnerId }
 
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')

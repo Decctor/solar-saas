@@ -9,7 +9,7 @@ type InsertProjectTypeParams = {
 }
 export async function insertProjectType({ collection, info, partnerId }: InsertProjectTypeParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info, dataInsercao: new Date().toISOString() })
+    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId, dataInsercao: new Date().toISOString() })
     return insertResponse
   } catch (error) {
     throw error

@@ -13,8 +13,7 @@ type GetResponse = {
 const getProposalServices: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TService> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TService> = { idParceiro: partnerId }
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TService> = db.collection('services')

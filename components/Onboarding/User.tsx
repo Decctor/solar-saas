@@ -29,8 +29,104 @@ function User({ partnerId, setAuthorHolder, goToNextStage, goToPreviousStage }: 
     senha: '',
     avatar_url: null,
     idParceiro: partnerId,
-    idGrupo: '1',
-    permissoes: UserGroups[0].permissoes,
+    idGrupo: '',
+    comissionamento: {
+      aplicavel: false,
+      resultados: [],
+    },
+    permissoes: {
+      usuarios: {
+        visualizar: true,
+        criar: true,
+        editar: true,
+      },
+      comissoes: {
+        visualizar: true,
+        editar: true,
+      },
+      kits: {
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      produtos: {
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      servicos: {
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      planos: {
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      propostas: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      oportunidades: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      analisesTecnicas: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      homologacoes: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      clientes: {
+        escopo: null,
+        visualizar: true,
+        editar: true,
+        criar: true,
+      },
+      projetos: {
+        escopo: null,
+        visualizar: false,
+        editar: false,
+        criar: false,
+      },
+      parceiros: {
+        escopo: null,
+        visualizar: false,
+        editar: false,
+        criar: false,
+      },
+      precos: {
+        visualizar: true,
+        editar: true,
+      },
+      resultados: {
+        escopo: null,
+        visualizarComercial: true,
+        visualizarOperacional: true,
+      },
+      configuracoes: {
+        parceiro: true,
+        precificacao: true,
+        metodosPagamento: false,
+        tiposProjeto: true,
+        funis: true,
+        gruposUsuarios: false,
+      },
+      integracoes: {
+        receberLeads: false,
+      },
+    },
     comissoes: {
       semSDR: 0,
       comSDR: 0,

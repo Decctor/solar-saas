@@ -11,6 +11,7 @@ import { stateCities } from '@/utils/estados_cidades'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { useQueryClient } from '@tanstack/react-query'
 import { editPartner } from '@/utils/mutations/onboarding'
+import { editOwnPartner } from '@/utils/mutations/partners'
 
 type PartnerProps = {
   partner: TPartnerDTO
@@ -58,7 +59,7 @@ function Partner({ partner, goToNextStage }: PartnerProps) {
       if (partnerHolder.localizacao.cidade.trim().length <= 1) throw new Error('Preencha uma cidade válida.')
 
       const updateInfo = { ...partnerHolder }
-      await editPartner({ id: partner._id, info: updateInfo, logo: logoFile })
+      await editOwnPartner({ id: partner._id, info: updateInfo, logo: logoFile })
       return 'Alterações feitas com sucesso !'
     } catch (error) {
       throw error

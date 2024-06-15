@@ -13,7 +13,6 @@ type ControlPricingUnitProps = {
   setMethodology: React.Dispatch<React.SetStateAction<TPricingMethod>>
 }
 function ControlPricingUnit({ methodology, setMethodology }: ControlPricingUnitProps) {
-  const { data: partners } = usePartnersSimplified()
   const [newPriceUnitMenuIsOpen, setNewPriceUnitMenuIsOpen] = useState<boolean>(true)
   const [editPriceUnitMenu, setEditPriceUnitMenu] = useState<{ index: number | null; info: TPricingMethod['itens'][number] | null }>({
     index: null,
@@ -49,7 +48,6 @@ function ControlPricingUnit({ methodology, setMethodology }: ControlPricingUnitP
           setResultHolder={setResultHolder}
           methodology={methodology}
           setMethodology={setMethodology}
-          partners={partners}
           closeMenu={() => setNewPriceUnitMenuIsOpen(false)}
         />
       ) : (
@@ -71,7 +69,6 @@ function ControlPricingUnit({ methodology, setMethodology }: ControlPricingUnitP
           setResultHolder={setResultHolder}
           methodology={methodology}
           setMethodology={setMethodology}
-          partners={partners}
           closeMenu={() => setEditPriceUnitMenu({ index: null, info: null })}
         />
       ) : null}
@@ -106,7 +103,7 @@ function ControlPricingUnit({ methodology, setMethodology }: ControlPricingUnitP
               {item.resultados.map((result, index2) => (
                 <div key={index2} className="mb-1 flex w-full items-center gap-2 rounded-md border border-[#A0E9FF] p-1">
                   <div className="flex flex-col">
-                    {renderConditionPhrase({ condition: result.condicao, partners: partners || [] })}
+                    {renderConditionPhrase({ condition: result.condicao })}
                     {/* <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
                       {!result.condicao.aplicavel
                         ? 'FÓRMULA GERAL:'

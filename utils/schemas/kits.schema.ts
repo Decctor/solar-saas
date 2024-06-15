@@ -53,7 +53,7 @@ export const ServiceItemSchema = z.object({
 export type TServiceItem = z.infer<typeof ServiceItemSchema>
 const GeneralNewKitSchema = z.object({
   nome: z.string(),
-  idParceiro: z.string().optional().nullable(),
+  idParceiro: z.string(),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean(),
   topologia: z.union([z.literal('MICRO-INVERSOR'), z.literal('INVERSOR')]),
@@ -74,7 +74,7 @@ export const InsertNewKitSchema = z.object({
   nome: z
     .string({ required_error: 'Nome do kit não informado.', invalid_type_error: 'Tipo não válido para o nome do kit.' })
     .min(3, 'É necessário que o nome do kit tenha ao menos 3 letras.'),
-  idParceiro: z.string({ required_error: 'ID do parceiro não informado.', invalid_type_error: 'Tipo não válido para o ID do parceiro.' }).optional().nullable(),
+  idParceiro: z.string({ required_error: 'ID do parceiro não informado.', invalid_type_error: 'Tipo não válido para o ID do parceiro.' }),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean({
     required_error: 'Status de ativação do kit não informado.',
@@ -110,7 +110,7 @@ export const KitDTOSchema = z.object({
   nome: z
     .string({ required_error: 'Nome do kit não informado.', invalid_type_error: 'Tipo não válido para o nome do kit.' })
     .min(3, 'É necessário que o nome do kit tenha ao menos 3 letras.'),
-  idParceiro: z.string({ required_error: 'ID do parceiro não informado.', invalid_type_error: 'Tipo não válido para o ID do parceiro.' }).optional().nullable(),
+  idParceiro: z.string({ required_error: 'ID do parceiro não informado.', invalid_type_error: 'Tipo não válido para o ID do parceiro.' }),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean({
     required_error: 'Status de ativação do kit não informado.',

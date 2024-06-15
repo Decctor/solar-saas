@@ -54,25 +54,6 @@ const getOpportunitiesHistory: NextApiHandler<GetResponse> = async (req, res) =>
   const history = await getOpportunityHistory({ opportunityId: opportunityId, collection: collection, partnerId: partnerId || '' })
 
   return res.status(200).json({ data: history })
-  // if (!!opportunityId) {
-  //   if (!!type) {
-  //     if (typeof type != 'string') throw new createHttpError.BadRequest('Tipo de requisição inválido.')
-  //     if (!getTypes.includes(type)) throw new createHttpError.BadGateway('Tipo de requisição inválido.')
-  //     const opportunityOpenActivities = await getOpportunityOpenActivitiesByOpportunityId({
-  //       opportunityId: opportunityId,
-  //       collection: opportunityHistoryCollection,
-  //       partnerId: partnerId || '',
-  //     })
-  //     return res.status(200).json({ data: opportunityOpenActivities })
-  //   }
-  //   const opportunityHistory = await getOpportunityHistoryByOpportunityId({
-  //     opportunityId: opportunityId,
-  //     collection: opportunityHistoryCollection,
-  //     partnerId: partnerId || '',
-  //   })
-  //   return res.status(200).json({ data: opportunityHistory })
-  // }
-  return res.status(400).json({ data: [] })
 }
 
 type PutResponse = {

@@ -20,6 +20,7 @@ import { SignaturePlans } from '@/utils/select-options'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
 import Image from 'next/image'
+import Link from 'next/link'
 import React, { useEffect, useState } from 'react'
 import toast from 'react-hot-toast'
 import { BsCheckLg } from 'react-icons/bs'
@@ -60,6 +61,7 @@ function EditPartner({ partnerId, closeModal }: EditPartnerProps) {
     logo_url: null,
     descricao: '',
     ativo: true,
+    onboarding: {},
     dataInsercao: new Date().toISOString(),
   })
   const { data: partner, isSuccess, isLoading, isError } = usePartnerById({ id: partnerId })
@@ -131,6 +133,19 @@ function EditPartner({ partnerId, closeModal }: EditPartnerProps) {
                     )}
                   </div>
                 </div>
+                {!infoHolder.onboarding.dataConclusao ? (
+                  <div className="my-2 flex w-full flex-col">
+                    <h1 className="w-full text-center text-sm tracking-tight text-gray-500">
+                      O Onboarding desse parceiro ainda não foi finalizado. Envie o link abaixo para execução do processo de onboarding:
+                    </h1>
+                    <Link
+                      className="w-full text-center text-sm font-medium tracking-wide text-blue-500 hover:text-cyan-500"
+                      href={`/configuracoes/on-boarding/${partnerId}`}
+                    >
+                      ONBOARDING
+                    </Link>
+                  </div>
+                ) : null}
                 <GeneralInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <AddressInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
                 <ContactInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />

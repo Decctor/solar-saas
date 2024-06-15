@@ -17,6 +17,7 @@ type PricingMethodsProps = {
   session: Session
 }
 function PricingMethods({ session }: PricingMethodsProps) {
+  const userHasPricingMethodsSettingsPermission = session.user.permissoes.configuracoes.precificacao
   const [newPricingMethodModalIsOpen, setNewPricingMethodModalIsOpen] = useState<boolean>(false)
   const { data: pricingMethods, isSuccess, isLoading, isError } = usePricingMethods()
   const [editModal, setEditModal] = useState<{ id: string | null; isOpen: boolean }>({ id: null, isOpen: false })
@@ -47,7 +48,7 @@ function PricingMethods({ session }: PricingMethodsProps) {
                     <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
                       <ImPriceTag size={13} />
                     </div>
-                    {!FixedPricingMethod.includes(method._id) ? (
+                    {userHasPricingMethodsSettingsPermission && !!method.idParceiro ? (
                       <p
                         onClick={() => setEditModal({ id: method._id, isOpen: true })}
                         className="cursor-pointer text-sm font-medium leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500"
@@ -57,10 +58,8 @@ function PricingMethods({ session }: PricingMethodsProps) {
                     ) : (
                       <p className="text-sm font-medium leading-none tracking-tight">{method.nome}</p>
                     )}
+                    {!method.idParceiro ? <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">FIXO</h1> : null}
                   </div>
-                  {FixedPricingMethod.includes(method._id) ? null : (
-                    <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">FIXO</h1>
-                  )}
                 </div>
 
                 <h1 className='"w-full mt-2 text-start text-xs font-medium'>UNIDADES DE PREÇO</h1>

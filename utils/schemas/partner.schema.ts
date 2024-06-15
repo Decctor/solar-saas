@@ -56,6 +56,16 @@ const GeneralPartnerSchema = z.object({
   slogan: z.string({ required_error: 'Slogan da empresa não fornecido.', invalid_type_error: 'Tipo não válido para slogan da empresa.' }),
   midias: PartnerMediaSchema,
   localizacao: LocationSchema,
+  onboarding: z.object({
+    dataConclusao: z
+      .string({
+        required_error: 'Data de conclusão de onboarding não informada.',
+        invalid_type_error: 'Tipo não válido para data de conclusão de onboarding.',
+      })
+      .datetime()
+      .optional()
+      .nullable(),
+  }),
   dataInsercao: z.string().datetime(),
 })
 
@@ -94,6 +104,16 @@ export const InsertPartnerSchema = z.object({
   slogan: z.string({ required_error: 'Slogan da empresa não fornecido.', invalid_type_error: 'Tipo não válido para slogan da empresa.' }),
   midias: PartnerMediaSchema,
   localizacao: LocationSchema,
+  onboarding: z.object({
+    dataConclusao: z
+      .string({
+        required_error: 'Data de conclusão de onboarding não informada.',
+        invalid_type_error: 'Tipo não válido para data de conclusão de onboarding.',
+      })
+      .datetime()
+      .optional()
+      .nullable(),
+  }),
   dataInsercao: z
     .string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' })
     .datetime({ message: 'Tipo inválido para a data de inserção.' }),
@@ -130,6 +150,16 @@ export const UpdateOwnPartnerSchema = z.object({
   slogan: z.string({ required_error: 'Slogan da empresa não fornecido.', invalid_type_error: 'Tipo não válido para slogan da empresa.' }),
   midias: PartnerMediaSchema,
   localizacao: LocationSchema,
+  onboarding: z.object({
+    dataConclusao: z
+      .string({
+        required_error: 'Data de conclusão de onboarding não informada.',
+        invalid_type_error: 'Tipo não válido para data de conclusão de onboarding.',
+      })
+      .datetime()
+      .optional()
+      .nullable(),
+  }),
 })
 const PartnerEntitySchema = z.object({
   _id: z.instanceof(ObjectId),
@@ -146,6 +176,16 @@ const PartnerEntitySchema = z.object({
   slogan: z.string({ required_error: 'Slogan da empresa não fornecido.', invalid_type_error: 'Tipo não válido para slogan da empresa.' }),
   midias: PartnerMediaSchema,
   localizacao: LocationSchema,
+  onboarding: z.object({
+    dataConclusao: z
+      .string({
+        required_error: 'Data de conclusão de onboarding não informada.',
+        invalid_type_error: 'Tipo não válido para data de conclusão de onboarding.',
+      })
+      .datetime()
+      .optional()
+      .nullable(),
+  }),
   dataInsercao: z.string(),
 })
 

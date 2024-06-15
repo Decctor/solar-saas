@@ -36,8 +36,7 @@ type GetResponse = {
 const getPartnerPaymentMethods: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TPaymentMethod> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TPaymentMethod> = { idParceiro: partnerId }
 
   const { id } = req.query
 
@@ -63,7 +62,7 @@ const editPaymentMethod: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'configuracoes', 'metodosPagamento', true)
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TPaymentMethod> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TPaymentMethod> = parterScope ? { idParceiro: partnerId } : {}
 
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')

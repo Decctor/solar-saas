@@ -145,7 +145,6 @@ type FetchTechnicalAnalysisByPersonalizedFiltersParams = {
   page: number
   applicants: string[] | null
   analysts: string[] | null
-  partners: string[] | null
   filters: TPersonalizedTechnicalAnalysisFilter
 }
 async function fetchTechnicalAnalysisByPersonalizedFilters({
@@ -154,14 +153,14 @@ async function fetchTechnicalAnalysisByPersonalizedFilters({
   page,
   applicants,
   analysts,
-  partners,
+
   filters,
 }: FetchTechnicalAnalysisByPersonalizedFiltersParams) {
   try {
     const { data } = await axios.post(`/api/technical-analysis/search?after=${after}&before=${before}&page=${page}`, {
       applicants,
       analysts,
-      partners,
+
       filters,
     })
     return data.data as TTechnicalAnalysisByFiltersResult
@@ -175,16 +174,8 @@ type UseTechnicalAnalysisByPersonalizedFiltersParams = {
   page: number
   applicants: string[] | null
   analysts: string[] | null
-  partners: string[] | null
 }
-export function useTechnicalAnalysisByPersonalizedFilters({
-  after,
-  before,
-  page,
-  applicants,
-  analysts,
-  partners,
-}: UseTechnicalAnalysisByPersonalizedFiltersParams) {
+export function useTechnicalAnalysisByPersonalizedFilters({ after, before, page, applicants, analysts }: UseTechnicalAnalysisByPersonalizedFiltersParams) {
   const [filters, setFilters] = useState<TPersonalizedTechnicalAnalysisFilter>({
     name: '',
     status: [],
@@ -199,8 +190,8 @@ export function useTechnicalAnalysisByPersonalizedFilters({
   }
   return {
     ...useQuery({
-      queryKey: ['analysis-by-personalized-filters', after, before, page, applicants, analysts, partners, filters],
-      queryFn: async () => await fetchTechnicalAnalysisByPersonalizedFilters({ after, before, page, applicants, analysts, partners, filters }),
+      queryKey: ['analysis-by-personalized-filters', after, before, page, applicants, analysts, filters],
+      queryFn: async () => await fetchTechnicalAnalysisByPersonalizedFilters({ after, before, page, applicants, analysts, filters }),
     }),
     updateFilters,
   }

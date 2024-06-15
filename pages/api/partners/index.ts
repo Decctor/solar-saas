@@ -24,12 +24,11 @@ const createPartner: NextApiHandler<PostResponse> = async (req, res) => {
 type GetResponse = {
   data: TPartner | TPartnerDTOWithUsers[]
 }
-const getClients: NextApiHandler<GetResponse> = async (req, res) => {
+const getPartners: NextApiHandler<GetResponse> = async (req, res) => {
   // Validating authorization and payload
-  const session = await validateAuthorization(req, res, 'parceiros', 'visualizar', true)
+  const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
-  const partnerScope = session.user.permissoes.parceiros.escopo
-
+  const userIsAdmin = session.user.administrador
   const { id } = req.query
 
   // Passed validations
@@ -37,15 +36,13 @@ const getClients: NextApiHandler<GetResponse> = async (req, res) => {
   const partnersCollection: Collection<TPartner> = db.collection('partners')
 
   if (id) {
-    console.log(id)
+    if (!userIsAdmin && id != partnerId) throw new createHttpError.BadRequest('Nível de autorização inválido.')
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-    if (!!partnerScope && !partnerScope.includes(id)) throw new createHttpError.Unauthorized('Nível de autorização insuficiente.')
-
     const partner = await partnersCollection.findOne({ _id: new ObjectId(id) })
     if (!partner) throw new createHttpError.NotFound('Nenhum parceiro encontrado com esse ID.')
     return res.status(200).json({ data: partner })
   }
-
+  if (!userIsAdmin) throw new createHttpError.BadRequest('Nível de autorização inválido.')
   const partners = await partnersCollection
     .aggregate([
       {
@@ -96,4 +93,4 @@ const editPartners: NextApiHandler<PutResponse> = async (req, res) => {
   return res.status(201).json({ data: 'Parceiro atualizado com sucesso !', message: 'Parceiro atualizado com sucesso !' })
 }
 
-export default apiHandler({ POST: createPartner, GET: getClients, PUT: editPartners })
+export default apiHandler({ POST: createPartner, GET: getPartners, PUT: editPartners })

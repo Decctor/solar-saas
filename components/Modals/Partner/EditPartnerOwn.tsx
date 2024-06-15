@@ -14,7 +14,7 @@ import { formatDateInputChange, formatNameAsInitials } from '@/lib/methods/forma
 import { stateCities } from '@/utils/estados_cidades'
 import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getCEPInfo } from '@/utils/methods'
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
-import { createPartner, editPartner } from '@/utils/mutations/partners'
+import { createPartner, editOwnPartner, editPartner } from '@/utils/mutations/partners'
 import { usePartnerById } from '@/utils/queries/partners'
 import { TPartner } from '@/utils/schemas/partner.schema'
 import { SignaturePlans } from '@/utils/select-options'
@@ -65,33 +65,9 @@ function EditPartnerOwn({ partnerId, closeModal }: EditPartnerProps) {
     dataInsercao: new Date().toISOString(),
   })
   const { data: partner, isSuccess, isLoading, isError } = usePartnerById({ id: partnerId })
-  async function setAddressDataByCEP(cep: string) {
-    const addressInfo = await getCEPInfo(cep)
-    const toastID = toast.loading('Buscando informações sobre o CEP...', {
-      duration: 2000,
-    })
-    setTimeout(() => {
-      if (addressInfo) {
-        toast.dismiss(toastID)
-        toast.success('Dados do CEP buscados com sucesso.', {
-          duration: 1000,
-        })
-        setInfoHolder((prev) => ({
-          ...prev,
-          localizacao: {
-            ...prev.localizacao,
-            endereco: addressInfo.logradouro,
-            bairro: addressInfo.bairro,
-            uf: addressInfo.uf as keyof typeof stateCities,
-            cidade: addressInfo.localidade.toUpperCase(),
-          },
-        }))
-      }
-    }, 1000)
-  }
   const { mutate: handleEditPartner } = useMutationWithFeedback({
     mutationKey: ['edit-partner', partnerId],
-    mutationFn: editPartner,
+    mutationFn: editOwnPartner,
     queryClient: queryClient,
     affectedQueryKey: ['partner-onw-info', partnerId],
     callbackFn: () => closeModal(),

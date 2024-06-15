@@ -39,7 +39,6 @@ type EditUserProps = {
 function EditUser({ closeModal, users, userId, partnerId, session }: EditUserProps) {
   const queryClient = useQueryClient()
   const { data: user, isLoading, isError, isSuccess } = useUserById({ id: userId })
-  const { data: partners } = usePartnersSimplified()
   const { data: groups } = useUserGroups()
   const [image, setImage] = useState<File | null>()
   const [userInfo, setUserInfo] = useState<TUserDTO>({
@@ -349,17 +348,6 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                         width="100%"
                       />
                     </div>
-                  </div>
-                  <div className="flex w-full items-center">
-                    <SelectWithImages
-                      label="PARCEIRO"
-                      value={userInfo.idParceiro}
-                      handleChange={(value) => setUserInfo((prev) => ({ ...prev, idParceiro: value }))}
-                      options={partners?.map((p) => ({ id: p._id, label: p.nome, value: p._id, url: p.logo_url || undefined })) || []}
-                      selectedItemLabel="NÃO DEFINIDO"
-                      onReset={() => setUserInfo((prev) => ({ ...prev, idParceiro: partners ? partners[0]._id : '' }))}
-                      width="100%"
-                    />
                   </div>
                   <SelectInput
                     label="GRUPO DE PERMISSÃO"

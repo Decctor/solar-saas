@@ -8,7 +8,7 @@ type CreatePricingMethodParams = {
 }
 export async function insertPricingMethod({ collection, info, partnerId }: CreatePricingMethodParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info, dataInsercao: new Date().toISOString() })
+    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId, dataInsercao: new Date().toISOString() })
     return insertResponse
   } catch (error) {
     throw error

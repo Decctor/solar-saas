@@ -46,7 +46,7 @@ function ProjectTypes({ session }: ProjectTypesProps) {
                     <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
                       <MdDashboard size={13} />
                     </div>
-                    {userHasProjectTypeEditingPermission ? (
+                    {userHasProjectTypeEditingPermission && !!type.idParceiro ? (
                       <p
                         onClick={() => setEditModal({ id: type._id, isOpen: true })}
                         className="cursor-pointer text-sm font-medium leading-none tracking-tight duration-300 ease-in-out hover:text-cyan-500"
@@ -57,9 +57,7 @@ function ProjectTypes({ session }: ProjectTypesProps) {
                       <p className="text-sm font-medium leading-none tracking-tight">{type.nome}</p>
                     )}
                   </div>
-                  {FixedProjectTypes.includes(type._id) ? (
-                    <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">FIXO</h1>
-                  ) : null}
+                  {!type.idParceiro ? <h1 className="rounded-full bg-black px-2 py-1 text-[0.65rem] font-bold text-white lg:text-xs">FIXO</h1> : null}
                 </div>
 
                 <h1 className='"w-full mt-2 text-start text-xs font-medium'>SEÇÕES DE DIMENSIONAMENTO</h1>

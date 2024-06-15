@@ -18,7 +18,6 @@ type ClientsPageProps = {
 }
 function ClientsPage({ session }: ClientsPageProps) {
   const userClientsScope = session.user.permissoes.clientes.escopo || null
-  const userPartnersScope = session.user.permissoes.parceiros.escopo || null
   const [filterMenuIsOpen, setFilterMenuIsOpen] = useState<boolean>(false)
   const [newClientModalIsOpen, setNewClientModalIsOpen] = useState(false)
   const [editClient, setEditClient] = useState<{ isOpen: boolean; id: string | null }>({ isOpen: false, id: null })
@@ -27,14 +26,11 @@ function ClientsPage({ session }: ClientsPageProps) {
   const [page, setPage] = useState<number>(1)
   const [period, setPeriod] = useState<{ after: string | null; before: string | null }>({ after: null, before: null })
   const [authors, setAuthors] = useState<string[] | null>(userClientsScope)
-  const [partners, setPartners] = useState<string[] | null>(userPartnersScope)
   const { data: authorOptions } = useUsers()
-  const { data: partnersOptions } = usePartnersSimplified()
   const { data, isLoading, isError, isSuccess, updateFilters } = useClientsByPersonalizedFilters({
     after: period.after,
     before: period.before,
     authors: authors,
-    partners: partners,
     page: page,
   })
   const clients = data?.clients
@@ -78,10 +74,7 @@ function ClientsPage({ session }: ClientsPageProps) {
               session={session}
               selectedAuthors={authors}
               setAuthors={setAuthors}
-              selectedPartners={partners}
-              setPartners={setPartners}
               authorsOptions={authorOptions}
-              partnersOptions={partnersOptions}
               resetSelectedPage={() => setPage(1)}
             />
           ) : null}

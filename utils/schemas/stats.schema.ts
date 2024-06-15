@@ -36,12 +36,6 @@ export const GeneralStatsFiltersSchema = z.object({
       invalid_type_error: 'Tipo não válido para a lista de responsáveis.',
     })
     .nullable(),
-  partners: z
-    .array(z.string({ required_error: 'Parceiros não informados ou inválidos.', invalid_type_error: 'Parceiros inválidos.' }), {
-      required_error: 'Lista de parceiros não informada.',
-      invalid_type_error: 'Tipo não válido para a lista de parceiros.',
-    })
-    .nullable(),
   projectTypes: z
     .array(z.string({ required_error: 'Tipos de projeto não informados ou inválidos.', invalid_type_error: 'Tipos de projeto inválidos.' }), {
       required_error: 'Lista de tipos de projetos não informada.',

@@ -16,9 +16,6 @@ type GeneralInformationBlockProps = {
   session: Session
 }
 function GeneralInformationBlock({ opportunity, setOpportunity, projectTypes, session }: GeneralInformationBlockProps) {
-  const partnersScope = session.user.permissoes.parceiros.escopo
-  const { data: partners } = usePartnersSimplified()
-  const vinculationPartners = partners ? (partnersScope ? partners?.filter((p) => partnersScope.includes(p._id)) : partners) : []
   return (
     <div className="flex w-full flex-col gap-2">
       <h1 className="w-full rounded bg-gray-800 p-1 text-center font-bold text-white">INFORMAÇÕES DO PROJETO</h1>
@@ -27,25 +24,6 @@ function GeneralInformationBlock({ opportunity, setOpportunity, projectTypes, se
         value={opportunity.nome}
         placeholder="Preencha aqui o nome a ser dado ao projeto..."
         handleChange={(value) => setOpportunity((prev) => ({ ...prev, nome: value }))}
-        width="100%"
-      />
-      <SelectWithImages
-        label="VÍNCULO DE PARCEIRO"
-        value={opportunity.idParceiro || null}
-        options={vinculationPartners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
-        selectedItemLabel="TODOS"
-        handleChange={(value) =>
-          setOpportunity((prev) => ({
-            ...prev,
-            idParceiro: value,
-          }))
-        }
-        onReset={() =>
-          setOpportunity((prev) => ({
-            ...prev,
-            idParceiro: session.user.idParceiro,
-          }))
-        }
         width="100%"
       />
       <div className="flex w-full flex-col items-center gap-2 lg:flex-row">

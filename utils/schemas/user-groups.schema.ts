@@ -3,6 +3,10 @@ import { AuthorSchema, PermissionsSchema, TUserDTO, TUserDTOSimplified } from '.
 
 const GeneralUserGroupSchema = z.object({
   titulo: z.string({ required_error: 'Título do grupo de usuários não informado.', invalid_type_error: 'Tipo não válido para o título do grupo de usuários.' }),
+  idParceiro: z.string({
+    required_error: 'ID de referência de parceiro não informado.',
+    invalid_type_error: 'Tipo não válido para o ID de referência de parceiro',
+  }),
   descricao: z.string({
     required_error: 'Descrição do grupo de usuários não fornecida.',
     invalid_type_error: 'Tipo não válido para a descrição do grupo de usuários.',
@@ -14,6 +18,10 @@ const GeneralUserGroupSchema = z.object({
 
 export const InsertUserGroupSchema = z.object({
   titulo: z.string({ required_error: 'Título do grupo de usuários não informado.', invalid_type_error: 'Tipo não válido para o título do grupo de usuários.' }),
+  idParceiro: z.string({
+    required_error: 'ID de referência de parceiro não informado.',
+    invalid_type_error: 'Tipo não válido para o ID de referência de parceiro',
+  }),
   descricao: z.string({
     required_error: 'Descrição do grupo de usuários não fornecida.',
     invalid_type_error: 'Tipo não válido para a descrição do grupo de usuários.',

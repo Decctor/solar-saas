@@ -37,6 +37,8 @@ const QueryParamsSchema = z.object({
 })
 const getTechnicalAnalysisStats: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
+  const partnerId = session.user.idParceiro
+  const query: Filter<TTechnicalAnalysis> = { idParceiro: partnerId }
 
   const { after, before } = QueryParamsSchema.parse(req.query)
 
@@ -45,7 +47,7 @@ const getTechnicalAnalysisStats: NextApiHandler<GetResponse> = async (req, res) 
 
   const afterDateStr = formatDateQuery(after, 'start', 'string') as string
   const beforeDateStr = formatDateQuery(before, 'end', 'string') as string
-  const analysis = await getAnalysis({ analysisCollection, afterDateStr, beforeDateStr })
+  const analysis = await getAnalysis({ analysisCollection, afterDateStr, beforeDateStr, query })
 
   const condensed = getCondensedStats({ analysis, afterDateStr, beforeDateStr })
 
@@ -221,11 +223,13 @@ type GetAnalysisParams = {
   analysisCollection: Collection<TTechnicalAnalysis>
   afterDateStr: string
   beforeDateStr: string
+  query: Filter<TTechnicalAnalysis>
 }
 
-async function getAnalysis({ analysisCollection, afterDateStr, beforeDateStr }: GetAnalysisParams) {
+async function getAnalysis({ analysisCollection, afterDateStr, beforeDateStr, query }: GetAnalysisParams) {
   console.log('DATES', afterDateStr, beforeDateStr)
   const match: Filter<TTechnicalAnalysis> = {
+    ...query,
     $or: [
       { $and: [{ dataInsercao: { $gte: afterDateStr } }, { dataInsercao: { $lte: beforeDateStr } }] },
       { $and: [{ dataEfetivacao: { $gte: afterDateStr } }, { dataEfetivacao: { $lte: beforeDateStr } }] },

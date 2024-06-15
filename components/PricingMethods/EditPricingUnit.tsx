@@ -41,7 +41,6 @@ type EditPricingUnitProps = {
   setResultHolder: React.Dispatch<React.SetStateAction<TPricingMethodItemResultItem>>
   methodology: TPricingMethod
   setMethodology: React.Dispatch<React.SetStateAction<TPricingMethod>>
-  partners: TPartnerSimplifiedDTO[] | undefined
   closeMenu: () => void
 }
 
@@ -53,7 +52,6 @@ function EditPricingUnit({
   setResultHolder,
   methodology,
   setMethodology,
-  partners,
   closeMenu,
 }: EditPricingUnitProps) {
   function addResultFormula() {
@@ -283,7 +281,7 @@ function EditPricingUnit({
           />
         </div>
       </div>
-      {resultHolder.condicao.aplicavel ? <ConditionMenu resultHolder={resultHolder} setResultHolder={setResultHolder} partners={partners} /> : null}
+      {resultHolder.condicao.aplicavel ? <ConditionMenu resultHolder={resultHolder} setResultHolder={setResultHolder} /> : null}
       {/* {resultHolder.condicao.aplicavel ? (
         <div className="flex w-full flex-col">
           <div className="my-2 flex flex-wrap items-center gap-2">
@@ -323,7 +321,7 @@ function EditPricingUnit({
         pricingHolder.resultados.map((result, index) => (
           <div key={index} className="mb-1 flex w-full flex-col items-center gap-2 rounded-md border border-[#A0E9FF] p-1 md:flex-row">
             <div className="flex flex-col">
-              {renderConditionPhrase({ condition: result.condicao, partners: partners || [] })}
+              {renderConditionPhrase({ condition: result.condicao })}
               {/* <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
                 {!result.condicao.aplicavel
                   ? 'FÓRMULA GERAL:'

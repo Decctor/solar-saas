@@ -99,20 +99,15 @@ const getClientsByPersonalizedFilters: NextApiHandler<PostResponse> = async (req
   const PAGE_SIZE = 500
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
-  const partnerScope = session.user.permissoes.parceiros.escopo
 
   const userId = session.user.id
   const userScope = session.user.permissoes.clientes.escopo
   const { after, before, page } = QuerySchema.parse(req.query)
-  const { authors, partners, filters } = PersonalizedClientQuerySchema.parse(req.body)
+  const { authors, filters } = PersonalizedClientQuerySchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
   // to access a overall visualiation, which he/she isnt allowed
   if (!!userScope && !authors) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
-
-  // If user has a scope defined and in the request there isnt a partners arr defined, then user is trying
-  // to access a overall visualiation, which he/she isnt allowed
-  if (!!partnerScope && !partners) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
   // If user has a scope defined and in the responsible arr request there is a single responsible that is not in hes/shes scope
   // then user is trying to access a visualization he/she isnt allowed
@@ -125,11 +120,16 @@ const getClientsByPersonalizedFilters: NextApiHandler<PostResponse> = async (req
   // Defining the queries
   const insertionQuery: Filter<TClient> =
     after != 'null' && before != 'null'
-      ? { $and: [{ dataInsercao: { $gte: formatDateQuery(after, 'start') } }, { dataInsercao: { $lte: formatDateQuery(before, 'end') } }] }
+      ? {
+          $and: [
+            { dataInsercao: { $gte: formatDateQuery(after, 'start', 'string') as string } },
+            { dataInsercao: { $lte: formatDateQuery(before, 'end', 'string') as string } },
+          ],
+        }
       : {}
 
   const authorsQuery: Filter<TClient> = authors ? { 'autor.id': { $in: authors } } : {}
-  const partnerQuery: Filter<TClient> = partners ? { idParceiro: { $in: [...partners] } } : {}
+  const partnerQuery: Filter<TClient> = { idParceiro: partnerId }
   const orQuery = getClientByPersonalizedFilterORSearchParams({ name: filters.name, phone: filters.phone })
   const filtersQuery: Filter<TClient> = {
     ...orQuery,

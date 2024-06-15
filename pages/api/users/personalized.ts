@@ -2,14 +2,14 @@ import { getTechnicalAnalysis } from '@/repositories/technical-analysis/queries'
 import { getLeadReceivers, getOpportunityCreators, getTechnicalAnalysts } from '@/repositories/users/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
-import { TUser, TUserEntity } from '@/utils/schemas/user.schema'
+import { TUser, TUserEntity, TUserSimplified } from '@/utils/schemas/user.schema'
 import { Collection, Filter, WithId } from 'mongodb'
 import { NextApiHandler } from 'next'
 import { z } from 'zod'
 import technicalAnalysis from '../technical-analysis'
 
 type GetResponse = {
-  data: WithId<TUser>[]
+  data: WithId<TUserSimplified>[]
 }
 const PersonalizedQueryTypes = [
   'user-creators',
@@ -25,8 +25,7 @@ const PersonalizedQueryTypes = [
 const getUsersPersonalized: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TUser> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+  const partnerQuery: Filter<TUser> = { idParceiro: partnerId }
 
   const type = z
     .enum(PersonalizedQueryTypes, { invalid_type_error: 'Tipo inválido para tipo de usuários.', required_error: 'Tipo de usuários não definido.' })

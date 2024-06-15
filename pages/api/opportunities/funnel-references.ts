@@ -35,9 +35,8 @@ type PutResponse = {
 }
 const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true)
-  // const partnerId = session.user.idParceiro
-  // const parterScope = session.user.permissoes.parceiros.escopo
-  // const partnerQuery: Filter<TFunnelReference> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
+  const partnerId = session.user.idParceiro
+  const partnerQuery: Filter<TFunnelReference> = { idParceiro: partnerId }
 
   // Validing update id
   const { id } = req.query
@@ -51,7 +50,7 @@ const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
   const newStageId = updates.idEstagioFunil?.toString()
   if (!newStageId) throw new createHttpError.BadRequest('Novo estágio de funil não informado.')
 
-  const reference = await getFunnelReferenceById({ collection: funnelReferencesCollection, id: id, query: {} })
+  const reference = await getFunnelReferenceById({ collection: funnelReferencesCollection, id: id, query: partnerQuery })
   if (!reference) throw new createHttpError.NotFound('Referência de funil não encontrada.')
 
   // In case there new stage id is equal to the current stage id, there is no need to update the reference
@@ -67,7 +66,7 @@ const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
     funnelReferenceId: id,
     newStageId: newStageId,
     additionalUpdates,
-    // query: partnerQuery,
+    query: partnerQuery,
   })
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na atualização da referência de funil.')
   res.status(201).json({ data: 'Atualização feita com sucesso!', message: 'Atualização feita com sucesso !' })
@@ -80,6 +79,9 @@ type DeleteResponse = {
 
 const removeFunnelReferenceRoute: NextApiHandler<DeleteResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true)
+  const partnerId = session.user.idParceiro
+  const partnerQuery: Filter<TFunnelReference> = { idParceiro: partnerId }
+
   const userId = session.user.id
   const userOpportunityScope = session.user.permissoes.oportunidades.escopo
   const { id } = req.query
@@ -89,7 +91,7 @@ const removeFunnelReferenceRoute: NextApiHandler<DeleteResponse> = async (req, r
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
   const opportunitiesCollection: Collection<TOpportunity> = db.collection('opportunities')
 
-  const funnelReference = await getFunnelReferenceById({ collection: funnelReferencesCollection, id: id, query: {} })
+  const funnelReference = await getFunnelReferenceById({ collection: funnelReferencesCollection, id: id, query: partnerQuery })
   if (!funnelReference) throw new createHttpError.NotFound('Referência de funil não encontrada.')
   const opportunityId = funnelReference.idOportunidade
   const opportunity = await opportunitiesCollection.findOne({ _id: new ObjectId(opportunityId) }, { projection: { responsaveis: 1 } })
@@ -100,7 +102,7 @@ const removeFunnelReferenceRoute: NextApiHandler<DeleteResponse> = async (req, r
     !userOpportunityScope || opportunity.responsaveis.some((opResp) => opResp.id == userId || userOpportunityScope.includes(opResp.id))
   if (!hasEditAuthorizationForOpportunity) throw new createHttpError.Unauthorized('Você não possui permissão para realizar essa operação.')
 
-  const deleteResponse = await deleteFunnelReference({ collection: funnelReferencesCollection, id: id, query: {} })
+  const deleteResponse = await deleteFunnelReference({ collection: funnelReferencesCollection, id: id, query: partnerQuery })
   if (!deleteResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao excluir referência de funil.')
 
   return res.status(200).json({ data: 'Referência de funil removida com sucesso !', message: 'Referência de funil removida com sucesso !' })

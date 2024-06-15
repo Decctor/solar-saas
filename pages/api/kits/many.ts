@@ -15,7 +15,7 @@ type PostResponse = {
 }
 const createKits: NextApiHandler<PostResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'editar', true)
-  const partnerId = null // session.user.idParceiro
+  const partnerId = session.user.idParceiro
 
   const kits = z.array(InsertNewKitSchema).parse(req.body)
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')

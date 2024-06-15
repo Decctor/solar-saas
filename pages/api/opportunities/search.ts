@@ -1,5 +1,5 @@
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
-import { apiHandler, validateAuthentication } from '@/utils/api'
+import { apiHandler, validateAuthentication, validateAuthenticationWithSession } from '@/utils/api'
 import { TOpportunity } from '@/utils/schemas/opportunity.schema'
 import createHttpError from 'http-errors'
 import { Collection } from 'mongodb'
@@ -16,7 +16,8 @@ type GetResponse = {
 }
 
 const getOpportunitiesBySearch: NextApiHandler<GetResponse> = async (req, res) => {
-  await validateAuthentication(req)
+  const session = await validateAuthenticationWithSession(req, res)
+  const partnerId = session.user.idParceiro
   const search = ParamSchema.parse(req.query.param)
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -25,6 +26,7 @@ const getOpportunitiesBySearch: NextApiHandler<GetResponse> = async (req, res) =
   const opportunities = await collection
     .find(
       {
+        idParceiro: partnerId,
         $or: [{ nome: { $regex: search, $options: 'i' } }, { identificador: { $regex: search, $options: 'i' } }],
       },
       { projection: { nome: 1, identificador: 1, responsavel: 1 } }

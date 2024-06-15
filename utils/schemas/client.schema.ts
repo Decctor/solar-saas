@@ -284,6 +284,5 @@ const PersonalizedFiltersSchema = z.object({
 export type TPersonalizedClientsFilter = z.infer<typeof PersonalizedFiltersSchema>
 export const PersonalizedClientQuerySchema = z.object({
   authors: z.array(z.string({ required_error: 'Autores não informados ou inválidos.', invalid_type_error: 'Autores inválidos.' })).nullable(),
-  partners: z.array(z.string({ required_error: 'Parceiros não informados ou inválidos.', invalid_type_error: 'Parceiros inválidos.' })).nullable(),
   filters: PersonalizedFiltersSchema,
 })

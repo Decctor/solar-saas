@@ -4,11 +4,11 @@ import { Collection, Filter, ObjectId } from 'mongodb'
 type CreateFunnelParams = {
   collection: Collection<TFunnel>
   info: TFunnel
-  partnerId?: string | null
+  partnerId: string
 }
 export async function insertFunnel({ collection, info, partnerId }: CreateFunnelParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info })
+    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId })
     return insertResponse
   } catch (error) {
     throw error

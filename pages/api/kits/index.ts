@@ -36,8 +36,7 @@ type GetResponse = {
 const getKits: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'visualizar', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TKit> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TKit> = { idParceiro: partnerId }
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const kitsCollection: Collection<TKit> = db.collection('kits')
@@ -70,8 +69,7 @@ type PutResponse = {
 const editKit: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'kits', 'editar', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TKit> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TKit> = { idParceiro: partnerId }
 
   const { id } = req.query
   const changes = InsertNewKitSchema.parse(req.body)

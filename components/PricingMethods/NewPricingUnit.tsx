@@ -31,20 +31,10 @@ type NewPricingUnitProps = {
   setResultHolder: React.Dispatch<React.SetStateAction<TPricingMethodItemResultItem>>
   methodology: TPricingMethod
   setMethodology: React.Dispatch<React.SetStateAction<TPricingMethod>>
-  partners: TPartnerSimplifiedDTO[] | undefined
   closeMenu: () => void
 }
 
-function NewPricingUnit({
-  pricingHolder,
-  setPricingHolder,
-  resultHolder,
-  setResultHolder,
-  methodology,
-  setMethodology,
-  partners,
-  closeMenu,
-}: NewPricingUnitProps) {
+function NewPricingUnit({ pricingHolder, setPricingHolder, resultHolder, setResultHolder, methodology, setMethodology, closeMenu }: NewPricingUnitProps) {
   function addResultFormula() {
     if (resultHolder.condicao.aplicavel) {
       if (!resultHolder.condicao.variavel) return toast.error('Selecione uma variável para condição.')
@@ -307,7 +297,7 @@ function NewPricingUnit({
           />
         </div>
       ) : null} */}
-      {resultHolder.condicao.aplicavel ? <ConditionMenu resultHolder={resultHolder} setResultHolder={setResultHolder} partners={partners} /> : null}
+      {resultHolder.condicao.aplicavel ? <ConditionMenu resultHolder={resultHolder} setResultHolder={setResultHolder} /> : null}
       <div className="my-2 flex items-center justify-end gap-2">
         <button
           className="rounded bg-black p-1 px-4 text-xs font-medium text-white duration-300 ease-in-out disabled:bg-gray-400 disabled:text-black enabled:hover:bg-gray-600"
@@ -321,7 +311,7 @@ function NewPricingUnit({
         pricingHolder.resultados.map((result, index) => (
           <div key={index} className="mb-1 flex w-full flex-col items-center gap-2 rounded-md border border-[#A0E9FF] p-1 md:flex-row">
             <div className="flex flex-col">
-              {renderConditionPhrase({ condition: result.condicao, partners: partners || [] })}
+              {renderConditionPhrase({ condition: result.condicao })}
               {/* <h1 className="text-start text-sm font-bold leading-none tracking-tight text-cyan-500">
                 {!result.condicao.aplicavel
                   ? 'FÓRMULA GERAL:'

@@ -14,8 +14,7 @@ type GetResponse = {
 const getPartnerProducts: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'produtos', 'visualizar', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TProduct> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TProduct> = { idParceiro: partnerId }
 
   const { id } = req.query
 
@@ -63,8 +62,7 @@ type PutResponse = {
 const editProduct: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'produtos', 'editar', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TProduct> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TProduct> = { idParceiro: partnerId }
 
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')

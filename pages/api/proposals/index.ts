@@ -39,7 +39,6 @@ const getProposals: NextApiHandler<GetResponse> = async (req, res) => {
   if (!opportunityId && !id) throw new createHttpError.BadRequest('ID de referência não fornecido.')
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const proposalsCollection: Collection<TProposal> = db.collection('proposals')
-  console.log('ID', id)
   // Query for opportunity proposals
   if (opportunityId) {
     if (typeof opportunityId != 'string' || !ObjectId.isValid(opportunityId)) throw new createHttpError.BadRequest('ID de oportunidade inválido.')

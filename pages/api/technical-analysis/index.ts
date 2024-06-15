@@ -17,8 +17,8 @@ const getPartnerTechnicalAnalysis: NextApiHandler<GetResponse> = async (req, res
   const session = await validateAuthenticationWithSession(req, res)
   const analysisScope = session.user.permissoes.analisesTecnicas.escopo
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TTechnicalAnalysis> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+
+  const partnerQuery: Filter<TTechnicalAnalysis> = { idParceiro: partnerId }
 
   const { id, opportunityId, concludedOnly } = req.query
 
@@ -38,7 +38,7 @@ const getPartnerTechnicalAnalysis: NextApiHandler<GetResponse> = async (req, res
 
     const opportunityAnalysis = await getTechnicalAnalysisByOpportunityId({
       collection: collection,
-      query: concludedQuery,
+      query: { ...partnerQuery, ...concludedQuery },
       opportunityId: opportunityId,
     })
     return res.status(200).json({ data: opportunityAnalysis })

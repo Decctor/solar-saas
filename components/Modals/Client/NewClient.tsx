@@ -5,10 +5,9 @@ import TextInput from '../../Inputs/TextInput'
 import { ObjectId } from 'mongodb'
 import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getCEPInfo } from '@/utils/methods'
 import { stateCities } from '../../../utils/estados_cidades'
-import { IRepresentative } from '@/utils/models'
-import representatives from '@/pages/api/representatives'
-import { useMutation, useQueryClient } from '@tanstack/react-query'
-import axios, { AxiosError } from 'axios'
+
+import { useQueryClient } from '@tanstack/react-query'
+
 import { toast } from 'react-hot-toast'
 import { TClient } from '@/utils/schemas/client.schema'
 import { Session } from 'next-auth'

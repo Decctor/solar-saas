@@ -20,10 +20,7 @@ export const PlanIntervalSchema = z.object({
 const GeneralSignaturePlanSchema = z.object({
   ativo: z.boolean({ required_error: 'Status de ativação do plano não informado.', invalid_type_error: 'Tipo não válido para o status de ativação do plano.' }),
   nome: z.string({ description: 'Nome do item de plano comercial.' }),
-  idParceiro: z
-    .string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' })
-    .optional()
-    .nullable(),
+  idParceiro: z.string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' }),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   descricao: z.string({ description: 'Descrição do plano não informada.', invalid_type_error: 'Tipo não válido para a descrição do plano.' }),
   intervalo: PlanIntervalSchema,
@@ -43,10 +40,7 @@ const GeneralSignaturePlanSchema = z.object({
 export const InsertSignaturePlanSchema = z.object({
   ativo: z.boolean({ required_error: 'Status de ativação do plano não informado.', invalid_type_error: 'Tipo não válido para o status de ativação do plano.' }),
   nome: z.string({ description: 'Nome do item de plano comercial.' }),
-  idParceiro: z
-    .string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' })
-    .optional()
-    .nullable(),
+  idParceiro: z.string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' }),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   descricao: z.string({ description: 'Descrição do plano não informada.', invalid_type_error: 'Tipo não válido para a descrição do plano.' }),
   intervalo: PlanIntervalSchema,

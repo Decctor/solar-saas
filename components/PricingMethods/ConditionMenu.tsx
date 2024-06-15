@@ -11,9 +11,8 @@ import MultipleSelectInput from '../Inputs/MultipleSelectInput'
 type ConditionMenuProps = {
   resultHolder: TPricingMethodItemResultItem
   setResultHolder: React.Dispatch<React.SetStateAction<TPricingMethodItemResultItem>>
-  partners: TPartnerSimplifiedDTO[] | undefined
 }
-function ConditionMenu({ resultHolder, setResultHolder, partners }: ConditionMenuProps) {
+function ConditionMenu({ resultHolder, setResultHolder }: ConditionMenuProps) {
   return (
     <div className="flex w-full flex-col">
       <div className="my-2 flex flex-wrap items-center gap-2">
@@ -79,7 +78,7 @@ function ConditionMenu({ resultHolder, setResultHolder, partners }: ConditionMen
           label="IGUAL A:"
           value={resultHolder.condicao.igual}
           // options={options[resultHolder.condicao.variavel as keyof typeof options]?.map((op, index) => ({ id: index + 1, label: op, value: op })) || []}
-          options={getConditionOptions({ variable: resultHolder.condicao.variavel as keyof TPricingConditionData, additional: { partners: partners || [] } })}
+          options={getConditionOptions({ variable: resultHolder.condicao.variavel as keyof TPricingConditionData })}
           handleChange={(value) => setResultHolder((prev) => ({ ...prev, condicao: { ...prev.condicao, igual: value } }))}
           selectedItemLabel="NÃO DEFINIDO"
           onReset={() => setResultHolder((prev) => ({ ...prev, condicao: { ...prev.condicao, igual: null } }))}
@@ -157,7 +156,7 @@ function ConditionMenu({ resultHolder, setResultHolder, partners }: ConditionMen
         <MultipleSelectInput
           label="INCLUSO EM:"
           selected={resultHolder.condicao.inclui || null}
-          options={getConditionOptions({ variable: resultHolder.condicao.variavel as keyof TPricingConditionData, additional: { partners: partners || [] } })}
+          options={getConditionOptions({ variable: resultHolder.condicao.variavel as keyof TPricingConditionData })}
           handleChange={(value) => setResultHolder((prev) => ({ ...prev, condicao: { ...prev.condicao, inclui: value as string[] } }))}
           onReset={() => setResultHolder((prev) => ({ ...prev, condicao: { ...prev.condicao, inclui: [] } }))}
           selectedItemLabel="NÃO DEFINIDO"

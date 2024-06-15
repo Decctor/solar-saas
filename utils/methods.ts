@@ -310,29 +310,6 @@ export function checkQueryEnableStatus(session: ISession | null, queryId: any) {
     return false
   }
 }
-// Hooks
-export function useRepresentatives(): UseQueryResult<IRepresentative[], Error> {
-  return useQuery({
-    queryKey: ['representatives'],
-    queryFn: async (): Promise<IRepresentative[]> => {
-      try {
-        const { data } = await axios.get('/api/representatives')
-        return data.data
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          let errorMsg = error.response?.data.error.message
-          toast.error(errorMsg)
-        }
-        if (error instanceof Error) {
-          let errorMsg = error.message
-          toast.error(errorMsg)
-        }
-        return []
-      }
-    },
-    refetchOnWindowFocus: false,
-  })
-}
 
 export function useClient(clientId: string, enabled: boolean): UseQueryResult<IClient, Error> {
   return useQuery<IClient, Error>({
@@ -356,56 +333,7 @@ export function useClient(clientId: string, enabled: boolean): UseQueryResult<IC
     enabled: enabled && !!clientId,
   })
 }
-export function useResponsibles(): UseQueryResult<IResponsible[], Error> {
-  return useQuery({
-    queryKey: ['responsibles'],
-    queryFn: async (): Promise<IResponsible[]> => {
-      try {
-        const { data } = await axios.get('/api/responsibles')
-        return data.data
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          let errorMsg = error.response?.data.error.message
-          toast.error(errorMsg)
-        }
-        if (error instanceof Error) {
-          let errorMsg = error.message
-          toast.error(errorMsg)
-        }
-        return []
-      }
-    },
-    staleTime: 0,
-    refetchOnWindowFocus: false,
-  })
-}
-export function useResponsibleInfo(responsibleId: string | undefined): IResponsible | null {
-  const { data: responsible } = useQuery({
-    queryKey: ['responsible', responsibleId],
-    queryFn: async (): Promise<IResponsible | null> => {
-      try {
-        const { data } = await axios.get(`/api/responsibles?id=${responsibleId}`)
-        return data.data
-      } catch (error) {
-        if (error instanceof AxiosError) {
-          let errorMsg = error.response?.data.error.message
-          toast.error(errorMsg)
-        }
-        if (error instanceof Error) {
-          let errorMsg = error.message
-          toast.error(errorMsg)
-        }
-        return null
-      }
-    },
-    refetchOnWindowFocus: false,
-    staleTime: 0,
-    enabled: !!responsibleId,
-  })
 
-  if (responsible) return responsible
-  else return null
-}
 export function useKits(onlyActive?: boolean): UseQueryResult<IKit[], Error> {
   return useQuery({
     queryKey: ['kits'],

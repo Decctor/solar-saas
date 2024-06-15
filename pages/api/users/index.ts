@@ -29,12 +29,12 @@ const createUser: NextApiHandler<PostResponse> = async (req, res) => {
   const collection: Collection<TUser> = db.collection('users')
 
   // Validing existence of equivalent user in database
-  const existingUserInDn = await collection.findOne({ email: user.email })
+  const existingUserInDn = await collection.findOne({ email: user.email, idParceiro: partnerId })
   if (existingUserInDn) {
     throw new createHttpError.BadRequest('Oops, já existe um usuário com esse email.')
   }
   // Passed validations, now, creating user refencing requester partner ID
-  let insertResponse = await collection.insertOne({ ...user, senha: hashedPassword })
+  let insertResponse = await collection.insertOne({ ...user, idParceiro: partnerId, senha: hashedPassword })
   const insertedIdAsString = insertResponse.insertedId.toString()
   // Dealing with updates for self scope only
   var updates = { $set: {} }
@@ -59,7 +59,7 @@ const createUser: NextApiHandler<PostResponse> = async (req, res) => {
   if (user.permissoes.resultados.escopo && user.permissoes.resultados.escopo.length == 0) {
     updates.$set = { ...updates.$set, 'permissoes.resultados.escopo': [insertedIdAsString] }
   }
-  await collection.updateOne({ _id: insertResponse.insertedId }, updates)
+  await collection.updateOne({ _id: insertResponse.insertedId, idParceiro: partnerId }, updates)
   // Returning successful insertion
   if (insertResponse.acknowledged) res.status(201).json({ data: { insertedId: insertedIdAsString }, message: 'Usuário adicionado!' })
   else throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido na criação do usuário.')
@@ -72,10 +72,8 @@ type GetResponse = {
 const getUsers: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TUser> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
 
-  console.log(partnerQuery)
+  const partnerQuery: Filter<TUser> = { idParceiro: partnerId }
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const usersCollection: Collection<TUserEntity> = db.collection('users')
@@ -98,7 +96,9 @@ type PutResponse = {
 }
 
 const editUser: NextApiHandler<PutResponse> = async (req, res) => {
-  await validateAuthorization(req, res, 'usuarios', 'editar', true)
+  const session = await validateAuthorization(req, res, 'usuarios', 'editar', true)
+  const partnerId = session.user.idParceiro
+
   const { id } = req.query
   if (!id || typeof id !== 'string') throw new createHttpError.BadRequest('ID do objeto de alteração não especificado.')
   if (!req.body.changes) throw new createHttpError.BadRequest('Mudanças não especificadas na requisição.')
@@ -110,7 +110,7 @@ const editUser: NextApiHandler<PutResponse> = async (req, res) => {
     user = { ...user, senha: hashedPassword }
   }
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
-  const collection = db.collection('users')
+  const collection: Collection<TUser> = db.collection('users')
   // let changes
   // if (req.body.changePassword && user.senha) {
   //   let hashedPassword = hashSync(user.senha, 10)
@@ -121,7 +121,7 @@ const editUser: NextApiHandler<PutResponse> = async (req, res) => {
   // @ts-ignore
   delete user._id
   console.log(user)
-  if (typeof id === 'string') await collection.updateOne({ _id: new ObjectId(id) }, { $set: { ...user } })
+  if (typeof id === 'string') await collection.updateOne({ _id: new ObjectId(id), idParceiro: partnerId }, { $set: { ...user } })
   res.status(201).json({ data: 'OK', message: 'Usuário alterado com sucesso.' })
 }
 

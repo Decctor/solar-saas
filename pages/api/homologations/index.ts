@@ -15,8 +15,7 @@ const getHomologations: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'homologacoes', 'visualizar', true)
   const homologationScope = session.user.permissoes.homologacoes.escopo
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<THomologation> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+  const partnerQuery: Filter<THomologation> = { idParceiro: partnerId }
 
   const { id, opportunityId } = req.query
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -73,8 +72,7 @@ type PutResponse = {
 const editHomologation: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'homologacoes', 'editar', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<THomologation> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+  const partnerQuery: Filter<THomologation> = { idParceiro: partnerId }
 
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')

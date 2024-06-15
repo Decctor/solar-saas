@@ -26,13 +26,13 @@ export function formatToDateTime(date: string | null) {
 export function formatDateQuery(date: string, type: 'start' | 'end', returnAs?: 'string' | 'date') {
   if (type == 'start') {
     if (returnAs == 'date') return dayjs(date).startOf('day').subtract(3, 'hour').toDate() as Date
-    return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
+    return dayjs(date).startOf('day').subtract(3, 'hour').toISOString() as string
   }
   if (type == 'end') {
     if (returnAs == 'date') return dayjs(date).endOf('day').subtract(3, 'hour').toDate() as Date
-    return dayjs(date).endOf('day').subtract(3, 'hour').toISOString()
+    return dayjs(date).endOf('day').subtract(3, 'hour').toISOString() as string
   }
-  return dayjs(date).startOf('day').subtract(3, 'hour').toISOString()
+  return dayjs(date).startOf('day').subtract(3, 'hour').toISOString() as string
 }
 export function formatNameAsInitials(name: string) {
   const splittedName = name.split(' ')

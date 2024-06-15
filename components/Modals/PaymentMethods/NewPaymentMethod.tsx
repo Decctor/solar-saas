@@ -19,7 +19,7 @@ type NewPaymentMethodProps = {
 }
 function NewPaymentMethod({ session, closeModal }: NewPaymentMethodProps) {
   const queryClient = useQueryClient()
-  const { data: partners } = usePartnersSimplified()
+
   const [infoHolder, setInfoHolder] = useState<TPaymentMethod>({
     nome: '',
     ativo: true,
@@ -99,27 +99,7 @@ function NewPaymentMethod({ session, closeModal }: NewPaymentMethodProps) {
                 />
               </div>
             </div>
-            <div className="w-full">
-              <SelectWithImages
-                label="VISIBILIDADE DE PARCEIRO"
-                value={infoHolder.idParceiro || null}
-                options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
-                selectedItemLabel="TODOS"
-                handleChange={(value) =>
-                  setInfoHolder((prev) => ({
-                    ...prev,
-                    idParceiro: value,
-                  }))
-                }
-                onReset={() =>
-                  setInfoHolder((prev) => ({
-                    ...prev,
-                    idParceiro: null,
-                  }))
-                }
-                width="100%"
-              />
-            </div>
+
             <h1 className="mt-2 w-full rounded-md bg-gray-700 p-1 text-center text-sm font-bold text-white">FRACIONAMENTO</h1>
             {newFractionnementItemMenuIsOpen ? (
               <NewFractionnement

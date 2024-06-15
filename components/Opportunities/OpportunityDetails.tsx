@@ -2,7 +2,7 @@ import React, { useEffect, useState } from 'react'
 import SelectInput from '../Inputs/SelectInput'
 import TextInput from '../Inputs/TextInput'
 import DateInput from '../Inputs/DateInput'
-import { formatDate, formatToCPForCNPJ, useResponsibles } from '@/utils/methods'
+import { formatDate, formatToCPForCNPJ } from '@/utils/methods'
 
 import { AiOutlineCheck } from 'react-icons/ai'
 import { useQueryClient } from '@tanstack/react-query'
@@ -29,7 +29,7 @@ type DetailsBlockType = {
 
 function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
   const queryClient = useQueryClient()
-  const partnersScope = session.user.permissoes.parceiros.escopo
+
   const [infoHolder, setInfoHolder] = useState<TOpportunityDTOWithClientAndPartnerAndFunnelReferences>({ ...info })
   const [newFunnelHolder, setNewFunnelHolder] = useState<{
     id: number | null
@@ -38,8 +38,7 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
     id: null,
     etapaId: null,
   })
-  const { data: partners } = usePartnersSimplified()
-  const vinculationPartners = partners ? (partnersScope ? partners?.filter((p) => partnersScope.includes(p._id)) : partners) : []
+
   const { mutate: handleUpdateOpportunity } = useMutationWithFeedback({
     mutationKey: ['update-opportunity', opportunityId],
     mutationFn: updateOpportunity,
@@ -91,44 +90,6 @@ function DetailsBlock({ info, session, opportunityId }: DetailsBlockType) {
                 style={{
                   fontSize: '18px',
                   color: infoHolder?.nome != info.nome ? 'rgb(34,197,94)' : 'rgb(156,163,175)',
-                }}
-              />
-            </button>
-          </div>
-          <div className="flex w-full gap-2">
-            <div className="grow">
-              <SelectWithImages
-                label="VÍNCULO DE PARCEIRO"
-                value={infoHolder.idParceiro || null}
-                options={vinculationPartners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
-                selectedItemLabel="TODOS"
-                handleChange={(value) =>
-                  setInfoHolder((prev) => ({
-                    ...prev,
-                    idParceiro: value,
-                  }))
-                }
-                onReset={() =>
-                  setInfoHolder((prev) => ({
-                    ...prev,
-                    idParceiro: session.user.idParceiro,
-                  }))
-                }
-                width="100%"
-              />
-            </div>
-            <button
-              disabled={infoHolder?.idParceiro == info.idParceiro}
-              onClick={() =>
-                // @ts-ignore
-                handleUpdateOpportunity({ id: opportunityId, changes: { idParceiro: infoHolder.idParceiro } })
-              }
-              className="flex items-end justify-center pb-4 text-green-200"
-            >
-              <AiOutlineCheck
-                style={{
-                  fontSize: '18px',
-                  color: infoHolder?.idParceiro != info.idParceiro ? 'rgb(34,197,94)' : 'rgb(156,163,175)',
                 }}
               />
             </button>

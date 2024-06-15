@@ -4,10 +4,7 @@ import { ObjectId } from 'mongodb'
 import { AuthorSchema } from './user.schema'
 
 export const GeneralServiceSchema = z.object({
-  idParceiro: z
-    .string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' })
-    .optional()
-    .nullable(),
+  idParceiro: z.string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' }),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean({
     required_error: 'Status de ativação do serviço não informado.',
@@ -24,10 +21,7 @@ export const GeneralServiceSchema = z.object({
 })
 
 export const InsertServiceSchema = z.object({
-  idParceiro: z
-    .string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' })
-    .optional()
-    .nullable(),
+  idParceiro: z.string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' }),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean({
     required_error: 'Status de ativação do serviço não informado.',
@@ -45,10 +39,7 @@ export const InsertServiceSchema = z.object({
 
 export const ServiceEntitySchema = z.object({
   _id: z.instanceof(ObjectId),
-  idParceiro: z
-    .string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' })
-    .optional()
-    .nullable(),
+  idParceiro: z.string({ required_error: 'ID de referência do parceiro não informado.', invalid_type_error: 'ID de referência do parceiro não informado.' }),
   idMetodologiaPrecificacao: PricingMethodologyReferenceSchema,
   ativo: z.boolean({
     required_error: 'Status de ativação do serviço não informado.',

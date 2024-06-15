@@ -64,33 +64,22 @@ const QueryDatesSchema = z.object({
 const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'resultados', 'visualizarComercial', true)
   const partnerId = session.user.idParceiro
-  const partnerScope = session.user.permissoes.parceiros.escopo
 
-  const userId = session.user.id
   const userScope = session.user.permissoes.resultados.escopo
   const { after, before } = QueryDatesSchema.parse(req.query)
-  const { responsibles, partners, projectTypes } = GeneralStatsFiltersSchema.parse(req.body)
+  const { responsibles, projectTypes } = GeneralStatsFiltersSchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
   // to access a overall visualiation, which he/she isnt allowed
   if (!!userScope && !responsibles) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
-
-  // If user has a scope defined and in the request there isnt a partners arr defined, then user is trying
-  // to access a overall visualiation, which he/she isnt allowed
-  if (!!partnerScope && !partners) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
   // If user has a scope defined and in the responsible arr request there is a single responsible that is not in hes/shes scope
   // then user is trying to access a visualization he/she isnt allowed
   if (!!userScope && responsibles?.some((r) => !userScope.includes(r)))
     throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
-  // If user has a scope defined and in the partner arr request there is a single partner that is not in hes/shes scope
-  // then user is trying to access a visualization he/she isnt allowed
-  if (!!partnerScope && partners?.some((r) => !partnerScope.includes(r)))
-    throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
-
   const responsiblesQuery: Filter<TOpportunity> = responsibles ? { 'responsaveis.id': { $in: responsibles } } : {}
-  const partnerQuery = partners ? { idParceiro: { $in: [...partners, null] } } : {}
+  const partnerQuery = { idParceiro: partnerId }
   const projectTypesQuery: Filter<TOpportunity> = projectTypes ? { 'tipo.id': { $in: [...projectTypes] } } : {}
 
   const afterDate = dayjs(after).startOf('day').subtract(3, 'hour').toDate()
@@ -102,14 +91,7 @@ const getInProgressResults: NextApiHandler<GetResponse> = async (req, res) => {
   const funnelReferencesCollection: Collection<TFunnelReference> = db.collection('funnel-references')
   const projects = await getOpportunities({ opportunitiesCollection, responsiblesQuery, afterDate, beforeDate, partnerQuery, projectTypesQuery })
   const funnels = await getPartnerFunnels({ collection: funnelsCollection, query: partnerQuery })
-  const funnelsReferences = await getFunnelReferences({
-    funnelReferencesCollection,
-    partnerQuery: partnerQuery as {
-      idParceiro: {
-        $in: string[]
-      }
-    },
-  })
+  const funnelsReferences = await getFunnelReferences({ funnelReferencesCollection, query: partnerQuery })
 
   // Getting the basic structure of data to work on top of
   const funnelsReduced = getFunnelsReduced({ funnels })
@@ -254,7 +236,7 @@ type GetProjetsParams = {
   projectTypesQuery: { 'tipo.id': { $in: string[] } } | {}
   afterDate: Date
   beforeDate: Date
-  partnerQuery: { idParceiro: { $in: (string | null)[] } } | {}
+  partnerQuery: { idParceiro: string } | {}
 }
 type TInProgressResultsProject = {
   _id: string
@@ -293,15 +275,11 @@ async function getOpportunities({ opportunitiesCollection, responsiblesQuery, af
 
 type GetFunnelReferencesParams = {
   funnelReferencesCollection: Collection<TFunnelReference>
-  partnerQuery: {
-    idParceiro: {
-      $in: string[]
-    }
-  }
+  query: Filter<TFunnelReference>
 }
-async function getFunnelReferences({ funnelReferencesCollection, partnerQuery }: GetFunnelReferencesParams) {
+async function getFunnelReferences({ funnelReferencesCollection, query }: GetFunnelReferencesParams) {
   try {
-    const references = await funnelReferencesCollection.find({ ...partnerQuery }).toArray()
+    const references = await funnelReferencesCollection.find({ ...query }).toArray()
     return references
   } catch (error) {
     throw error

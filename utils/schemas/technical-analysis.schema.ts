@@ -550,7 +550,6 @@ export const PersonalizedTechnicalAnalysisFiltersSchema = z.object({
 export type TPersonalizedTechnicalAnalysisFilter = z.infer<typeof PersonalizedTechnicalAnalysisFiltersSchema>
 export const PersonalizedTechnicalAnalysisQuerySchema = z.object({
   applicants: z.array(z.string({ required_error: 'Requerentes não informados ou inválidos.', invalid_type_error: 'Requerentes inválidos.' })).nullable(),
-  partners: z.array(z.string({ required_error: 'Parceiros não informados ou inválidos.', invalid_type_error: 'Parceiros inválidos.' })).nullable(),
   analysts: z.array(z.string({ required_error: 'Analistas não informados ou inválidos.', invalid_type_error: 'Analistas inválidos.' })).nullable(),
   filters: PersonalizedTechnicalAnalysisFiltersSchema,
 })

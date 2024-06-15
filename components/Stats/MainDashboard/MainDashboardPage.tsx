@@ -55,11 +55,6 @@ function MainDashboardPage({ session }: MainDashboardPageProps) {
       ? queryOptions.responsibles.filter((a) => userOpportunitiesScope.includes(a._id))
       : queryOptions.responsibles
     : []
-  const partnersSelectableOptions = queryOptions?.partners
-    ? userPartnersScope
-      ? queryOptions?.partners.filter((a) => userPartnersScope.includes(a._id))
-      : queryOptions?.partners
-    : []
   console.log(session)
   console.log(queryFilters)
   return (

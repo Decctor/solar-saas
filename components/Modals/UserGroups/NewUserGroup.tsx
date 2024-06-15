@@ -18,6 +18,7 @@ function NewUserGroup({ session, closeModal }: NewUserGroupProps) {
   const [infoHolder, setInfoHolder] = useState<TUserGroup>({
     titulo: '',
     descricao: '',
+    idParceiro: session.user.idParceiro,
     permissoes: {
       usuarios: {
         visualizar: false,
@@ -92,6 +93,12 @@ function NewUserGroup({ session, closeModal }: NewUserGroupProps) {
         escopo: null,
         visualizarComercial: false,
         visualizarOperacional: false,
+      },
+      projetos: {
+        escopo: null,
+        visualizar: false,
+        editar: false,
+        criar: false,
       },
       configuracoes: {
         parceiro: false,

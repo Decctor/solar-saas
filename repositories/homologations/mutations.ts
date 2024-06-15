@@ -8,7 +8,7 @@ type InsertHomologationParams = {
 }
 export async function insertHomologation({ collection, info, partnerId }: InsertHomologationParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info, dataInsercao: new Date().toISOString() })
+    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId, dataInsercao: new Date().toISOString() })
 
     return insertResponse
   } catch (error) {

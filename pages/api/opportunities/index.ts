@@ -79,8 +79,7 @@ type GetResponse = {
 const getOpportunities: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'visualizar', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TOpportunity> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+  const partnerQuery: Filter<TOpportunity> = { idParceiro: partnerId }
 
   const userScope = session.user.permissoes.oportunidades.escopo
 
@@ -180,8 +179,7 @@ type PutResponse = {
 const editOpportunity: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'editar', true)
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TOpportunity> = { idParceiro: parterScope ? { $in: parterScope } : { $ne: undefined } }
+  const partnerQuery: Filter<TOpportunity> = { idParceiro: partnerId }
 
   const userId = session.user.id
   const userScope = session.user.permissoes.oportunidades.escopo

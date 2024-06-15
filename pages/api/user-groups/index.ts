@@ -4,7 +4,7 @@ import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertUserGroupSchema, TUserGroup, TUserGroupWithUsers } from '@/utils/schemas/user-groups.schema'
 import createHttpError from 'http-errors'
-import { Collection, ObjectId } from 'mongodb'
+import { Collection, Filter, ObjectId } from 'mongodb'
 import { NextApiHandler } from 'next'
 
 type GetResponse = {
@@ -13,6 +13,8 @@ type GetResponse = {
 
 const getUserGroupsMethod: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
+  const partnerId = session.user.idParceiro
+  const partnerQuery: Filter<TUserGroup> = { idParceiro: partnerId }
 
   const { id } = req.query
 
@@ -21,12 +23,12 @@ const getUserGroupsMethod: NextApiHandler<GetResponse> = async (req, res) => {
   if (id) {
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
 
-    const group = await getUserGroupById({ collection, id })
+    const group = await getUserGroupById({ collection, id, query: partnerQuery })
     if (!group) throw new createHttpError.NotFound('Grupo de usuários não encontrado.')
     return res.status(200).json({ data: group })
   }
 
-  const groups = await getUserGroups({ collection })
+  const groups = await getUserGroups({ collection, query: partnerQuery })
 
   return res.status(200).json({ data: groups })
 }
@@ -37,13 +39,14 @@ type PostResponse = {
 }
 const createUserGroup: NextApiHandler<PostResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'configuracoes', 'gruposUsuarios', true)
+  const partnerId = session.user.idParceiro
 
   const group = InsertUserGroupSchema.parse(req.body)
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TUserGroup> = db.collection('user-groups')
 
-  const insertResponse = await insertUserGroup({ collection, info: group })
+  const insertResponse = await insertUserGroup({ collection, info: group, partnerId })
   if (!insertResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao criar grupo de usuários.')
 
   const insertedId = insertResponse.insertedId.toString()
@@ -58,6 +61,7 @@ type PutResponse = {
 
 const editUserGroup: NextApiHandler<PutResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'configuracoes', 'gruposUsuarios', true)
+  const partnerId = session.user.idParceiro
 
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
@@ -66,7 +70,7 @@ const editUserGroup: NextApiHandler<PutResponse> = async (req, res) => {
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TUserGroup> = db.collection('user-groups')
 
-  const updateResponse = await updateUserGroup({ id: id, collection: collection, info: changes })
+  const updateResponse = await updateUserGroup({ id: id, collection: collection, info: changes, partnerId })
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar grupo de usuários.')
   if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Grupo de usuários não encontrado.')
 

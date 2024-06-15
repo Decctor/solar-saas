@@ -24,35 +24,16 @@ type FilterMenuProps = {
   updateFilters: (filters: TPersonalizedClientsFilter) => void
   selectedAuthors: string[] | null
   setAuthors: (authors: string[] | null) => void
-  selectedPartners: string[] | null
-  setPartners: (partners: string[] | null) => void
   authorsOptions?: TUserDTO[]
-  partnersOptions?: TPartnerSimplifiedDTO[]
   session: Session
   queryLoading: boolean
   resetSelectedPage: () => void
 }
-function FilterMenu({
-  updateFilters,
-  selectedAuthors,
-  setAuthors,
-  selectedPartners,
-  setPartners,
-  authorsOptions,
-  partnersOptions,
-  session,
-  queryLoading,
-  resetSelectedPage,
-}: FilterMenuProps) {
+function FilterMenu({ updateFilters, selectedAuthors, setAuthors, authorsOptions, session, queryLoading, resetSelectedPage }: FilterMenuProps) {
   const userPartnerScope = session.user.permissoes.parceiros.escopo
   const userClientsScope = session.user.permissoes.clientes.escopo
 
   const authorSelectableOptions = authorsOptions ? (userClientsScope ? authorsOptions.filter((a) => userClientsScope.includes(a._id)) : authorsOptions) : []
-  const partnersSelectableOptions = partnersOptions
-    ? userPartnerScope
-      ? partnersOptions.filter((a) => userPartnerScope.includes(a._id))
-      : partnersOptions
-    : []
 
   const [filtersHolder, setFiltersHolder] = useState<TPersonalizedClientsFilter>({
     name: '',
@@ -142,18 +123,6 @@ function FilterMenu({
               handleChange={(value) => setAuthors(value as string[])}
               selectedItemLabel="TODOS"
               onReset={() => setAuthors(null)}
-              labelClassName="text-xs font-medium tracking-tight text-black"
-              width="100%"
-            />
-          </div>
-          <div className="w-full md:w-[250px]">
-            <MultipleSelectInput
-              label="PARCEIROS"
-              options={partnersSelectableOptions?.map((promoter) => ({ id: promoter._id || '', label: promoter.nome, value: promoter._id })) || null}
-              selected={selectedPartners}
-              handleChange={(value) => setPartners(value as string[])}
-              selectedItemLabel="TODOS"
-              onReset={() => setPartners(null)}
               labelClassName="text-xs font-medium tracking-tight text-black"
               width="100%"
             />

@@ -20,7 +20,6 @@ type GeneralInformationBlockProps = {
   pricingMethods: TPricingMethodDTO[]
 }
 function GeneralInformationBlock({ infoHolder, setInfoHolder, pricingMethods }: GeneralInformationBlockProps) {
-  const { data: partners } = usePartnersSimplified()
   return (
     <div className="flex w-full flex-col gap-y-2">
       <h1 className="w-full bg-gray-700  p-1 text-center font-medium text-white">INFORMAÇÕES GERAIS</h1>
@@ -117,27 +116,6 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder, pricingMethods }: 
                 setInfoHolder((prev) => ({
                   ...prev,
                   estruturasCompativeis: [],
-                }))
-              }
-              width="100%"
-            />
-          </div>
-          <div className="w-full lg:w-1/2">
-            <SelectWithImages
-              label="VISIBILIDADE DE PARCEIRO"
-              value={infoHolder.idParceiro || null}
-              options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
-              selectedItemLabel="TODOS"
-              handleChange={(value) =>
-                setInfoHolder((prev) => ({
-                  ...prev,
-                  idParceiro: value,
-                }))
-              }
-              onReset={() =>
-                setInfoHolder((prev) => ({
-                  ...prev,
-                  idParceiro: null,
                 }))
               }
               width="100%"

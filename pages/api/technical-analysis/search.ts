@@ -43,24 +43,15 @@ const getTechnicalAnalysisByPersonalizedFilters: NextApiHandler<PostResponse> = 
   const userId = session.user.id
   const userScope = session.user.permissoes.analisesTecnicas.escopo
   const { after, before, page } = QueryParamsSchema.parse(req.query)
-  const { applicants, analysts, partners, filters } = PersonalizedTechnicalAnalysisQuerySchema.parse(req.body)
+  const { applicants, analysts, filters } = PersonalizedTechnicalAnalysisQuerySchema.parse(req.body)
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
   // to access a overall visualiation, which he/she isnt allowed
   if (!!userScope && !applicants) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
-  // If user has a scope defined and in the request there isnt a partners arr defined, then user is trying
-  // to access a overall visualiation, which he/she isnt allowed
-  if (!!partnerScope && !partners) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
-
   // If user has a scope defined and in the applicant arr request there is a single applicant that is not in hes/shes scope
   // then user is trying to access a visualization he/she isnt allowed
   if (!!userScope && applicants?.some((r) => !userScope.includes(r)))
-    throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
-
-  // If user has a partner scope defined and in the partner arr request there is a single partner that is not in hes/shes scope
-  // then user is trying to access a visualization he/she isnt allowed
-  if (!!partnerScope && partners?.some((r) => !partnerScope.includes(r)))
     throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
   // Validating page parameter
@@ -69,10 +60,10 @@ const getTechnicalAnalysisByPersonalizedFilters: NextApiHandler<PostResponse> = 
   // Defining the queries
   const insertionQuery: Filter<TTechnicalAnalysis> =
     after != 'null' && before != 'null'
-      ? { $and: [{ dataInsercao: { $gte: formatDateQuery(after, 'start') } }, { dataInsercao: { $lte: formatDateQuery(before, 'end') } }] }
+      ? { $and: [{ dataInsercao: { $gte: formatDateQuery(after, 'start') as string } }, { dataInsercao: { $lte: formatDateQuery(before, 'end') as string } }] }
       : {}
   const applicantQuery: Filter<TTechnicalAnalysis> = applicants ? { 'requerente.id': { $in: applicants } } : {}
-  const partnerQuery: Filter<TTechnicalAnalysis> = partners ? { idParceiro: { $in: [...partners] } } : {}
+  const partnerQuery: Filter<TTechnicalAnalysis> = { idParceiro: partnerId }
   const analystQuery: Filter<TTechnicalAnalysis> = analysts ? { 'analista.id': { $in: analysts } } : {}
   const nameQuery = filters.name.trim().length > 0 ? { $or: [{ nome: { $regex: filters.name, $options: 'i' } }, { nome: filters.name }] } : {}
   const filtersQuery: Filter<TTechnicalAnalysis> = {
@@ -87,7 +78,6 @@ const getTechnicalAnalysisByPersonalizedFilters: NextApiHandler<PostResponse> = 
   const query = { ...insertionQuery, ...applicantQuery, ...partnerQuery, ...analystQuery, ...filtersQuery }
   const skip = PAGE_SIZE * (Number(page) - 1)
   const limit = PAGE_SIZE
-  console.log(query)
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TTechnicalAnalysis> = db.collection('technical-analysis')
 

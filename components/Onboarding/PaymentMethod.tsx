@@ -74,91 +74,94 @@ function PaymentMethod({ partnerId, author, goToNextStage, goToPreviousStage }: 
       <h1 className="mb-4 w-full px-2 text-center text-lg tracking-tight text-gray-500">
         Se desejar, você pode pular essa etapa e criar seus métodos de pagamento posteriormente.
       </h1>
-      <h1 className="w-full bg-[#fead41] p-1 text-center font-bold text-white">MÉTODOS DE PAGAMENTO</h1>
-      <div className="flex w-full flex-col gap-2 px-2 lg:flex-row">
-        <div className="w-full lg:w-1/2">
-          <TextInput
-            label="NOME DO MÉTODO"
-            value={infoHolder.nome}
-            placeholder="Preencha aqui o nome para identificação do método de pagamento..."
-            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, nome: value }))}
-            width="100%"
+      <div className="flex w-full grow flex-col gap-y-2">
+        <h1 className="w-full bg-[#fead41] p-1 text-center font-bold text-white">MÉTODOS DE PAGAMENTO</h1>
+        <div className="flex w-full flex-col gap-2 px-2 lg:flex-row">
+          <div className="w-full lg:w-1/2">
+            <TextInput
+              label="NOME DO MÉTODO"
+              value={infoHolder.nome}
+              placeholder="Preencha aqui o nome para identificação do método de pagamento..."
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, nome: value }))}
+              width="100%"
+            />
+          </div>
+          <div className="w-full lg:w-1/2">
+            <TextInput
+              label="DESCRIÇÃO"
+              value={infoHolder.descricao}
+              placeholder="Preencha aqui a descrição que aparecerá na proposta..."
+              handleChange={(value) => setInfoHolder((prev) => ({ ...prev, descricao: value }))}
+              width="100%"
+            />
+          </div>
+        </div>
+        <h1 className="mt-2 w-full rounded-md bg-gray-700 p-1 text-center text-sm font-bold text-white">FRACIONAMENTO</h1>
+        {newFractionnementItemMenuIsOpen ? (
+          <NewFractionnement
+            addFractionnement={addFractionnement}
+            removeFractionnement={removeFractionnement}
+            missingPercentage={missingPercentage}
+            closeMenu={() => setNewFractionnementItemMenuIsOpen(false)}
           />
-        </div>
-        <div className="w-full lg:w-1/2">
-          <TextInput
-            label="DESCRIÇÃO"
-            value={infoHolder.descricao}
-            placeholder="Preencha aqui a descrição que aparecerá na proposta..."
-            handleChange={(value) => setInfoHolder((prev) => ({ ...prev, descricao: value }))}
-            width="100%"
-          />
-        </div>
-      </div>
-      <h1 className="mt-2 w-full rounded-md bg-gray-700 p-1 text-center text-sm font-bold text-white">FRACIONAMENTO</h1>
-      {newFractionnementItemMenuIsOpen ? (
-        <NewFractionnement
-          addFractionnement={addFractionnement}
-          removeFractionnement={removeFractionnement}
-          missingPercentage={missingPercentage}
-          closeMenu={() => setNewFractionnementItemMenuIsOpen(false)}
-        />
-      ) : (
-        <div className="flex w-full items-center justify-end">
-          <button
-            className="rounded bg-green-500 p-1 px-4 text-sm font-medium text-white duration-300 ease-in-out hover:bg-green-600"
-            onClick={() => setNewFractionnementItemMenuIsOpen(true)}
-          >
-            NOVO ITEM DE FRACIONAMENTO
-          </button>
-        </div>
-      )}
-      <h1 className="my-4 px-2 text-sm font-bold leading-none tracking-tight text-[#E25E3E]">LISTA DE FRACIONAMENTOS</h1>
-      {infoHolder.fracionamento.length > 0 ? (
-        <div className="flex w-full flex-wrap items-center justify-around gap-2 px-2">
-          {infoHolder.fracionamento.map((fractionnement, index) => (
-            <div key={index} className="flex w-full flex-col rounded-md border border-gray-500 p-3 shadow-sm lg:w-[500px]">
-              <div className="flex w-full items-center justify-between gap-2">
-                <h1 className="text-sm font-black leading-none tracking-tight">FRAÇÃO DE {fractionnement.porcentagem}%</h1>
-                <button
-                  onClick={() => removeFractionnement(index)}
-                  type="button"
-                  className="flex items-center justify-center rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
-                >
-                  <MdDelete style={{ color: 'red' }} />
-                </button>
-              </div>
+        ) : (
+          <div className="flex w-full items-center justify-end">
+            <button
+              className="rounded bg-green-500 p-1 px-4 text-sm font-medium text-white duration-300 ease-in-out hover:bg-green-600"
+              onClick={() => setNewFractionnementItemMenuIsOpen(true)}
+            >
+              NOVO ITEM DE FRACIONAMENTO
+            </button>
+          </div>
+        )}
+        <h1 className="my-4 px-2 text-sm font-bold leading-none tracking-tight text-[#E25E3E]">LISTA DE FRACIONAMENTOS</h1>
+        {infoHolder.fracionamento.length > 0 ? (
+          <div className="flex w-full flex-wrap items-center justify-around gap-2 px-2">
+            {infoHolder.fracionamento.map((fractionnement, index) => (
+              <div key={index} className="flex w-full flex-col rounded-md border border-gray-500 p-3 shadow-sm lg:w-[500px]">
+                <div className="flex w-full items-center justify-between gap-2">
+                  <h1 className="text-sm font-black leading-none tracking-tight">FRAÇÃO DE {fractionnement.porcentagem}%</h1>
+                  <button
+                    onClick={() => removeFractionnement(index)}
+                    type="button"
+                    className="flex items-center justify-center rounded-lg p-1 duration-300 ease-linear hover:scale-105 hover:bg-red-200"
+                  >
+                    <MdDelete style={{ color: 'red' }} />
+                  </button>
+                </div>
 
-              <div className="mt-2 flex w-full items-center justify-between">
-                <div className="flex items-center gap-2">
-                  <MdPayment color={'#76c893'} />
-                  <p className="text-xs font-medium leading-none tracking-tight text-gray-500">{fractionnement.metodo}</p>
-                </div>
-                <div className="flex items-center gap-2">
-                  <BsCircleHalf color="#ed174c" />
-                  <p className="text-xs font-medium leading-none tracking-tight text-gray-500">
-                    {fractionnement.maximoParcelas} {fractionnement.maximoParcelas > 1 ? 'PARCELAS' : 'PARCELA'}
-                  </p>
-                </div>
-                {fractionnement.taxaJuros ? (
+                <div className="mt-2 flex w-full items-center justify-between">
                   <div className="flex items-center gap-2">
-                    <FaPercentage />
-                    <p className="text-xs font-medium leading-none tracking-tight text-gray-500">{fractionnement.taxaJuros} DE JUROS</p>
+                    <MdPayment color={'#76c893'} />
+                    <p className="text-xs font-medium leading-none tracking-tight text-gray-500">{fractionnement.metodo}</p>
                   </div>
-                ) : null}
-                {fractionnement.taxaUnica ? (
                   <div className="flex items-center gap-2">
-                    <FaPercentage />
-                    <p className="text-xs font-medium leading-none tracking-tight text-gray-500">{fractionnement.taxaUnica} DE USO</p>
+                    <BsCircleHalf color="#ed174c" />
+                    <p className="text-xs font-medium leading-none tracking-tight text-gray-500">
+                      {fractionnement.maximoParcelas} {fractionnement.maximoParcelas > 1 ? 'PARCELAS' : 'PARCELA'}
+                    </p>
                   </div>
-                ) : null}
+                  {fractionnement.taxaJuros ? (
+                    <div className="flex items-center gap-2">
+                      <FaPercentage />
+                      <p className="text-xs font-medium leading-none tracking-tight text-gray-500">{fractionnement.taxaJuros} DE JUROS</p>
+                    </div>
+                  ) : null}
+                  {fractionnement.taxaUnica ? (
+                    <div className="flex items-center gap-2">
+                      <FaPercentage />
+                      <p className="text-xs font-medium leading-none tracking-tight text-gray-500">{fractionnement.taxaUnica} DE USO</p>
+                    </div>
+                  ) : null}
+                </div>
               </div>
-            </div>
-          ))}
-        </div>
-      ) : (
-        <p className="w-full text-center text-sm italic text-gray-500">Nenhum fracionamento adicionado.</p>
-      )}
+            ))}
+          </div>
+        ) : (
+          <p className="w-full text-center text-sm italic text-gray-500">Nenhum fracionamento adicionado.</p>
+        )}
+      </div>
+
       <div className="flex w-full items-center justify-end gap-2 px-2">
         <button
           className="rounded bg-gray-500 p-1 px-4 text-xs font-medium text-white duration-300 ease-in-out hover:bg-gray-600"

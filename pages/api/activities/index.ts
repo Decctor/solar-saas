@@ -22,7 +22,7 @@ const getActivities: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TActivity> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+  const partnerQuery: Filter<TActivity> = { idParceiro: partnerId }
 
   const { opportunityId, homologationId, technicalAnalysisId, responsibleId, openOnly, dueOnly } = req.query
 
@@ -88,7 +88,7 @@ const editActivity: NextApiHandler<PutResponse> = async (req, res) => {
 
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TActivity> = parterScope ? { idParceiro: { $in: [...parterScope] } } : {}
+  const partnerQuery: Filter<TActivity> = { idParceiro: partnerId }
 
   const { id } = req.query
 

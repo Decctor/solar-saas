@@ -40,7 +40,6 @@ export const conditionsAlias: TConditionsAlias[] = [
   { label: 'TIPO DE ESTRUTURA', value: 'tipoEstrutura', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
   { label: 'GRUPO DA INSTALAÇÃO', value: 'grupoInstalacao', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
   { label: 'TIPO DE CONEXÃO ELÉTRICA', value: 'faseamentoEletrico', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
-  { label: 'PARCEIRO', value: 'idParceiro', types: ['IGUAL_TEXTO', 'INCLUI_LISTA'] },
   { label: 'Nº DE MÓDULOS', value: 'numModulos', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
   { label: 'Nº DE INVERSORES', value: 'numInversores', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
   { label: 'POTÊNCIA PICO', value: 'potenciaPico', types: ['IGUAL_NÚMERICO', 'MAIOR_QUE_NÚMERICO', 'MENOR_QUE_NÚMERICO', 'INTERVALO_NÚMERICO'] },
@@ -66,11 +65,8 @@ export function formatCondition(value: string) {
 type FormatConditionValueParams = {
   conditionVariable: keyof TPricingConditionData
   conditionValue: string
-  additional: {
-    partners: TPartnerSimplifiedDTO[]
-  }
 }
-export function formatConditionValue({ conditionVariable, conditionValue, additional }: FormatConditionValueParams) {
+export function formatConditionValue({ conditionVariable, conditionValue }: FormatConditionValueParams) {
   if (conditionVariable == 'uf') {
     const ufLabel = Object.keys(stateCities)
       .map((k, index) => ({ id: index + 1, label: k, value: k }))
@@ -104,10 +100,6 @@ export function formatConditionValue({ conditionVariable, conditionValue, additi
     const electricalConnection = EletricalPhasesTypes.find((g) => g.value == conditionValue)?.label
     return electricalConnection || 'NÃO DEFINIDO'
   }
-  if (conditionVariable == 'idParceiro') {
-    const partnerLabel = additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id })).find((p) => p.value == conditionValue)?.label
-    return partnerLabel
-  }
   if (conditionVariable == 'numModulos') return conditionValue.toString()
   if (conditionVariable == 'numInversores') return conditionValue.toString()
   if (conditionVariable == 'potenciaPico') return conditionValue.toString()
@@ -118,9 +110,8 @@ export function formatConditionValue({ conditionVariable, conditionValue, additi
 
 type RenderConditionPhraseParams = {
   condition: TPricingMethodItemResultItem['condicao']
-  partners: TPartnerSimplifiedDTO[]
 }
-export function renderConditionPhrase({ condition, partners }: RenderConditionPhraseParams) {
+export function renderConditionPhrase({ condition }: RenderConditionPhraseParams) {
   const isConditionAplicable = condition.aplicavel
   const conditionType = condition.tipo
   const conditionAlias = formatCondition(condition.variavel || '')
@@ -131,9 +122,6 @@ export function renderConditionPhrase({ condition, partners }: RenderConditionPh
         {`SE ${formatCondition(condition.variavel || '')} FOR IGUAL A ${formatConditionValue({
           conditionVariable: condition.variavel as keyof TPricingConditionData,
           conditionValue: condition.igual || '',
-          additional: {
-            partners: partners || [],
-          },
         })}:`}
       </h1>
     )
@@ -166,11 +154,8 @@ export function renderConditionPhrase({ condition, partners }: RenderConditionPh
 
 type GetConditionOptions = {
   variable: keyof TPricingConditionData
-  additional: {
-    partners: TPartnerSimplifiedDTO[]
-  }
 }
-export function getConditionOptions({ variable, additional }: GetConditionOptions) {
+export function getConditionOptions({ variable }: GetConditionOptions) {
   if (variable == 'uf') return Object.keys(stateCities).map((k, index) => ({ id: index + 1, label: k, value: k }))
   if (variable == 'cidade')
     return Object.entries(stateCities)
@@ -182,7 +167,6 @@ export function getConditionOptions({ variable, additional }: GetConditionOption
   if (variable == 'tipoEstrutura') return StructureTypes
   if (variable == 'grupoInstalacao') return ElectricalInstallationGroups
   if (variable == 'faseamentoEletrico') return EletricalPhasesTypes
-  if (variable == 'idParceiro') return additional.partners.map((p) => ({ id: p._id, label: p.nome, value: p._id }))
   if (variable == 'ativacaoReferencia') return YesOrNoOptons
   return []
 }

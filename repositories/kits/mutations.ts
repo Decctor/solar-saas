@@ -8,7 +8,7 @@ type InsertKitParams = {
 }
 export async function insertKit({ collection, info, partnerId }: InsertKitParams) {
   try {
-    const insertResponse = await collection.insertOne({ ...info, dataInsercao: new Date().toISOString() })
+    const insertResponse = await collection.insertOne({ ...info, idParceiro: partnerId, dataInsercao: new Date().toISOString() })
     return insertResponse
   } catch (error) {
     throw error

@@ -23,8 +23,6 @@ type EditFunnelProps = {
 }
 function EditFunnel({ session, funnelId, closeModal }: EditFunnelProps) {
   const queryClient = useQueryClient()
-  const { data: partners } = usePartnersSimplified()
-
   const { data: funnel, isLoading, isError, isSuccess } = useFunnelById({ id: funnelId })
 
   const [infoHolder, setInfoHolder] = useState<TFunnelDTO>({
@@ -98,27 +96,6 @@ function EditFunnel({ session, funnelId, closeModal }: EditFunnelProps) {
                     placeholder="Preencha o descrição a ser dado ao funil..."
                     value={infoHolder.descricao}
                     handleChange={(value) => setInfoHolder((prev) => ({ ...prev, descricao: value }))}
-                    width="100%"
-                  />
-                </div>
-                <div className="w-full">
-                  <SelectWithImages
-                    label="VISIBILIDADE DE PARCEIRO"
-                    value={infoHolder.idParceiro || null}
-                    options={partners?.map((p) => ({ id: p._id, value: p._id, label: p.nome, url: p.logo_url || undefined })) || []}
-                    selectedItemLabel="TODOS"
-                    handleChange={(value) =>
-                      setInfoHolder((prev) => ({
-                        ...prev,
-                        idParceiro: value,
-                      }))
-                    }
-                    onReset={() =>
-                      setInfoHolder((prev) => ({
-                        ...prev,
-                        idParceiro: null,
-                      }))
-                    }
                     width="100%"
                   />
                 </div>

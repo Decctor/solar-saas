@@ -3,7 +3,7 @@ import z from 'zod'
 const GeneralFunnelSchema = z.object({
   nome: z.string(),
   descricao: z.string(),
-  idParceiro: z.string().optional().nullable(),
+  idParceiro: z.string(),
   etapas: z.array(
     z.object({
       id: z.union([z.string(), z.number()]),
@@ -23,13 +23,10 @@ export const InsertFunnelSchema = z.object({
     .string({ required_error: 'Nome do funil não informado.', invalid_type_error: 'Tipo não válido para o nome do funil.' })
     .min(3, 'É necessário um nome de ao menos 3 letras para o funil.'),
   descricao: z.string({ required_error: 'Descrição do funil não informada.', invalid_type_error: 'Tipo não válido para a descrição do funil.' }),
-  idParceiro: z
-    .string({
-      required_error: 'Identificação do parceiro não informado.',
-      invalid_type_error: 'Tipo não válido para a identificação do parceiro.',
-    })
-    .optional()
-    .nullable(),
+  idParceiro: z.string({
+    required_error: 'Identificação do parceiro não informado.',
+    invalid_type_error: 'Tipo não válido para a identificação do parceiro.',
+  }),
   etapas: z
     .array(
       z.object({
@@ -51,7 +48,7 @@ const FunnelEntitySchema = z.object({
   _id: z.instanceof(ObjectId),
   nome: z.string(),
   descricao: z.string(),
-  idParceiro: z.string().optional().nullable(),
+  idParceiro: z.string(),
   etapas: z.array(
     z.object({
       id: z.union([z.string(), z.number()]),

@@ -55,6 +55,7 @@ const getOpportunitiesExport: NextApiHandler<GetResponse> = async (req, res) => 
   // Validing user scope visibility
   if (!!userScope && !userScope.includes(responsible)) throw new createHttpError.BadRequest('Seu escopo de visibilidade não contempla esse usuário.')
 
+  const queryPartner: Filter<TOpportunity> = { idParceiro: partnerId }
   // Defining the responsible query parameters. If specified, filtering opportunities in the provided responsible scope
   const queryResponsible: Filter<TOpportunity> = responsible != 'null' ? { 'responsaveis.id': responsible } : {}
   // Defining, if provided, period query parameters for date of insertion
@@ -62,7 +63,7 @@ const getOpportunitiesExport: NextApiHandler<GetResponse> = async (req, res) => 
   // Defining, if provided, won/lost query parameters
   const queryStatus: Filter<TOpportunity> = status != 'undefined' ? statusOption : { 'perda.data': null, 'ganho.data': null }
 
-  const query = { ...queryResponsible, ...queryInsertion, ...queryStatus }
+  const query = { ...queryPartner, ...queryResponsible, ...queryInsertion, ...queryStatus }
 
   const addFields = {
     activeProposeObjectID: {

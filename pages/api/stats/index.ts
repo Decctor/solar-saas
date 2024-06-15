@@ -20,7 +20,6 @@ import { NextApiHandler } from 'next'
 
 export type TGeneralStatsQueryFiltersOptions = {
   responsibles: TUserDTOSimplified[]
-  partners: TPartnerSimplifiedDTO[]
   projectTypes: TProjectTypeDTOSimplified[]
 }
 
@@ -30,8 +29,9 @@ type GetResponse = {
 
 const getQueryFiltersOptions: NextApiHandler<GetResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerId = session.user.idParceiro
+
+  const partnerQuery = { idParceiro: partnerId }
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const usersCollection: Collection<TUser> = db.collection('users')
@@ -39,12 +39,10 @@ const getQueryFiltersOptions: NextApiHandler<GetResponse> = async (req, res) => 
   const projectTypesCollection: Collection<TProjectType> = db.collection('project-types')
 
   const responsibles = await getOpportunityCreators({ collection: usersCollection, query: partnerQuery as Filter<TUser> })
-  const partners = await getPartnersSimplified({ collection: partnersCollection, query: partnerQuery as Filter<TPartner> })
   const projectTypes = await getProjectTypesSimplified({ collection: projectTypesCollection, query: partnerQuery })
 
   const options = {
     responsibles: responsibles.map((u) => ({ ...u, _id: u._id.toString() })),
-    partners: partners.map((u) => ({ ...u, _id: u._id.toString() })),
     projectTypes: projectTypes.map((u) => ({ ...u, _id: u._id.toString() })),
   }
   return res.status(200).json({ data: options })
@@ -53,11 +51,12 @@ const getQueryFiltersOptions: NextApiHandler<GetResponse> = async (req, res) => 
 type PostResponse = { data: TGeneralStats }
 const getStats: NextApiHandler<PostResponse> = async (req, res) => {
   const session = await validateAuthorization(req, res, 'oportunidades', 'visualizar', true)
-  const partnerScope = session.user.permissoes.parceiros.escopo
+  const partnerId = session.user.idParceiro
+
   const opportunityVisibilityScope = session.user.permissoes.oportunidades.escopo
 
   const { after, before } = QueryDatesSchema.parse(req.query)
-  const { responsibles, partners, projectTypes } = GeneralStatsFiltersSchema.parse(req.body)
+  const { responsibles, projectTypes } = GeneralStatsFiltersSchema.parse(req.body)
   if (typeof after != 'string' || typeof before != 'string') throw new createHttpError.BadRequest('Parâmetros de período inválidos.')
 
   // If user has a scope defined and in the request there isnt a responsible arr defined, then user is trying
@@ -65,22 +64,13 @@ const getStats: NextApiHandler<PostResponse> = async (req, res) => {
   if (!!opportunityVisibilityScope && !responsibles)
     throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
-  // If user has a scope defined and in the request there isnt a partners arr defined, then user is trying
-  // to access a overall visualiation, which he/she isnt allowed
-  if (!!partnerScope && !partners) throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
-
   // If user has a scope defined and in the responsible arr request there is a single responsible that is not in hes/shes scope
   // then user is trying to access a visualization he/she isnt allowed
   if (!!opportunityVisibilityScope && responsibles?.some((r) => !opportunityVisibilityScope.includes(r)))
     throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
 
-  // If user has a scope defined and in the partner arr request there is a single partner that is not in hes/shes scope
-  // then user is trying to access a visualization he/she isnt allowed
-  if (!!partnerScope && partners?.some((r) => !partnerScope.includes(r)))
-    throw new createHttpError.Unauthorized('Seu usuário não possui solicitação para esse escopo de visualização.')
-
   const responsiblesQuery: Filter<TOpportunity> = responsibles ? { 'responsaveis.id': { $in: responsibles } } : {}
-  const partnerQuery: Filter<TOpportunity> = partners ? { idParceiro: { $in: [...partners] } } : {}
+  const partnerQuery: Filter<TOpportunity> = { idParceiro: partnerId }
   const projectTypeQuery: Filter<TOpportunity> = projectTypes ? { 'tipo.id': { $in: [...projectTypes] } } : {}
 
   const query: Filter<TOpportunity> = { ...responsiblesQuery, ...partnerQuery, ...projectTypeQuery }
