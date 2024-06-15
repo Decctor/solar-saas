@@ -50,21 +50,6 @@ function OpportunityFunnelReferencesBlock({ opportunity, setOpportunity }: Oppor
   const queryClient = useQueryClient()
   const { data: funnels } = useFunnels()
 
-  async function updateOpportunityFunnelReference({ id, newStageId }: { id: string; newStageId: string }) {
-    try {
-      const response = await updateFunnelReference({ funnelReferenceId: id, newStageId: newStageId })
-      return 'Referência de funil atualizada com sucesso !'
-    } catch (error) {
-      throw error
-    }
-  }
-  const { mutate: handleUpdateOpportunityFunnelReference, isPending } = useMutationWithFeedback({
-    mutationKey: ['update-funnel-reference'],
-    mutationFn: updateOpportunityFunnelReference,
-    queryClient: queryClient,
-    affectedQueryKey: ['opportunity-by-id', opportunity._id],
-  })
-
   const newFunnelReferencesOptions = getNewFunnelReferenceOptions({ funnelReferences: opportunity.referenciasFunil, funnels })
   const [newFunnelReferenceMenuIsOpen, setNewFunnelReferenceMenuIsOpen] = useState<boolean>(false)
   const [newFunnelReference, setNewFunnelReference] = useState<TFunnelReference>({
@@ -91,32 +76,7 @@ function OpportunityFunnelReferencesBlock({ opportunity, setOpportunity }: Oppor
     affectedQueryKey: ['opportunity-by-id', opportunity._id],
   })
 
-  async function removeFunnelReference({
-    funnelReferenceToRemoveIndex,
-    opportunityFunnelReferences,
-  }: {
-    funnelReferenceToRemoveIndex: number
-    opportunityFunnelReferences: TFunnelReferenceDTO[]
-  }) {
-    try {
-      if (opportunityFunnelReferences.length == 1) return toast.error('Não é possível remover a única referência de funil da oportundiade.')
-
-      const funnelReferenceId = opportunityFunnelReferences[funnelReferenceToRemoveIndex]._id
-      const response = await deleteFunnelReference({ id: funnelReferenceId })
-      const newReferences = [...opportunity.referenciasFunil]
-      newReferences.splice(funnelReferenceToRemoveIndex, 1)
-      setOpportunity((prev) => ({ ...prev, referenciasFunil: newReferences }))
-      return response
-    } catch (error) {
-      throw error
-    }
-  }
-  const { mutate: handleRemoveFunnelReference, isPending: removeFunnelReferencePending } = useMutationWithFeedback({
-    mutationKey: ['remove-funnel-reference'],
-    mutationFn: removeFunnelReference,
-    queryClient: queryClient,
-    affectedQueryKey: ['opportunity-by-id', opportunity._id],
-  })
+  console.log(funnels)
   return (
     <div className=" flex w-full flex-col gap-2">
       <h1 className="w-full rounded-md bg-[#fead41] p-1 text-center text-sm font-medium text-white">FUNIS</h1>

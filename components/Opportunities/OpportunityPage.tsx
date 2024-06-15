@@ -114,7 +114,6 @@ function OpportunityPage({ session, opportunityId }: OpportunityPageProps) {
                 opportunityWonProposalId={opportunity.ganho.idProposta}
               />
               <OpportunityFiles opportunityId={opportunity._id} clientId={opportunity.idCliente} session={session} />
-              <OpportunityPPSCalls opportunity={opportunity} session={session} />
               <OpportunityTechnicalAnalysis session={session} opportunity={opportunity} />
               <OpportunityHomologations opportunity={opportunity} session={session} />
               <OpportunityHistory

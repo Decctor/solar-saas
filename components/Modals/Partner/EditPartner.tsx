@@ -142,7 +142,7 @@ function EditPartner({ partnerId, closeModal }: EditPartnerProps) {
                       className="w-full text-center text-sm font-medium tracking-wide text-blue-500 hover:text-cyan-500"
                       href={`/configuracoes/on-boarding/${partnerId}`}
                     >
-                      ONBOARDING
+                      https://solar-saas.vercel.app/{partnerId}
                     </Link>
                   </div>
                 ) : null}
