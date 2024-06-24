@@ -3,6 +3,7 @@ import React from 'react'
 import RDStationIntegrationBlock from '../Integrations/RDStationIntegrationBlock'
 import { NextPageContext } from 'next'
 import { useUsers } from '@/utils/queries/users'
+import GoogleIntegrationBlock from '../Integrations/GoogleIntegrationBlock'
 
 type IntegrationsProps = {
   session: Session
@@ -18,6 +19,7 @@ function Integrations({ session }: IntegrationsProps) {
       </div>
       <div className="flex w-full flex-col gap-2 py-2">
         <RDStationIntegrationBlock session={session} />
+        <GoogleIntegrationBlock session={session} />
       </div>
     </div>
   )

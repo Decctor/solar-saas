@@ -26,7 +26,7 @@ export async function getPartnerUsers({ collection, query }: GetPartnerUsers) {
   }
 }
 type GetUserById = {
-  collection: Collection<TUserEntity>
+  collection: Collection<TUser>
   id: string
   query: Filter<TUser>
 }

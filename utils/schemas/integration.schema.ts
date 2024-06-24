@@ -19,3 +19,13 @@ export type TIntegrationRDStation = TIntegration & {
   refresh_token?: string
   dataValidacaoToken?: string
 }
+
+export type TIntegrationGoogleAuth = TIntegration & {
+  identificador: 'GOOGLE_AUTH'
+  userId: string
+  authorization_code: string
+  access_token?: string
+  refresh_token?: string
+  dataValidacaoToken?: string
+  dataExpiracaoToken?: string
+}
