@@ -12,6 +12,23 @@ const ResponsibleSchema = z.object({
   }),
   avatar_url: z.string().optional().nullable(),
 })
+
+const ActivityIntegrationSchema = z.object(
+  {
+    google: z.object(
+      {
+        ativo: z.boolean({
+          required_error: 'Ativação da integração com Google não informada.',
+          invalid_type_error: 'Tipo não válido para ativação da integração com Google.',
+        }),
+        idTask: z.string({ invalid_type_error: 'Tipo não válido para a referência de task Google.' }).optional().nullable(),
+      },
+      { required_error: 'Informações de integração Google não informadas.', invalid_type_error: 'Tipo não válido para as informações de integração Google.' }
+    ),
+  },
+  { required_error: 'Informações de integração não informadas.', invalid_type_error: 'Tipo não válido para as informações de integração.' }
+)
+
 const GeneralActivitySchema = z.object({
   idParceiro: z.string(),
   titulo: z.string(), // resume of the activity
@@ -23,6 +40,7 @@ const GeneralActivitySchema = z.object({
   }),
   idHomologacao: z.string().optional().nullable(),
   idAnaliseTecnica: z.string().optional().nullable(),
+  integracoes: ActivityIntegrationSchema,
   subatividades: z.array(
     z.object({
       titulo: z.string(),
@@ -57,6 +75,7 @@ export const InsertActivitySchema = z.object({
   }),
   idHomologacao: z.string({ invalid_type_error: 'Tipo não válido para o ID de referência homologação.' }).optional().nullable(),
   idAnaliseTecnica: z.string({ invalid_type_error: 'Tipo não válido para o ID de referência de análise técnica.' }).optional().nullable(),
+  integracoes: ActivityIntegrationSchema,
   subatividades: z.array(
     z.object({
       titulo: z.string({
@@ -127,6 +146,7 @@ const ActivityEntitySchema = z.object({
   }),
   idHomologacao: z.string().optional().nullable(),
   idAnaliseTecnica: z.string().optional().nullable(),
+  integracoes: ActivityIntegrationSchema,
   subatividades: z.array(
     z.object({
       titulo: z.string(),

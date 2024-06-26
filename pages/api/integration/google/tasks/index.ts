@@ -22,7 +22,7 @@ const getTasks: NextApiHandler<GetResponse> = async (req, res) => {
   console.log(authAccess.credentials)
   const tasks = google.tasks({ version: 'v1', auth: process.env.GOOGLE_API_KEY })
   const task: tasks_v1.Schema$Task = {
-    title: 'NOVA TAREFA',
+    title: 'NOVA TAREFA 2',
     notes: 'Criação de tarefa via API.',
     due: dayjs().add(1, 'day').toISOString(),
   }
@@ -31,7 +31,12 @@ const getTasks: NextApiHandler<GetResponse> = async (req, res) => {
     requestBody: task,
     auth: authAccess,
   })
-
+  // const tasksResponse = await tasks.tasks.patch({
+  //   task: 'aGVjZkdKLXFaNGhRbjVjbw',
+  //   tasklist: '@default',
+  //   requestBody: { notes: 'Alteração de tarefa via API 3.', status: 'needsAction' },
+  //   auth: authAccess,
+  // })
   return res.status(200).json(calendarResponse)
 }
 

@@ -14,7 +14,8 @@ import SelectWithImages from '../Inputs/SelectWithImages'
 import DateTimeInput from '../Inputs/DateTimeInput'
 import TextInput from '../Inputs/TextInput'
 import { createActivity } from '@/utils/mutations/activities'
-
+import Image from 'next/image'
+import GoogleLogo from '@/utils/images/google-logo.svg'
 const variants = {
   hidden: {
     opacity: 0.2,
@@ -56,6 +57,11 @@ function NewOpportunityActivityMenu({ session, opportunity, closeMenu }: NewOppo
     idHomologacao: undefined,
     idAnaliseTecnica: undefined,
     subatividades: [],
+    integracoes: {
+      google: {
+        ativo: session.user.integracoes.google,
+      },
+    },
     dataVencimento: null,
     dataConclusao: null,
     dataInsercao: new Date().toISOString(),
@@ -111,6 +117,29 @@ function NewOpportunityActivityMenu({ session, opportunity, closeMenu }: NewOppo
             />
           </div>
         </div>
+        {session.user.integracoes.google ? (
+          <div className="flex w-full items-center justify-center">
+            <button
+              onClick={() =>
+                setNewActivityHolder((prev) => ({
+                  ...prev,
+                  integracoes: { ...prev.integracoes, google: { ...prev.integracoes.google, ativo: !prev.integracoes.google.ativo } },
+                }))
+              }
+              className={`flex items-center gap-1 rounded border-[1.5px] border-[#4CAF50] bg-green-50 px-2 py-1 text-[#4CAF50] duration-300 ease-in-out ${
+                newActivityHolder.integracoes.google.ativo ? 'opacity-100' : 'opacity-50'
+              }`}
+            >
+              <div
+                style={{ width: 15, height: 15, opacity: newActivityHolder.integracoes.google.ativo ? '100%' : '50%' }}
+                className="relative flex items-center justify-center"
+              >
+                <Image src={GoogleLogo} alt="Logo da Google" fill={true} style={{ borderRadius: '100%' }} />
+              </div>
+              <p className="text-xs font-bold">INTEGRAÇÃO GOOGLE</p>
+            </button>
+          </div>
+        ) : null}
         <div className="flex w-full flex-col rounded-md border border-gray-200 p-2 shadow-sm">
           <h1 className="text-sm font-medium leading-none tracking-tight text-gray-500">DESCRIÇÃO DA ATIVIDADE</h1>
           <input

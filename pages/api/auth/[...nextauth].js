@@ -24,6 +24,7 @@ export const authOptions = {
         const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
         const usersCollection = db.collection('users')
         const partnersCollection = db.collection('partners')
+        const integrationsCollection = db.collection('integrations')
         const userInDb = await usersCollection.findOne({ email: email })
         console.log(userInDb)
         if (!userInDb) throw new createHttpError.BadRequest('Usuário não encontrado.')
@@ -32,6 +33,11 @@ export const authOptions = {
         if (!compareResult) throw new createHttpError.BadRequest('Senha incorreta.')
 
         const userPartner = await partnersCollection.findOne({ _id: new ObjectId(userInDb.idParceiro) })
+        const userGoogleIntegration = await integrationsCollection.findOne({
+          identificador: 'GOOGLE_AUTH',
+          idUsuario: userInDb._id.toString(),
+          idParceiro: userInDb.idParceiro,
+        })
         const user = {
           id: userInDb._id,
           administrador: userInDb.administrador,
@@ -45,6 +51,9 @@ export const authOptions = {
           parceiro: {
             nome: userPartner.nome,
             logo_url: userPartner.logo_url,
+          },
+          integracoes: {
+            google: !!userGoogleIntegration,
           },
         }
         // If no error and we have user data, return it
@@ -81,6 +90,7 @@ export const authOptions = {
         session.user.idGrupo = token.idGrupo
         session.user.permissoes = token.permissoes
         session.user.parceiro = token.parceiro
+        session.user.integracoes = token.integracoes
       }
       return session
     },
@@ -96,6 +106,7 @@ export const authOptions = {
         token.idGrupo = user.idGrupo
         token.permissoes = user.permissoes
         token.parceiro = user.parceiro
+        token.integracoes = user.integracoes
       }
 
       return token

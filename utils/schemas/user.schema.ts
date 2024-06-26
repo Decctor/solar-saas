@@ -492,5 +492,8 @@ export type TSessionUser = Pick<TUser, 'administrador' | 'nome' | 'telefone' | '
     nome: TPartner['nome']
     logo_url: TPartner['logo_url']
   }
+  integracoes: {
+    google: boolean
+  }
 }
 export const simplifiedProjection = { nome: true, email: true, telefone: true, avatar_url: true }

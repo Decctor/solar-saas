@@ -24,7 +24,7 @@ export async function createGoogleAuthIntegration({ userId, tokens, authorizatio
         nome: user.nome,
         avatar_url: user.avatar_url,
       },
-      userId: userId,
+      idUsuario: userId,
       authorization_code: authorizationCode,
       access_token: tokens.access_token || undefined,
       refresh_token: tokens.refresh_token || undefined,
@@ -49,7 +49,7 @@ export async function getGoogleAuthAccess({ userId, collection, query }: GetGoog
   try {
     const authClient = getGoogleAuthClient()
     const currentDate = new Date()
-    const integration = await collection.findOne({ identificador: 'GOOGLE_AUTH', userId: userId, ...query })
+    const integration = await collection.findOne({ identificador: 'GOOGLE_AUTH', idUsuario: userId, ...query })
     const access_token = integration?.access_token
     const refresh_token = integration?.refresh_token
     const expirationDate = integration?.dataExpiracaoToken ? new Date(integration?.dataExpiracaoToken) : null
@@ -62,7 +62,7 @@ export async function getGoogleAuthAccess({ userId, collection, query }: GetGoog
       const tokenResponse = await authClient.refreshAccessToken()
       const newTokens = tokenResponse.credentials
       await collection.updateOne(
-        { identificador: 'GOOGLE_AUTH', userId: userId, ...query },
+        { identificador: 'GOOGLE_AUTH', idUsuario: userId, ...query },
         {
           $set: {
             access_token: newTokens.access_token || undefined,

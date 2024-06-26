@@ -36,6 +36,11 @@ const migrate: NextApiHandler<any> = async (req, res) => {
         },
         idHomologacao: undefined,
         idAnaliseTecnica: undefined,
+        integracoes: {
+          google: {
+            ativo: false,
+          },
+        },
         subatividades: [],
         dataVencimento: info.dataVencimento,
         dataConclusao: info.dataConclusao,

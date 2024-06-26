@@ -9,6 +9,7 @@ import {
 } from '@/repositories/acitivities/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAuthenticationWithSession } from '@/utils/api'
+import { concludeGoogleTask, createGoogleTask } from '@/utils/integrations/google/tasks'
 import { InsertActivitySchema, TActivity } from '@/utils/schemas/activities.schema'
 import { TNotification } from '@/utils/schemas/notification.schema'
 import createHttpError from 'http-errors'
@@ -67,7 +68,9 @@ type PostResponse = {
 
 const createActivity: NextApiHandler<PostResponse> = async (req, res) => {
   const session = await validateAuthenticationWithSession(req, res)
+  const partnerId = session.user.idParceiro
   const activity = InsertActivitySchema.parse(req.body)
+  const partnerQuery: Filter<TActivity> = { idParceiro: partnerId }
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const collection: Collection<TActivity> = db.collection('activities')
@@ -75,6 +78,17 @@ const createActivity: NextApiHandler<PostResponse> = async (req, res) => {
   const insertResponse = await insertActivity({ collection: collection, info: activity })
   if (!insertResponse.acknowledged) throw new createHttpError.InternalServerError('Ooops, houve um erro desconhecido ao criar atividade.')
   const insertedId = insertResponse.insertedId.toString()
+
+  if (activity.integracoes.google) {
+    const task = {
+      title: activity.titulo,
+      notes: activity.descricao,
+      due: activity.dataVencimento || undefined,
+    }
+    const insertedTaskId = await createGoogleTask({ session, database: db, task })
+    const changes = { 'integracoes.google.idTask': insertedTaskId } as Partial<TActivity>
+    await updateActivity({ activityId: insertedId, changes: changes, collection: collection, query: partnerQuery })
+  }
   return res.status(201).json({ data: { insertedId }, message: 'Atividade criada com sucesso !' })
 }
 
@@ -104,7 +118,7 @@ const editActivity: NextApiHandler<PutResponse> = async (req, res) => {
   if (!updateResponse.acknowledged) throw new createHttpError.InternalServerError('Oops, houve um erro desconhecido ao atualizar atividade.')
   if (updateResponse.matchedCount == 0) throw new createHttpError.NotFound('Atividade não encontrada.')
 
-  // Validating need to generate an notification in activity conclusion
+  // Validating automations for activity conclusion
   if (!!changes.dataConclusao) {
     const activity = await getActivityById({ collection: collection, id: id, query: {} })
     if (!activity) throw new createHttpError.NotFound('Atividade não encontrada.')
@@ -126,6 +140,9 @@ const editActivity: NextApiHandler<PutResponse> = async (req, res) => {
         dataInsercao: new Date().toISOString(),
       }
       await notificationsCollection.insertOne(newNotification)
+    }
+    if (!!activity.integracoes.google.idTask) {
+      await concludeGoogleTask({ session, database: db, taskId: activity.integracoes.google.idTask, conclusionDate: changes.dataConclusao })
     }
   }
   return res.status(201).json({ data: 'Atividade atualizada com sucesso !', message: 'Atividade atualizada com sucesso !' })
