@@ -23,7 +23,7 @@ type SelectInputProps<T> = {
 function MultipleSelectInput<T>({
   width,
   label,
-  labelClassName = 'font-sans font-bold  text-[#353432] text-start',
+  labelClassName = 'text-xs font-bold text-[#353432] text-start',
   showLabel = true,
   selected,
   options,
@@ -109,7 +109,11 @@ function MultipleSelectInput<T>({
         </label>
       ) : null}
 
-      <div className="flex h-[47px] w-full items-center justify-between rounded-md border border-gray-200 bg-[#fff] p-3 text-sm shadow-sm">
+      <div
+        className={`flex h-full min-h-[46.6px] w-full items-center justify-between rounded-md border duration-500 ease-in-out ${
+          selectMenuIsOpen ? 'border-gray-500' : 'border-gray-200'
+        } bg-[#fff] p-3 text-sm shadow-sm`}
+      >
         {selectMenuIsOpen ? (
           <input
             type="text"
@@ -149,9 +153,7 @@ function MultipleSelectInput<T>({
               <div
                 onClick={() => handleSelect(item.id, item.value)}
                 key={item.id ? item.id : index}
-                className={`flex w-full cursor-pointer items-center rounded p-1 px-2 hover:bg-gray-100 ${
-                  selectedIds?.includes(item.id) ? 'bg-gray-100' : ''
-                }`}
+                className={`flex w-full cursor-pointer items-center rounded p-1 px-2 hover:bg-gray-100 ${selectedIds?.includes(item.id) ? 'bg-gray-100' : ''}`}
               >
                 <p className="grow font-medium text-[#353432]">{item.label}</p>
                 {selectedIds?.includes(item.id) ? <HiCheck style={{ color: '#fead61', fontSize: '20px' }} /> : null}

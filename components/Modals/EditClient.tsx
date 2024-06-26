@@ -284,9 +284,7 @@ function EditClient({ user, client, representatives, closeModal, updateInfo }: E
                           <div className="w-[30%] py-1 text-center">{projeto.nome}</div>
                           <div className="w-[25%] py-1 text-center">{projeto.responsavel.nome}</div>
                           <div className="w-[25%] py-1 text-center">{projeto.representante.nome}</div>
-                          <div className="w-[20%] py-1 text-center">
-                            {projeto.dataInsercao ? new Date(projeto.dataInsercao).toLocaleDateString() : '-'}
-                          </div>
+                          <div className="w-[20%] py-1 text-center">{projeto.dataInsercao ? new Date(projeto.dataInsercao).toLocaleDateString() : '-'}</div>
                         </div>
                       ))}
                     </div>
@@ -306,7 +304,7 @@ function EditClient({ user, client, representatives, closeModal, updateInfo }: E
             </div>
             <div className="grid grid-cols-1 px-2">
               <div className="flex w-full flex-col gap-1">
-                <label htmlFor="representante" className="font-sans font-bold  text-[#353432]">
+                <label htmlFor="representante" className="text-xs font-bold text-[#353432]">
                   REPRESENTANTE
                 </label>
                 <DropdownSelect

@@ -82,7 +82,7 @@ function GeneralInformationBlock({ opportunity, setOpportunity, projectTypes, se
       </div>
 
       <div className="flex w-full flex-col gap-1">
-        <p className="font-Raleway font-bold text-gray-800">DESCRIÇÃO</p>
+        <p className="text-xs font-bold text-[#353432]">DESCRIÇÃO</p>
         <textarea
           value={opportunity.descricao}
           onChange={(e) =>

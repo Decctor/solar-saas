@@ -13,7 +13,7 @@ type TextInputProps = {
 function TextInput({
   width,
   label,
-  labelClassName = 'font-sans font-bold  text-[#353432]',
+  labelClassName = 'text-xs font-bold text-[#353432]',
   showLabel = true,
   value,
   placeholder,
@@ -41,7 +41,7 @@ function TextInput({
         readOnly={!editable}
         type="text"
         placeholder={placeholder}
-        className="w-full rounded-md border border-gray-200 p-3 text-sm shadow-sm outline-none placeholder:italic"
+        className="w-full rounded-md border border-gray-200 p-3 text-sm shadow-sm outline-none duration-500 ease-in-out placeholder:italic focus:border-gray-500"
       />
     </div>
   )

@@ -9,7 +9,7 @@ type TextareaInputProps = {
 }
 function TextareaInput({ label, value, placeholder, editable = true, handleChange }: TextareaInputProps) {
   return (
-    <div className="flex w-full flex-col rounded-md border border-gray-300 shadow-sm">
+    <div className="flex w-full flex-col rounded-md border border-gray-300 shadow-sm duration-500 ease-in-out group-focus-within:border-gray-500">
       <h1 className="font w-full rounded-tl-md rounded-tr-md bg-gray-600 p-1 text-center text-xs font-bold text-white">{label}</h1>
       <textarea
         placeholder={placeholder}

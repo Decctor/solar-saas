@@ -31,7 +31,7 @@ function GeneralInformationBlock({ infoHolder, setInfoHolder }: GeneralInformati
         </div>
       </div>
       <div className={`flex w-full flex-col gap-1`}>
-        <label htmlFor={'description'} className={'font-sans font-bold  text-[#353432]'}>
+        <label htmlFor={'description'} className={'text-xs font-bold text-[#353432]'}>
           DESCRIÇÃO DE APRESENTAÇÃO
         </label>
 

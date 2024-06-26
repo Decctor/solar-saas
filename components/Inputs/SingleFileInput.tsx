@@ -83,7 +83,7 @@ function SingleFileInput({
   return (
     <div className="flex w-full gap-2">
       <div className={`flex w-full grow flex-col gap-1 lg:w-[${width ? width : '350px'}]`}>
-        <label htmlFor={inputIdentifier} className="font-sans font-bold  text-[#353432]">
+        <label htmlFor={inputIdentifier} className="text-xs font-bold text-[#353432]">
           {label}
         </label>
         <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">

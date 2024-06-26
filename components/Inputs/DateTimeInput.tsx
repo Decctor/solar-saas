@@ -11,7 +11,7 @@ type DateTimeProps = {
 function DateTimeInput({
   width,
   label,
-  labelClassName = 'font-sans font-bold  text-[#353432]',
+  labelClassName = 'text-xs font-bold text-[#353432]',
   showLabel = true,
   value,
   editable = true,

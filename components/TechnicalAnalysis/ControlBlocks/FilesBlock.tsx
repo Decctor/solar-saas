@@ -19,7 +19,7 @@ function FilesBlock({ auxiliarFilesLink, analysisId, session }: FilesBlockProps)
         <h1 className="font-bold text-white">ARQUIVOS</h1>
       </div>
       <div className="flex w-full flex-col items-center">
-        <h1 className="font-sans font-bold  text-[#353432]">LINK PARA ARQUIVOS AUXILIARES</h1>
+        <h1 className="text-xs font-bold text-[#353432]">LINK PARA ARQUIVOS AUXILIARES</h1>
         {auxiliarFilesLink ? (
           <Link href={auxiliarFilesLink}>
             <p className="font-raleway w-fit cursor-pointer self-center text-center text-sm font-medium text-blue-300 duration-300 ease-in-out hover:text-cyan-300">

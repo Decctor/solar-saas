@@ -56,7 +56,7 @@ function NewOpportunityNoteMenu({ session, opportunity, closeMenu }: NewOpportun
     <AnimatePresence>
       <motion.div variants={variants} initial="hidden" animate="visible" exit="exit" className="flex w-full flex-col gap-2 p-2">
         <div className="flex w-full flex-col gap-1">
-          <label htmlFor={'opportunity-note'} className={'font-sans font-bold  text-[#353432]'}>
+          <label htmlFor={'opportunity-note'} className={'text-xs font-bold text-[#353432]'}>
             ANOTAÇÃO
           </label>
           <textarea

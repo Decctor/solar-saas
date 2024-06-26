@@ -24,7 +24,7 @@ type SelectInputProps<T> = {
 function SelectInput<T>({
   width,
   label,
-  labelClassName = 'font-sans font-bold  text-[#353432] text-start',
+  labelClassName = 'text-xs font-bold text-[#353432] text-start',
   showLabel = true,
   value,
   editable = true,
@@ -98,7 +98,11 @@ function SelectInput<T>({
           {label}
         </label>
       ) : null}
-      <div className="flex h-full min-h-[46.6px] w-full items-center justify-between rounded-md border border-gray-200 bg-[#fff] p-3 text-sm shadow-sm">
+      <div
+        className={`flex h-full min-h-[46.6px] w-full items-center justify-between rounded-md border duration-500 ease-in-out ${
+          selectMenuIsOpen ? 'border-gray-500' : 'border-gray-200'
+        } bg-[#fff] p-3 text-sm shadow-sm`}
+      >
         {selectMenuIsOpen ? (
           <input
             type="text"
@@ -135,7 +139,7 @@ function SelectInput<T>({
         )}
       </div>
       {selectMenuIsOpen ? (
-        <div className="absolute top-[75px] z-[100] flex h-[250px] max-h-[250px] w-full flex-col self-center overflow-y-auto overscroll-y-auto rounded-md border border-gray-200 bg-[#fff] p-2 py-1 shadow-sm scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
+        <div className="absolute top-[75px] z-[100] flex h-[250px] max-h-[250px] w-full flex-col self-center overflow-y-auto overscroll-y-auto rounded-md border border-gray-300 bg-[#fff] p-2 py-1 shadow-sm scrollbar-thin scrollbar-track-gray-100 scrollbar-thumb-gray-300">
           <div
             onClick={() => resetState()}
             className={`flex w-full cursor-pointer items-center rounded p-1 px-2 hover:bg-gray-100 ${!selectedId ? 'bg-gray-100' : ''}`}

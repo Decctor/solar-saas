@@ -25,7 +25,7 @@ type SelectInputVirtualizedProps<T> = {
 function SelectInputVirtualized<T>({
   width,
   label,
-  labelClassName = 'font-sans font-bold  text-[#353432] text-start',
+  labelClassName = 'text-xs font-bold text-[#353432] text-start',
   showLabel = true,
   value,
   editable = true,
@@ -120,7 +120,11 @@ function SelectInputVirtualized<T>({
           {label}
         </label>
       ) : null}
-      <div className="flex h-full min-h-[46.6px] w-full items-center justify-between rounded-md border border-gray-200 bg-[#fff] p-3 text-sm shadow-sm">
+      <div
+        className={`flex h-full min-h-[46.6px] w-full items-center justify-between rounded-md border duration-500 ease-in-out ${
+          selectMenuIsOpen ? 'border-gray-500' : 'border-gray-200'
+        } bg-[#fff] p-3 text-sm shadow-sm`}
+      >
         {selectMenuIsOpen ? (
           <input
             type="text"

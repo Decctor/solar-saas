@@ -106,7 +106,7 @@ function OpportunityResponsiblesBlock({ infoHolder, setInfoHolder, handleUpdateO
             <div className="flex w-full items-center gap-2">
               <div className="flex items-center gap-2">
                 <Avatar url={resp.avatar_url || undefined} height={20} width={20} fallback={formatNameAsInitials(resp.nome)} />
-                <h1 className="font-sans font-bold  text-[#353432]">{resp.nome}</h1>
+                <h1 className="text-xs font-bold text-[#353432]">{resp.nome}</h1>
               </div>
               <div className="flex grow items-center justify-end gap-2">
                 <button

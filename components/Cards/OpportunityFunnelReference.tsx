@@ -135,7 +135,7 @@ function OpportunityFunnelReference({ reference, referenceIndex, funnels, opport
           <div className="flex h-[25px] w-[25px] items-center justify-center rounded-full border border-black p-1">
             <BsFunnelFill />
           </div>
-          <h1 className="font-sans font-bold  text-[#353432]">{funnelLabel || 'CARREGANDO...'}</h1>
+          <h1 className="text-xs font-bold text-[#353432]">{funnelLabel || 'CARREGANDO...'}</h1>
         </div>
         <div className="flex grow items-center justify-end gap-2">
           <button

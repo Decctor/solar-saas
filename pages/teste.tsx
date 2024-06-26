@@ -7,17 +7,28 @@ import React, { useEffect, useState } from 'react'
 
 function Testing() {
   const { data: session, status } = useSession()
-  const [infoHolder, setInfoHolder] = useState<TOpportunityDTOWithClientAndPartnerAndFunnelReferences | null>(null)
-  const { data: opportunity } = useOpportunityById({ opportunityId: '664b7c2b1c66e9f6f8eed711' })
+  const [holder, setHolder] = useState('')
 
-  useEffect(() => {
-    if (opportunity) setInfoHolder(opportunity)
-  }, [opportunity])
   if (status != 'authenticated') return <LoadingPage />
   return (
     <div className="flex h-full flex-col md:flex-row">
       <Sidebar session={session} />
-      <div className="flex w-full max-w-full grow flex-col overflow-x-hidden bg-[#f8f9fa] p-6"></div>
+      <div className="flex w-full grow flex-col items-center justify-center">
+        <div className={`flex w-full flex-col gap-1 font-Inter lg:w-[350px]`}>
+          <label htmlFor={'input-x'} className={'text-xs font-bold text-[#353432]'}>
+            NOME DO USUÁRIO
+          </label>
+
+          <input
+            value={holder}
+            onChange={(e) => setHolder(e.target.value)}
+            id={'input-x'}
+            type="text"
+            placeholder={'Preencha o nome do usuário'}
+            className="w-full rounded-md border border-gray-200 p-3 text-sm shadow-sm outline-none duration-500 ease-in-out placeholder:italic focus:border-gray-500"
+          />
+        </div>
+      </div>
     </div>
   )
 }

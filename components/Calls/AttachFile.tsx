@@ -25,7 +25,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
       {isCPF ? (
         <>
           <div className="flex w-full flex-col">
-            <label htmlFor={'comprovanteEndereco'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'comprovanteEndereco'} className="text-xs font-bold text-[#353432]">
               COMPROVANTE DE ENDEREÇO
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
@@ -49,7 +49,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
             </div>
           </div>
           <div className="flex w-full flex-col">
-            <label htmlFor={'comprovanteRenda'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'comprovanteRenda'} className="text-xs font-bold text-[#353432]">
               COMPROVANTE DE RENDA
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
@@ -73,7 +73,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
             </div>
           </div>
           <div className="flex w-full flex-col">
-            <label htmlFor={'documentoPessoal'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'documentoPessoal'} className="text-xs font-bold text-[#353432]">
               DOCUMENTO PESSOAL (COM CPF/CNPJ)
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
@@ -101,7 +101,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
       {isCNPJ ? (
         <>
           <div className="flex w-full flex-col">
-            <label htmlFor={'cartaoCNPJ'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'cartaoCNPJ'} className="text-xs font-bold text-[#353432]">
               CARTÃO CNPJ
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
@@ -125,7 +125,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
             </div>
           </div>
           <div className="flex w-full flex-col">
-            <label htmlFor={'contratoSocial'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'contratoSocial'} className="text-xs font-bold text-[#353432]">
               CONTRATO SOCIAL
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
@@ -149,7 +149,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
             </div>
           </div>
           <div className="flex w-full flex-col">
-            <label htmlFor={'comprovanteEndereco'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'comprovanteEndereco'} className="text-xs font-bold text-[#353432]">
               COMPROVANTE DE ENDEREÇO DA INSTALAÇÃO
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
@@ -173,7 +173,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
             </div>
           </div>
           <div className="flex w-full flex-col">
-            <label htmlFor={'comprovanteRenda'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'comprovanteRenda'} className="text-xs font-bold text-[#353432]">
               COMPROVANTE DE RENDA (REPRESENTANTE LEGAL)
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
@@ -197,7 +197,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
             </div>
           </div>
           <div className="flex w-full flex-col">
-            <label htmlFor={'declaracaoFaturamento'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'declaracaoFaturamento'} className="text-xs font-bold text-[#353432]">
               DECLARAÇÃO DE FATURAMENTO (12 MESES)
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
@@ -221,7 +221,7 @@ function AttachFile({ files, setFiles, clientIdentifier }: AttachFileProps) {
             </div>
           </div>
           <div className="flex w-full flex-col">
-            <label htmlFor={'documentoPessoal'} className="font-sans font-bold  text-[#353432]">
+            <label htmlFor={'documentoPessoal'} className="text-xs font-bold text-[#353432]">
               DOCUMENTO PESSOAL (REPRESENTANTE LEGAL)
             </label>
             <div className="relative flex h-[46px] w-full items-center justify-center overflow-x-hidden rounded-lg border-2 border-dotted border-blue-700 bg-gray-100 p-2">
