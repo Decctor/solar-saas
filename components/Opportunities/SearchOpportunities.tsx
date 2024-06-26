@@ -23,6 +23,7 @@ function SearchOpportunities() {
   const [searchText, setSearchText] = useState<string>('')
   const debouncedFilter = useDebounce(searchText, 1000)
   const { data: opportunities, isLoading, isError, isSuccess, isFetching, error } = useOpportunitiesBySearch({ param: debouncedFilter })
+
   return (
     <div className="relative flex items-center justify-center">
       <button
@@ -34,7 +35,7 @@ function SearchOpportunities() {
         <AiOutlineSearch />
       </button>
       {searchMenuIsOpen ? (
-        <div className="absolute -top-[5px] right-[30] z-[2000] flex h-[150px] w-[270px] flex-col self-center rounded-md border border-gray-200 bg-[#fff] p-2 shadow-sm lg:right-[110%] lg:w-[350px]">
+        <div className="absolute right-[30] top-[60px] z-[2000] flex h-[150px] w-[270px] flex-col self-center rounded-md border border-gray-200 bg-[#fff] p-2 shadow-sm lg:-top-[5px] lg:right-[110%] lg:w-[350px]">
           <input
             type="text"
             autoFocus={true}
@@ -67,9 +68,7 @@ function SearchOpportunities() {
                   error.response?.status != undefined && error.response?.status < 500 ? (
                     <p className="text-center text-sm italic text-gray-500">{error.response?.data.error.message}</p>
                   ) : (
-                    <p className="text-center text-sm italic text-gray-500">
-                      Houve um erro de servidor na busca de projetos. Por favor, tente novamente.
-                    </p>
+                    <p className="text-center text-sm italic text-gray-500">Houve um erro de servidor na busca de projetos. Por favor, tente novamente.</p>
                   )
                 ) : null}
               </div>

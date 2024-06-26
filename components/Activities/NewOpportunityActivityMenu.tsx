@@ -99,7 +99,7 @@ function NewOpportunityActivityMenu({ session, opportunity, closeMenu }: NewOppo
     <AnimatePresence>
       <motion.div variants={variants} initial="hidden" animate="visible" exit="exit" className="flex w-full flex-col gap-2 p-2">
         <div className="flex w-full flex-col items-center gap-2 lg:flex-row">
-          <div className="w-1/2 lg:w-full">
+          <div className="w-full lg:w-1/2">
             <TextInput
               label="TÍTULO DA ATIVIDADE"
               placeholder="Preencha aqui o titulo a ser dado à atividade..."
@@ -108,7 +108,7 @@ function NewOpportunityActivityMenu({ session, opportunity, closeMenu }: NewOppo
               width="100%"
             />
           </div>
-          <div className="w-1/2 lg:w-full">
+          <div className="w-full lg:w-1/2">
             <DateTimeInput
               label="DATA DE VENCIMENTO"
               value={formatDateTime(newActivityHolder.dataVencimento)}
