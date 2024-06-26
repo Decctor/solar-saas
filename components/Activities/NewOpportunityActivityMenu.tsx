@@ -52,7 +52,7 @@ function NewOpportunityActivityMenu({ session, opportunity, closeMenu }: NewOppo
     idParceiro: session.user.idParceiro || '',
     titulo: '', // resume of the activity
     descricao: '', // description of what to be done
-    responsaveis: [],
+    responsaveis: [{ id: session.user.id, nome: session.user.nome, avatar_url: session.user.avatar_url }],
     oportunidade: opportunity,
     idHomologacao: undefined,
     idAnaliseTecnica: undefined,
