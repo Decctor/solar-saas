@@ -6,7 +6,8 @@ import { formatDateAsLocale, formatNameAsInitials } from '@/lib/methods/formatti
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { useQueryClient } from '@tanstack/react-query'
 import { editActivity } from '@/utils/mutations/activities'
-
+import Image from 'next/image'
+import GoogleLogo from '@/utils/images/google-logo.svg'
 type OpportunityActivityProps = {
   opportunityId: string
   activity: TActivityDTO
@@ -58,6 +59,16 @@ function OpportunityActivity({ opportunityId, activity }: OpportunityActivityPro
           ) : null}
         </div>
       </div>
+      {!!activity.integracoes.google.idTask ? (
+        <div className="my-1 flex w-full items-center justify-start gap-2">
+          <div className="flex items-center justify-center gap-1 rounded-full border-[1.5px] border-[#4CAF50] bg-green-50 px-2 py-1 text-[#4CAF50]">
+            <div style={{ width: 12, height: 12 }} className="relative flex items-center justify-center">
+              <Image src={GoogleLogo} alt="Logo da Google" fill={true} />
+            </div>
+            <p className="text-[0.5rem] font-bold">INTEGRAÇÃO GOOGLE</p>
+          </div>
+        </div>
+      ) : null}
       <h1 className="my-2 w-full rounded-md bg-gray-100 p-2 py-1 text-center text-xs font-medium text-gray-500">{activity.descricao}</h1>
       <div className="flex w-full flex-col items-center justify-between gap-2 lg:flex-row">
         <div className="flex grow flex-col items-center gap-1 lg:flex-row">
