@@ -30,7 +30,7 @@ function FirstStage({ simulation, setSimulation, goToNextStage }: FirstStageProp
           >
             <FaMinus />
           </button>
-          <h1 className="text-4xl font-black ">{formatToMoney(simulation.valorFaturaEnergia || 0)}</h1>
+          <h1 className="text-3xl font-black lg:text-4xl ">{formatToMoney(simulation.valorFaturaEnergia || 0)}</h1>
           <button
             onClick={() => setSimulation((prev) => ({ ...prev, valorFaturaEnergia: (prev.valorFaturaEnergia || 0) + 10 }))}
             className="flex items-center justify-center rounded-full border border-gray-500 bg-[#fff] p-3 text-xs duration-300 ease-in-out hover:scale-105 hover:bg-gray-100 lg:text-lg"
