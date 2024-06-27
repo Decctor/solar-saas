@@ -199,7 +199,7 @@ function SolarCalculatorPage({ partnerJSON, error }: SolarCalculatorPageProps) {
             <p className="text-xs tracking-tight">{partner.contatos.email}</p>
           </div>
         </div>
-        <div className="flex w-full items-center justify-around gap-6">
+        <div className="flex w-full flex-wrap items-center justify-around gap-6">
           {partner.midias.website ? (
             <div className="flex items-center gap-1 text-white">
               <TbWorld size={20} />
@@ -219,7 +219,7 @@ function SolarCalculatorPage({ partnerJSON, error }: SolarCalculatorPageProps) {
             <p className="text-xs tracking-tight">{partner.contatos.telefonePrimario}</p>
           </div>
         </div>
-        {partner.slogan ? <h1 className="w-full text-center font-black text-white">{partner.slogan}</h1> : null}
+        {partner.slogan ? <h1 className="w-full text-center text-sm font-black text-white lg:text-base">{partner.slogan}</h1> : null}
       </div>
     </div>
   )
