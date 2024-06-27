@@ -13,6 +13,7 @@ const GeneralIntegrationSchema = z.object({
 export type TIntegration = z.infer<typeof GeneralIntegrationSchema>
 
 export type TIntegrationRDStation = TIntegration & {
+  identificador: 'RD_STATION'
   client_id: string
   client_secret: string
   access_token?: string

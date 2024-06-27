@@ -335,14 +335,13 @@ export async function getServerSideProps(context: GetServerSidePropsContext) {
     }
   }
   const partnerId = session.user.idParceiro
-  const parterScope = session.user.permissoes.parceiros.escopo
-  const partnerQuery: Filter<TFunnel> = parterScope ? { idParceiro: { $in: [...parterScope, null] } } : {}
+  const partnerQuery: Filter<TFunnel> = { idParceiro: partnerId }
 
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const funnelsCollection: Collection<TFunnel> = db.collection('funnels')
   const funnels = await getPartnerFunnels({ collection: funnelsCollection, query: partnerQuery })
   const parsedFunnels: TFunnelDTO[] = funnels.map((funnel) => ({ ...funnel, _id: funnel._id.toString() }))
-  const { user } = session
+  const user = session.user
   return {
     props: {
       funnelsJSON: JSON.stringify(parsedFunnels),
