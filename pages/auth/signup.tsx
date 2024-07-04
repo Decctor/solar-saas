@@ -31,8 +31,8 @@ export type TSignUpHolder = {
 function SignUpPage() {
   const [signUpHolder, setSignUpHolder] = useState<TSignUpHolder>({
     usuario: {
-      nome: 
-    }
+      nome: '',
+    },
     estagiosCadastro: {
       inicio: null,
       detalhesParceiro: null,
