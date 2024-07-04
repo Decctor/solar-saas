@@ -3,6 +3,7 @@ import { getPartnersSimplified } from '@/repositories/partner-simplified/query'
 import { getProjectTypes, getProjectTypesSimplified } from '@/repositories/project-type/queries'
 import { getOpportunityCreators } from '@/repositories/users/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
+import clientPromise from '@/services/mongodb/main-client'
 import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { ISession } from '@/utils/models'
 import { TActivity, TActivityDTO } from '@/utils/schemas/activities.schema'
@@ -33,6 +34,7 @@ const getQueryFiltersOptions: NextApiHandler<GetResponse> = async (req, res) => 
 
   const partnerQuery = { idParceiro: partnerId }
 
+  const mongo = await clientPromise
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
   const usersCollection: Collection<TUser> = db.collection('users')
   const partnersCollection: Collection<TPartner> = db.collection('partners')

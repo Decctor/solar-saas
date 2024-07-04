@@ -20,6 +20,7 @@ const handleOAuthCallback: NextApiHandler<GetResponse> = async (req, res) => {
   if (!userId) throw new createHttpError.BadRequest('Parâmetros de estado inválido ou não informado.')
   const { tokens } = await authClient.getToken(code as string)
   setGoogleAuthCredentials({ authClient, tokens })
+
   const { access_token, refresh_token, expiry_date } = tokens
   console.log('DATA DE EXPIRAÇÃO', new Date(expiry_date as number).toLocaleString('pt-br'))
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')

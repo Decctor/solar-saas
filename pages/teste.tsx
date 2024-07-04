@@ -2,31 +2,32 @@ import { Sidebar } from '@/components/Sidebar'
 import LoadingPage from '@/components/utils/LoadingPage'
 import { useOpportunityById } from '@/utils/queries/opportunities'
 import { TOpportunityDTOWithClientAndPartnerAndFunnelReferences } from '@/utils/schemas/opportunity.schema'
+import axios from 'axios'
 import { useSession } from 'next-auth/react'
+import { useRouter } from 'next/router'
 import React, { useEffect, useState } from 'react'
+import Stripe from 'stripe'
 
 function Testing() {
+  const router = useRouter()
   const { data: session, status } = useSession()
   const [holder, setHolder] = useState('')
 
+  async function getCustomers() {
+    try {
+      const { data } = await axios.get('/api/integration/stripe')
+      router.push(data.data)
+    } catch (error) {
+      throw error
+    }
+  }
   if (status != 'authenticated') return <LoadingPage />
   return (
     <div className="flex h-full flex-col md:flex-row">
       <Sidebar session={session} />
       <div className="flex w-full grow flex-col items-center justify-center">
         <div className={`flex w-full flex-col gap-1 font-Inter lg:w-[350px]`}>
-          <label htmlFor={'input-x'} className={'text-xs font-bold text-[#353432]'}>
-            NOME DO USUÁRIO
-          </label>
-
-          <input
-            value={holder}
-            onChange={(e) => setHolder(e.target.value)}
-            id={'input-x'}
-            type="text"
-            placeholder={'Preencha o nome do usuário'}
-            className="w-full rounded-md border border-gray-200 p-3 text-sm shadow-sm outline-none duration-500 ease-in-out placeholder:italic focus:border-gray-500"
-          />
+          <button onClick={() => getCustomers()}>TESTE</button>
         </div>
       </div>
     </div>

@@ -1,5 +1,6 @@
 import NextAuth from 'next-auth/next'
 import CredentialsProvider from 'next-auth/providers/credentials'
+import GoogleProvider from 'next-auth/providers/google'
 import bcrypt from 'bcrypt'
 import createHttpError from 'http-errors'
 import connectToDatabase from '../../../services/mongodb/crm-db-connection'
@@ -64,18 +65,24 @@ export const authOptions = {
         return null
       },
     }),
+    GoogleProvider({
+      clientId: process.env.GOOGLE_OAUTH_CLIENT_ID,
+      clientSecret: process.env.GOOGLE_OAUTH_CLIENT_SECRET_KEY,
+    }),
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      // console.log("USER", user);
-      // console.log("ACCOUNT", account);
-      // console.log("PROFILE", profile);
-      // console.log("EMAIL", email);
-      // console.log("CREDENTIALS", credentials);
+      console.log('USER', user)
+      console.log('ACCOUNT', account)
+      console.log('EMAIL', email)
+      console.log('CRENDENTIALS', credentials)
+      console.log('PROFILE', profile)
       return user
     },
     async redirect({ url, baseUrl }) {
-      return baseUrl
+      console.log('URL', url)
+      console.log('BASE URL', baseUrl)
+      return url
     },
     async session({ session, user, token }) {
       // console.log("SESSAO", session);
