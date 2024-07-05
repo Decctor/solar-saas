@@ -51,7 +51,7 @@ function SecondStage({ signUpHolder, setSignUpHolder, goToNextStage }: SecondSta
         <h1 className="w-full text-center text-2xl font-black text-white lg:text-4xl">Começe agora sua jornada conosco.</h1>
         <h1 className="w-full text-center font-medium text-white">Conheça a plataforma de experiência completa em energia solar.</h1>
       </div>
-      <div className="flex h-full w-full flex-col items-center rounded-md bg-[#fff] p-6 py-36 lg:w-[40%]">
+      <div className="flex h-full w-full flex-col items-center rounded-md bg-[#fff] p-6 py-32 lg:w-[40%]">
         <h1 className="text-3xl font-black text-cyan-500">SOBRE A SUA EMPRESA</h1>
         <div className="flex w-[90%] grow flex-col items-center justify-center gap-6 self-center lg:w-[70%]">
           <div className="flex w-full flex-col gap-6">
