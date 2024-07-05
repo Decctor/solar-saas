@@ -15,7 +15,7 @@ const createCheckout: NextApiHandler<any> = async (req, res) => {
   // 5 - finding all active users for the given partner
   // 6 - creating a checkout session using the priceId, the customerId(which is the partnerId) and the items qty(which is
   // the amount of the active users)
-
+  console.log('CHECKOUT WAS CALLED')
   const partnerId = 'cus_QOEWrEtqVycDr4' // Should come from the partnerId created in the onboarding process
 
   const priceId = process.env.STRIPE_PRICE_ID_SOLAR_SALES_SUBSCRIPTION // Price created for our subscription product
@@ -37,7 +37,11 @@ const createCheckout: NextApiHandler<any> = async (req, res) => {
     success_url: 'http://localhost:3000/teste',
     cancel_url: 'http://localhost:3000/teste',
   })
+  console.log('CHECKOUTSESSION', session.url)
   if (!session.url) throw new createHttpError.BadRequest('Oops, houve um erro desconhecido.')
+  // res.redirect(session.url)
+  // End the response
+  // res.end()
   res.status(200).json({ data: session.url })
 }
 

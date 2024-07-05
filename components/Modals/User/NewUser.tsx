@@ -442,7 +442,7 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
               />
             </div>
             <div className="flex w-full flex-col gap-1">
-              <div className="flex w-full items-center gap-2">
+              {/* <div className="flex w-full items-center gap-2">
                 <div className="w-[50%]">
                   <NumberInput
                     label="COMISSÃO SEM SDR"
@@ -477,7 +477,7 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
                     width="100%"
                   />
                 </div>
-              </div>
+              </div> */}
               <SelectInput
                 label="GRUPO DE PERMISSÃO"
                 options={
@@ -636,7 +636,7 @@ function NewUserModal({ closeModal, users, userId, partnerId, session }: NewUser
               />
             </div>
             <PermissionsPannel referenceId={null} userInfo={userInfo} setUserInfo={setUserInfo} users={users} session={session} />
-            <ComissionPannel infoHolder={userInfo} setInfoHolder={setUserInfo} />
+            {/* <ComissionPannel infoHolder={userInfo} setInfoHolder={setUserInfo} /> */}
           </div>
           <div className="mt-1 flex w-full items-end justify-end">
             <button

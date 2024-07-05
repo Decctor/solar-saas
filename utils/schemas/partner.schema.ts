@@ -43,6 +43,7 @@ const PartnerMediaSchema = z.object(
   { required_error: 'Informações de mídias sociais não fornecidas.', invalid_type_error: 'Tipo não válido para informações de mídias sociais.' }
 )
 const GeneralPartnerSchema = z.object({
+  idCustomerStripe: z.string().optional().nullable(),
   nome: z.string(),
   ativo: z.boolean(),
   cpfCnpj: z.string(),
@@ -70,6 +71,7 @@ const GeneralPartnerSchema = z.object({
 })
 
 export const InsertPartnerSchema = z.object({
+  idCustomerStripe: z.string().optional().nullable(),
   nome: z
     .string({ required_error: 'Nome necessário para criação do parceiro.', invalid_type_error: 'Tipo não válido para o nome do parceiro.' })
     .min(2, 'Preencha um nome de ao menos 2 letras para o parceiro.'),

@@ -72,16 +72,16 @@ export const authOptions = {
   ],
   callbacks: {
     async signIn({ user, account, profile, email, credentials }) {
-      console.log('USER', user)
-      console.log('ACCOUNT', account)
-      console.log('EMAIL', email)
-      console.log('CRENDENTIALS', credentials)
-      console.log('PROFILE', profile)
+      // console.log('USER', user)
+      // console.log('ACCOUNT', account)
+      // console.log('EMAIL', email)
+      // console.log('CRENDENTIALS', credentials)
+      // console.log('PROFILE', profile)
       return user
     },
     async redirect({ url, baseUrl }) {
-      console.log('URL', url)
-      console.log('BASE URL', baseUrl)
+      // console.log('URL', url)
+      // console.log('BASE URL', baseUrl)
       return url
     },
     async session({ session, user, token }) {

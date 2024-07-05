@@ -313,7 +313,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                   />
                 </div>
                 <div className="flex w-full flex-col gap-1">
-                  <div className="flex w-full items-center gap-2">
+                  {/* <div className="flex w-full items-center gap-2">
                     <div className="w-[50%]">
                       <NumberInput
                         label="COMISSÃO SEM SDR"
@@ -348,7 +348,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                         width="100%"
                       />
                     </div>
-                  </div>
+                  </div> */}
                   <SelectInput
                     label="GRUPO DE PERMISSÃO"
                     options={
@@ -524,7 +524,7 @@ function EditUser({ closeModal, users, userId, partnerId, session }: EditUserPro
                   users={users}
                   session={session}
                 />
-                <ComissionPannel infoHolder={userInfo} setInfoHolder={setUserInfo as React.Dispatch<React.SetStateAction<TUser>>} />
+                {/* <ComissionPannel infoHolder={userInfo} setInfoHolder={setUserInfo as React.Dispatch<React.SetStateAction<TUser>>} /> */}
               </div>
               <div className="mt-1 flex w-full items-end justify-end">
                 <button
