@@ -11,7 +11,7 @@ import getRawBody from 'raw-body'
 
 import Stripe from 'stripe'
 
-const endpointSecret = 'whsec_04b6616b4ebc739fc1c90edbfb5549a2f10f9ec9cecb6fb0d8a4621455acb423'
+const endpointSecret = process.env.STRIPE_WEBHOOK_SECRET
 
 const stripe = new Stripe('sk_test_51Jd29hGCjFDtApCWA0OS5XOn6kpG2I2SsuwfKGaoiOrAEcebKRtnUXcjF7wH97FML5B7Su3RNqYToDseYbHhKEbU00YeY59eni')
 const handleStripeWebhooks: NextApiHandler<any> = async (req, res) => {
@@ -22,7 +22,7 @@ const handleStripeWebhooks: NextApiHandler<any> = async (req, res) => {
 
   try {
     const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
-    const event = await stripe.webhooks.constructEventAsync(buf.toString(), stripeSignature!, endpointSecret)
+    const event = await stripe.webhooks.constructEventAsync(buf.toString(), stripeSignature!, endpointSecret as string)
     switch (event.type) {
       case 'customer.subscription.created':
         return handleSubscriptionEvent(event, 'created', db, res)
