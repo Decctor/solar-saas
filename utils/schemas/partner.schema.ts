@@ -1,6 +1,7 @@
 import { ObjectId } from 'mongodb'
 import z from 'zod'
 import { TUserEntity, TUserDTO } from './user.schema'
+import { TSubscriptionDTO } from './subscription.schema'
 
 const LocationSchema = z.object({
   cep: z.string().optional().nullable(),
@@ -43,7 +44,8 @@ const PartnerMediaSchema = z.object(
   { required_error: 'Informações de mídias sociais não fornecidas.', invalid_type_error: 'Tipo não válido para informações de mídias sociais.' }
 )
 const GeneralPartnerSchema = z.object({
-  idCustomerStripe: z.string().optional().nullable(),
+  idClienteStripe: z.string().optional().nullable(),
+  idAssinaturaStripe: z.string().optional().nullable(),
   nome: z.string(),
   ativo: z.boolean(),
   cpfCnpj: z.string(),
@@ -71,7 +73,8 @@ const GeneralPartnerSchema = z.object({
 })
 
 export const InsertPartnerSchema = z.object({
-  idCustomerStripe: z.string().optional().nullable(),
+  idClienteStripe: z.string().optional().nullable(),
+  idAssinaturaStripe: z.string().optional().nullable(),
   nome: z
     .string({ required_error: 'Nome necessário para criação do parceiro.', invalid_type_error: 'Tipo não válido para o nome do parceiro.' })
     .min(2, 'Preencha um nome de ao menos 2 letras para o parceiro.'),
@@ -192,12 +195,14 @@ const PartnerEntitySchema = z.object({
 })
 
 export type TPartner = z.infer<typeof GeneralPartnerSchema>
+export type TPartnerWithSubscriptionAndUsers = TPartner & { usuarios: TUserDTO[]; assinatura: TSubscriptionDTO | null }
 
 export type TPartnerEntity = z.infer<typeof PartnerEntitySchema>
 
 export type TPartnerDTO = TPartner & { _id: string }
 
 export type TPartnerDTOWithUsers = TPartnerDTO & { usuarios: TUserDTO[] }
+export type TPartnerDTOWithSubscriptionAndUsers = TPartnerDTO & { usuarios: TUserDTO[]; assinatura: TSubscriptionDTO | null }
 
 export type TPartnerSimplified = Pick<TPartner, 'nome' | 'descricao' | 'contatos' | 'midias' | 'slogan' | 'cpfCnpj' | 'logo_url' | 'localizacao'>
 export type TPartnerSimplifiedDTO = TPartnerSimplified & { _id: string }

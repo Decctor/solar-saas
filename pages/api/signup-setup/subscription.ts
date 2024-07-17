@@ -82,9 +82,10 @@ const handleSetUpSubscription: NextApiHandler<any> = async (req, res) => {
       },
     ],
     mode: 'subscription',
-    success_url: 'https://yourapp.com/success?session_id={CHECKOUT_SESSION_ID}',
+    success_url: `${process.env.STRIPE_CHECKOUT_SUCCESS_URL}?setupId=${setupId}&checkoutSession=`,
     cancel_url: 'https://yourapp.com/cancel',
   })
+  console.log(stripeCheckoutSession.id)
   if (!stripeCheckoutSession.url) throw new createHttpError.InternalServerError('Oops, um erro interno ocorreu ao finalizar cadastro.')
 
   return res.redirect(stripeCheckoutSession.url)

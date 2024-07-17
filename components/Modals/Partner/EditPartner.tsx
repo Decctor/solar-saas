@@ -6,6 +6,7 @@ import AddressInformationBlock from '@/components/Partners/AddressInformationBlo
 import ContactInformationBlock from '@/components/Partners/ContactInformationBlock'
 import GeneralInformationBlock from '@/components/Partners/GeneralInformationBlock'
 import MediaInformationBlock from '@/components/Partners/MediaInformationBlock'
+import SubscriptionInformationBlock from '@/components/Partners/SubscriptionInformationBlock'
 import ErrorComponent from '@/components/utils/ErrorComponent'
 import LoadingComponent from '@/components/utils/LoadingComponent'
 import LoadingPage from '@/components/utils/LoadingPage'
@@ -15,7 +16,7 @@ import { formatDate, formatToCEP, formatToCPForCNPJ, formatToPhone, getCEPInfo }
 import { useMutationWithFeedback } from '@/utils/mutations/general-hook'
 import { createPartner, editPartner } from '@/utils/mutations/partners'
 import { usePartnerById } from '@/utils/queries/partners'
-import { TPartner } from '@/utils/schemas/partner.schema'
+import { TPartner, TPartnerDTOWithSubscriptionAndUsers } from '@/utils/schemas/partner.schema'
 import { SignaturePlans } from '@/utils/select-options'
 import { useQueryClient } from '@tanstack/react-query'
 import { useSession } from 'next-auth/react'
@@ -34,7 +35,8 @@ function EditPartner({ partnerId, closeModal }: EditPartnerProps) {
 
   const [image, setImage] = useState<File | null>()
   const [editImage, setEditImage] = useState<boolean>(false)
-  const [infoHolder, setInfoHolder] = useState<TPartner>({
+  const [infoHolder, setInfoHolder] = useState<TPartnerDTOWithSubscriptionAndUsers>({
+    _id: 'id-holder',
     nome: '',
     cpfCnpj: '',
     contatos: {
@@ -62,6 +64,8 @@ function EditPartner({ partnerId, closeModal }: EditPartnerProps) {
     descricao: '',
     ativo: true,
     onboarding: {},
+    usuarios: [],
+    assinatura: null,
     dataInsercao: new Date().toISOString(),
   })
   const { data: partner, isSuccess, isLoading, isError } = usePartnerById({ id: partnerId })
@@ -146,10 +150,15 @@ function EditPartner({ partnerId, closeModal }: EditPartnerProps) {
                     </Link>
                   </div>
                 ) : null}
-                <GeneralInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
-                <AddressInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
-                <ContactInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
-                <MediaInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
+                <GeneralInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<TPartner>>} />
+                <AddressInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<TPartner>>} />
+                <ContactInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<TPartner>>} />
+                <MediaInformationBlock infoHolder={infoHolder} setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<TPartner>>} />
+                <SubscriptionInformationBlock
+                  partnerId={partnerId}
+                  infoHolder={infoHolder}
+                  setInfoHolder={setInfoHolder as React.Dispatch<React.SetStateAction<TPartner>>}
+                />
               </div>
               <div className="mt-2 flex w-full items-center justify-end">
                 <button

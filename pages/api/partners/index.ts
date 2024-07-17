@@ -1,3 +1,4 @@
+import { getPartnerById } from '@/repositories/partners/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
 import { apiHandler, validateAdminAuthorizaton, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertPartnerSchema, TPartner, TPartnerEntity, TPartnerDTOWithUsers } from '@/utils/schemas/partner.schema'
@@ -38,7 +39,7 @@ const getPartners: NextApiHandler<GetResponse> = async (req, res) => {
   if (id) {
     if (!userIsAdmin && id != partnerId) throw new createHttpError.BadRequest('Nível de autorização inválido.')
     if (typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')
-    const partner = await partnersCollection.findOne({ _id: new ObjectId(id) })
+    const partner = await getPartnerById({ collection: partnersCollection, id, query: {} })
     if (!partner) throw new createHttpError.NotFound('Nenhum parceiro encontrado com esse ID.')
     return res.status(200).json({ data: partner })
   }

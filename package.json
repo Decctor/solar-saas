@@ -41,6 +41,7 @@
     "next": "13.2.4",
     "next-auth": "^4.20.1",
     "puppeteer": "^21.4.1",
+    "raw-body": "^2.5.2",
     "react": "18.2.0",
     "react-beautiful-dnd": "^13.1.1",
     "react-copy-to-clipboard": "^5.1.0",

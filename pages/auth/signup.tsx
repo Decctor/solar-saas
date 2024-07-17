@@ -11,30 +11,6 @@ import { useRouter } from 'next/router'
 import { TSignUpSetup, TSignUpSetupWithHolder } from '@/utils/schemas/sign-up-setup.schema'
 import { editSignUpSetup } from '@/utils/mutations/sign-up-setup'
 
-// export type TSignUpHolder = {
-//   usuario: {
-//     nome: string
-//     email: string
-//     telefone: string
-//   }
-//   parceiro: {
-//     id: string | null
-//     nome: string
-//     telefone: string
-//     email: string
-//     cpfCnpj: string
-//     cep: string | null
-//     uf: string | null
-//     cidade: string | null
-//   }
-//   quantidadeUsuarios: number
-//   estagiosCadastro: {
-//     inicio: string | null
-//     detalhesParceiro: string | null
-//     usuarios: string | null
-//   }
-// }
-
 function SignUpPage() {
   const router = useRouter()
   const [signUpHolder, setSignUpHolder] = useState<TSignUpSetupWithHolder>({

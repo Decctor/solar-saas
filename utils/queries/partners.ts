@@ -1,11 +1,11 @@
 import axios from 'axios'
-import { TPartnerDTO, TPartnerDTOWithUsers, TPartnerEntity, TPartnerSimplifiedDTO } from '../schemas/partner.schema'
+import { TPartnerDTO, TPartnerDTOWithSubscriptionAndUsers, TPartnerDTOWithUsers, TPartnerEntity, TPartnerSimplifiedDTO } from '../schemas/partner.schema'
 import { useQuery } from '@tanstack/react-query'
 
 async function fetchPartnerById({ id }: { id: string }) {
   try {
     const { data } = await axios.get(`/api/partners?id=${id}`)
-    return data.data as TPartnerDTO
+    return data.data as TPartnerDTOWithSubscriptionAndUsers
   } catch (error) {
     throw error
   }
