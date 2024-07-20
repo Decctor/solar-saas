@@ -15,7 +15,7 @@ type PostResponse = {
 }
 
 const createPricingMethod: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'precos', 'editar', true)
+  const session = await validateAuthorization(req, res, 'precos', 'editar', true, true)
   const partnerId = session.user.idParceiro
 
   const pricingMethod = InsertPricingMethodSchema.parse(req.body)
@@ -59,7 +59,7 @@ type PutResponse = {
 }
 
 const editPricingMethod: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'precificacao', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'precificacao', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<TPricingMethod> = { idParceiro: partnerId }
 

@@ -14,7 +14,7 @@ type PostResponse = {
 }
 
 const createProjectType: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'tiposProjeto', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'tiposProjeto', true, true)
   const partnerId = session.user.idParceiro
 
   const type = InsertProjectTypeSchema.parse(req.body)
@@ -56,7 +56,7 @@ const getProjectType: NextApiHandler<GetResponse> = async (req, res) => {
   return res.status(200).json({ data: types })
 }
 const editProjectType: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'tiposProjeto', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'tiposProjeto', true, true)
   const partnerId = session.user.idParceiro
 
   const partnerQuery: Filter<TProjectType> = { idParceiro: partnerId }

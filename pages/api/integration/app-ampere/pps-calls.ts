@@ -51,7 +51,7 @@ type PostResponse = {
 }
 
 const createPPSCall: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
 
   const call = InsertPPSCallSchema.parse(req.body)
 

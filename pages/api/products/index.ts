@@ -39,7 +39,7 @@ type PostResponse = {
 }
 
 const createProducts: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'produtos', 'criar', true)
+  const session = await validateAuthorization(req, res, 'produtos', 'criar', true, true)
   const partnerId = session.user.idParceiro
 
   const product = InsertProductSchema.parse(req.body)
@@ -60,7 +60,7 @@ type PutResponse = {
 }
 
 const editProduct: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'produtos', 'editar', true)
+  const session = await validateAuthorization(req, res, 'produtos', 'editar', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<TProduct> = { idParceiro: partnerId }
 

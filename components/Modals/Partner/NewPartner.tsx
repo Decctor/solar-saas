@@ -57,6 +57,7 @@ function NewPartner({ closeModal }: NewPartnerProps) {
     descricao: '',
     ativo: true,
     onboarding: {},
+    testeGratis: {},
     dataInsercao: new Date().toISOString(),
   })
   async function setAddressDataByCEP(cep: string) {

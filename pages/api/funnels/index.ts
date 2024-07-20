@@ -35,7 +35,7 @@ type PostResponse = {
   message: string
 }
 const createFunnel: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'funis', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'funis', true, true)
   const partnerId = session.user.idParceiro
   const infoParsed = InsertFunnelSchema.parse(req.body)
   const funnel = {
@@ -57,7 +57,7 @@ type PutResponse = {
   message: string
 }
 const editFunnel: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'funis', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'funis', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<TFunnel> = { idParceiro: partnerId }
 

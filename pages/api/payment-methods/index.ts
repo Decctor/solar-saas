@@ -15,7 +15,7 @@ type PostResponse = {
 }
 
 const createPaymentMethod: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'metodosPagamento', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'metodosPagamento', true, true)
   const partnerId = session.user.idParceiro
 
   const paymentMethod = InsertPaymentMethodSchema.parse(req.body)
@@ -59,7 +59,7 @@ type PutResponse = {
   message: string
 }
 const editPaymentMethod: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'metodosPagamento', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'metodosPagamento', true, true)
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo
   const partnerQuery: Filter<TPaymentMethod> = parterScope ? { idParceiro: partnerId } : {}

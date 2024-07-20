@@ -16,7 +16,7 @@ type PostResponse = {
 }
 
 const createNotification: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
 
   const notification = InsertNotificationSchema.parse(req.body)
@@ -73,7 +73,7 @@ type PutResponse = {
 }
 
 const editNotification: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
 
   const { id } = req.query

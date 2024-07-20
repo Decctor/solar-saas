@@ -31,10 +31,14 @@ export async function validateAuthentication(req: NextApiRequest) {
   if (!sessionToken) throw new createHttpError.Unauthorized(`Rota não acessível a usuários não autenticados.`)
   return sessionToken
 }
-export async function validateAuthenticationWithSession(req: NextApiRequest, res: NextApiResponse) {
+export async function validateAuthenticationWithSession(req: NextApiRequest, res: NextApiResponse, onlySubscribed?: boolean) {
   // @ts-ignore
   const session = await getServerSession(req, res, authOptions)
   if (!session) throw new createHttpError.Unauthorized(`Recurso não acessível a usuários não autenticados.`)
+  if (!onlySubscribed) return session
+
+  const isSubscriptionValid = !!session.user.parceiro.assinaturaAtiva
+  if (!isSubscriptionValid) throw new createHttpError.Unauthorized('Oops, sua assinatura está inativa.')
   return session
 }
 // Validação de niveis de autorização para rotas
@@ -43,36 +47,27 @@ export async function validateAuthorization<T extends keyof TUser['permissoes'],
   res: NextApiResponse,
   field: T,
   permission: K,
-  validate: any
+  validate: any,
+  onlySubscribed?: boolean
 ) {
   // @ts-ignore
   const session = await getServerSession(req, res, authOptions)
 
-  if (session) {
-    // console.log('PERMISSAO', session.user.permissoes[field][permission])
+  if (!session) throw new createHttpError.Unauthorized(`Nível de autorização insuficiente.`)
+
+  if (!onlySubscribed) {
+    // If no active subscription is necessary, going for authorization validation
     if (session.user.permissoes[field][permission] == validate) return session
     else throw new createHttpError.Unauthorized(`Nível de autorização insuficiente.`)
-  } else {
-    throw new createHttpError.Unauthorized(`Nível de autorização insuficiente.`)
   }
+  // If active subscription is necessary, checking its validity
+  const isSubscriptionValid = !!session.user.parceiro.assinaturaAtiva
+  if (!isSubscriptionValid) throw new createHttpError.Unauthorized('Oops, sua assinatura está inativa.')
+  // If valid, checking authorization
+  if (session.user.permissoes[field][permission] == validate) return session
+  else throw new createHttpError.Unauthorized(`Nível de autorização insuficiente.`)
 }
-// Validação de aquisição de módulo
-type ValidateModuleAccessParams = {
-  req: NextApiRequest
-  res: NextApiResponse
-  module: keyof TSessionUser['modulos']
-}
-export async function validateModuleAccess({ req, res, module }: ValidateModuleAccessParams) {
-  // @ts-ignore
-  const session = await getServerSession(req, res, authOptions)
-  if (!session) throw new createHttpError.Unauthorized('Nível de acesso insuficiente.')
-  // Getting user modules and validating if session user has given module
-  const userModules = session.user.modulos
-  // If not, throwing unauthorized error
-  if (!userModules[module]) throw new createHttpError.Unauthorized('Nível de acesso insuficiente.')
-  // Else, returning session
-  return session
-}
+
 export async function validateAdminAuthorizaton(req: NextApiRequest, res: NextApiResponse) {
   // @ts-ignore
   const session = await getServerSession(req, res, authOptions)

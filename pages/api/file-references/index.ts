@@ -20,7 +20,7 @@ type PostResponse = {
 }
 
 const createFileReference: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
   // Parsing payload and validating fields
   const fileReference = InsertFileReferenceSchema.parse(req.body)

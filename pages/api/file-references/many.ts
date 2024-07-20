@@ -15,7 +15,7 @@ type PostResponse = {
 }
 
 const createManyFileReferences: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
 
   const manyAnalysis = z.array(InsertFileReferenceSchema).parse(req.body)

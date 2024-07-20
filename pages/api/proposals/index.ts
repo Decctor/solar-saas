@@ -17,7 +17,7 @@ type PostResponse = {
 }
 
 const createProposal: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'propostas', 'criar', true)
+  const session = await validateAuthorization(req, res, 'propostas', 'criar', true, true)
   const partnerId = session.user.idParceiro
 
   const proposal = InsertProposalSchema.parse(req.body)
@@ -59,7 +59,7 @@ type PutResponse = {
 }
 
 const editProposal: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'propostas', 'editar', true)
+  const session = await validateAuthorization(req, res, 'propostas', 'editar', true, true)
   const partnerId = session.user.idParceiro
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')

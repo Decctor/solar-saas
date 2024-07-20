@@ -5,6 +5,8 @@ import bcrypt from 'bcrypt'
 import createHttpError from 'http-errors'
 import connectToDatabase from '../../../services/mongodb/crm-db-connection'
 import { ObjectId } from 'mongodb'
+import { getPartnerById } from '@/repositories/partners/queries'
+import { validateSubscriptionAccess } from '@/utils/subscriptions'
 // Hash para senha padrão 123456789: $2b$10$zh5TZpnAZ9APevFJaYFIf.1DgkIuLfWlKrbXfS0Gdy0XxDSlSb74K
 
 export const authOptions = {
@@ -26,6 +28,7 @@ export const authOptions = {
         const usersCollection = db.collection('users')
         const partnersCollection = db.collection('partners')
         const integrationsCollection = db.collection('integrations')
+
         const userInDb = await usersCollection.findOne({ email: email })
         console.log(userInDb)
         if (!userInDb) throw new createHttpError.BadRequest('Usuário não encontrado.')
@@ -33,12 +36,15 @@ export const authOptions = {
         let compareResult = bcrypt.compareSync(password, userInDb.senha)
         if (!compareResult) throw new createHttpError.BadRequest('Senha incorreta.')
 
-        const userPartner = await partnersCollection.findOne({ _id: new ObjectId(userInDb.idParceiro) })
+        const userPartner = await getPartnerById({ collection: partnersCollection, id: userInDb.idParceiro })
         const userGoogleIntegration = await integrationsCollection.findOne({
           identificador: 'GOOGLE_AUTH',
           idUsuario: userInDb._id.toString(),
           idParceiro: userInDb.idParceiro,
         })
+
+        const isSubscriptionActive = validateSubscriptionAccess(userPartner)
+
         const user = {
           id: userInDb._id,
           administrador: userInDb.administrador,
@@ -52,6 +58,7 @@ export const authOptions = {
           parceiro: {
             nome: userPartner.nome,
             logo_url: userPartner.logo_url,
+            assinaturaAtiva: isSubscriptionActive,
           },
           integracoes: {
             google: !!userGoogleIntegration,

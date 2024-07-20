@@ -69,6 +69,10 @@ const GeneralPartnerSchema = z.object({
       .optional()
       .nullable(),
   }),
+  testeGratis: z.object({
+    inicio: z.string({ invalid_type_error: 'Tipo não válido para o início do teste grátis.' }).datetime().optional().nullable(),
+    fim: z.string({ invalid_type_error: 'Tipo não válido para o início do teste grátis.' }).datetime().optional().nullable(),
+  }),
   dataInsercao: z.string().datetime(),
 })
 
@@ -118,6 +122,10 @@ export const InsertPartnerSchema = z.object({
       .datetime()
       .optional()
       .nullable(),
+  }),
+  testeGratis: z.object({
+    inicio: z.string({ invalid_type_error: 'Tipo não válido para o início do teste grátis.' }).datetime().optional().nullable(),
+    fim: z.string({ invalid_type_error: 'Tipo não válido para o início do teste grátis.' }).datetime().optional().nullable(),
   }),
   dataInsercao: z
     .string({ required_error: 'Data de inserção não informada.', invalid_type_error: 'Tipo não válido para data de inserção.' })

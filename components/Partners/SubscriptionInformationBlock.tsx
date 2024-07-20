@@ -12,6 +12,7 @@ import { BsCalendarPlus } from 'react-icons/bs'
 import { formatDateAsLocale } from '@/lib/methods/formatting'
 import { MdEmail } from 'react-icons/md'
 import SubscriptionCard from './SubscriptionUtils/SubscriptionCard'
+import NewSubscriptionMenu from './SubscriptionUtils/NewSubscriptionMenu'
 
 function getSubscriptionStatusTag(status: TSubscription['status']) {
   if (status == 'active') return <h1 className="rounded-lg border border-green-600 bg-green-400 px-2 py-1 text-[0.6rem] font-medium text-white">ATIVA</h1>
@@ -56,41 +57,7 @@ function SubscriptionInformationBlock({ partnerId, infoHolder, setInfoHolder }: 
       {infoHolder.assinatura ? (
         <SubscriptionCard subscription={infoHolder.assinatura} />
       ) : (
-        <div className="flex w-full flex-col">
-          {checkoutSessionUrl ? (
-            <div className="flex w-full items-center justify-center gap-1 rounded border border-blue-700 bg-blue-50 p-3 text-center text-xs text-blue-700">
-              <h1 className="break-all">{formatLongString(checkoutSessionUrl, 200)}</h1>
-              <button className="min-w-fit">
-                <FaRegCopy size={20} />
-              </button>
-            </div>
-          ) : (
-            <>
-              <h1 className="my-2 w-full text-center text-xs font-medium tracking-tight text-gray-500">
-                O parceiro em questão não possui uma assinatura. Crie abaixo um link para ativação:{' '}
-              </h1>
-              <div className="flex w-full items-center justify-center">
-                <NumberInput
-                  label="Nº DE ASSINATURAS"
-                  placeholder="Preencha aqui o número desejado de assinaturas..."
-                  value={usersQtyHolder}
-                  handleChange={(value) => setUsersQtyHolder(value)}
-                  width="100%"
-                />
-              </div>
-              <div className="mt-2 flex w-full items-center justify-end">
-                <button
-                  disabled={isPending}
-                  // @ts-ignore
-                  onClick={() => mutate(usersQtyHolder)}
-                  className="whitespace-nowrap rounded bg-gray-900 px-4 py-1 text-xs font-medium text-white shadow disabled:bg-gray-500 disabled:text-white enabled:hover:bg-gray-800 enabled:hover:text-white"
-                >
-                  CRIAR CHECKOUT
-                </button>
-              </div>
-            </>
-          )}
-        </div>
+        <NewSubscriptionMenu partnerId={partnerId} infoHolder={infoHolder} setInfoHolder={setInfoHolder} />
       )}
     </div>
   )

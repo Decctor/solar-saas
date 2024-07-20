@@ -64,6 +64,7 @@ function EditPartner({ partnerId, closeModal }: EditPartnerProps) {
     descricao: '',
     ativo: true,
     onboarding: {},
+    testeGratis: {},
     usuarios: [],
     assinatura: null,
     dataInsercao: new Date().toISOString(),

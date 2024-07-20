@@ -53,7 +53,7 @@ type PostResponse = {
 }
 
 const createOpportunity: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true)
+  const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true, true)
   const partnerId = session.user.idParceiro
 
   const project = InsertOpportunitySchema.parse(req.body)
@@ -177,7 +177,7 @@ type PutResponse = {
   message: string
 }
 const editOpportunity: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'oportunidades', 'editar', true)
+  const session = await validateAuthorization(req, res, 'oportunidades', 'editar', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<TOpportunity> = { idParceiro: partnerId }
 

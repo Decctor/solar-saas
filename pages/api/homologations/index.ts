@@ -1,7 +1,7 @@
 import { insertHomologation, updateHomologation } from '@/repositories/homologations/mutations'
 import { getHomologationById, getHomologationByOpportunityId, getPartnerHomologations } from '@/repositories/homologations/queries'
 import connectToDatabase from '@/services/mongodb/crm-db-connection'
-import { apiHandler, validateAuthenticationWithSession, validateAuthorization, validateModuleAccess } from '@/utils/api'
+import { apiHandler, validateAuthenticationWithSession, validateAuthorization } from '@/utils/api'
 import { InsertHomologationSchema, THomologation } from '@/utils/schemas/homologation.schema'
 import createHttpError from 'http-errors'
 import { Collection, Filter, ObjectId } from 'mongodb'
@@ -49,7 +49,7 @@ type PostResponse = {
 }
 
 const createHomologation: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'homologacoes', 'criar', true)
+  const session = await validateAuthorization(req, res, 'homologacoes', 'criar', true, true)
   const partnerId = session.user.idParceiro
 
   const homologation = InsertHomologationSchema.parse(req.body)
@@ -70,7 +70,7 @@ type PutResponse = {
 }
 
 const editHomologation: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'homologacoes', 'editar', true)
+  const session = await validateAuthorization(req, res, 'homologacoes', 'editar', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<THomologation> = { idParceiro: partnerId }
 

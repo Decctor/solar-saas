@@ -17,7 +17,7 @@ type PostResponse = {
 }
 
 const createKit: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'kits', 'criar', true)
+  const session = await validateAuthorization(req, res, 'kits', 'criar', true, true)
   const partnerId = session.user.idParceiro
 
   const kit = InsertNewKitSchema.parse(req.body)
@@ -67,7 +67,7 @@ type PutResponse = {
 }
 
 const editKit: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'kits', 'editar', true)
+  const session = await validateAuthorization(req, res, 'kits', 'editar', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<TKit> = { idParceiro: partnerId }
 

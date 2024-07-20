@@ -491,6 +491,7 @@ export type TSessionUser = Pick<TUser, 'administrador' | 'nome' | 'telefone' | '
   parceiro: {
     nome: TPartner['nome']
     logo_url: TPartner['logo_url']
+    assinaturaAtiva: boolean
   }
   integracoes: {
     google: boolean

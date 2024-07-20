@@ -14,7 +14,7 @@ type PostResponse = {
 }
 
 const createUpdateRecord: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'propostas', 'editar', true)
+  const session = await validateAuthorization(req, res, 'propostas', 'editar', true, true)
   const partnerId = session.user.idParceiro
 
   const record = InsertProposalUpdateRecordSchema.parse(req.body)

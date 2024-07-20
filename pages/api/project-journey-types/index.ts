@@ -37,7 +37,7 @@ type PostResponse = {
 }
 
 const createProjectJourneyTypeRoute: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'tiposProjeto', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'tiposProjeto', true, true)
 
   const journeyType = InsertProjectJourneyTypeSchema.parse(req.body)
 
@@ -57,7 +57,7 @@ type PutResponse = {
 }
 
 const updateProjectJourneyTypeRoute: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'configuracoes', 'tiposProjeto', true)
+  const session = await validateAuthorization(req, res, 'configuracoes', 'tiposProjeto', true, true)
 
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')

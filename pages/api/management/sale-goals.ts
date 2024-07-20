@@ -16,7 +16,7 @@ type PostResponse = {
   message: string
 }
 const createSaleGoal: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
   const info = InsertSaleGoalSchema.parse(req.body)
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -45,7 +45,7 @@ type PutResponse = {
   message: string
 }
 const editSaleGoal: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'resultados', 'visualizarComercial', true)
+  const session = await validateAuthorization(req, res, 'resultados', 'visualizarComercial', true, true)
   const partnerId = session.user.idParceiro
 
   const changes = InsertSaleGoalSchema.partial().parse(req.body)

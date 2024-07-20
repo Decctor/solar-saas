@@ -29,7 +29,7 @@ type PostResponse = {
   message: string
 }
 const createRdStationConfig: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
 
   const { client_id, client_secret } = req.body

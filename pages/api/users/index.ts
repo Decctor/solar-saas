@@ -19,7 +19,7 @@ type PostResponse = {
 }
 
 const createUser: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'usuarios', 'criar', true)
+  const session = await validateAuthorization(req, res, 'usuarios', 'criar', true, true)
   const partnerId = session.user.idParceiro
   const user = InsertUserSchema.parse(req.body)
   const { senha: password } = user
@@ -96,7 +96,7 @@ type PutResponse = {
 }
 
 const editUser: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'usuarios', 'editar', true)
+  const session = await validateAuthorization(req, res, 'usuarios', 'editar', true, true)
   const partnerId = session.user.idParceiro
 
   const { id } = req.query

@@ -20,7 +20,7 @@ type PostResponse = {
 }
 
 const createOpportunityHistory: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'oportunidades', 'editar', true)
+  const session = await validateAuthorization(req, res, 'oportunidades', 'editar', true, true)
   const partnerId = session.user.idParceiro
 
   const opportunityHistory = InsertOpportunityHistorySchema.parse(req.body)
@@ -62,7 +62,7 @@ type PutResponse = {
 }
 
 const editOpportunityHistory: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'oportunidades', 'editar', true)
+  const session = await validateAuthorization(req, res, 'oportunidades', 'editar', true, true)
   const userId = session.user.id
   const partnerId = session.user.idParceiro
   const userScope = session.user.permissoes.oportunidades.escopo

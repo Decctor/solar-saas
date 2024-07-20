@@ -35,7 +35,7 @@ const CreateClientOpportunityAndFunnelReferencesSchema = z.object({
 })
 
 const createClientOpportunityAndFunnelReferences: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
   // Validating creation permissions
   const userHasClientCreationPermission = session.user.permissoes.clientes.criar

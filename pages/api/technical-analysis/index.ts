@@ -57,7 +57,7 @@ type PostResponse = {
 }
 
 const createTechnicalAnalysis: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
 
   const analysis = GeneralTechnicalAnalysisSchema.parse(req.body)
@@ -76,7 +76,7 @@ type PutResponse = {
   message: string
 }
 const editTechnicalAnalysis: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
   const { id } = req.query
   if (!id || typeof id != 'string' || !ObjectId.isValid(id)) throw new createHttpError.BadRequest('ID inválido.')

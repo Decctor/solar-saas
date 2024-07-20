@@ -42,7 +42,7 @@ type PostResponse = {
 }
 
 const createService: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'servicos', 'criar', true)
+  const session = await validateAuthorization(req, res, 'servicos', 'criar', true, true)
   const partnerId = session.user.idParceiro
 
   const service = InsertServiceSchema.parse(req.body)
@@ -63,7 +63,7 @@ type PutResponse = {
 }
 
 const editProduct: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'servicos', 'editar', true)
+  const session = await validateAuthorization(req, res, 'servicos', 'editar', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<TService> = { idParceiro: partnerId }
 

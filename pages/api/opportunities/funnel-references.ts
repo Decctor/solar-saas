@@ -14,7 +14,7 @@ type PostResponse = {
   message: string
 }
 const createFunnelReference: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true)
+  const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true, true)
   const partnerId = session.user.idParceiro
   // Parsing insert object from request
   const funnelReference = InsertFunnelReferenceSchema.parse(req.body)
@@ -34,7 +34,7 @@ type PutResponse = {
   message: string
 }
 const editFunnelReference: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true)
+  const session = await validateAuthorization(req, res, 'oportunidades', 'criar', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<TFunnelReference> = { idParceiro: partnerId }
 

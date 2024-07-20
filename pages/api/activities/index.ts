@@ -67,7 +67,7 @@ type PostResponse = {
 }
 
 const createActivity: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
   const partnerId = session.user.idParceiro
   const activity = InsertActivitySchema.parse(req.body)
   const partnerQuery: Filter<TActivity> = { idParceiro: partnerId }
@@ -98,7 +98,7 @@ type PutResponse = {
 }
 
 const editActivity: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthenticationWithSession(req, res)
+  const session = await validateAuthenticationWithSession(req, res, true)
 
   const partnerId = session.user.idParceiro
   const parterScope = session.user.permissoes.parceiros.escopo

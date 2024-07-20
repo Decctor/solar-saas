@@ -19,7 +19,7 @@ type PostResponse = {
 }
 
 const createClient: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'clientes', 'criar', true)
+  const session = await validateAuthorization(req, res, 'clientes', 'criar', true, true)
   const partnerId = session.user.idParceiro
   const client = InsertClientSchema.parse(req.body)
   const db = await connectToDatabase(process.env.MONGODB_URI, 'crm')
@@ -84,7 +84,7 @@ type PutResponse = {
 }
 
 const editClients: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'clientes', 'editar', true)
+  const session = await validateAuthorization(req, res, 'clientes', 'editar', true, true)
   const partnerId = session.user.idParceiro
   const userId = session.user.id
   const userScope = session.user.permissoes.oportunidades.escopo

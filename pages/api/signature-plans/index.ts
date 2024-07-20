@@ -44,7 +44,7 @@ type PostResponse = {
 }
 
 const createSignaturePlan: NextApiHandler<PostResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'planos', 'criar', true)
+  const session = await validateAuthorization(req, res, 'planos', 'criar', true, true)
   const partnerId = session.user.idParceiro
 
   const plan = InsertSignaturePlanSchema.parse(req.body)
@@ -64,7 +64,7 @@ type PutResponse = {
   message: string
 }
 const editSignaturePlan: NextApiHandler<PutResponse> = async (req, res) => {
-  const session = await validateAuthorization(req, res, 'planos', 'criar', true)
+  const session = await validateAuthorization(req, res, 'planos', 'criar', true, true)
   const partnerId = session.user.idParceiro
   const partnerQuery: Filter<TSignaturePlan> = { idParceiro: partnerId }
 
